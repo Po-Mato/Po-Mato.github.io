@@ -1,0 +1,141 @@
+1:"$Sreact.fragment"
+3:I[5035,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"default"]
+4:I[28921,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"default"]
+6:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+7:"$Sreact.suspense"
+9:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"ViewportBoundary"]
+b:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"MetadataBoundary"]
+d:I[80036,[],"default"]
+:HL["/_next/static/chunks/5d389d79c27b8a78.css","style"]
+:HL["/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"P":null,"b":"v6DAT_iK3pBp3Zuivol5x","c":["","posts","2026-02-04-frontend-trends",""],"q":"","i":false,"f":[[["",{"children":["posts",{"children":[["slug","2026-02-04-frontend-trends","d"],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",true],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/5d389d79c27b8a78.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/_next/static/chunks/9d01b59247e1a9f9.js","async":true,"nonce":"$undefined"}]],"$L2"]}],{"children":[["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":["$L5",null,["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],["$","$1","h",{"children":[null,["$","$L9",null,{"children":"$La"}],["$","div",null,{"hidden":true,"children":["$","$Lb",null,{"children":["$","$7",null,{"name":"Next.Metadata","children":"$Lc"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],false]],"m":"$undefined","G":["$d",[]],"S":true}
+e:I[2407,["/_next/static/chunks/9d01b59247e1a9f9.js"],"default"]
+f:I[59588,["/_next/static/chunks/9d01b59247e1a9f9.js"],""]
+2:["$","html",null,{"lang":"ko-KR","dir":"ltr","className":"h-full","children":["$","body",null,{"className":"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full","children":[["$","$Le",null,{}],["$","div",null,{"className":"relative z-10 min-h-full","children":[["$","div",null,{"className":"sticky top-0 z-20 border-b border-white/10 bg-black/30 backdrop-blur","children":["$","nav",null,{"className":"mx-auto flex max-w-3xl items-center gap-3 px-10 py-3 text-sm text-white/80","children":[["$","$Lf","/",{"href":"/","className":"rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10","children":"블로그"}],["$","$Lf","/games/",{"href":"/games/","className":"rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10","children":"게임"}],["$","$Lf","/portfolio/",{"href":"/portfolio/","className":"rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10","children":"포트폴리오"}],["$","$Lf","/search/",{"href":"/search/","className":"rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10","children":"검색"}],["$","$Lf","/tags/",{"href":"/tags/","className":"rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10","children":"태그"}]]}]}],["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]]}]]}]}]
+a:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+11:I[94966,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"IconMark"]
+10:T2046,<h1>Frontend Trends - 2026-02-04</h1>
+<blockquote>
+<p>오늘 프론트엔드 생태계에서 주목할 만한 프로젝트와 트렌드를 심층 분석합니다.</p>
+</blockquote>
+<h2>🎯 Today's Highlights</h2>
+<ul>
+<li><strong>Bruno</strong>: Git 친화적이고 오프라인 우선인 가벼운 API 테스팅 IDE. Postman의 강력한 대안으로 부상 중입니다.</li>
+<li><strong>Wren AI</strong>: 자연어를 SQL과 차트로 변환해주는 오픈소스 GenBI(Generative Business Intelligence) 에이전트입니다.</li>
+<li><strong>Activepieces</strong>: TypeScript 기반의 오픈소스 AI 자동화 워크플로우 엔진으로, 280개 이상의 MCP 서버를 지원합니다.</li>
+</ul>
+<hr>
+<h2>1️⃣ Bruno - API Client / IDE</h2>
+<h3>📌 개요</h3>
+<p>Bruno는 Postman이나 Insomnia와 같은 기존 API 클라이언트의 무거움과 클라우드 강제 동기화 문제를 해결하기 위해 등장한 오픈소스 IDE입니다. 'API 테스팅의 Git화'를 목표로 합니다.</p>
+<p><strong>GitHub</strong>: <a href="https://github.com/usebruno/bruno">https://github.com/usebruno/bruno</a> | <strong>Stars</strong>: 30,000+ ⭐ | <strong>Status</strong>: Stable</p>
+<h3>🔍 기술적 특징</h3>
+<ul>
+<li><strong>Bru Markup Language</strong>: 요청 정보를 <code>.bru</code>라는 일반 텍스트 파일로 저장하여 Git으로 관리하기 매우 용이합니다.</li>
+<li><strong>Offline-only</strong>: 데이터 프라이버시를 위해 클라우드 동기화를 배제하고 로컬 파일 시스템을 기반으로 작동합니다.</li>
+<li><strong>Cross-platform</strong>: Electron 기반으로 Mac, Windows, Linux를 모두 지원하며 가볍고 빠릅니다.</li>
+</ul>
+<h3>💼 실무 적용</h3>
+<pre><code class="language-javascript">// .bru 파일 예시 (텍스트 기반 관리 가능)
+meta {
+  name: Get User Info
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/users/:id
+  body: none
+  auth: bearer
+}
+
+params:path {
+  id: 123
+}
+</code></pre>
+<p><strong>Use Case</strong>:</p>
+<ul>
+<li>✅ API 컬렉션을 개발팀과 Git 레포지토리 내에서 함께 관리하고 싶을 때</li>
+<li>✅ 보안상의 이유로 외부 클라우드에 API 요청 정보를 저장할 수 없을 때</li>
+<li>✅ Postman의 유료화나 무거워진 기능들에 피로감을 느낄 때</li>
+</ul>
+<h3>🤔 Expert Take</h3>
+<p>Bruno는 프론트엔드 개발자의 DX(Developer Experience)를 크게 개선합니다. API 문서와 테스트 케이스를 코드와 함께 버전 관리할 수 있다는 점은 대규모 협업에서 강력한 무기가 됩니다. 최근 Postman의 무리한 클라우드 강제 정책에 실망한 유저들이 대거 이동하며 생태계가 급격히 확장되고 있습니다.</p>
+<hr>
+<h2>2️⃣ Wren AI - Generative BI Agent</h2>
+<h3>📌 개요</h3>
+<p>Wren AI는 데이터베이스를 자연어로 쿼리할 수 있게 해주는 오픈소스 GenBI 솔루션입니다. 복잡한 SQL을 몰라도 데이터에서 인사이트를 추출할 수 있도록 돕습니다.</p>
+<p><strong>GitHub</strong>: <a href="https://github.com/Canner/WrenAI">https://github.com/Canner/WrenAI</a> | <strong>Stars</strong>: 10,000+ ⭐ | <strong>Status</strong>: Beta/Stable</p>
+<h3>🔍 기술적 특징</h3>
+<ul>
+<li><strong>Semantic Layer</strong>: MDL(Modeling Definition Language)을 통해 데이터 스키마와 비즈니스 로직을 LLM이 이해하기 쉬운 형태로 구조화합니다.</li>
+<li><strong>Multi-DB Support</strong>: PostgreSQL, MySQL, BigQuery, Snowflake, DuckDB 등 대부분의 현대적인 데이터베이스를 지원합니다.</li>
+<li><strong>API-First</strong>: 생성된 쿼리와 차트를 기존 앱에 API로 임베딩할 수 있는 기능을 제공합니다.</li>
+</ul>
+<h3>💼 실무 적용</h3>
+<p><strong>Use Case</strong>:</p>
+<ul>
+<li>✅ 사내 데이터 분석 대시보드를 자연어 인터페이스로 구축하고 싶을 때</li>
+<li>✅ 비개발 직군이 직접 데이터 쿼리를 수행해야 하는 환경</li>
+<li>✅ AI 기반의 맞춤형 BI 도구를 커스텀하게 구축하고 싶을 때</li>
+</ul>
+<h3>🤔 Expert Take</h3>
+<p>프론트엔드 관점에서 Wren AI는 단순한 BI 도구를 넘어 'AI-powered UI'의 좋은 예시입니다. 특히 Semantic Layer를 통해 LLM의 할루시네이션(환각)을 제어하고 정확한 SQL을 생성하는 접근 방식은 엔터프라이즈 급 AI 앱 개발 시 참고할 만한 아키텍처입니다.</p>
+<hr>
+<h2>3️⃣ Activepieces - AI Automation</h2>
+<h3>📌 개요</h3>
+<p>Activepieces는 Zapier의 오픈소스 대안을 표방하며, 특히 개발자 친화적인 TypeScript 프레임워크를 강점으로 내세우는 AI 자동화 워크플로우 엔진입니다.</p>
+<p><strong>GitHub</strong>: <a href="https://github.com/activepieces/activepieces">https://github.com/activepieces/activepieces</a> | <strong>Stars</strong>: 20,000+ ⭐ | <strong>Status</strong>: Stable</p>
+<h3>🔍 기술적 특징</h3>
+<ul>
+<li><strong>TypeScript Framework</strong>: 모든 커넥터(Pieces)가 TypeScript로 작성되어 타입 안정성이 높고 확장이 쉽습니다.</li>
+<li><strong>MCP(Model Context Protocol) 지원</strong>: 280개 이상의 커넥터가 자동으로 MCP 서버로 변환되어 Claude, Cursor 등에서 즉시 사용 가능합니다.</li>
+<li><strong>Self-hosted</strong>: 데이터 주권 확보를 위해 직접 호스팅이 가능하며, 보안이 중요한 환경에 적합합니다.</li>
+</ul>
+<h3>💼 실무 적용</h3>
+<pre><code class="language-typescript">// Custom Piece 작성 예시
+export const slackSendMessage = createAction({
+  name: 'send_message',
+  displayName: 'Send Message',
+  props: {
+    text: Property.ShortText({ displayName: 'Message', required: true }),
+  },
+  async run(context) {
+    // Slack API 호출 로직
+  },
+});
+</code></pre>
+<p><strong>Use Case</strong>:</p>
+<ul>
+<li>✅ 복잡한 비즈니스 로직이 포함된 AI 자동화 워크플로우를 구축할 때</li>
+<li>✅ 커스텀 커넥터를 TypeScript로 빠르게 개발해야 할 때</li>
+<li>✅ MCP를 통해 개발 환경(IDE)과 외부 툴을 연동하고 싶을 때</li>
+</ul>
+<h3>🤔 Expert Take</h3>
+<p>Activepieces는 프론트엔드 개발자들에게 익숙한 TS 에코시스템을 자동화 영역으로 확장했습니다. 특히 최근 부상하는 MCP 표준을 적극 수용하여, AI 에이전트가 실제 도구들을 제어할 수 있는 가교 역할을 하고 있다는 점이 매우 고무적입니다.</p>
+<hr>
+<h2>📈 Trend Analysis</h2>
+<h3>이번 주 트렌드 요약</h3>
+<ul>
+<li><strong>주요 키워드</strong>: Developer Experience (DX), AI Agents, Open Source Alternatives, MCP</li>
+<li><strong>부상 중인 기술</strong>: MCP (Model Context Protocol) - AI 에이전트와 도구 간의 통신 표준으로 급부상 중.</li>
+<li><strong>커뮤니티 반응</strong>: Postman과 같은 거대 독점 툴의 대안으로 Bruno와 같은 가벼운 오픈소스 툴에 대한 열광적인 지지가 확인됨.</li>
+</ul>
+<h3>실무 체크리스트</h3>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> Postman 컬렉션을 Bruno <code>.bru</code> 포맷으로 전환 검토 (협업 효율성 증대)</li>
+<li class="task-list-item"><input type="checkbox" disabled> 내부 데이터 대시보드에 Wren AI를 활용한 자연어 검색 기능 도입 가능성 타진</li>
+<li class="task-list-item"><input type="checkbox" disabled> 반복적인 업무 자동화에 Activepieces MCP 서버 연동 고려</li>
+<li class="task-list-item"><input type="checkbox" disabled> 팀 내에서 사용 중인 API 테스팅 도구의 데이터 보안 가이드라인 재점검</li>
+</ul>
+<h3>참고 자료</h3>
+<ul>
+<li><a href="https://docs.usebruno.com">Bruno 공식 문서</a></li>
+<li><a href="https://getwren.ai/post/how-we-design-our-semantic-engine-for-llms">Wren AI 디자인 아키텍처 블로그</a></li>
+<li><a href="https://www.activepieces.com/docs/developers/building-pieces/overview">Activepieces Piece 개발 가이드</a></li>
+</ul>
+<hr>
+<p><em>이 포스트는 매일 자동으로 생성되며, 최신 프론트엔드 트렌드를 실시간으로 반영합니다.</em></p>5:["$","main",null,{"className":"mx-auto max-w-3xl p-10 text-white","children":["$","article",null,{"className":"rounded-xl border border-white/10 bg-black/30 p-8 backdrop-blur","children":[["$","div",null,{"className":"text-sm text-white/60","children":"Wed Feb 04 2026 00:00:00 GMT+0000 (Coordinated Universal Time)"}],["$","h1",null,{"className":"mt-2 text-4xl font-bold","children":"Frontend Trends - 2026-02-04"}],null,["$","div",null,{"className":"prose prose-invert mt-8 max-w-none","dangerouslySetInnerHTML":{"__html":"$10"}}]]}]}]
+8:null
+c:[["$","title","0",{"children":"Frontend Trends - 2026-02-04 | Mato Po Tech Blog"}],["$","meta","1",{"name":"description","content":"개발하면서 배운 것과 삽질 로그를 기록합니다."}],["$","link","2",{"rel":"canonical","href":"https://po-mato.github.io/posts/2026-02-04-frontend-trends/"}],["$","meta","3",{"property":"og:title","content":"Frontend Trends - 2026-02-04"}],["$","meta","4",{"property":"og:description","content":"개발하면서 배운 것과 삽질 로그를 기록합니다."}],["$","meta","5",{"property":"og:url","content":"https://po-mato.github.io/posts/2026-02-04-frontend-trends/"}],["$","meta","6",{"property":"og:image","content":"https://po-mato.github.io/og.png"}],["$","meta","7",{"property":"og:type","content":"article"}],["$","meta","8",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","9",{"name":"twitter:title","content":"Frontend Trends - 2026-02-04"}],["$","meta","10",{"name":"twitter:description","content":"개발하면서 배운 것과 삽질 로그를 기록합니다."}],["$","meta","11",{"name":"twitter:image","content":"https://po-mato.github.io/og.png"}],["$","link","12",{"rel":"icon","href":"/favicon.ico?favicon.0b3bf435.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L11","13",{}]]

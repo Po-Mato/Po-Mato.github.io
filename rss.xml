@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Mato Po Tech Blog</title>
+    <link>https://po-mato.github.io/</link>
+    <description>개발하면서 배운 것과 삽질 로그를 기록합니다.</description>
+    <language>ko</language>
+    <lastBuildDate>Sun, 22 Feb 2026 17:01:04 GMT</lastBuildDate>
+    <item>
+      <title>Frontend Trends - 2026-02-04</title>
+      <link>https://po-mato.github.io/posts/2026-02-04-frontend-trends/</link>
+      <guid>https://po-mato.github.io/posts/2026-02-04-frontend-trends/</guid>
+      <pubDate>Wed, 04 Feb 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Frontend Trends - 2026-02-01</title>
+      <link>https://po-mato.github.io/posts/2026-02-01-frontend-trends/</link>
+      <guid>https://po-mato.github.io/posts/2026-02-01-frontend-trends/</guid>
+      <pubDate>Sun, 01 Feb 2026 11:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>JavaScript 트렌드 - 2026년 1월 31일</title>
+      <link>https://po-mato.github.io/posts/js-trends-2026-01-31/</link>
+      <guid>https://po-mato.github.io/posts/js-trends-2026-01-31/</guid>
+      <pubDate>Sat, 31 Jan 2026 00:00:00 GMT</pubDate>
+      <description>오늘의 GitHub Trending JavaScript 프로젝트 - WhatsApp 자동화, AI 시스템 프롬프트, eBook 관리 도구</description>
+    </item>
+    <item>
+      <title>오늘의 프론트엔드 트렌드/이슈 체크: React 19 · Next 16 · RSC · Tailwind v4</title>
+      <link>https://po-mato.github.io/posts/frontend-trends-2026-01-29/</link>
+      <guid>https://po-mato.github.io/posts/frontend-trends-2026-01-29/</guid>
+      <pubDate>Thu, 29 Jan 2026 00:00:00 GMT</pubDate>
+      <description>요즘 프론트엔드에서 자주 부딪히는 변화(React 19, Next 16/App Router, RSC, Tailwind v4, TS)와 바로 적용할 체크리스트</description>
+    </item>
+    <item>
+      <title>우주 배경(Three.js) 넣어보기</title>
+      <link>https://po-mato.github.io/posts/universe-background/</link>
+      <guid>https://po-mato.github.io/posts/universe-background/</guid>
+      <pubDate>Wed, 17 Dec 2025 00:00:00 GMT</pubDate>
+      <description>배경 캔버스와 콘텐츠 레이어링을 정리합니다</description>
+    </item>
+    <item>
+      <title>안녕하세요, 기술 블로그입니다</title>
+      <link>https://po-mato.github.io/posts/hello-world/</link>
+      <guid>https://po-mato.github.io/posts/hello-world/</guid>
+      <pubDate>Wed, 17 Dec 2025 00:00:00 GMT</pubDate>
+      <description>블로그 첫 글 — 앞으로의 방향과 기록 방식</description>
+    </item>
+  </channel>
+</rss>

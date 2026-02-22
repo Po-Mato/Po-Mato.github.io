@@ -1,0 +1,82 @@
+1:"$Sreact.fragment"
+3:I[5035,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"default"]
+4:I[28921,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"default"]
+6:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+7:"$Sreact.suspense"
+9:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"ViewportBoundary"]
+b:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"MetadataBoundary"]
+d:I[80036,[],"default"]
+:HL["/_next/static/chunks/5d389d79c27b8a78.css","style"]
+:HL["/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"P":null,"b":"v6DAT_iK3pBp3Zuivol5x","c":["","posts","2026-02-01-frontend-trends",""],"q":"","i":false,"f":[[["",{"children":["posts",{"children":[["slug","2026-02-01-frontend-trends","d"],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",true],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/5d389d79c27b8a78.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/_next/static/chunks/9d01b59247e1a9f9.js","async":true,"nonce":"$undefined"}]],"$L2"]}],{"children":[["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":["$L5",null,["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],["$","$1","h",{"children":[null,["$","$L9",null,{"children":"$La"}],["$","div",null,{"hidden":true,"children":["$","$Lb",null,{"children":["$","$7",null,{"name":"Next.Metadata","children":"$Lc"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],false]],"m":"$undefined","G":["$d",[]],"S":true}
+e:I[2407,["/_next/static/chunks/9d01b59247e1a9f9.js"],"default"]
+f:I[59588,["/_next/static/chunks/9d01b59247e1a9f9.js"],""]
+2:["$","html",null,{"lang":"ko-KR","dir":"ltr","className":"h-full","children":["$","body",null,{"className":"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full","children":[["$","$Le",null,{}],["$","div",null,{"className":"relative z-10 min-h-full","children":[["$","div",null,{"className":"sticky top-0 z-20 border-b border-white/10 bg-black/30 backdrop-blur","children":["$","nav",null,{"className":"mx-auto flex max-w-3xl items-center gap-3 px-10 py-3 text-sm text-white/80","children":[["$","$Lf","/",{"href":"/","className":"rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10","children":"블로그"}],["$","$Lf","/games/",{"href":"/games/","className":"rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10","children":"게임"}],["$","$Lf","/portfolio/",{"href":"/portfolio/","className":"rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10","children":"포트폴리오"}],["$","$Lf","/search/",{"href":"/search/","className":"rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10","children":"검색"}],["$","$Lf","/tags/",{"href":"/tags/","className":"rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10","children":"태그"}]]}]}],["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]]}]]}]}]
+a:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+11:I[94966,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"IconMark"]
+10:T1119,<h2>오늘의 주목할 프론트엔드 프로젝트 3선</h2>
+<h3>1. 🤖 transformers.js (Hugging Face)</h3>
+<p><strong>GitHub:</strong> <a href="https://github.com/huggingface/transformers.js">https://github.com/huggingface/transformers.js</a></p>
+<h4>뭐하는 프로젝트?</h4>
+<ul>
+<li>브라우저에서 서버 없이 Hugging Face의 Transformer 모델을 직접 실행할 수 있는 JavaScript 라이브러리</li>
+<li>ONNX Runtime을 활용해 클라이언트 사이드에서 ML 추론 가능</li>
+</ul>
+<h4>왜 트렌드에 올랐는지?</h4>
+<ul>
+<li>AI 붐과 맞물려 프론트엔드에서 직접 ML 모델을 돌릴 수 있다는 점이 큰 화제</li>
+<li>서버 비용 절감과 개인정보 보호 측면에서 강력한 이점 제공</li>
+<li>WebGPU 지원으로 성능도 크게 향상</li>
+</ul>
+<h4>실무 체크리스트</h4>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> 서버 없이 텍스트 분류/요약/번역 기능을 프론트엔드에 구현 가능한지 검토</li>
+<li class="task-list-item"><input type="checkbox" disabled> 사용자 데이터를 서버로 보내지 않고 처리해야 하는 프라이버시 민감 기능에 활용</li>
+<li class="task-list-item"><input type="checkbox" disabled> 오프라인 환경에서도 동작하는 AI 기반 기능 구현 시 유용</li>
+</ul>
+<hr>
+<h3>2. 📱 whatsapp-web.js</h3>
+<p><strong>GitHub:</strong> <a href="https://github.com/pedroslopez/whatsapp-web.js">https://github.com/pedroslopez/whatsapp-web.js</a></p>
+<h4>뭐하는 프로젝트?</h4>
+<ul>
+<li>Puppeteer를 통해 WhatsApp Web을 제어하는 Node.js 클라이언트 라이브러리</li>
+<li>봇 개발, 자동화, 알림 시스템 구축에 활용 가능</li>
+</ul>
+<h4>왜 트렌드에 올랐는지?</h4>
+<ul>
+<li>WhatsApp Business API의 높은 진입 장벽 때문에 커뮤니티 기반 대안 솔루션 수요 증가</li>
+<li>Multi-Device 지원, 미디어 전송, 그룹 관리 등 거의 모든 WhatsApp 기능 커버</li>
+<li>고객 서비스 자동화, 알림 시스템에 대한 실무 니즈 반영</li>
+</ul>
+<h4>실무 체크리스트</h4>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> 고객 문의 자동 응답 봇 구현 시 WhatsApp 채널 추가 검토</li>
+<li class="task-list-item"><input type="checkbox" disabled> 주문/배송 알림을 WhatsApp으로 전송하는 시스템 구축 가능성 탐색</li>
+<li class="task-list-item"><input type="checkbox" disabled> ⚠️ 공식 API가 아니므로 계정 차단 위험 인지 필요 (프로덕션 환경 주의)</li>
+</ul>
+<hr>
+<h3>3. 📚 Calibre-Web-Automated</h3>
+<p><strong>GitHub:</strong> <a href="https://github.com/crocodilestick/Calibre-Web-Automated">https://github.com/crocodilestick/Calibre-Web-Automated</a></p>
+<h4>뭐하는 프로젝트?</h4>
+<ul>
+<li>Calibre-Web에 자동화 기능을 대폭 추가한 eBook 관리 솔루션</li>
+<li>자동 변환, 메타데이터 관리, 중복 제거, KOReader 동기화 등 포함</li>
+</ul>
+<h4>왜 트렌드에 올랐는지?</h4>
+<ul>
+<li>개인 디지털 도서관에 대한 관심 증가 (Self-hosted 트렌드)</li>
+<li>Calibre의 복잡한 UI 대신 모던한 웹 인터페이스 제공</li>
+<li>OAuth 2.0/OIDC 인증, 배치 편집, 통계 대시보드 등 엔터프라이즈급 기능 탑재</li>
+</ul>
+<h4>실무 체크리스트</h4>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> 사내 문서/매뉴얼 관리 시스템 구축 시 아키텍처 참고 (자동 메타데이터, 중복 제거)</li>
+<li class="task-list-item"><input type="checkbox" disabled> 파일 업로드 → 자동 변환 → 저장 워크플로우를 다른 도메인에 적용 가능</li>
+<li class="task-list-item"><input type="checkbox" disabled> OAuth 통합, 권한 관리, 배치 작업 등 프론트엔드 패턴 학습 소스로 활용</li>
+</ul>
+<hr>
+<h2>마무리</h2>
+<p>오늘은 <strong>AI 클라이언트 추론</strong>, <strong>메시징 자동화</strong>, <strong>콘텐츠 관리 자동화</strong> 세 가지 키워드가 돋보이는 날이었습니다. 특히 transformers.js는 프론트엔드에서 AI를 직접 다루는 시대의 서막을 알리고 있으며, 실무에서도 프라이버시와 비용 측면에서 큰 가능성을 보여줍니다.</p>5:["$","main",null,{"className":"mx-auto max-w-3xl p-10 text-white","children":["$","article",null,{"className":"rounded-xl border border-white/10 bg-black/30 p-8 backdrop-blur","children":[["$","div",null,{"className":"text-sm text-white/60","children":"Sun Feb 01 2026 11:00:00 GMT+0000 (Coordinated Universal Time)"}],["$","h1",null,{"className":"mt-2 text-4xl font-bold","children":"Frontend Trends - 2026-02-01"}],null,["$","div",null,{"className":"prose prose-invert mt-8 max-w-none","dangerouslySetInnerHTML":{"__html":"$10"}}]]}]}]
+8:null
+c:[["$","title","0",{"children":"Frontend Trends - 2026-02-01 | Mato Po Tech Blog"}],["$","meta","1",{"name":"description","content":"개발하면서 배운 것과 삽질 로그를 기록합니다."}],["$","link","2",{"rel":"canonical","href":"https://po-mato.github.io/posts/2026-02-01-frontend-trends/"}],["$","meta","3",{"property":"og:title","content":"Frontend Trends - 2026-02-01"}],["$","meta","4",{"property":"og:description","content":"개발하면서 배운 것과 삽질 로그를 기록합니다."}],["$","meta","5",{"property":"og:url","content":"https://po-mato.github.io/posts/2026-02-01-frontend-trends/"}],["$","meta","6",{"property":"og:image","content":"https://po-mato.github.io/og.png"}],["$","meta","7",{"property":"og:type","content":"article"}],["$","meta","8",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","9",{"name":"twitter:title","content":"Frontend Trends - 2026-02-01"}],["$","meta","10",{"name":"twitter:description","content":"개발하면서 배운 것과 삽질 로그를 기록합니다."}],["$","meta","11",{"name":"twitter:image","content":"https://po-mato.github.io/og.png"}],["$","link","12",{"rel":"icon","href":"/favicon.ico?favicon.0b3bf435.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L11","13",{}]]

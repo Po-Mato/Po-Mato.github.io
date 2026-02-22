@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[48124,["/_next/static/chunks/9d01b59247e1a9f9.js","/_next/static/chunks/b5afbc1ba25f4a09.js"],"default"]
+3:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"v6DAT_iK3pBp3Zuivol5x","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"mx-auto max-w-3xl p-10 text-white","children":[["$","header",null,{"className":"mb-8","children":[["$","div",null,{"className":"text-sm text-white/60","children":"2026-02-12"}],["$","h1",null,{"className":"mt-2 text-4xl font-bold","children":"Daily Dodger — CLASSIC"}],["$","p",null,{"className":"mt-3 text-white/80","children":"탄막을 피하고 오브를 먹어서 점수를 올려봐. 5 스테이지 생존하면 클리어! (매일 시드/스테이지 팩 변경)"}]]}],["$","div",null,{"className":"rounded-xl border border-white/10 bg-black/30 p-6 backdrop-blur","children":["$","$L2",null,{"game":{"date":"2026-02-12","type":"phaser","template":"dodger","title":"Daily Dodger — CLASSIC","description":"탄막을 피하고 오브를 먹어서 점수를 올려봐. 5 스테이지 생존하면 클리어! (매일 시드/스테이지 팩 변경)","seed":20260212,"stagePack":"classic","difficulty":2,"theme":"sunset"}}]}]]}],[["$","script","script-0",{"src":"/_next/static/chunks/b5afbc1ba25f4a09.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null
