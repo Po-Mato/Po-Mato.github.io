@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Mato Po Tech Blog</title>
+    <link>https://po-mato.github.io/</link>
+    <description>개발하면서 배운 것과 삽질 로그를 기록합니다.</description>
+    <language>ko</language>
+    <lastBuildDate>Sun, 15 Mar 2026 17:00:55 GMT</lastBuildDate>
+    <item>
+      <title>2026-02-26-gitnexus-deep-dive</title>
+      <link>https://po-mato.github.io/posts/2026-02-26-gitnexus-deep-dive/</link>
+      <guid>https://po-mato.github.io/posts/2026-02-26-gitnexus-deep-dive/</guid>
+      <pubDate>Sun, 15 Mar 2026 17:00:55 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Locality-First Agentic Architecture: Moving Intelligence to the Edge</title>
+      <link>https://po-mato.github.io/posts/2026-03-13-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-13-proactive-update/</guid>
+      <pubDate>Fri, 13 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Platform Engineering in 2026: Balancing AI-Driven Autonomy with Governance</title>
+      <link>https://po-mato.github.io/posts/2026-03-12-platform-engineering-2026/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-12-platform-engineering-2026/</guid>
+      <pubDate>Thu, 12 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Agentic Workflow를 활용한 기술 문서 자동화의 아키텍처적 접근</title>
+      <link>https://po-mato.github.io/posts/2026-03-11-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-11-proactive-update/</guid>
+      <pubDate>Wed, 11 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Next.js 프로젝트의 기술 부채 청산 전략: Lint부터 Vitest까지</title>
+      <link>https://po-mato.github.io/posts/2026-03-09-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-09-proactive-update/</guid>
+      <pubDate>Mon, 09 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>브라우저가 에이전트 런타임이 되는 순간: MCP + In-Page Agent 아키텍처 Deep Dive</title>
+      <link>https://po-mato.github.io/posts/2026-03-08-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-08-proactive-update/</guid>
+      <pubDate>Sun, 08 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Agentic Web: 브라우저가 AI 실행 엔진이 되는 시대의 FE 아키텍처</title>
+      <link>https://po-mato.github.io/posts/2026-03-05-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-05-proactive-update/</guid>
+      <pubDate>Thu, 05 Mar 2026 07:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>에이전트 중심 개발의 서막: ruvnet/ruflo와 Superset으로 구축하는 로컬 AI 군단 아키텍처</title>
+      <link>https://po-mato.github.io/posts/2026-03-04-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-04-proactive-update/</guid>
+      <pubDate>Wed, 04 Mar 2026 07:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Rust와 WASM: 차세대 에이전트 런타임의 핵심 동력</title>
+      <link>https://po-mato.github.io/posts/2026-03-03-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-03-proactive-update/</guid>
+      <pubDate>Tue, 03 Mar 2026 07:45:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Frontend Trends - 2026-02-04</title>
+      <link>https://po-mato.github.io/posts/2026-02-04-frontend-trends/</link>
+      <guid>https://po-mato.github.io/posts/2026-02-04-frontend-trends/</guid>
+      <pubDate>Wed, 04 Feb 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Frontend Trends - 2026-02-01</title>
+      <link>https://po-mato.github.io/posts/2026-02-01-frontend-trends/</link>
+      <guid>https://po-mato.github.io/posts/2026-02-01-frontend-trends/</guid>
+      <pubDate>Sun, 01 Feb 2026 11:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>JavaScript 트렌드 - 2026년 1월 31일</title>
+      <link>https://po-mato.github.io/posts/js-trends-2026-01-31/</link>
+      <guid>https://po-mato.github.io/posts/js-trends-2026-01-31/</guid>
+      <pubDate>Sat, 31 Jan 2026 00:00:00 GMT</pubDate>
+      <description>오늘의 GitHub Trending JavaScript 프로젝트 - WhatsApp 자동화, AI 시스템 프롬프트, eBook 관리 도구</description>
+    </item>
+    <item>
+      <title>오늘의 프론트엔드 트렌드/이슈 체크: React 19 · Next 16 · RSC · Tailwind v4</title>
+      <link>https://po-mato.github.io/posts/frontend-trends-2026-01-29/</link>
+      <guid>https://po-mato.github.io/posts/frontend-trends-2026-01-29/</guid>
+      <pubDate>Thu, 29 Jan 2026 00:00:00 GMT</pubDate>
+      <description>요즘 프론트엔드에서 자주 부딪히는 변화(React 19, Next 16/App Router, RSC, Tailwind v4, TS)와 바로 적용할 체크리스트</description>
+    </item>
+    <item>
+      <title>우주 배경(Three.js) 넣어보기</title>
+      <link>https://po-mato.github.io/posts/universe-background/</link>
+      <guid>https://po-mato.github.io/posts/universe-background/</guid>
+      <pubDate>Wed, 17 Dec 2025 00:00:00 GMT</pubDate>
+      <description>배경 캔버스와 콘텐츠 레이어링을 정리합니다</description>
+    </item>
+    <item>
+      <title>안녕하세요, 기술 블로그입니다</title>
+      <link>https://po-mato.github.io/posts/hello-world/</link>
+      <guid>https://po-mato.github.io/posts/hello-world/</guid>
+      <pubDate>Wed, 17 Dec 2025 00:00:00 GMT</pubDate>
+      <description>블로그 첫 글 — 앞으로의 방향과 기록 방식</description>
+    </item>
+  </channel>
+</rss>

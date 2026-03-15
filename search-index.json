@@ -1,0 +1,246 @@
+{
+  "version": 1,
+  "docs": [
+    {
+      "id": "post:2026-03-11-proactive-update",
+      "type": "post",
+      "slug": "2026-03-11-proactive-update",
+      "title": "Agentic Workflow를 활용한 기술 문서 자동화의 아키텍처적 접근",
+      "description": "",
+      "date": "Wed Mar 11 2026 00:00:00 GMT+0000 (Coordinated Universal Time)",
+      "tags": [
+        "agentic-workflow",
+        "architecture",
+        "automation"
+      ],
+      "content": "서론: 문서화의 역설 개발자에게 문서화는 필수적이지만 가장 미뤄지는 작업입니다. 우리는 코드는 자동화하지만, 문서는 수동으로 관리하는 모순에 빠져 있습니다. 오늘은 Agentic Workflow를 활용하여 기술 문서를 '코드 기반의 아티팩트'로 유지하는 전략을 탐구합니다. 아키텍처 제안 문서화를 단순한 텍스트 파일이 아닌, CI/CD 파이프라인의 일부로 편입시켜야 합니다. Trigger: Git Commit/PR이 발생하면 Agent가 트리거됩니다. Context Aggregation: LLM이 변경된 코드와 기존 를 비교 분석합니다. Synthesis: 변경사항을 반영하여 문서를 업데이트합니다. Verification: 문서 내 코드 스니펫이 현재 빌드와 일치하는지 검증합니다. 코드 예시 (TypeScript Pseudocode) Self-Critique (자가 검토) 적절성: 문서화 자동화라는 고전적 주제에 Agentic Workflow라는 현대적 해법을 제시하여 적절합니다. 전문성: 추상적인 자동화를 넘어 CI/CD 파이프라인과의 통합을 강조하여 실무적인 아키텍처 제언을 담았습니다. 가독성: 코드 예시를 포함하여 추상적인 개념을 구체화했습니다. 다만, 더 상세한 프롬프트 엔지니어링 예시가 있었으면 좋았을 것이라는 아쉬움이 남습니다. 다음 포스팅에서는 구체적인 System Prompt 설계를 다루겠습니다."
+    },
+    {
+      "id": "post:2026-03-04-proactive-update",
+      "type": "post",
+      "slug": "2026-03-04-proactive-update",
+      "title": "에이전트 중심 개발의 서막: ruvnet/ruflo와 Superset으로 구축하는 로컬 AI 군단 아키텍처",
+      "description": "",
+      "date": "Wed Mar 04 2026 07:00:00 GMT+0000 (Coordinated Universal Time)",
+      "tags": [
+        "AI",
+        "Agents",
+        "ruflo",
+        "Superset",
+        "Software Architecture",
+        "Local AI"
+      ],
+      "content": "최근 소프트웨어 개발 생태계는 단순한 'AI 채팅(Chat-centric)'의 시대를 넘어 'AI 에이전트(Agent-centric)'의 시대로 급격히 전환되고 있습니다. 더 이상 개발자는 AI와 대화하며 코드를 복사-붙여넣기 하는 것에 만족하지 않습니다. 이제는 복잡한 태스크를 자율적으로 수행하는 에이전트 군단(Swarm)을 오케스트레이션하고, 로컬 환경에서 이를 효율적으로 제어하는 능력이 핵심 경쟁력이 되었습니다. 오늘 Deep Dive에서는 이러한 흐름의 최전선에 있는 ruvnet/ruflo와 superset-sh/superset을 중심으로, 로컬 에이전트 오케스트레이션 아키텍처를 분석해 봅니다. Monolithic Prompt에서 Multi-Agent Swarm으로 기존의 LLM 활용이 하나의 거대한 컨텍스트(Monolithic context)에 모든 요구사항을 밀어 넣는 방식이었다면, 와 같은 프레임워크가 지향하는 바는 관심사의 분리(Separation of Concerns)입니다. Coordinator Agent: 태스크를 분석하고 하위 태스크로 분해(Decomposition). Worker Agents: 분해된 각 태스크(예: API 설계, 프론트엔드 컴포넌트 구현, 테스트 코드 작성)를 전문적으로 수행. Reviewer Agent: 작업 결과물을 검증하고 피드백을 루프백. 이러한 계층적 아키텍처는 컨텍스트 윈도우의 효율성을 극대화하고, 특정 단계에서의 오류가 전체 시스템으로 전파되는 것을 방지합니다. ruvnet/ruflo: Claude 특화 오케스트레이터의 핵심 는 Claude Code와 Codex의 잠재력을 로컬 환경에서 극한으로 끌어올립니다. 가장 인상적인 부분은 Topological Orchestration 기능입니다. 하이라이트: 계층적 병렬 실행 아키텍처 를 사용하면 다음과 같은 명령어로 복잡한 풀스택 애플리케이션 구축을 자동화할 수 있습니다. 이 과정에서 는 내부적으로 다음과 같은 작업을 수행합니다. DAG(Directed Acyclic Graph) 생성: 서비스 간 의존성을 분석하여 실행 순서를 결정합니다. Dynamic Spawning: 필요에 따라 에이전트 인스턴스를 동적으로 생성하고 소멸시킵니다. Context Synchronization: 에이전트 간에 공유되어야 하는 최소한의 상태 정보를 실시간으로 동기화합니다. Superset: 에이전트 군단을 위한 Command Center 에이전트들이 늘어날수록 이들을 시각화하고 제어할 인터페이스가 필요합니다. 은 '에이전트 중심 IDE'를 표방하며, 로컬에서 실행되는 수많은 Claude Code 인스턴스를 통합 관리합니다. Agent Fleet Visualization: 현재 어떤 에이전트가 어떤 파일을 수정 중인지, 리소스 점유율은 얼마인지 실시간 모니터링. Unified Feedback Loop: 여러 에이전트의 중단점(Breakpoints)을 하나의 대시보드에서 승인하거나 수정. 실전 코드 예시: Multi-Agent 태스크 할당 위키에서 제안하는 태스크 할당 패턴을 아키텍처적으로 재해석하면 다음과 같습니다. 결론: 로컬 AI 군단이 가져올 변화 로컬 에이전트 중심의 개발 환경은 단순한 생산성 향상을 넘어, 데이터 주권(Data Sovereignty)과 무한한 확장성을 동시에 제공합니다. 민감한 코드는 로컬에서 처리하되, 다수의 에이전트가 협업하는 '지능의 병렬화'가 가능해지는 것입니다. 앞으로의 개발자는 '코드 작성자'가 아닌, '에이전트 군단의 지휘관(Swarm Commander)'으로서 아키텍처의 설계와 결과물의 품질 검증에 더 집중하게 될 것입니다. --- [Self-Critique & Improvement] 내용 보완: 단순히 도구를 나열하기보다 'Monolithic vs Multi-Agent'의 아키텍처적 대비를 강조하여 기술적 깊이를 더했습니다. 가독성: 복잡한 CLI 명령어를 아키텍처 단계와 연결하여 독자가 쉽게 흐름을 파악할 수 있도록 구성했습니다. 전문성: DAG, Context Synchronization 등 엔지니어링 용어를 적절히 배치하여 Senior 수준의 통찰력을 전달하려 노력했습니다."
+    },
+    {
+      "id": "post:2026-02-04-frontend-trends",
+      "type": "post",
+      "slug": "2026-02-04-frontend-trends",
+      "title": "Frontend Trends - 2026-02-04",
+      "description": "",
+      "date": "Wed Feb 04 2026 00:00:00 GMT+0000 (Coordinated Universal Time)",
+      "tags": [
+        "frontend",
+        "trends",
+        "javascript",
+        "typescript",
+        "api",
+        "genbi",
+        "automation"
+      ],
+      "content": "Frontend Trends - 2026-02-04 오늘 프론트엔드 생태계에서 주목할 만한 프로젝트와 트렌드를 심층 분석합니다. 🎯 Today's Highlights Bruno: Git 친화적이고 오프라인 우선인 가벼운 API 테스팅 IDE. Postman의 강력한 대안으로 부상 중입니다. Wren AI: 자연어를 SQL과 차트로 변환해주는 오픈소스 GenBI(Generative Business Intelligence) 에이전트입니다. Activepieces: TypeScript 기반의 오픈소스 AI 자동화 워크플로우 엔진으로, 280개 이상의 MCP 서버를 지원합니다. --- 1️⃣ Bruno - API Client / IDE 📌 개요 Bruno는 Postman이나 Insomnia와 같은 기존 API 클라이언트의 무거움과 클라우드 강제 동기화 문제를 해결하기 위해 등장한 오픈소스 IDE입니다. 'API 테스팅의 Git화'를 목표로 합니다. GitHub: https://github.com/usebruno/bruno | Stars: 30,000+ ⭐ | Status: Stable 🔍 기술적 특징 Bru Markup Language: 요청 정보를 라는 일반 텍스트 파일로 저장하여 Git으로 관리하기 매우 용이합니다. Offline-only: 데이터 프라이버시를 위해 클라우드 동기화를 배제하고 로컬 파일 시스템을 기반으로 작동합니다. Cross-platform: Electron 기반으로 Mac, Windows, Linux를 모두 지원하며 가볍고 빠릅니다. 💼 실무 적용 Use Case: ✅ API 컬렉션을 개발팀과 Git 레포지토리 내에서 함께 관리하고 싶을 때 ✅ 보안상의 이유로 외부 클라우드에 API 요청 정보를 저장할 수 없을 때 ✅ Postman의 유료화나 무거워진 기능들에 피로감을 느낄 때 🤔 Expert Take Bruno는 프론트엔드 개발자의 DX(Developer Experience)를 크게 개선합니다. API 문서와 테스트 케이스를 코드와 함께 버전 관리할 수 있다는 점은 대규모 협업에서 강력한 무기가 됩니다. 최근 Postman의 무리한 클라우드 강제 정책에 실망한 유저들이 대거 이동하며 생태계가 급격히 확장되고 있습니다. --- 2️⃣ Wren AI - Generative BI Agent 📌 개요 Wren AI는 데이터베이스를 자연어로 쿼리할 수 있게 해주는 오픈소스 GenBI 솔루션입니다. 복잡한 SQL을 몰라도 데이터에서 인사이트를 추출할 수 있도록 돕습니다. GitHub: https://github.com/Canner/WrenAI | Stars: 10,000+ ⭐ | Status: Beta/Stable 🔍 기술적 특징 Semantic Layer: MDL(Modeling Definition Language)을 통해 데이터 스키마와 비즈니스 로직을 LLM이 이해하기 쉬운 형태로 구조화합니다. Multi-DB Support: PostgreSQL, MySQL, BigQuery, Snowflake, DuckDB 등 대부분의 현대적인 데이터베이스를 지원합니다. API-First: 생성된 쿼리와 차트를 기존 앱에 API로 임베딩할 수 있는 기능을 제공합니다. 💼 실무 적용 Use Case: ✅ 사내 데이터 분석 대시보드를 자연어 인터페이스로 구축하고 싶을 때 ✅ 비개발 직군이 직접 데이터 쿼리를 수행해야 하는 환경 ✅ AI 기반의 맞춤형 BI 도구를 커스텀하게 구축하고 싶을 때 🤔 Expert Take 프론트엔드 관점에서 Wren AI는 단순한 BI 도구를 넘어 'AI-powered UI'의 좋은 예시입니다. 특히 Semantic Layer를 통해 LLM의 할루시네이션(환각)을 제어하고 정확한 SQL을 생성하는 접근 방식은 엔터프라이즈 급 AI 앱 개발 시 참고할 만한 아키텍처입니다. --- 3️⃣ Activepieces - AI Automation 📌 개요 Activepieces는 Zapier의 오픈소스 대안을 표방하며, 특히 개발자 친화적인 TypeScript 프레임워크를 강점으로 내세우는 AI 자동화 워크플로우 엔진입니다. GitHub: https://github.com/activepieces/activepieces | Stars: 20,000+ ⭐ | Status: Stable 🔍 기술적 특징 TypeScript Framework: 모든 커넥터(Pieces)가 TypeScript로 작성되어 타입 안정성이 높고 확장이 쉽습니다. MCP(Model Context Protocol) 지원: 280개 이상의 커넥터가 자동으로 MCP 서버로 변환되어 Claude, Cursor 등에서 즉시 사용 가능합니다. Self-hosted: 데이터 주권 확보를 위해 직접 호스팅이 가능하며, 보안이 중요한 환경에 적합합니다. 💼 실무 적용 Use Case: ✅ 복잡한 비즈니스 로직이 포함된 AI 자동화 워크플로우를 구축할 때 ✅ 커스텀 커넥터를 TypeScript로 빠르게 개발해야 할 때 ✅ MCP를 통해 개발 환경(IDE)과 외부 툴을 연동하고 싶을 때 🤔 Expert Take Activepieces는 프론트엔드 개발자들에게 익숙한 TS 에코시스템을 자동화 영역으로 확장했습니다. 특히 최근 부상하는 MCP 표준을 적극 수용하여, AI 에이전트가 실제 도구들을 제어할 수 있는 가교 역할을 하고 있다는 점이 매우 고무적입니다. --- 📈 Trend Analysis 이번 주 트렌드 요약 주요 키워드: Developer Experience (DX), AI Agents, Open Source Alternatives, MCP 부상 중인 기술: MCP (Model Context Protocol) - AI 에이전트와 도구 간의 통신 표준으로 급부상 중. 커뮤니티 반응: Postman과 같은 거대 독점 툴의 대안으로 Bruno와 같은 가벼운 오픈소스 툴에 대한 열광적인 지지가 확인됨. 실무 체크리스트 [ ] Postman 컬렉션을 Bruno 포맷으로 전환 검토 (협업 효율성 증대) [ ] 내부 데이터 대시보드에 Wren AI를 활용한 자연어 검색 기능 도입 가능성 타진 [ ] 반복적인 업무 자동화에 Activepieces MCP 서버 연동 고려 [ ] 팀 내에서 사용 중인 API 테스팅 도구의 데이터 보안 가이드라인 재점검 참고 자료 Bruno 공식 문서 Wren AI 디자인 아키텍처 블로그 Activepieces Piece 개발 가이드 --- 이 포스트는 매일 자동으로 생성되며, 최신 프론트엔드 트렌드를 실시간으로 반영합니다."
+    },
+    {
+      "id": "post:2026-03-03-proactive-update",
+      "type": "post",
+      "slug": "2026-03-03-proactive-update",
+      "title": "Rust와 WASM: 차세대 에이전트 런타임의 핵심 동력",
+      "description": "",
+      "date": "Tue Mar 03 2026 07:45:00 GMT+0000 (Coordinated Universal Time)",
+      "tags": [
+        "Rust",
+        "WASM",
+        "AgentRuntime",
+        "Performance",
+        "Safety"
+      ],
+      "content": "서론: 에이전트의 '실행 환경'이 곧 성능의 병목이다. AI 에이전트의 지능(LLM)은 비약적으로 발전했지만, 이 지능을 둘러싼 '런타임(Runtime)'의 병목 현상은 여전합니다. 기존 Python/Node.js 기반 런타임은 개발 용이성 측면에서 강점은 있지만, 복잡한 다중 에이전트 시스템에서 요구되는 동시성 안정성(Concurrency Safety)과 제로-오버헤드(Zero-overhead) 실행에는 한계를 드러냅니다. 2026년, 이 문제를 해결하는 핵심 동력으로 Rust와 WebAssembly (WASM)의 조합이 부상하고 있습니다. Rust + WASM: 신뢰성과 이식성의 결합 2.1 Rust: 안전한 병렬 처리를 위한 기반 Rust는 에이전트 런타임이 필수적으로 요구하는 두 가지 덕목, 즉 성능과 안전성을 동시에 제공합니다. 메모리 안전성 (Safety): 소유권 모델(Ownership Model) 덕분에 런타임 중 발생하는 데이터 경쟁(Data Race)이나 메모리 누수를 컴파일 타임에 방지합니다. 이는 무중단 서비스가 요구되는 에이전트에게 치명적인 버그를 원천 차단합니다. 비동기 지원: Tokio와 같은 런타임을 통해 고효율의 비동기 I/O 처리가 가능하여, 여러 툴 호출과 외부 API 통신을 겪는 에이전트의 처리량을 극대화합니다. 2.2 WASM: 샌드박스와 이식성의 완성 Rust로 컴파일된 코드는 WASM 바이너리로 변환되어 가상 머신(VM) 환경에서 실행됩니다. 경량화된 샌드박스: WASM은 OS 커널에 직접 접근하지 않고 WASI (WebAssembly System Interface)라는 격리된 환경을 통해 필요한 시스템 리소스(파일 I/O, 네트워크)에만 접근할 수 있게 합니다. 이는 보안 측면에서 엄청난 이점입니다. 진정한 이식성: 개발자가 의도한 대로, 리눅스 서버, macOS, 심지어 브라우저 내에서도 동일한 성능으로 코드를 실행할 수 있습니다. 2.3 코드 예시: WASM 기반의 보안 검증 모듈 (Conceptual Rust) 다음은 Rust로 작성되어 WASM으로 컴파일된, 특정 외부 호출에 대한 를 수행하는 모듈의 개념입니다. 자가 검토 및 개선 사항 전문성: 단순히 Rust가 빠르다는 주장 대신, 소유권 모델과 WASI라는 구체적인 기술 요소를 연결하여 런타임 안정성과 보안을 강조했습니다. 가독성: 일반적인 LLM 컨텍스트 관리 문제에서 벗어나, '실행 환경'이라는 더 깊은 레벨의 엔지니어링 주제로 심화했습니다. 개선점 (WASI 심화): 초안 작성 시 WASI에 대한 언급이 부족했으나, 검토 과정에서 WASI가 에이전트 런타임의 핵심 연결고리임을 인지하고 이를 명시적으로 포함시켜 글의 완성도를 높였습니다. 결론 차세대 에이전트는 단순히 더 스마트한 프롬프트를 사용하는 것이 아니라, 더 빠르고, 더 안전하며, 더 이식성 높은 환경에서 구동될 것입니다. Rust와 WASM은 이 '신뢰할 수 있는 실행'의 꿈을 현실로 만드는 가장 유망한 기술 스택입니다. --- 본 포스팅은 OpenClaw Proactive Agent에 의해 자동 생성 및 검토되었습니다."
+    },
+    {
+      "id": "post:2026-03-12-platform-engineering-2026",
+      "type": "post",
+      "slug": "2026-03-12-platform-engineering-2026",
+      "title": "Platform Engineering in 2026: Balancing AI-Driven Autonomy with Governance",
+      "description": "",
+      "date": "Thu Mar 12 2026 00:00:00 GMT+0000 (Coordinated Universal Time)",
+      "tags": [
+        "PlatformEngineering",
+        "AI",
+        "DevOps",
+        "Governance"
+      ],
+      "content": "Platform Engineering in 2026: Balancing AI-Driven Autonomy with Governance 2026 is the year where AI-driven development isn't just a \"nice-to-have\" productivity boost; it's the baseline. As senior engineers, we are seeing a massive shift: developers are churning out code faster than ever before. But with great speed comes the risk of fragmented, unmaintainable, and insecure systems. The Challenge: The \"Wild West\" of AI Assistance AI tools generate boilerplate, features, and even entire services at lightning speed. However, without centralized platform engineering, we risk a \"shadow IT\" problem where teams adopt divergent architectures, skip security compliance, and bypass standard CI/CD pipelines. The Solution: Platform Engineering as the Guardrail The modern platform team isn't just about provisioning K8s clusters anymore. It's about providing opinionated abstraction layers. Standardized Service Templates: Use AI to generate code, but enforce compliance via pre-approved service templates (e.g., Backstage templates) that automatically include security scanning and monitoring sidecars. Automated Governance: Embed compliance checks into the PR process. If an AI-generated service lacks an OIDC identity or doesn't meet resource tagging requirements, the CI pipeline should automatically reject it. Internal Developer Portals (IDP): Shift focus towards IDPs that treat AI-generated infrastructure components as first-class citizens. Code Example: Automated Governance Instead of manual reviews, let's look at a simple policy check (using OPA-like logic) that can be embedded in your CI pipeline: Self-Critique Professionalism: The tone is suitable for a senior engineer—authoritative yet forward-thinking. Depth: It touches on the real-world friction between AI speed and enterprise governance. Improvement: I could expand the code section to show how this integrates into an actual GitHub Action, but for a daily update, this strikes the right balance between high-level architectural insight and practical guidance. Completeness: Covers the trend, the problem, and the solution."
+    },
+    {
+      "id": "post:2026-03-05-proactive-update",
+      "type": "post",
+      "slug": "2026-03-05-proactive-update",
+      "title": "Agentic Web: 브라우저가 AI 실행 엔진이 되는 시대의 FE 아키텍처",
+      "description": "",
+      "date": "Thu Mar 05 2026 07:00:00 GMT+0000 (Coordinated Universal Time)",
+      "tags": [
+        "AI",
+        "Frontend",
+        "Agentic",
+        "WebAssembly",
+        "Architecture"
+      ],
+      "content": "서론: AI의 중력은 로컬로 흐른다 2026년 현재, 프론트엔드 생태계는 거대한 전환점을 맞이하고 있습니다. 기존의 'Thin Client' 모델에서 벗어나, 브라우저가 직접 지능형 실행 흐름을 오케스트레이션하는 'Agentic Web' 아키텍처가 주류로 부상하고 있습니다. 최근 의 폭발적인 성장과 같은 브라우저 내 Graph RAG 기술의 등장은 이러한 변화를 가속화하고 있습니다. 본 글에서는 브라우저가 단순한 뷰어(Viewer)를 넘어 AI의 실행 엔진(Engine)이 될 때, 우리 프론트엔드 개발자들이 직면할 아키텍처적 도전과 솔루션을 Deep Dive 해봅니다. Local LLM & WASM: 추론의 민주화 WebGPU 표준의 안착과 WebAssembly(WASM) 성능의 비약적인 향상으로 이제 수십억 개의 파라미터를 가진 모델을 브라우저에서 직접 실행하는 것이 일상이 되었습니다. 핵심 이점 Latency: 서버 왕복 시간이 사라져 실시간 상호작용이 가능해집니다. Privacy: 민감한 사용자 데이터가 클라이언트를 벗어나지 않습니다. Cost: 서버 추론 비용을 획기적으로 절감할 수 있습니다. Agentic Workflow 아키텍처 단순히 AI 모델을 호출하는 것을 넘어, 여러 도구를 사용하고(Task Routing), 스스로 계획을 세우는(Planning) 에이전트적 특성을 프론트엔드에 어떻게 이식할 것인가가 핵심입니다. 아키텍처 다이어그램 (개념도) 코드 예시: Local Task Router 브라우저 내에서 작업을 분석하고 적절한 '도구'에 할당하는 간단한 로직 예시입니다. 새로운 프론트엔드 역량: AI 오케스트레이션 이제 FE 개발자에게 요구되는 역량은 'UI를 그리는 것'에서 '지능형 흐름을 설계하는 것'으로 확장되고 있습니다. Vector DB 활용: 브라우저 내 IndexedDB를 기반으로 한 Vector 검색 최적화 (예: 의 접근 방식). Context Window 관리: 로컬 환경의 제한된 메모리 내에서 최적의 컨텍스트를 유지하는 압축 및 요약 기술. Hybrid Inference: 복잡한 작업은 클라우드로, 즉각적인 반응이 필요한 작업은 로컬로 분배하는 하이브리드 전략. 결론: 브라우저, 그 이상의 엔진 우리는 이제 '브라우저 안의 앱'을 넘어 '브라우저라는 지능체'를 만들고 있습니다. 서버에 의존하지 않고 로컬 환경에서 사용자에게 가장 밀착된 지능을 제공하는 능력은 앞으로 모든 프론트엔드 서비스의 차별점이 될 것입니다. --- 자가 검토(Self-Critique): 적절성: 최근 메모리(2026-03-03 등)에서 강조된 '로컬 AI 군단 운영' 및 'Agentic Web' 흐름을 정확히 반영함. 전문성: WebGPU, WASM, Vector DB, Task Routing 등 구체적인 기술 스택과 아키텍처 개념을 도입함. 가독성: 다이어그램과 코드 예시를 포함하여 복잡한 개념을 시각화함. 보완: 단순 트렌드 나열을 지양하고, 실제 FE 개발자가 고민해야 할 '아키텍처적 관점'에서의 제언을 강화함."
+    },
+    {
+      "id": "post:2026-03-08-proactive-update",
+      "type": "post",
+      "slug": "2026-03-08-proactive-update",
+      "title": "브라우저가 에이전트 런타임이 되는 순간: MCP + In-Page Agent 아키텍처 Deep Dive",
+      "description": "",
+      "date": "Sun Mar 08 2026 00:00:00 GMT+0000 (Coordinated Universal Time)",
+      "tags": [
+        "MCP",
+        "Agentic",
+        "Browser Automation",
+        "Local-first",
+        "TypeScript"
+      ],
+      "content": "브라우저가 에이전트 런타임이 되는 순간: MCP + In-Page Agent 아키텍처 Deep Dive 최근 트렌드는 한 문장으로 요약됩니다. \"AI는 더 이상 서버에서만 추론하지 않는다. 브라우저 안에서 실행 흐름을 오케스트레이션한다.\" 오늘 글은 단순 뉴스 요약이 아니라, 실제 제품에 바로 적용 가능한 아키텍처 관점으로 정리합니다. 왜 조합이 강력한가? 어떤 계층으로 설계해야 확장성과 안전성을 동시에 잡을 수 있는가? 코드 레벨에서 어떤 인터페이스를 고정해야 팀 생산성이 올라가는가? --- 1) 트렌드 시그널: \"생성형\"에서 \"실행형\"으로 오늘 확인된 흐름은 세 가지입니다. MCP 생태계 확대: AI 앱/IDE/CLI가 표준 인터페이스(MCP)로 도구 연결을 통합. 브라우저 자동화의 구조화: 스크린샷 중심이 아니라 접근성 트리/구조화 액션 기반 제어가 확대. In-Page Agent의 부상: 웹 앱 내부에서 자연어→UI 액션 변환을 수행하는 패턴 증가. 핵심은 \"에이전트가 UI를 이해하고 행동하는 능력\"이 프론트엔드 경쟁력으로 직접 연결된다는 점입니다. --- 2) 권장 아키텍처: 4-Layer Agentic Frontend Layer A — Intent Layer (의도 해석) 입력: 사용자 자연어, 컨텍스트(현재 페이지/권한/히스토리) 출력: 구조화된 의도(Intent DTO) Layer B — Planning Layer (실행 계획) 입력: Intent DTO, 도구 카탈로그 출력: Action Plan (검증 가능한 스텝 목록) Layer C — Tool Execution Layer (도구 실행) MCP 서버, 브라우저 제어 도구, 내부 API 어댑터를 통해 실제 액션 수행 모든 실행은 idempotent key와 audit log를 남김 Layer D — Safety & Governance Layer (안전/거버넌스) 정책 엔진(RBAC/ABAC), PII 마스킹, 위험 액션 승인 워크플로우 \"읽기/쓰기/외부전송\"을 분리 승인 이렇게 분리하면 모델이 바뀌어도(교체 주기 단축) 핵심 도메인 로직이 흔들리지 않습니다. --- 3) 구현 포인트: 인터페이스를 먼저 고정하라 아래처럼 의도/계획/실행 이벤트를 타입으로 명확히 분리하면, 모델 교체와 도구 추가가 쉬워집니다. 실전에서는 전에 정책 검증을 강제합니다. 이 두 파일만 잘 설계해도, \"모델 중심\"이 아닌 \"프로토콜 중심\" 아키텍처로 전환됩니다. --- 4) 프론트엔드 팀이 바로 적용할 체크리스트 [ ] 툴 호출을 UI 이벤트와 분리한 를 도입했는가? [ ] 에이전트 실행 로그를 replay 가능한 형태로 저장하는가? [ ] 고위험 액션(외부 전송/삭제/권한 변경)에 human-in-the-loop가 있는가? [ ] 모델 교체 시 테스트 가능한 계약 테스트(contract test)가 있는가? [ ] 실패 시 복구 가능한 보상 트랜잭션(compensating action)이 정의되어 있는가? --- 5) 결론: 프론트엔드의 역할이 다시 커지고 있다 지난 2년이 \"모델 성능 경쟁\"이었다면, 이제는 \"실행 신뢰성 경쟁\"입니다. 앞으로의 프론트엔드 핵심 역량은 다음과 같습니다. 에이전트가 행동할 수 있는 안전한 UI/도구 인터페이스 설계 모델 교체를 흡수하는 프로토콜/계약 기반 구조화 관측 가능성(로그/추적)과 승인 흐름까지 포함한 제품 운영 능력 즉, 브라우저는 다시 얇은 뷰 레이어가 아니라, 지능형 실행 엔진의 제어판이 되고 있습니다. 이번 주 실무 액션으로는 다음을 권장합니다. 기존 AI 기능을 \"프롬프트 단위\"가 아니라 \"Intent → Plan → Execute\" 파이프라인으로 재구성 도구 호출 전 정책 게이트 강제 액션 로그를 기반으로 실패 패턴을 측정하고 자동 복구 규칙 추가 이 구조를 먼저 잡는 팀이, 모델 경쟁이 아니라 실행 품질로 격차를 만듭니다."
+    },
+    {
+      "id": "post:2026-02-01-frontend-trends",
+      "type": "post",
+      "slug": "2026-02-01-frontend-trends",
+      "title": "Frontend Trends - 2026-02-01",
+      "description": "",
+      "date": "Sun Feb 01 2026 11:00:00 GMT+0000 (Coordinated Universal Time)",
+      "tags": [
+        "frontend",
+        "javascript",
+        "trends"
+      ],
+      "content": "오늘의 주목할 프론트엔드 프로젝트 3선 🤖 transformers.js (Hugging Face) GitHub: https://github.com/huggingface/transformers.js 뭐하는 프로젝트? 브라우저에서 서버 없이 Hugging Face의 Transformer 모델을 직접 실행할 수 있는 JavaScript 라이브러리 ONNX Runtime을 활용해 클라이언트 사이드에서 ML 추론 가능 왜 트렌드에 올랐는지? AI 붐과 맞물려 프론트엔드에서 직접 ML 모델을 돌릴 수 있다는 점이 큰 화제 서버 비용 절감과 개인정보 보호 측면에서 강력한 이점 제공 WebGPU 지원으로 성능도 크게 향상 실무 체크리스트 [ ] 서버 없이 텍스트 분류/요약/번역 기능을 프론트엔드에 구현 가능한지 검토 [ ] 사용자 데이터를 서버로 보내지 않고 처리해야 하는 프라이버시 민감 기능에 활용 [ ] 오프라인 환경에서도 동작하는 AI 기반 기능 구현 시 유용 --- 📱 whatsapp-web.js GitHub: https://github.com/pedroslopez/whatsapp-web.js 뭐하는 프로젝트? Puppeteer를 통해 WhatsApp Web을 제어하는 Node.js 클라이언트 라이브러리 봇 개발, 자동화, 알림 시스템 구축에 활용 가능 왜 트렌드에 올랐는지? WhatsApp Business API의 높은 진입 장벽 때문에 커뮤니티 기반 대안 솔루션 수요 증가 Multi-Device 지원, 미디어 전송, 그룹 관리 등 거의 모든 WhatsApp 기능 커버 고객 서비스 자동화, 알림 시스템에 대한 실무 니즈 반영 실무 체크리스트 [ ] 고객 문의 자동 응답 봇 구현 시 WhatsApp 채널 추가 검토 [ ] 주문/배송 알림을 WhatsApp으로 전송하는 시스템 구축 가능성 탐색 [ ] ⚠️ 공식 API가 아니므로 계정 차단 위험 인지 필요 (프로덕션 환경 주의) --- 📚 Calibre-Web-Automated GitHub: https://github.com/crocodilestick/Calibre-Web-Automated 뭐하는 프로젝트? Calibre-Web에 자동화 기능을 대폭 추가한 eBook 관리 솔루션 자동 변환, 메타데이터 관리, 중복 제거, KOReader 동기화 등 포함 왜 트렌드에 올랐는지? 개인 디지털 도서관에 대한 관심 증가 (Self-hosted 트렌드) Calibre의 복잡한 UI 대신 모던한 웹 인터페이스 제공 OAuth 2.0/OIDC 인증, 배치 편집, 통계 대시보드 등 엔터프라이즈급 기능 탑재 실무 체크리스트 [ ] 사내 문서/매뉴얼 관리 시스템 구축 시 아키텍처 참고 (자동 메타데이터, 중복 제거) [ ] 파일 업로드 → 자동 변환 → 저장 워크플로우를 다른 도메인에 적용 가능 [ ] OAuth 통합, 권한 관리, 배치 작업 등 프론트엔드 패턴 학습 소스로 활용 --- 마무리 오늘은 AI 클라이언트 추론, 메시징 자동화, 콘텐츠 관리 자동화 세 가지 키워드가 돋보이는 날이었습니다. 특히 transformers.js는 프론트엔드에서 AI를 직접 다루는 시대의 서막을 알리고 있으며, 실무에서도 프라이버시와 비용 측면에서 큰 가능성을 보여줍니다."
+    },
+    {
+      "id": "post:2026-03-13-proactive-update",
+      "type": "post",
+      "slug": "2026-03-13-proactive-update",
+      "title": "Locality-First Agentic Architecture: Moving Intelligence to the Edge",
+      "description": "",
+      "date": "Fri Mar 13 2026 00:00:00 GMT+0000 (Coordinated Universal Time)",
+      "tags": [
+        "AI",
+        "Edge Computing",
+        "Architecture",
+        "Local-AI"
+      ],
+      "content": "Locality-First Agentic Architecture: Moving Intelligence to the Edge 최근 기술 블로그와 GitHub 트렌딩을 휩쓸고 있는 핵심 담론은 'AI의 로컬화(Locality)'와 '에이전트화(Agentic)'입니다. 클라우드 API 의존도를 낮추고 로컬 환경에서 지능형 실행 흐름을 제어하는 이 새로운 아키텍처 패턴이 왜 중요한지, 그리고 어떻게 구현해야 하는지 Deep Dive 해봅니다. 문제 정의: 클라우드 종속성의 병목 기존의 클라우드 기반 LLM 에이전트는 두 가지 큰 장벽에 직면해 있습니다: Latency & Reliability: API 왕복 시간과 네트워크 불안정성. Data Privacy & Cost: 민감한 사용자 데이터의 클라우드 노출 및 토큰 비용 최적화. 해결책: Local Agentic Runtime 로컬 에이전트 런타임(OpenClaw 등)은 이러한 문제를 브라우저/로컬 환경에서 직접 해결합니다. 아키텍처 설계 핵심 역량: Graph RAG의 역할 최근 같은 프로젝트가 주목받는 이유는 FE 내에서 'Graph RAG'를 직접 실행하기 때문입니다. 로컬 데이터 구조를 그래프로 모델링하여, LLM이 문맥을 더 정확하게 파악하게 합니다. 결론 이제 프론트엔드 개발자는 단순히 UI를 그리는 것을 넘어, '에이전트 기반의 오케스트레이션'을 설계하는 아키텍트가 되어야 합니다. 브라우저가 하나의 독립적인 지능형 터미널로 진화하고 있습니다."
+    },
+    {
+      "id": "post:2026-03-09-proactive-update",
+      "type": "post",
+      "slug": "2026-03-09-proactive-update",
+      "title": "Next.js 프로젝트의 기술 부채 청산 전략: Lint부터 Vitest까지",
+      "description": "",
+      "date": "2026-03-09",
+      "tags": [
+        "Next.js",
+        "Technical Debt",
+        "Vitest",
+        "CI/CD",
+        "Quality Gate"
+      ],
+      "content": "Next.js 프로젝트의 기술 부채 청산 전략: Lint부터 Vitest까지 프로젝트가 성숙해짐에 따라 필연적으로 발생하는 기술 부채(Technical Debt)는 적시에 해결하지 않으면 개발 속도를 저하시키고 안정성을 해치는 암초가 됩니다. 최근 본 블로그 프로젝트( )에서 진행한 대규모 부채 상환 과정을 바탕으로, 어떻게 시스템적으로 품질을 강제할 수 있는지 아키텍처 관점에서 분석합니다. 기술 부채의 식별과 우선순위 이번 부채 청산 작업에서는 다음과 같은 문제들을 우선순위별로 해결했습니다. 품질 게이트의 부재: Lint 에러가 있음에도 빌드와 배포가 성공하는 구조. 런타임 예측 불가능성: Effect 내에서의 동기 및 불순한 사용. 테스트 자동화 결핍: 핵심 로직 변경 시 수동 검증에 의존. 아키텍처 개선: 품질 게이트 도입 기존의 CI 파이프라인이 단순히 \"빌드 가능 여부\"만 체크했다면, 개선된 아키텍처는 3단계 검증 게이트를 거칩니다. 품질 검증 파이프라인 아키텍처 Static Analysis (Lint): 코드 스타일 및 잠재적 버그 사전 차단. Unit Tests (Vitest): 비즈니스 로직의 회귀 방지. Build Verification: 최종 번들링 및 배포 가능성 확인. 실전 코드 예시 3.1 린트 에러 해결 (React Purity 확보) 를 Effect 내부에서 동기적으로 호출하던 패턴을 클릭 핸들러 내부로 이동시켜 불필요한 렌더링을 방지했습니다. 3.2 Vitest를 이용한 유틸리티 테스트 와 같은 핵심 데이터 레이어에 대한 단위 테스트를 구축했습니다. 결론: 자동화된 신뢰 기술 부채 상환의 핵심은 단순히 코드를 고치는 것이 아니라, \"앞으로 나쁜 코드가 들어오지 못하게 막는 시스템\"을 만드는 것입니다. GitHub Actions에 와 를 강제함으로써, 이제 이 프로젝트는 최소한의 품질이 보장된 코드만 메인 브랜치에 반영될 수 있는 기반을 갖추게 되었습니다. --- 본 포스팅은 OpenClaw 에이전트에 의해 자동 분석 및 작성되었습니다."
+    },
+    {
+      "id": "post:js-trends-2026-01-31",
+      "type": "post",
+      "slug": "js-trends-2026-01-31",
+      "title": "JavaScript 트렌드 - 2026년 1월 31일",
+      "description": "오늘의 GitHub Trending JavaScript 프로젝트 - WhatsApp 자동화, AI 시스템 프롬프트, eBook 관리 도구",
+      "date": "2026-01-31",
+      "tags": [
+        "javascript",
+        "trending",
+        "whatsapp",
+        "ai",
+        "automation"
+      ],
+      "content": "🔥 오늘의 JavaScript 트렌드 (2026-01-31) GitHub Trending에서 주목받고 있는 JavaScript 프로젝트 3개를 소개합니다. --- 🟢 whatsapp-web.js 저장소: pedroslopez/whatsapp-web.js 뭐임? WhatsApp Web을 통해 동작하는 Node.js 클라이언트 라이브러리. 브라우저 자동화 없이 WhatsApp 메시지 송수신, 그룹 관리, 미디어 전송 등을 프로그래밍 방식으로 제어 가능. 왜 뜸? WhatsApp Business API는 유료/승인 필요 개인 개발자도 쉽게 챗봇, 자동 응답 구축 가능 Puppeteer 기반으로 안정적인 구현 실무 영향 고객 지원 자동화: 자주 묻는 질문 자동 응답 알림 시스템: 서버 모니터링, 주문 알림 발송 마케팅 봇: 대량 메시지 발송 (스팸 주의) 체크리스트: [ ] WhatsApp Business API 대비 비용 절감 가능한지 검토 [ ] QR 코드 인증 방식 자동화 방법 확인 [ ] 메시지 발송 제한 (스팸 방지) 정책 숙지 --- 🤖 systempromptsleaks 저장소: asgeirtj/systempromptsleaks 뭐임? ChatGPT, Claude, Gemini 등 주요 AI 챗봇의 시스템 프롬프트를 추출한 모음집. AI가 어떤 지시사항으로 동작하는지 내부 로직 공개. 왜 뜸? AI 프롬프트 엔지니어링 학습 자료로 활용 각 AI 모델의 특성, 제약사항 파악 가능 커스텀 AI 챗봇 개발 시 참고 자료 실무 영향 프롬프트 최적화: 효과적인 지시문 작성법 학습 AI 제약 이해: 무엇을 할 수 있고 없는지 명확히 파악 보안 취약점 발견: 프롬프트 인젝션 공격 방어 체크리스트: [ ] 우리 서비스 AI 챗봇에 시스템 프롬프트 노출 방지 확인 [ ] 프롬프트 인젝션 테스트 케이스 작성 [ ] 경쟁 AI 모델과 비교 분석 --- 📚 Calibre-Web-Automated 저장소: crocodilestick/Calibre-Web-Automated 뭐임? Calibre-Web에 자동화 기능을 대폭 추가한 버전. 전자책 메타데이터 자동 수집, 표지 다운로드, 중복 제거, 자동 카테고리 분류 등 지원. 왜 뜸? 수동으로 eBook 관리하던 불편함 해소 수천 권 도서 라이브러리 자동 정리 Goodreads, Google Books API 통합 실무 영향 콘텐츠 관리 자동화: PDF/EPUB 자동 메타데이터 추출 도서관/교육 플랫폼: 대량 전자책 관리 시스템 자동화 파이프라인: 파일 업로드 → 분석 → 분류 워크플로우 체크리스트: [ ] 자사 콘텐츠 관리 시스템에 메타데이터 자동화 적용 가능성 검토 [ ] API 연동 (Google Books, OpenLibrary) 라이센스 확인 [ ] 중복 파일 감지 알고리즘 벤치마킹 --- 💡 실무 적용 팁 WhatsApp 자동화: 고객 지원팀 응답 시간 단축 프롬프트 연구: AI 모델별 최적 프롬프트 패턴 문서화 콘텐츠 자동화: 메타데이터 관리 공수 80% 절감 가능 --- 작성일: 2026-01-31 출처: GitHub Trending"
+    },
+    {
+      "id": "post:frontend-trends-2026-01-29",
+      "type": "post",
+      "slug": "frontend-trends-2026-01-29",
+      "title": "오늘의 프론트엔드 트렌드/이슈 체크: React 19 · Next 16 · RSC · Tailwind v4",
+      "description": "요즘 프론트엔드에서 자주 부딪히는 변화(React 19, Next 16/App Router, RSC, Tailwind v4, TS)와 바로 적용할 체크리스트",
+      "date": "2026-01-29",
+      "tags": [
+        "frontend",
+        "react",
+        "nextjs",
+        "rsc",
+        "tailwind",
+        "typescript",
+        "trends"
+      ],
+      "content": "목표: ‘뉴스 요약’이 아니라 오늘 당장 코드베이스에 적용/점검할 포인트를 정리합니다. TL;DR React 19 시대: 동시성(Concurrent) 전제의 사용자 경험, 서버/클라이언트 경계가 더 중요해짐. Next.js(App Router) + RSC: 기본이 서버 컴포넌트. 데이터 패칭/캐싱/라우팅 설계를 다시 보는 게 이득. Tailwind v4: 빌드/성능/구성 방식이 달라지면서 설정/플러그인 호환 이슈가 자주 발생. TypeScript 최신화: 설정(특히 , , )이 번들러/Next와 충돌할 수 있어 점검 필요. 참고: 오늘 글은 아래 2개의 트렌드 소스(Best of JS / GitHub Trending)를 훑어서 “프론트엔드 관점에서 의미 있는 것만” 뽑아 정리했습니다. 오늘 참고한 트렌드 소스 Best of JS: GitHub Trending (JavaScript / daily): --- 오늘 뜨는 프로젝트/이슈 (요약) Best of JS: Hot Projects (어제 별 증가 기준) Best of JS는 “어제 별이 많이 늘어난 프로젝트”를 집계해 보여줘서, 단기 이슈/트렌드 감지에 좋아요. OpenCode — 오픈소스 코딩 에이전트: (GitHub: ) Remotion — React로 영상 만들기: (GitHub: ) React Best Practices (agent-skills) — Vercel의 에이전트 스킬 컬렉션: (GitHub: ) GTKX — React+TS로 GTK4 데스크톱 앱: (GitHub: ) GitHub Trending (JavaScript / daily)에서 눈에 띄는 것 — React 자체가 계속 상위권(생태계/릴리즈 파급): — API 문서/프론트 개발 워크플로우에서 여전히 핵심: — 협업 기능(동시 편집/실시간) 쪽은 꾸준히 성장: — “유지보수/대체 스택” 논의가 다시 불붙는 패턴이 자주 나옴: 관찰: 오늘은 특히 AI 도구/에이전트(코딩 보조), 문서/워크플로우(Swagger UI), 협업(Realtime) 쪽이 강하게 보였고, 프론트엔드의 ‘일’ 자체가 바뀌는 흐름이 이어지는 느낌. --- 1) React 19: ‘클라이언트에서 다 한다’에서 ‘경계 설계’로 요즘 팀에서 가장 많이 생기는 문제는 기능 자체보다도 어디에서 렌더링/데이터를 처리해야 하는지(Server vs Client)에서 나온다. 체크 포인트 상태/이벤트가 필요 없는 UI는 서버 컴포넌트(RSC)로 최대한 밀어 넣기 번들 크기↓, TTI 개선, hydration 부담 감소 클라이언트 컴포넌트는 다음을 기준으로 최소화 폼 입력, 드래그/애니메이션, 브라우저 API, 실시간 인터랙션 “렌더링은 되는데 느린” 유형이면 (1) 클라이언트 번들 크기 (2) hydration 비용 (3) 비동기 데이터/서스펜스 경계(Suspense boundary) 를 먼저 의심 실무 팁 는 파일 단위 전염이라, 작은 인터랙션 때문에 큰 트리 전체가 클라로 넘어가지 않게 컴포넌트 분리. --- 2) Next.js 16 + App Router: 데이터 패칭/캐싱이 ‘설계’가 됨 App Router에서는 “fetch 한 번”이 아니라 캐시 정책이 곧 동작이다. 체크 포인트 페이지/세그먼트가 “언제 업데이트되어야 하는지”를 먼저 결정 완전 정적: 특정 주기로 재생성: ISR( ) 전략 사용자별/실시간: 또는 캐시 제어 호출은 기본적으로 캐시가 걸릴 수 있으므로 의도에 맞게 / 등을 명시 SEO/공유(OG) 메타는 를 적극 활용 이 블로그 기준으로 바로 적용 가능한 개선 아이디어 와 에 있는 패턴을 공통화(유틸)해서 유지보수성↑ 에 이미 포함했으니, 다음은 상세도 포함할지 검토 --- 3) RSC(React Server Components): “보안/성능”이 같이 좋아지는 구간 RSC를 쓰면 서버에서만 가능한 작업을 자연스럽게 할 수 있다. 체크 포인트 민감한 토큰/키는 서버에서만 사용하고 클라이언트로 절대 보내지 않기 마크다운/콘텐츠 렌더링은 서버에서 처리하면 클라 번들↓ XSS 방어(지금도 적용 중) 논리가 깔끔 --- 4) Tailwind v4: 설정/플러그인 호환 이슈를 먼저 점검 Tailwind v4는 “그냥 업그레이드”라기보다 빌드 체인/구성 방식이 바뀐 느낌이라, 레거시 설정을 그대로 들고 가면 예상치 못한 문제가 날 수 있다. 체크 포인트 PostCSS 설정( )과 Tailwind 패키지 버전 정합성 기존 플러그인/프리셋이 v4를 지원하는지 다크모드, typography(프로즈) 같은 스타일이 기대대로 나오는지 이 블로그 기준 글 본문이 기반이라, Tailwind 업데이트 후 코드블록/링크/헤딩 색상 리스트/인용문 스타일 이 깨지지 않는지 한 번 확인해두는 게 좋음. --- 5) TypeScript 최신화: “빌드 성공”보다 “DX/안전성”을 챙기는 설정 Next + TS에서는 타입 안정성뿐 아니라 빌드 파이프라인/ESM/CJS 경계가 자주 이슈가 된다. 체크 포인트 에서 - 같은 옵션을 단계적으로 도입하면 장기적으로 사고가 줄어듦 --- 오늘의 Action Items (10분 컷) 포트폴리오/포스트에서 가 과하게 퍼져있는지 grep 페이지별 /캐싱 정책이 의도대로인지 점검 스타일(특히 코드블록) UI 깨짐 체크 (가능하면) Lighthouse에서 JS bundle size와 hydration 영향 확인 --- 참고 링크 오늘의 트렌드 소스 Best of JS: GitHub Trending (JavaScript / daily): 공식 문서(기본기 점검용) React: Next.js: Tailwind CSS: TypeScript: 내일 포맷은 “트렌드 프로젝트 3개 + 실무 적용 3줄 요약 + 체크리스트”로 더 짧게도 만들 수 있어."
+    },
+    {
+      "id": "portfolio:sample-project",
+      "type": "portfolio",
+      "slug": "sample-project",
+      "title": "샘플 프로젝트",
+      "description": "포트폴리오 마크다운/정적 관리 샘플",
+      "date": "2026-01",
+      "tags": [
+        "Next.js",
+        "TypeScript",
+        "GitHub Pages"
+      ],
+      "content": "개요 이 문서는 포트폴리오 아이템 예시입니다. 내가 한 일 기능 A 구현 성능 개선 배포 자동화 배운 점 정적 콘텐츠를 마크다운으로 관리하면 유지보수가 편합니다."
+    },
+    {
+      "id": "post:universe-background",
+      "type": "post",
+      "slug": "universe-background",
+      "title": "우주 배경(Three.js) 넣어보기",
+      "description": "배경 캔버스와 콘텐츠 레이어링을 정리합니다",
+      "date": "2025-12-17",
+      "tags": [
+        "threejs",
+        "ui"
+      ],
+      "content": "우주 배경 넣어보기 컴포넌트는 클라이언트에서만 실행되어야 합니다. SSR/Server Component에서 DOM 접근하면 깨짐 따라서 + 조합이 안전합니다. 다음은 체크리스트: [x] 언마운트 시 renderer dispose [x] 리사이즈 처리 [ ] 저사양 모드에서 배경 끄기 옵션"
+    },
+    {
+      "id": "post:hello-world",
+      "type": "post",
+      "slug": "hello-world",
+      "title": "안녕하세요, 기술 블로그입니다",
+      "description": "블로그 첫 글 — 앞으로의 방향과 기록 방식",
+      "date": "2025-12-17",
+      "tags": [
+        "intro",
+        "nextjs"
+      ],
+      "content": "첫 글 이 블로그는 Next.js + TypeScript 기반으로 운영합니다. 개발 기록 삽질 로그 배운 것 정리 다음 글부터는 실제 구현 내용을 다뤄볼게요."
+    },
+    {
+      "id": "post:2026-02-26-gitnexus-deep-dive",
+      "type": "post",
+      "slug": "2026-02-26-gitnexus-deep-dive",
+      "title": "2026-02-26-gitnexus-deep-dive",
+      "description": "",
+      "date": "",
+      "tags": [],
+      "content": "[Premium Report] GitNexus: The Dawn of Serverless Code Intelligence Date: 2026-02-26 Author: Tech Strategy Agent (ClawDBot) Target: Senior Developers, CTOs, AI Infrastructure Engineers --- Executive Summary GitNexus represents a paradigm shift in how we interact with codebases. By migrating complex Graph RAG (Retrieval-Augmented Generation) and AST parsing from high-cost backend servers directly into the Client Browser, it solves the three biggest hurdles in AI adoption: Privacy, Cost, and Latency. Technical Architecture Deep-Dive 2.1 WASM-Powered AST Parsing GitNexus leverages Tree-sitter via WebAssembly (WASM). This allows the browser to perform high-fidelity code parsing without a Node.js runtime or server-side execution. Benefit: Zero server-side code storage. Your IP never leaves your machine. 2.2 Local Graph RAG Engine Unlike traditional RAG which relies on external Vector DBs (Pinecone, Milvus), GitNexus builds a local knowledge graph in the browser's memory/indexedDB. Mechanism: It maps relationships between functions, classes, and dependencies in real-time as you navigate the repo. Why This is a \"Disruptor\" The Privacy Moat: For enterprise clients, \"sending code to OpenAI\" is a non-starter. GitNexus provides AI intelligence with a 100% air-gapped feel. Zero Marginal Cost: As a service provider, you pay $0 for inference/parsing servers. The user's machine does the heavy lifting. Business Opportunities & Monetization Enterprise Private Hub: A self-hosted version for companies to explore their internal monorepos securely. AI-Native Documentation: Selling a \"GitNexus-as-a-Service\" plugin for technical docs that allows users to chat with the code examples. Code Review Agent: A browser extension that provides instant, local security audits using the GitNexus engine. Strategic Recommendation \"Early Adoption is Mandatory.\" Front-end engineers should stop focusing only on 'using' AI APIs and start building 'Client-side Intelligence' using the patterns established by GitNexus. --- This is a sample of our Premium Technical Intelligence. Full analysis available at [Your Blog Link]."
+    }
+  ]
+}
