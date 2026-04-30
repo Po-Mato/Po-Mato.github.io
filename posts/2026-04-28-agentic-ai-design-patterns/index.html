@@ -1,0 +1,234 @@
+<!DOCTYPE html><!--l4LaIe153TZIDwRgib2bJ--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/893724321ed0589d.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/329e63eb984ada35.js" async=""></script><meta name="next-size-adjust" content=""/><title>Agentic AI의 5대 설계 패턴: 자율 에이전트 아키텍처 깊이 파고들기 | Mato Po Tech Blog</title><meta name="description" content="개발하면서 배운 것과 삽질 로그를 기록합니다."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-04-28-agentic-ai-design-patterns/"/><meta property="og:title" content="Agentic AI의 5대 설계 패턴: 자율 에이전트 아키텍처 깊이 파고들기"/><meta property="og:description" content="개발하면서 배운 것과 삽질 로그를 기록합니다."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-04-28-agentic-ai-design-patterns/"/><meta property="og:image" content="https://po-mato.github.io/og.png"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Agentic AI의 5대 설계 패턴: 자율 에이전트 아키텍처 깊이 파고들기"/><meta name="twitter:description" content="개발하면서 배운 것과 삽질 로그를 기록합니다."/><meta name="twitter:image" content="https://po-mato.github.io/og.png"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><div class="text-sm text-white/60">Tue Apr 28 2026 07:00:00 GMT+0000 (Coordinated Universal Time)</div><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">Agentic AI의 5대 설계 패턴: 자율 에이전트 아키텍처 깊이 파고들기</h1><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><h2>서론: 왜 지금 Agentic AI인가</h2>
+<p>2026년, AI는 단순한 "질의응답기"에서 "실행 주체"로 전환하고 있다. Agentic AI — 즉, 목표를 자율적으로 설정하고 도구를 선택하며 행동을 계획하는 AI 시스템 — 는 enterprise architecture에서 가장 뜨거운 화제다. Google Cloud Architecture Center에서 발표한 바와 같이, reasoning engine, tool integration, safety guardrails의 세 가지 축이 핵심을 이룬다.</p>
+<p>오늘은 <strong>5대 핵심 설계 패턴</strong>을 시스템 이론적 프레임워크로 정리하고, 각 패턴의 아키텍처적 의미를 코드와 함께 깊이 파고들겠다.</p>
+<hr>
+<h2>1. Reflection Pattern (자기 반성 패턴)</h2>
+<h3>개념</h3>
+<p>에이전트가 자신의 이전 행동을 평가하고, 그 결과를 다음行动计划에 반영하는 패턴이다. 단일 에이전트의 출력물이 다음 사이클의 입력으로回流한다.</p>
+<h3>아키텍처</h3>
+<pre><code>Agent (LLM)
+  │
+  ├─→ Action → Environment
+  │                  │
+  │                  ▼
+  │              Observation
+  │                  │
+  └──────────←── Feedback ←─┘
+         (Self-Evaluation)
+</code></pre>
+<h3>코드 예시 (Python)</h3>
+<pre><code class="language-python">class ReflectiveAgent:
+    def __init__(self, model, max_iterations=3):
+        self.model = model
+        self.max_iterations = max_iterations
+        self.history = []
+
+    def run(self, task: str) -> str:
+        for i in range(self.max_iterations):
+            # 1) Plan
+            plan = self.model.generate(f"""
+                Task: {task}
+                History: {self.history}
+                What is the next action?
+            """)
+
+            # 2) Act
+            result = self.execute(plan)
+            self.history.append({"plan": plan, "result": result})
+
+            # 3) Reflect
+            evaluation = self.model.generate(f"""
+                Action: {plan}
+                Result: {result}
+                Was this effective? Rate 1-10 and explain.
+            """)
+
+            if self.is_satisfactory(evaluation):
+                return result
+
+        return self.history[-1]["result"]
+</code></pre>
+<h3>실무적 함의</h3>
+<p>Reflection pattern은 <strong>반복 작업에 강력</strong>하다. 하지만 무한 루프 방지를 위해 iteration limit과 cost control이 반드시 필요하다. evaluator-optimizer loop 구조가 핵심이다.</p>
+<hr>
+<h2>2. Tool Use Pattern (도구 사용 패턴)</h2>
+<h3>개념</h3>
+<p>LLM이 외부 도구 (검색, API 호출, DB 쿼리, 파일 시스템 접근 등) 를 호출하여 자신의 능력 경계를 확장하는 패턴이다.</p>
+<h3>핵심: Progressive Disclosure</h3>
+<p>Google Cloud의 권장 사항에 따르면, 모든 도구 스키마를 한꺼번에 로드하는 대신 <strong>필요할 때만 relevant한 도구만 동적으로 로드</strong>해야 token 소비를 절감할 수 있다.</p>
+<pre><code class="language-python">class ToolUsingAgent:
+    def __init__(self):
+        self.tool_registry = {
+            "search": SearchTool(),
+            "sql": SQLTool(),
+            "file": FileTool(),
+        }
+        # Lazy loading - 도구 스키마는 처음부터 로드하지 않음
+        self.loaded_tools = {}
+
+    def invoke_tool(self, tool_name: str, params: dict):
+        # 처음 호출될 때만 스키마를 로드
+        if tool_name not in self.loaded_tools:
+            self.loaded_tools[tool_name] = self.tool_registry[tool_name]
+        
+        tool = self.loaded_tools[tool_name]
+        return tool.run(params)
+</code></pre>
+<h3>Search Tool Pattern의威力</h3>
+<p>LLM의 tool selection은 자체적으로 도구를 선택하는 "agent" 역할을 한다. 이 패턴을 통해 에이전트는 <strong>RAG (Retrieval Augmented Generation) 없이도 동적 지식 조회</strong>가 가능하다.</p>
+<hr>
+<h2>3. ReAct Pattern (Reasoning + Acting)</h2>
+<h3>개념</h3>
+<p>Reasoning (사고) 과 Acting (행동) 을 교대로 수행하며, 매 행동마다 observation을 reasoning 체인에 통합하는 패턴이다. Smith et al. (2023) 의 ReAct 논문에서 출발했다.</p>
+<h3>상태 머신 구조</h3>
+<pre><code>THINK → ACT → OBSERVE → (next cycle or STOP)
+  ↑__________________|
+</code></pre>
+<pre><code class="language-python">def react_loop(task: str, agent: LLM, tools: list):
+    obs = ""
+    thought_chain = []
+
+    while True:
+        # Reasoning 단계
+        thought = agent.reason(
+            f"Task: {task}\nObservation: {obs}\nThoughts: {thought_chain}"
+        )
+        thought_chain.append(thought)
+
+        # Acting 단계
+        if thought.is_finished:
+            return thought.final_answer
+        
+        action, params = thought.choose_tool(tools)
+        obs = action.execute(params)
+        
+        # Safety check
+        if is_dangerous(action):
+            raise SafetyGuardrailViolation(action)
+</code></pre>
+<h3>MES/PLC Integration에의 적용</h3>
+<p>실제 제조 현장에서는 <strong>Modbus/MELSEC I/F</strong> 를 통해 PLC에서 실시간 센서 데이터를 조회하고, 그 observation을 기반으로 재처리 파라미터를 조정하는 에이전트를 구성할 수 있다. 이것이 Industry 4.0의 핵심이다.</p>
+<hr>
+<h2>4. Planning Pattern (계층적 계획 패턴)</h2>
+<h3>개념</h3>
+<p>에이전트가 복잡한 목표를 하위 작업으로 분해하고, 계층적으로 planning하는 패턴이다. 단일 프롬프트가 아닌 <strong>Task Decomposition → Sub-task Scheduling → Execution → Monitoring</strong> 의 파이프라인을 따른다.</p>
+<h3>계층 구조</h3>
+<pre><code>Top-Level Goal
+    │
+    ├─→ Sub-task 1 ─→ [Plan A]
+    │                     ├─→ Step A1
+    │                     └─→ Step A2
+    │
+    ├─→ Sub-task 2 ─→ [Plan B]
+    │                     └─→ Step B1
+    │
+    └─→ Sub-task 3 ─→ [Plan C]
+</code></pre>
+<h3>산업용 적용 시나리오</h3>
+<p>전구체 박막 성장 공정에서:</p>
+<ol>
+<li><strong>Goal</strong>: specified film uniformity 달성</li>
+<li><strong>Sub-task 1</strong>: 온도 프로파일 최적화</li>
+<li><strong>Sub-task 2</strong>: 가스 유량 재배정</li>
+<li><strong>Sub-task 3</strong>: 실시간 수율 예측</li>
+</ol>
+<p>이 모든 것을 하나의 거대 모델에 던지는 대신, 계층적으로 분해하면 각 서브태스크에 적합한 specialist 모델을 배정할 수 있다 — 바로 <strong>CQRS 패턴</strong>의 아이디어다.</p>
+<hr>
+<h2>5. Multi-Agent Orchestration (다중 에이전트 오케스트레이션)</h2>
+<h3>아키텍처: LangGraph 기반 Reference Architecture</h3>
+<p>LangChain의 LangGraph를 활용한 multi-agent coordinated framework는 다음과 같은 참조 아키텍처를 따른다:</p>
+<pre><code>┌─────────────────────────────────────────────┐
+│           Supervisor / Orchestrator         │
+│  (목표 분해 + 에이전트 할당 + 결과 집계)     │
+└────────┬──────────────┬─────────────────────┘
+         │              │
+    ┌────▼────┐   ┌────▼────┐
+    │ Agent A │   │ Agent B │
+    │(DevOps) │   │ (Data)  │
+    └─────────┘   └─────────┘
+         │              │
+    ┌────▼────┐   ┌────▼────┐
+    │Toolset A│   │Toolset B│
+    │(Cloud   │   │(SQL,    │
+    │ CLI)    │   │ML Model)│
+    └─────────┘   └─────────┘
+</code></pre>
+<h3>산업용 사례: DT/AI Transformation</h3>
+<p>배터리 실리콘 음극재 생산라인에서:</p>
+<ul>
+<li><strong>DevOps Agent</strong>: AWS/Azure 인프라 프로비저닝</li>
+<li><strong>Data Agent</strong>: MS-SQL/Oracle에서 수율 데이터 조회 및 이상치 탐지</li>
+<li><strong>MES Agent</strong>: 실시간 공정 데이터 연동</li>
+<li><strong>Supervisor</strong>: 세 에이전트의 결과를 종합하여 QMS에 보고</li>
+</ul>
+<h3>안전 가드레일 (Safety Guardrails)</h3>
+<p>LangChain의 연구에 따르면, multi-agent 시스템에서 가장 큰 위험은 <strong>에이전트 간失控된 행동 연쇄</strong>다. 이를 방지하기 위해:</p>
+<ul>
+<li>각 에이전트의 행동에 대해 사전 승인 체인 (pre-approval chain)</li>
+<li>리소스 사용량 상한 (cost ceiling)</li>
+<li>행동 이력의 감사 로깅 (audit logging)</li>
+</ul>
+<hr>
+<h2>패턴 간 관계와 조합</h2>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Primary Role</th>
+<th>Trigger</th>
+<th>Weakness</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reflection</td>
+<td>자기 평가</td>
+<td>반복 작업</td>
+<td>비용 증가</td>
+</tr>
+<tr>
+<td>Tool Use</td>
+<td>능력 확장</td>
+<td>정보 부족</td>
+<td>스키마 오염</td>
+</tr>
+<tr>
+<td>ReAct</td>
+<td>추론-행동 통합</td>
+<td>실시간 환경</td>
+<td>Observation噪声</td>
+</tr>
+<tr>
+<td>Planning</td>
+<td>복잡도 분해</td>
+<td>다단계 작업</td>
+<td>계획 오류 전파</td>
+</tr>
+<tr>
+<td>Multi-Agent</td>
+<td>협업 확장</td>
+<td>시스템 수준</td>
+<td>오케스트레이션 복잡</td>
+</tr>
+</tbody>
+</table>
+<h3>권장 조합</h3>
+<ol>
+<li><strong>간단한 질의응답</strong>: Tool Use 단독</li>
+<li><strong>반복적 분석 작업</strong>: Reflection + Tool Use</li>
+<li><strong>실시간 제어</strong>: ReAct + Safety Guardrails</li>
+<li><strong>기업 전체 자동화</strong>: Planning + Multi-Agent Orchestration + Safety Guardrails</li>
+</ol>
+<hr>
+<h2>결론: 설계 패턴은 도구일 뿐</h2>
+<p>5대 패턴은万能 솔루션이 아니다. 시스템의 복잡도, 신뢰성 요구 수준, 비용 제약에 따라 적절한 패턴 조합이 달라진다. 중요한 것은 <strong>이 패턴들이 서로 독립적이지 않으며, 실제로는 cascading하게 적용</strong>된다는 것이다.</p>
+<p>2026년 현재, Agentic AI는 "hot topic"을 넘어서 enterprise에서 production 환경에 실제로 배포되고 있다. 위에 기술한 패턴들을 이해하고, 자신의 도메인에 맞게 조합하는 것이 software engineer로서 가장 중요한 숙제다.</p>
+<hr>
+<h2>References</h2>
+<ul>
+<li>Google Cloud Architecture Center: "Choose your agentic AI architecture components" (2026)</li>
+<li>LangChain Blog: "Agentic Engineering: How Swarms of AI Agents Are Redefining Software Engineering" (2026)</li>
+<li>System Design Newsletter: "Agentic Design Patterns" by Neo Kim (2026)</li>
+<li>Smith et al.: "ReAct: Synergizing Reasoning and Acting in Language Models" (2023)</li>
+<li>VoltAgent/awesome-ai-agent-papers: AI Agent Research Papers 2026 Collection</li>
+</ul></div></article></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/893724321ed0589d.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"l4LaIe153TZIDwRgib2bJ\",\"c\":[\"\",\"posts\",\"2026-04-28-agentic-ai-design-patterns\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-04-28-agentic-ai-design-patterns\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/893724321ed0589d.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/329e63eb984ada35.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"11:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n10:T2ae6,"])</script><script>self.__next_f.push([1,"\u003ch2\u003e서론: 왜 지금 Agentic AI인가\u003c/h2\u003e\n\u003cp\u003e2026년, AI는 단순한 \"질의응답기\"에서 \"실행 주체\"로 전환하고 있다. Agentic AI — 즉, 목표를 자율적으로 설정하고 도구를 선택하며 행동을 계획하는 AI 시스템 — 는 enterprise architecture에서 가장 뜨거운 화제다. Google Cloud Architecture Center에서 발표한 바와 같이, reasoning engine, tool integration, safety guardrails의 세 가지 축이 핵심을 이룬다.\u003c/p\u003e\n\u003cp\u003e오늘은 \u003cstrong\u003e5대 핵심 설계 패턴\u003c/strong\u003e을 시스템 이론적 프레임워크로 정리하고, 각 패턴의 아키텍처적 의미를 코드와 함께 깊이 파고들겠다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e1. Reflection Pattern (자기 반성 패턴)\u003c/h2\u003e\n\u003ch3\u003e개념\u003c/h3\u003e\n\u003cp\u003e에이전트가 자신의 이전 행동을 평가하고, 그 결과를 다음行动计划에 반영하는 패턴이다. 단일 에이전트의 출력물이 다음 사이클의 입력으로回流한다.\u003c/p\u003e\n\u003ch3\u003e아키텍처\u003c/h3\u003e\n\u003cpre\u003e\u003ccode\u003eAgent (LLM)\n  │\n  ├─→ Action → Environment\n  │                  │\n  │                  ▼\n  │              Observation\n  │                  │\n  └──────────←── Feedback ←─┘\n         (Self-Evaluation)\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e코드 예시 (Python)\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003eclass ReflectiveAgent:\n    def __init__(self, model, max_iterations=3):\n        self.model = model\n        self.max_iterations = max_iterations\n        self.history = []\n\n    def run(self, task: str) -\u003e str:\n        for i in range(self.max_iterations):\n            # 1) Plan\n            plan = self.model.generate(f\"\"\"\n                Task: {task}\n                History: {self.history}\n                What is the next action?\n            \"\"\")\n\n            # 2) Act\n            result = self.execute(plan)\n            self.history.append({\"plan\": plan, \"result\": result})\n\n            # 3) Reflect\n            evaluation = self.model.generate(f\"\"\"\n                Action: {plan}\n                Result: {result}\n                Was this effective? Rate 1-10 and explain.\n            \"\"\")\n\n            if self.is_satisfactory(evaluation):\n                return result\n\n        return self.history[-1][\"result\"]\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e실무적 함의\u003c/h3\u003e\n\u003cp\u003eReflection pattern은 \u003cstrong\u003e반복 작업에 강력\u003c/strong\u003e하다. 하지만 무한 루프 방지를 위해 iteration limit과 cost control이 반드시 필요하다. evaluator-optimizer loop 구조가 핵심이다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e2. Tool Use Pattern (도구 사용 패턴)\u003c/h2\u003e\n\u003ch3\u003e개념\u003c/h3\u003e\n\u003cp\u003eLLM이 외부 도구 (검색, API 호출, DB 쿼리, 파일 시스템 접근 등) 를 호출하여 자신의 능력 경계를 확장하는 패턴이다.\u003c/p\u003e\n\u003ch3\u003e핵심: Progressive Disclosure\u003c/h3\u003e\n\u003cp\u003eGoogle Cloud의 권장 사항에 따르면, 모든 도구 스키마를 한꺼번에 로드하는 대신 \u003cstrong\u003e필요할 때만 relevant한 도구만 동적으로 로드\u003c/strong\u003e해야 token 소비를 절감할 수 있다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003eclass ToolUsingAgent:\n    def __init__(self):\n        self.tool_registry = {\n            \"search\": SearchTool(),\n            \"sql\": SQLTool(),\n            \"file\": FileTool(),\n        }\n        # Lazy loading - 도구 스키마는 처음부터 로드하지 않음\n        self.loaded_tools = {}\n\n    def invoke_tool(self, tool_name: str, params: dict):\n        # 처음 호출될 때만 스키마를 로드\n        if tool_name not in self.loaded_tools:\n            self.loaded_tools[tool_name] = self.tool_registry[tool_name]\n        \n        tool = self.loaded_tools[tool_name]\n        return tool.run(params)\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003eSearch Tool Pattern의威力\u003c/h3\u003e\n\u003cp\u003eLLM의 tool selection은 자체적으로 도구를 선택하는 \"agent\" 역할을 한다. 이 패턴을 통해 에이전트는 \u003cstrong\u003eRAG (Retrieval Augmented Generation) 없이도 동적 지식 조회\u003c/strong\u003e가 가능하다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e3. ReAct Pattern (Reasoning + Acting)\u003c/h2\u003e\n\u003ch3\u003e개념\u003c/h3\u003e\n\u003cp\u003eReasoning (사고) 과 Acting (행동) 을 교대로 수행하며, 매 행동마다 observation을 reasoning 체인에 통합하는 패턴이다. Smith et al. (2023) 의 ReAct 논문에서 출발했다.\u003c/p\u003e\n\u003ch3\u003e상태 머신 구조\u003c/h3\u003e\n\u003cpre\u003e\u003ccode\u003eTHINK → ACT → OBSERVE → (next cycle or STOP)\n  ↑__________________|\n\u003c/code\u003e\u003c/pre\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003edef react_loop(task: str, agent: LLM, tools: list):\n    obs = \"\"\n    thought_chain = []\n\n    while True:\n        # Reasoning 단계\n        thought = agent.reason(\n            f\"Task: {task}\\nObservation: {obs}\\nThoughts: {thought_chain}\"\n        )\n        thought_chain.append(thought)\n\n        # Acting 단계\n        if thought.is_finished:\n            return thought.final_answer\n        \n        action, params = thought.choose_tool(tools)\n        obs = action.execute(params)\n        \n        # Safety check\n        if is_dangerous(action):\n            raise SafetyGuardrailViolation(action)\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003eMES/PLC Integration에의 적용\u003c/h3\u003e\n\u003cp\u003e실제 제조 현장에서는 \u003cstrong\u003eModbus/MELSEC I/F\u003c/strong\u003e 를 통해 PLC에서 실시간 센서 데이터를 조회하고, 그 observation을 기반으로 재처리 파라미터를 조정하는 에이전트를 구성할 수 있다. 이것이 Industry 4.0의 핵심이다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e4. Planning Pattern (계층적 계획 패턴)\u003c/h2\u003e\n\u003ch3\u003e개념\u003c/h3\u003e\n\u003cp\u003e에이전트가 복잡한 목표를 하위 작업으로 분해하고, 계층적으로 planning하는 패턴이다. 단일 프롬프트가 아닌 \u003cstrong\u003eTask Decomposition → Sub-task Scheduling → Execution → Monitoring\u003c/strong\u003e 의 파이프라인을 따른다.\u003c/p\u003e\n\u003ch3\u003e계층 구조\u003c/h3\u003e\n\u003cpre\u003e\u003ccode\u003eTop-Level Goal\n    │\n    ├─→ Sub-task 1 ─→ [Plan A]\n    │                     ├─→ Step A1\n    │                     └─→ Step A2\n    │\n    ├─→ Sub-task 2 ─→ [Plan B]\n    │                     └─→ Step B1\n    │\n    └─→ Sub-task 3 ─→ [Plan C]\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e산업용 적용 시나리오\u003c/h3\u003e\n\u003cp\u003e전구체 박막 성장 공정에서:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003eGoal\u003c/strong\u003e: specified film uniformity 달성\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eSub-task 1\u003c/strong\u003e: 온도 프로파일 최적화\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eSub-task 2\u003c/strong\u003e: 가스 유량 재배정\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eSub-task 3\u003c/strong\u003e: 실시간 수율 예측\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003e이 모든 것을 하나의 거대 모델에 던지는 대신, 계층적으로 분해하면 각 서브태스크에 적합한 specialist 모델을 배정할 수 있다 — 바로 \u003cstrong\u003eCQRS 패턴\u003c/strong\u003e의 아이디어다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e5. Multi-Agent Orchestration (다중 에이전트 오케스트레이션)\u003c/h2\u003e\n\u003ch3\u003e아키텍처: LangGraph 기반 Reference Architecture\u003c/h3\u003e\n\u003cp\u003eLangChain의 LangGraph를 활용한 multi-agent coordinated framework는 다음과 같은 참조 아키텍처를 따른다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e┌─────────────────────────────────────────────┐\n│           Supervisor / Orchestrator         │\n│  (목표 분해 + 에이전트 할당 + 결과 집계)     │\n└────────┬──────────────┬─────────────────────┘\n         │              │\n    ┌────▼────┐   ┌────▼────┐\n    │ Agent A │   │ Agent B │\n    │(DevOps) │   │ (Data)  │\n    └─────────┘   └─────────┘\n         │              │\n    ┌────▼────┐   ┌────▼────┐\n    │Toolset A│   │Toolset B│\n    │(Cloud   │   │(SQL,    │\n    │ CLI)    │   │ML Model)│\n    └─────────┘   └─────────┘\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e산업용 사례: DT/AI Transformation\u003c/h3\u003e\n\u003cp\u003e배터리 실리콘 음극재 생산라인에서:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eDevOps Agent\u003c/strong\u003e: AWS/Azure 인프라 프로비저닝\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eData Agent\u003c/strong\u003e: MS-SQL/Oracle에서 수율 데이터 조회 및 이상치 탐지\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eMES Agent\u003c/strong\u003e: 실시간 공정 데이터 연동\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eSupervisor\u003c/strong\u003e: 세 에이전트의 결과를 종합하여 QMS에 보고\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e안전 가드레일 (Safety Guardrails)\u003c/h3\u003e\n\u003cp\u003eLangChain의 연구에 따르면, multi-agent 시스템에서 가장 큰 위험은 \u003cstrong\u003e에이전트 간失控된 행동 연쇄\u003c/strong\u003e다. 이를 방지하기 위해:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e각 에이전트의 행동에 대해 사전 승인 체인 (pre-approval chain)\u003c/li\u003e\n\u003cli\u003e리소스 사용량 상한 (cost ceiling)\u003c/li\u003e\n\u003cli\u003e행동 이력의 감사 로깅 (audit logging)\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003ch2\u003e패턴 간 관계와 조합\u003c/h2\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003ePattern\u003c/th\u003e\n\u003cth\u003ePrimary Role\u003c/th\u003e\n\u003cth\u003eTrigger\u003c/th\u003e\n\u003cth\u003eWeakness\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003eReflection\u003c/td\u003e\n\u003ctd\u003e자기 평가\u003c/td\u003e\n\u003ctd\u003e반복 작업\u003c/td\u003e\n\u003ctd\u003e비용 증가\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eTool Use\u003c/td\u003e\n\u003ctd\u003e능력 확장\u003c/td\u003e\n\u003ctd\u003e정보 부족\u003c/td\u003e\n\u003ctd\u003e스키마 오염\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eReAct\u003c/td\u003e\n\u003ctd\u003e추론-행동 통합\u003c/td\u003e\n\u003ctd\u003e실시간 환경\u003c/td\u003e\n\u003ctd\u003eObservation噪声\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003ePlanning\u003c/td\u003e\n\u003ctd\u003e복잡도 분해\u003c/td\u003e\n\u003ctd\u003e다단계 작업\u003c/td\u003e\n\u003ctd\u003e계획 오류 전파\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eMulti-Agent\u003c/td\u003e\n\u003ctd\u003e협업 확장\u003c/td\u003e\n\u003ctd\u003e시스템 수준\u003c/td\u003e\n\u003ctd\u003e오케스트레이션 복잡\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003ch3\u003e권장 조합\u003c/h3\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e간단한 질의응답\u003c/strong\u003e: Tool Use 단독\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e반복적 분석 작업\u003c/strong\u003e: Reflection + Tool Use\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e실시간 제어\u003c/strong\u003e: ReAct + Safety Guardrails\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e기업 전체 자동화\u003c/strong\u003e: Planning + Multi-Agent Orchestration + Safety Guardrails\u003c/li\u003e\n\u003c/ol\u003e\n\u003chr\u003e\n\u003ch2\u003e결론: 설계 패턴은 도구일 뿐\u003c/h2\u003e\n\u003cp\u003e5대 패턴은万能 솔루션이 아니다. 시스템의 복잡도, 신뢰성 요구 수준, 비용 제약에 따라 적절한 패턴 조합이 달라진다. 중요한 것은 \u003cstrong\u003e이 패턴들이 서로 독립적이지 않으며, 실제로는 cascading하게 적용\u003c/strong\u003e된다는 것이다.\u003c/p\u003e\n\u003cp\u003e2026년 현재, Agentic AI는 \"hot topic\"을 넘어서 enterprise에서 production 환경에 실제로 배포되고 있다. 위에 기술한 패턴들을 이해하고, 자신의 도메인에 맞게 조합하는 것이 software engineer로서 가장 중요한 숙제다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003eReferences\u003c/h2\u003e\n\u003cul\u003e\n\u003cli\u003eGoogle Cloud Architecture Center: \"Choose your agentic AI architecture components\" (2026)\u003c/li\u003e\n\u003cli\u003eLangChain Blog: \"Agentic Engineering: How Swarms of AI Agents Are Redefining Software Engineering\" (2026)\u003c/li\u003e\n\u003cli\u003eSystem Design Newsletter: \"Agentic Design Patterns\" by Neo Kim (2026)\u003c/li\u003e\n\u003cli\u003eSmith et al.: \"ReAct: Synergizing Reasoning and Acting in Language Models\" (2023)\u003c/li\u003e\n\u003cli\u003eVoltAgent/awesome-ai-agent-papers: AI Agent Research Papers 2026 Collection\u003c/li\u003e\n\u003c/ul\u003e"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"text-sm text-white/60\",\"children\":\"Tue Apr 28 2026 07:00:00 GMT+0000 (Coordinated Universal Time)\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"Agentic AI의 5대 설계 패턴: 자율 에이전트 아키텍처 깊이 파고들기\"}],null,[\"$\",\"div\",null,{\"className\":\"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300\",\"dangerouslySetInnerHTML\":{\"__html\":\"$10\"}}]]}]}]\n8:null\nc:[[\"$\",\"title\",\"0\",{\"children\":\"Agentic AI의 5대 설계 패턴: 자율 에이전트 아키텍처 깊이 파고들기 | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"개발하면서 배운 것과 삽질 로그를 기록합니다.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-04-28-agentic-ai-design-patterns/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"Agentic AI의 5대 설계 패턴: 자율 에이전트 아키텍처 깊이 파고들기\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"개발하면서 배운 것과 삽질 로그를 기록합니다.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-04-28-agentic-ai-design-patterns/\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"Agentic AI의 5대 설계 패턴: 자율 에이전트 아키텍처 깊이 파고들기\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"개발하면서 배운 것과 삽질 로그를 기록합니다.\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}],[\"$\",\"$L11\",\"13\",{}]]\n"])</script></body></html>

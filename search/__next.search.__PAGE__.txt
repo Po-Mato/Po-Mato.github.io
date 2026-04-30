@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:"$Sreact.suspense"
+3:I[57361,["/_next/static/chunks/329e63eb984ada35.js","/_next/static/chunks/b68be0c0da0656e1.js"],"default"]
+4:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+0:{"buildId":"l4LaIe153TZIDwRgib2bJ","rsc":["$","$1","c",{"children":[["$","$2",null,{"fallback":["$","main",null,{"className":"mx-auto max-w-6xl px-5 pb-20 pt-8 text-white md:px-8","children":[["$","header",null,{"className":"mb-8","children":[["$","h1",null,{"className":"text-4xl font-semibold","children":"검색"}],["$","p",null,{"className":"mt-3 text-white/75","children":"로딩 중..."}]]}],["$","div",null,{"className":"rounded-2xl border border-white/10 bg-black/30 p-6","children":["$","p",null,{"className":"text-white/80","children":"검색 페이지 준비 중..."}]}]]}],"children":["$","$L3",null,{}]}],[["$","script","script-0",{"src":"/_next/static/chunks/b68be0c0da0656e1.js","async":true}]],["$","$L4",null,{"children":["$","$2",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null

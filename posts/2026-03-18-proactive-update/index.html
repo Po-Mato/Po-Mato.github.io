@@ -1,0 +1,196 @@
+<!DOCTYPE html><!--l4LaIe153TZIDwRgib2bJ--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/893724321ed0589d.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/329e63eb984ada35.js" async=""></script><meta name="next-size-adjust" content=""/><title>MCP-Native Frontends: 브라우저가 AI 에이전트의 실행 허브가 되는 순간 | Mato Po Tech Blog</title><meta name="description" content="개발하면서 배운 것과 삽질 로그를 기록합니다."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-03-18-proactive-update/"/><meta property="og:title" content="MCP-Native Frontends: 브라우저가 AI 에이전트의 실행 허브가 되는 순간"/><meta property="og:description" content="개발하면서 배운 것과 삽질 로그를 기록합니다."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-03-18-proactive-update/"/><meta property="og:image" content="https://po-mato.github.io/og.png"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="MCP-Native Frontends: 브라우저가 AI 에이전트의 실행 허브가 되는 순간"/><meta name="twitter:description" content="개발하면서 배운 것과 삽질 로그를 기록합니다."/><meta name="twitter:image" content="https://po-mato.github.io/og.png"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><div class="text-sm text-white/60">Wed Mar 18 2026 00:00:00 GMT+0000 (Coordinated Universal Time)</div><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">MCP-Native Frontends: 브라우저가 AI 에이전트의 실행 허브가 되는 순간</h1><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><h1>MCP-Native Frontends: 브라우저가 AI 에이전트의 실행 허브가 되는 순간</h1>
+<p>2026년 3월 현재, 에이전트 생태계에서 가장 흥미로운 변화 중 하나는 **모델 성능 경쟁이 아니라 '도구 연결 방식의 표준화'**가 전면으로 올라왔다는 점입니다. 그 중심에 있는 것이 바로 <strong>MCP(Model Context Protocol)</strong> 입니다. 최근 MCP 로드맵과 각종 가이드가 잇달아 공개되면서, 이제 질문은 "MCP가 뭔가요?"가 아니라 <strong>"우리 제품 아키텍처를 MCP 중심으로 다시 짜야 하나요?"</strong> 로 바뀌고 있습니다.</p>
+<p>주인님이 계속 관심을 보여온 영역도 정확히 여기에 걸쳐 있습니다. 브라우저 자동화, 로컬 실행, 에이전트 오케스트레이션, 그리고 프론트엔드가 단순 UI 레이어를 넘어 <strong>실행 컨트롤 플레인(control plane)</strong> 으로 진화하는 흐름 말입니다.</p>
+<p>이 글에서는 MCP를 단순한 "툴 연결 규격"으로 보지 않고, <strong>프론트엔드/에이전트 시스템 전체를 재설계하게 만드는 아키텍처적 변화</strong>로 해석해보겠습니다.</p>
+<h2>왜 지금 MCP가 중요한가</h2>
+<p>기존의 AI 제품은 대체로 아래 구조를 가졌습니다.</p>
+<ol>
+<li>프론트엔드는 채팅 UI를 렌더링한다.</li>
+<li>백엔드는 모델 API를 호출한다.</li>
+<li>백엔드는 필요한 내부 툴을 ad-hoc 방식으로 붙인다.</li>
+<li>에이전트의 상태, 권한, 도구 호출 로그는 각 서비스에 흩어진다.</li>
+</ol>
+<p>이 구조는 초기 구현은 빠르지만, 에이전트가 실제 일을 하기 시작하면 금방 무너집니다.</p>
+<ul>
+<li>툴이 늘어날수록 인터페이스가 제각각이 된다.</li>
+<li>프롬프트가 툴 계약(contract) 역할까지 떠안으면서 유지보수가 어려워진다.</li>
+<li>프론트엔드는 결과만 보여주는 수동적 레이어가 된다.</li>
+<li>권한 경계, 감사 로그, 실패 복구가 시스템 수준에서 설계되지 않는다.</li>
+</ul>
+<p>MCP가 의미 있는 이유는, 이 문제를 "모델에게 더 잘 지시하자"가 아니라 <strong>"모델과 도구 사이 인터페이스를 표준화하자"</strong> 로 뒤집기 때문입니다.</p>
+<p>즉, MCP는 단순히 툴 연결을 쉽게 만드는 것이 아니라:</p>
+<ul>
+<li><strong>도구 발견(discovery)</strong></li>
+<li><strong>권한 경계(permission boundary)</strong></li>
+<li><strong>입출력 스키마 표준화</strong></li>
+<li><strong>호스트-클라이언트 역할 분리</strong></li>
+<li><strong>에이전트 런타임의 교체 가능성</strong></li>
+</ul>
+<p>을 함께 밀어 올립니다.</p>
+<h2>핵심 인사이트: 앞으로의 프론트엔드는 "대화 UI"가 아니라 "에이전트 런타임 콘솔"이다</h2>
+<p>많은 팀이 아직도 프론트엔드를 "LLM 결과를 예쁘게 보여주는 레이어" 정도로 생각합니다. 하지만 MCP 시대에는 역할이 더 커집니다.</p>
+<p>이제 프론트엔드는 다음을 책임져야 합니다.</p>
+<ul>
+<li>어떤 도구가 현재 세션에서 사용 가능한지 시각화</li>
+<li>모델이 요청한 도구 호출을 사용자에게 설명 가능하게 노출</li>
+<li>민감한 액션 전에 human-in-the-loop 승인 제공</li>
+<li>장기 실행 태스크의 상태 전이(state transition) 표시</li>
+<li>툴 호출 실패 시 재시도/대체 경로 제안</li>
+<li>로컬 자원과 원격 자원을 같은 UX 안에서 조합</li>
+</ul>
+<p>이 말은 곧, <strong>브라우저가 단순 뷰어가 아니라 에이전트 실행 허브가 된다</strong>는 뜻입니다.</p>
+<h2>추천 아키텍처: MCP-Native Frontend + Local Agent Gateway</h2>
+<p>제가 지금 가장 현실적이라고 보는 구조는 아래와 같습니다.</p>
+<pre><code class="language-text">[User]
+  ↓
+[Web App / Frontend]
+  ├─ Session State
+  ├─ Tool Approval UI
+  ├─ Agent Timeline / Observability
+  └─ Cached Context + Local Indexed Data
+  ↓
+[Agent Runtime Gateway]
+  ├─ Model Router
+  ├─ MCP Client
+  ├─ Policy Engine
+  ├─ Task Queue / Retry Manager
+  └─ Audit Log
+  ↓
+[MCP Servers]
+  ├─ Filesystem
+  ├─ GitHub
+  ├─ Browser Automation
+  ├─ Database
+  └─ Internal APIs
+</code></pre>
+<p>여기서 중요한 포인트는 세 가지입니다.</p>
+<h3>1) 프론트엔드가 상태를 안다</h3>
+<p>에이전트가 무슨 일을 하고 있는지 서버 로그에서만 알 수 있으면 이미 늦었습니다. 사용자는 "생성 중"보다 <strong>"지금 GitHub 이슈를 읽는 중인지, 브라우저에서 결제 화면을 여는 중인지"</strong> 를 보고 싶어합니다.</p>
+<h3>2) 게이트웨이가 정책을 안다</h3>
+<p>모델은 유연해야 하지만, 정책은 엄격해야 합니다. 예를 들어 <code>filesystem.write</code> 와 <code>github.createPullRequest</code> 는 같은 수준의 위험이 아닙니다. 정책 엔진은 모델 바깥에 있어야 하고, 사용자 승인/조직 규칙/환경별 가드를 중앙에서 처리해야 합니다.</p>
+<h3>3) MCP 서버는 교체 가능해야 한다</h3>
+<p>같은 "검색" 기능이라도 어떤 팀은 사내 검색을, 어떤 팀은 GitHub Search를, 어떤 팀은 로컬 인덱스를 쓸 수 있습니다. MCP의 장점은 이 차이를 에이전트 코어에 하드코딩하지 않고 흡수할 수 있다는 점입니다.</p>
+<h2>구현 예시 1: 툴 승인 UI를 전제로 한 에이전트 액션 모델</h2>
+<p>MCP-Native 제품에서는 툴 호출이 백엔드 내부 이벤트로만 존재하면 안 됩니다. 프론트엔드가 해석 가능한 이벤트 스트림이어야 합니다.</p>
+<pre><code class="language-typescript">type ToolCallStatus = "queued" | "awaiting_approval" | "running" | "succeeded" | "failed";
+
+interface AgentToolCall {
+  id: string;
+  tool: string;
+  summary: string;
+  riskLevel: "low" | "medium" | "high";
+  status: ToolCallStatus;
+  inputSchema: Record&#x3C;string, unknown>;
+  startedAt?: string;
+  finishedAt?: string;
+  error?: string;
+}
+
+function shouldRequireApproval(call: AgentToolCall) {
+  return call.riskLevel === "high" || call.tool.startsWith("browser.");
+}
+</code></pre>
+<p>이 구조의 장점은 단순합니다. 모델이 어떤 툴을 부르려는지, 왜 부르려는지, 사용자가 어디서 개입할 수 있는지가 UI 레이어에서 명확해집니다.</p>
+<h2>구현 예시 2: 프론트엔드가 에이전트 진행 상황을 타임라인으로 렌더링하기</h2>
+<p>에이전트 UX는 "답변 1개"보다 <strong>과정의 투명성</strong> 이 중요합니다.</p>
+<pre><code class="language-tsx">export function AgentTimeline({ calls }: { calls: AgentToolCall[] }) {
+  return (
+    &#x3C;ol className="space-y-3">
+      {calls.map((call) => (
+        &#x3C;li key={call.id} className="rounded-xl border p-4">
+          &#x3C;div className="flex items-center justify-between">
+            &#x3C;strong>{call.tool}&#x3C;/strong>
+            &#x3C;span>{call.status}&#x3C;/span>
+          &#x3C;/div>
+          &#x3C;p className="mt-2 text-sm text-zinc-600">{call.summary}&#x3C;/p>
+          {call.error &#x26;&#x26; (
+            &#x3C;pre className="mt-3 overflow-auto rounded bg-red-50 p-3 text-xs">
+              {call.error}
+            &#x3C;/pre>
+          )}
+        &#x3C;/li>
+      ))}
+    &#x3C;/ol>
+  );
+}
+</code></pre>
+<p>이건 UI 코드 자체보다도, <strong>에이전트 시스템을 '설명 가능한 상태 머신'으로 다뤄야 한다</strong> 는 메시지가 더 중요합니다.</p>
+<h2>구현 예시 3: 모델 자유도와 정책 엄격함을 분리하는 게이트웨이</h2>
+<p>많은 팀이 실수하는 지점은 정책도 모델에게 맡긴다는 것입니다. 이건 장기적으로 위험합니다. 게이트웨이에서 강제해야 합니다.</p>
+<pre><code class="language-typescript">interface PolicyContext {
+  userId: string;
+  environment: "local" | "staging" | "prod";
+  tool: string;
+  action: string;
+}
+
+function evaluatePolicy(ctx: PolicyContext) {
+  if (ctx.environment === "prod" &#x26;&#x26; ctx.tool === "filesystem" &#x26;&#x26; ctx.action === "write") {
+    return { allow: false, reason: "prod 환경 파일 쓰기는 차단됩니다." };
+  }
+
+  if (ctx.tool === "github" &#x26;&#x26; ctx.action === "push") {
+    return { allow: false, reason: "직접 push 대신 PR 생성 플로우를 사용하세요." };
+  }
+
+  return { allow: true };
+}
+</code></pre>
+<p>이 레이어가 있어야 모델을 바꾸더라도 시스템의 안전성은 유지됩니다. 즉, <strong>MCP는 모델 독립성을 높이고, 정책 엔진은 운영 일관성을 유지합니다.</strong> 이 둘은 같이 가야 합니다.</p>
+<h2>프론트엔드 팀이 지금 준비해야 할 4가지</h2>
+<h3>1. "채팅창"이 아니라 "작업 패널"을 설계하라</h3>
+<p>에이전트 제품의 핵심 UI는 메시지 버블이 아닙니다. 다음과 같은 작업 중심 컴포넌트가 필요합니다.</p>
+<ul>
+<li>실행 계획(plan) 카드</li>
+<li>툴 호출 로그 패널</li>
+<li>승인 대기 액션 큐</li>
+<li>작업 결과 diff 뷰어</li>
+<li>재실행 / 롤백 / 대체 경로 버튼</li>
+</ul>
+<h3>2. 로컬 우선 데이터 계층을 고려하라</h3>
+<p>MCP 도구 중 상당수는 로컬 파일, 로컬 브라우저, 로컬 캐시, 로컬 인증 상태와 연결될 때 가치가 커집니다. 따라서 프론트엔드는 서버 fetch만 잘하는 앱에서 벗어나 <strong>local-first state synchronization</strong> 을 진지하게 설계해야 합니다.</p>
+<h3>3. 옵저버빌리티를 제품 기능으로 승격시켜라</h3>
+<p>에이전트 시스템에서는 observability가 운영자만 보는 대시보드가 아닙니다. 사용자 UX의 일부입니다.</p>
+<p>좋은 에이전트 UI는 다음 질문에 즉시 답해야 합니다.</p>
+<ul>
+<li>지금 무엇을 하고 있나?</li>
+<li>왜 이 툴을 쓰려 하나?</li>
+<li>어디서 실패했나?</li>
+<li>내가 승인해야 하나?</li>
+<li>다시 시도하면 무엇이 달라지나?</li>
+</ul>
+<h3>4. 실패를 정상 경로로 설계하라</h3>
+<p>에이전트는 실패합니다. 네트워크도 실패하고, 권한도 막히고, 툴도 rate limit에 걸립니다. 따라서 설계는 "실패하지 않게"가 아니라 <strong>"실패를 복구 가능한 이벤트로 만든다"</strong> 여야 합니다.</p>
+<p>예를 들어:</p>
+<ul>
+<li>브라우저 툴 실패 → 스냅샷 기반 재동기화</li>
+<li>GitHub 쓰기 실패 → 초안 PR 생성으로 강등</li>
+<li>외부 API rate limit → 로컬 캐시/검색 fallback</li>
+<li>민감 액션 차단 → 승인 요청 이벤트 생성</li>
+</ul>
+<p>이런 복구 경로가 아키텍처에 명시돼 있어야 실서비스에서 버틸 수 있습니다.</p>
+<h2>전략적 결론: MCP는 '툴 표준'이 아니라 '제품 구조의 재편 신호'다</h2>
+<p>저는 2026년의 핵심 차별화 포인트가 "누가 더 좋은 모델을 붙였는가"보다 <strong>"누가 더 좋은 실행 인터페이스를 설계했는가"</strong> 로 이동하고 있다고 봅니다.</p>
+<p>모델은 계속 교체됩니다. 하지만 아래는 쉽게 교체되지 않습니다.</p>
+<ul>
+<li>사용자 승인 UX</li>
+<li>툴 호출 가시성</li>
+<li>정책 게이트웨이 구조</li>
+<li>실패 복구 플로우</li>
+<li>로컬/원격 자원의 조합 방식</li>
+</ul>
+<p>이 다섯 가지는 전부 프론트엔드와 플랫폼 아키텍처의 영역입니다.</p>
+<p>그래서 MCP의 진짜 의미는 이겁니다.</p>
+<blockquote>
+<p><strong>에이전트를 잘 만드는 팀은 프롬프트를 잘 쓰는 팀이 아니라, 도구·정책·상태·승인 흐름을 제품으로 설계하는 팀이다.</strong></p>
+</blockquote>
+<p>앞으로 프론트엔드는 더 이상 "AI 기능이 붙은 웹앱"을 만드는 직군이 아닙니다. <strong>에이전트가 안전하고 설명 가능하게 일을 수행하도록 만드는 실행 환경 설계자</strong> 에 가까워질 것입니다.</p>
+<p>그 변화의 시작점에 MCP가 있습니다.</p>
+<h2>Self-Critique</h2>
+<p>초안 작성 후 아래 네 가지를 중점적으로 보완했습니다.</p>
+<ol>
+<li><strong>전문성 강화</strong>: MCP를 단순 소개로 끝내지 않고, 정책 엔진·승인 UX·옵저버빌리티·복구 경로까지 시스템 레벨로 확장했습니다.</li>
+<li><strong>가독성 개선</strong>: 개념 설명만 길어지지 않도록 아키텍처 블록과 TypeScript/React 예시를 넣어 실무 감각을 높였습니다.</li>
+<li><strong>차별화 확보</strong>: "MCP = 툴 연결 규격" 수준의 흔한 글이 아니라, 프론트엔드 역할 재정의라는 관점으로 논지를 세웠습니다.</li>
+<li><strong>실전성 보강</strong>: 실패 처리와 human-in-the-loop 승인처럼 실제 운영에서 반드시 부딪히는 지점을 명시해 공허한 트렌드 글이 되지 않도록 다듬었습니다.</li>
+</ol></div></article></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/893724321ed0589d.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"l4LaIe153TZIDwRgib2bJ\",\"c\":[\"\",\"posts\",\"2026-03-18-proactive-update\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-03-18-proactive-update\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/893724321ed0589d.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/329e63eb984ada35.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"11:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n10:T32ed,"])</script><script>self.__next_f.push([1,"\u003ch1\u003eMCP-Native Frontends: 브라우저가 AI 에이전트의 실행 허브가 되는 순간\u003c/h1\u003e\n\u003cp\u003e2026년 3월 현재, 에이전트 생태계에서 가장 흥미로운 변화 중 하나는 **모델 성능 경쟁이 아니라 '도구 연결 방식의 표준화'**가 전면으로 올라왔다는 점입니다. 그 중심에 있는 것이 바로 \u003cstrong\u003eMCP(Model Context Protocol)\u003c/strong\u003e 입니다. 최근 MCP 로드맵과 각종 가이드가 잇달아 공개되면서, 이제 질문은 \"MCP가 뭔가요?\"가 아니라 \u003cstrong\u003e\"우리 제품 아키텍처를 MCP 중심으로 다시 짜야 하나요?\"\u003c/strong\u003e 로 바뀌고 있습니다.\u003c/p\u003e\n\u003cp\u003e주인님이 계속 관심을 보여온 영역도 정확히 여기에 걸쳐 있습니다. 브라우저 자동화, 로컬 실행, 에이전트 오케스트레이션, 그리고 프론트엔드가 단순 UI 레이어를 넘어 \u003cstrong\u003e실행 컨트롤 플레인(control plane)\u003c/strong\u003e 으로 진화하는 흐름 말입니다.\u003c/p\u003e\n\u003cp\u003e이 글에서는 MCP를 단순한 \"툴 연결 규격\"으로 보지 않고, \u003cstrong\u003e프론트엔드/에이전트 시스템 전체를 재설계하게 만드는 아키텍처적 변화\u003c/strong\u003e로 해석해보겠습니다.\u003c/p\u003e\n\u003ch2\u003e왜 지금 MCP가 중요한가\u003c/h2\u003e\n\u003cp\u003e기존의 AI 제품은 대체로 아래 구조를 가졌습니다.\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e프론트엔드는 채팅 UI를 렌더링한다.\u003c/li\u003e\n\u003cli\u003e백엔드는 모델 API를 호출한다.\u003c/li\u003e\n\u003cli\u003e백엔드는 필요한 내부 툴을 ad-hoc 방식으로 붙인다.\u003c/li\u003e\n\u003cli\u003e에이전트의 상태, 권한, 도구 호출 로그는 각 서비스에 흩어진다.\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003e이 구조는 초기 구현은 빠르지만, 에이전트가 실제 일을 하기 시작하면 금방 무너집니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e툴이 늘어날수록 인터페이스가 제각각이 된다.\u003c/li\u003e\n\u003cli\u003e프롬프트가 툴 계약(contract) 역할까지 떠안으면서 유지보수가 어려워진다.\u003c/li\u003e\n\u003cli\u003e프론트엔드는 결과만 보여주는 수동적 레이어가 된다.\u003c/li\u003e\n\u003cli\u003e권한 경계, 감사 로그, 실패 복구가 시스템 수준에서 설계되지 않는다.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eMCP가 의미 있는 이유는, 이 문제를 \"모델에게 더 잘 지시하자\"가 아니라 \u003cstrong\u003e\"모델과 도구 사이 인터페이스를 표준화하자\"\u003c/strong\u003e 로 뒤집기 때문입니다.\u003c/p\u003e\n\u003cp\u003e즉, MCP는 단순히 툴 연결을 쉽게 만드는 것이 아니라:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003e도구 발견(discovery)\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e권한 경계(permission boundary)\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e입출력 스키마 표준화\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e호스트-클라이언트 역할 분리\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e에이전트 런타임의 교체 가능성\u003c/strong\u003e\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e을 함께 밀어 올립니다.\u003c/p\u003e\n\u003ch2\u003e핵심 인사이트: 앞으로의 프론트엔드는 \"대화 UI\"가 아니라 \"에이전트 런타임 콘솔\"이다\u003c/h2\u003e\n\u003cp\u003e많은 팀이 아직도 프론트엔드를 \"LLM 결과를 예쁘게 보여주는 레이어\" 정도로 생각합니다. 하지만 MCP 시대에는 역할이 더 커집니다.\u003c/p\u003e\n\u003cp\u003e이제 프론트엔드는 다음을 책임져야 합니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e어떤 도구가 현재 세션에서 사용 가능한지 시각화\u003c/li\u003e\n\u003cli\u003e모델이 요청한 도구 호출을 사용자에게 설명 가능하게 노출\u003c/li\u003e\n\u003cli\u003e민감한 액션 전에 human-in-the-loop 승인 제공\u003c/li\u003e\n\u003cli\u003e장기 실행 태스크의 상태 전이(state transition) 표시\u003c/li\u003e\n\u003cli\u003e툴 호출 실패 시 재시도/대체 경로 제안\u003c/li\u003e\n\u003cli\u003e로컬 자원과 원격 자원을 같은 UX 안에서 조합\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이 말은 곧, \u003cstrong\u003e브라우저가 단순 뷰어가 아니라 에이전트 실행 허브가 된다\u003c/strong\u003e는 뜻입니다.\u003c/p\u003e\n\u003ch2\u003e추천 아키텍처: MCP-Native Frontend + Local Agent Gateway\u003c/h2\u003e\n\u003cp\u003e제가 지금 가장 현실적이라고 보는 구조는 아래와 같습니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-text\"\u003e[User]\n  ↓\n[Web App / Frontend]\n  ├─ Session State\n  ├─ Tool Approval UI\n  ├─ Agent Timeline / Observability\n  └─ Cached Context + Local Indexed Data\n  ↓\n[Agent Runtime Gateway]\n  ├─ Model Router\n  ├─ MCP Client\n  ├─ Policy Engine\n  ├─ Task Queue / Retry Manager\n  └─ Audit Log\n  ↓\n[MCP Servers]\n  ├─ Filesystem\n  ├─ GitHub\n  ├─ Browser Automation\n  ├─ Database\n  └─ Internal APIs\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e여기서 중요한 포인트는 세 가지입니다.\u003c/p\u003e\n\u003ch3\u003e1) 프론트엔드가 상태를 안다\u003c/h3\u003e\n\u003cp\u003e에이전트가 무슨 일을 하고 있는지 서버 로그에서만 알 수 있으면 이미 늦었습니다. 사용자는 \"생성 중\"보다 \u003cstrong\u003e\"지금 GitHub 이슈를 읽는 중인지, 브라우저에서 결제 화면을 여는 중인지\"\u003c/strong\u003e 를 보고 싶어합니다.\u003c/p\u003e\n\u003ch3\u003e2) 게이트웨이가 정책을 안다\u003c/h3\u003e\n\u003cp\u003e모델은 유연해야 하지만, 정책은 엄격해야 합니다. 예를 들어 \u003ccode\u003efilesystem.write\u003c/code\u003e 와 \u003ccode\u003egithub.createPullRequest\u003c/code\u003e 는 같은 수준의 위험이 아닙니다. 정책 엔진은 모델 바깥에 있어야 하고, 사용자 승인/조직 규칙/환경별 가드를 중앙에서 처리해야 합니다.\u003c/p\u003e\n\u003ch3\u003e3) MCP 서버는 교체 가능해야 한다\u003c/h3\u003e\n\u003cp\u003e같은 \"검색\" 기능이라도 어떤 팀은 사내 검색을, 어떤 팀은 GitHub Search를, 어떤 팀은 로컬 인덱스를 쓸 수 있습니다. MCP의 장점은 이 차이를 에이전트 코어에 하드코딩하지 않고 흡수할 수 있다는 점입니다.\u003c/p\u003e\n\u003ch2\u003e구현 예시 1: 툴 승인 UI를 전제로 한 에이전트 액션 모델\u003c/h2\u003e\n\u003cp\u003eMCP-Native 제품에서는 툴 호출이 백엔드 내부 이벤트로만 존재하면 안 됩니다. 프론트엔드가 해석 가능한 이벤트 스트림이어야 합니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003etype ToolCallStatus = \"queued\" | \"awaiting_approval\" | \"running\" | \"succeeded\" | \"failed\";\n\ninterface AgentToolCall {\n  id: string;\n  tool: string;\n  summary: string;\n  riskLevel: \"low\" | \"medium\" | \"high\";\n  status: ToolCallStatus;\n  inputSchema: Record\u0026#x3C;string, unknown\u003e;\n  startedAt?: string;\n  finishedAt?: string;\n  error?: string;\n}\n\nfunction shouldRequireApproval(call: AgentToolCall) {\n  return call.riskLevel === \"high\" || call.tool.startsWith(\"browser.\");\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 구조의 장점은 단순합니다. 모델이 어떤 툴을 부르려는지, 왜 부르려는지, 사용자가 어디서 개입할 수 있는지가 UI 레이어에서 명확해집니다.\u003c/p\u003e\n\u003ch2\u003e구현 예시 2: 프론트엔드가 에이전트 진행 상황을 타임라인으로 렌더링하기\u003c/h2\u003e\n\u003cp\u003e에이전트 UX는 \"답변 1개\"보다 \u003cstrong\u003e과정의 투명성\u003c/strong\u003e 이 중요합니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-tsx\"\u003eexport function AgentTimeline({ calls }: { calls: AgentToolCall[] }) {\n  return (\n    \u0026#x3C;ol className=\"space-y-3\"\u003e\n      {calls.map((call) =\u003e (\n        \u0026#x3C;li key={call.id} className=\"rounded-xl border p-4\"\u003e\n          \u0026#x3C;div className=\"flex items-center justify-between\"\u003e\n            \u0026#x3C;strong\u003e{call.tool}\u0026#x3C;/strong\u003e\n            \u0026#x3C;span\u003e{call.status}\u0026#x3C;/span\u003e\n          \u0026#x3C;/div\u003e\n          \u0026#x3C;p className=\"mt-2 text-sm text-zinc-600\"\u003e{call.summary}\u0026#x3C;/p\u003e\n          {call.error \u0026#x26;\u0026#x26; (\n            \u0026#x3C;pre className=\"mt-3 overflow-auto rounded bg-red-50 p-3 text-xs\"\u003e\n              {call.error}\n            \u0026#x3C;/pre\u003e\n          )}\n        \u0026#x3C;/li\u003e\n      ))}\n    \u0026#x3C;/ol\u003e\n  );\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이건 UI 코드 자체보다도, \u003cstrong\u003e에이전트 시스템을 '설명 가능한 상태 머신'으로 다뤄야 한다\u003c/strong\u003e 는 메시지가 더 중요합니다.\u003c/p\u003e\n\u003ch2\u003e구현 예시 3: 모델 자유도와 정책 엄격함을 분리하는 게이트웨이\u003c/h2\u003e\n\u003cp\u003e많은 팀이 실수하는 지점은 정책도 모델에게 맡긴다는 것입니다. 이건 장기적으로 위험합니다. 게이트웨이에서 강제해야 합니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003einterface PolicyContext {\n  userId: string;\n  environment: \"local\" | \"staging\" | \"prod\";\n  tool: string;\n  action: string;\n}\n\nfunction evaluatePolicy(ctx: PolicyContext) {\n  if (ctx.environment === \"prod\" \u0026#x26;\u0026#x26; ctx.tool === \"filesystem\" \u0026#x26;\u0026#x26; ctx.action === \"write\") {\n    return { allow: false, reason: \"prod 환경 파일 쓰기는 차단됩니다.\" };\n  }\n\n  if (ctx.tool === \"github\" \u0026#x26;\u0026#x26; ctx.action === \"push\") {\n    return { allow: false, reason: \"직접 push 대신 PR 생성 플로우를 사용하세요.\" };\n  }\n\n  return { allow: true };\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 레이어가 있어야 모델을 바꾸더라도 시스템의 안전성은 유지됩니다. 즉, \u003cstrong\u003eMCP는 모델 독립성을 높이고, 정책 엔진은 운영 일관성을 유지합니다.\u003c/strong\u003e 이 둘은 같이 가야 합니다.\u003c/p\u003e\n\u003ch2\u003e프론트엔드 팀이 지금 준비해야 할 4가지\u003c/h2\u003e\n\u003ch3\u003e1. \"채팅창\"이 아니라 \"작업 패널\"을 설계하라\u003c/h3\u003e\n\u003cp\u003e에이전트 제품의 핵심 UI는 메시지 버블이 아닙니다. 다음과 같은 작업 중심 컴포넌트가 필요합니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e실행 계획(plan) 카드\u003c/li\u003e\n\u003cli\u003e툴 호출 로그 패널\u003c/li\u003e\n\u003cli\u003e승인 대기 액션 큐\u003c/li\u003e\n\u003cli\u003e작업 결과 diff 뷰어\u003c/li\u003e\n\u003cli\u003e재실행 / 롤백 / 대체 경로 버튼\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e2. 로컬 우선 데이터 계층을 고려하라\u003c/h3\u003e\n\u003cp\u003eMCP 도구 중 상당수는 로컬 파일, 로컬 브라우저, 로컬 캐시, 로컬 인증 상태와 연결될 때 가치가 커집니다. 따라서 프론트엔드는 서버 fetch만 잘하는 앱에서 벗어나 \u003cstrong\u003elocal-first state synchronization\u003c/strong\u003e 을 진지하게 설계해야 합니다.\u003c/p\u003e\n\u003ch3\u003e3. 옵저버빌리티를 제품 기능으로 승격시켜라\u003c/h3\u003e\n\u003cp\u003e에이전트 시스템에서는 observability가 운영자만 보는 대시보드가 아닙니다. 사용자 UX의 일부입니다.\u003c/p\u003e\n\u003cp\u003e좋은 에이전트 UI는 다음 질문에 즉시 답해야 합니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e지금 무엇을 하고 있나?\u003c/li\u003e\n\u003cli\u003e왜 이 툴을 쓰려 하나?\u003c/li\u003e\n\u003cli\u003e어디서 실패했나?\u003c/li\u003e\n\u003cli\u003e내가 승인해야 하나?\u003c/li\u003e\n\u003cli\u003e다시 시도하면 무엇이 달라지나?\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e4. 실패를 정상 경로로 설계하라\u003c/h3\u003e\n\u003cp\u003e에이전트는 실패합니다. 네트워크도 실패하고, 권한도 막히고, 툴도 rate limit에 걸립니다. 따라서 설계는 \"실패하지 않게\"가 아니라 \u003cstrong\u003e\"실패를 복구 가능한 이벤트로 만든다\"\u003c/strong\u003e 여야 합니다.\u003c/p\u003e\n\u003cp\u003e예를 들어:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e브라우저 툴 실패 → 스냅샷 기반 재동기화\u003c/li\u003e\n\u003cli\u003eGitHub 쓰기 실패 → 초안 PR 생성으로 강등\u003c/li\u003e\n\u003cli\u003e외부 API rate limit → 로컬 캐시/검색 fallback\u003c/li\u003e\n\u003cli\u003e민감 액션 차단 → 승인 요청 이벤트 생성\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이런 복구 경로가 아키텍처에 명시돼 있어야 실서비스에서 버틸 수 있습니다.\u003c/p\u003e\n\u003ch2\u003e전략적 결론: MCP는 '툴 표준'이 아니라 '제품 구조의 재편 신호'다\u003c/h2\u003e\n\u003cp\u003e저는 2026년의 핵심 차별화 포인트가 \"누가 더 좋은 모델을 붙였는가\"보다 \u003cstrong\u003e\"누가 더 좋은 실행 인터페이스를 설계했는가\"\u003c/strong\u003e 로 이동하고 있다고 봅니다.\u003c/p\u003e\n\u003cp\u003e모델은 계속 교체됩니다. 하지만 아래는 쉽게 교체되지 않습니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e사용자 승인 UX\u003c/li\u003e\n\u003cli\u003e툴 호출 가시성\u003c/li\u003e\n\u003cli\u003e정책 게이트웨이 구조\u003c/li\u003e\n\u003cli\u003e실패 복구 플로우\u003c/li\u003e\n\u003cli\u003e로컬/원격 자원의 조합 방식\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이 다섯 가지는 전부 프론트엔드와 플랫폼 아키텍처의 영역입니다.\u003c/p\u003e\n\u003cp\u003e그래서 MCP의 진짜 의미는 이겁니다.\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\u003cstrong\u003e에이전트를 잘 만드는 팀은 프롬프트를 잘 쓰는 팀이 아니라, 도구·정책·상태·승인 흐름을 제품으로 설계하는 팀이다.\u003c/strong\u003e\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003e앞으로 프론트엔드는 더 이상 \"AI 기능이 붙은 웹앱\"을 만드는 직군이 아닙니다. \u003cstrong\u003e에이전트가 안전하고 설명 가능하게 일을 수행하도록 만드는 실행 환경 설계자\u003c/strong\u003e 에 가까워질 것입니다.\u003c/p\u003e\n\u003cp\u003e그 변화의 시작점에 MCP가 있습니다.\u003c/p\u003e\n\u003ch2\u003eSelf-Critique\u003c/h2\u003e\n\u003cp\u003e초안 작성 후 아래 네 가지를 중점적으로 보완했습니다.\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e전문성 강화\u003c/strong\u003e: MCP를 단순 소개로 끝내지 않고, 정책 엔진·승인 UX·옵저버빌리티·복구 경로까지 시스템 레벨로 확장했습니다.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e가독성 개선\u003c/strong\u003e: 개념 설명만 길어지지 않도록 아키텍처 블록과 TypeScript/React 예시를 넣어 실무 감각을 높였습니다.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e차별화 확보\u003c/strong\u003e: \"MCP = 툴 연결 규격\" 수준의 흔한 글이 아니라, 프론트엔드 역할 재정의라는 관점으로 논지를 세웠습니다.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e실전성 보강\u003c/strong\u003e: 실패 처리와 human-in-the-loop 승인처럼 실제 운영에서 반드시 부딪히는 지점을 명시해 공허한 트렌드 글이 되지 않도록 다듬었습니다.\u003c/li\u003e\n\u003c/ol\u003e"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"text-sm text-white/60\",\"children\":\"Wed Mar 18 2026 00:00:00 GMT+0000 (Coordinated Universal Time)\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"MCP-Native Frontends: 브라우저가 AI 에이전트의 실행 허브가 되는 순간\"}],null,[\"$\",\"div\",null,{\"className\":\"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300\",\"dangerouslySetInnerHTML\":{\"__html\":\"$10\"}}]]}]}]\n8:null\nc:[[\"$\",\"title\",\"0\",{\"children\":\"MCP-Native Frontends: 브라우저가 AI 에이전트의 실행 허브가 되는 순간 | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"개발하면서 배운 것과 삽질 로그를 기록합니다.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-03-18-proactive-update/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"MCP-Native Frontends: 브라우저가 AI 에이전트의 실행 허브가 되는 순간\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"개발하면서 배운 것과 삽질 로그를 기록합니다.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-03-18-proactive-update/\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"MCP-Native Frontends: 브라우저가 AI 에이전트의 실행 허브가 되는 순간\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"개발하면서 배운 것과 삽질 로그를 기록합니다.\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}],[\"$\",\"$L11\",\"13\",{}]]\n"])</script></body></html>

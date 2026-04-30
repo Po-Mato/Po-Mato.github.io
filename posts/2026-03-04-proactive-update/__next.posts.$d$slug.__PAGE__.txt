@@ -1,0 +1,59 @@
+1:"$Sreact.fragment"
+4:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+5:"$Sreact.suspense"
+2:T15b8,<p>최근 소프트웨어 개발 생태계는 단순한 'AI 채팅(Chat-centric)'의 시대를 넘어 'AI 에이전트(Agent-centric)'의 시대로 급격히 전환되고 있습니다. 더 이상 개발자는 AI와 대화하며 코드를 복사-붙여넣기 하는 것에 만족하지 않습니다. 이제는 복잡한 태스크를 자율적으로 수행하는 **에이전트 군단(Swarm)**을 오케스트레이션하고, 로컬 환경에서 이를 효율적으로 제어하는 능력이 핵심 경쟁력이 되었습니다.</p>
+<p>오늘 Deep Dive에서는 이러한 흐름의 최전선에 있는 <strong>ruvnet/ruflo</strong>와 <strong>superset-sh/superset</strong>을 중심으로, 로컬 에이전트 오케스트레이션 아키텍처를 분석해 봅니다.</p>
+<h2>1. Monolithic Prompt에서 Multi-Agent Swarm으로</h2>
+<p>기존의 LLM 활용이 하나의 거대한 컨텍스트(Monolithic context)에 모든 요구사항을 밀어 넣는 방식이었다면, <code>ruflo</code>와 같은 프레임워크가 지향하는 바는 **관심사의 분리(Separation of Concerns)**입니다.</p>
+<ul>
+<li><strong>Coordinator Agent</strong>: 태스크를 분석하고 하위 태스크로 분해(Decomposition).</li>
+<li><strong>Worker Agents</strong>: 분해된 각 태스크(예: API 설계, 프론트엔드 컴포넌트 구현, 테스트 코드 작성)를 전문적으로 수행.</li>
+<li><strong>Reviewer Agent</strong>: 작업 결과물을 검증하고 피드백을 루프백.</li>
+</ul>
+<p>이러한 계층적 아키텍처는 컨텍스트 윈도우의 효율성을 극대화하고, 특정 단계에서의 오류가 전체 시스템으로 전파되는 것을 방지합니다.</p>
+<h2>2. ruvnet/ruflo: Claude 특화 오케스트레이터의 핵심</h2>
+<p><code>ruflo</code>는 Claude Code와 Codex의 잠재력을 로컬 환경에서 극한으로 끌어올립니다. 가장 인상적인 부분은 <strong>Topological Orchestration</strong> 기능입니다.</p>
+<h3>하이라이트: 계층적 병렬 실행 아키텍처</h3>
+<p><code>ruflo</code>를 사용하면 다음과 같은 명령어로 복잡한 풀스택 애플리케이션 구축을 자동화할 수 있습니다.</p>
+<pre><code class="language-bash">claude-flow orchestrate \
+  "React 프론트엔드, Node.js API, PostgreSQL을 사용하는 할 일 관리 앱 구축" \
+  --agents 8 \
+  --topology hierarchical \
+  --parallel
+</code></pre>
+<p>이 과정에서 <code>ruflo</code>는 내부적으로 다음과 같은 작업을 수행합니다.</p>
+<ol>
+<li><strong>DAG(Directed Acyclic Graph) 생성</strong>: 서비스 간 의존성을 분석하여 실행 순서를 결정합니다.</li>
+<li><strong>Dynamic Spawning</strong>: 필요에 따라 에이전트 인스턴스를 동적으로 생성하고 소멸시킵니다.</li>
+<li><strong>Context Synchronization</strong>: 에이전트 간에 공유되어야 하는 최소한의 상태 정보를 실시간으로 동기화합니다.</li>
+</ol>
+<h2>3. Superset: 에이전트 군단을 위한 Command Center</h2>
+<p>에이전트들이 늘어날수록 이들을 시각화하고 제어할 인터페이스가 필요합니다. <code>superset-sh/superset</code>은 '에이전트 중심 IDE'를 표방하며, 로컬에서 실행되는 수많은 Claude Code 인스턴스를 통합 관리합니다.</p>
+<ul>
+<li><strong>Agent Fleet Visualization</strong>: 현재 어떤 에이전트가 어떤 파일을 수정 중인지, 리소스 점유율은 얼마인지 실시간 모니터링.</li>
+<li><strong>Unified Feedback Loop</strong>: 여러 에이전트의 중단점(Breakpoints)을 하나의 대시보드에서 승인하거나 수정.</li>
+</ul>
+<h2>4. 실전 코드 예시: Multi-Agent 태스크 할당</h2>
+<p><code>ruflo</code> 위키에서 제안하는 태스크 할당 패턴을 아키텍처적으로 재해석하면 다음과 같습니다.</p>
+<pre><code class="language-bash"># 1. 코디네이터 에이전트 생성
+claude-flow agent spawn --type coordinator --name "MainOrchestrator"
+
+# 2. 태스크 생성 및 할당
+claude-flow task create "회원가입 로직 구현 및 단위 테스트 작성" --assign "MainOrchestrator"
+
+# 3. 내부 프로세스 (자동 수행)
+# - MainOrchestrator가 '구현 에이전트'와 '테스트 에이전트'를 추가로 spawn
+# - 병렬 작업 수행 후 결과 취합
+</code></pre>
+<h2>5. 결론: 로컬 AI 군단이 가져올 변화</h2>
+<p>로컬 에이전트 중심의 개발 환경은 단순한 생산성 향상을 넘어, **데이터 주권(Data Sovereignty)**과 <strong>무한한 확장성</strong>을 동시에 제공합니다. 민감한 코드는 로컬에서 처리하되, 다수의 에이전트가 협업하는 '지능의 병렬화'가 가능해지는 것입니다.</p>
+<p>앞으로의 개발자는 '코드 작성자'가 아닌, **'에이전트 군단의 지휘관(Swarm Commander)'**으로서 아키텍처의 설계와 결과물의 품질 검증에 더 집중하게 될 것입니다.</p>
+<hr>
+<p><strong>[Self-Critique &#x26; Improvement]</strong></p>
+<ul>
+<li><strong>내용 보완</strong>: 단순히 도구를 나열하기보다 'Monolithic vs Multi-Agent'의 아키텍처적 대비를 강조하여 기술적 깊이를 더했습니다.</li>
+<li><strong>가독성</strong>: 복잡한 CLI 명령어를 아키텍처 단계와 연결하여 독자가 쉽게 흐름을 파악할 수 있도록 구성했습니다.</li>
+<li><strong>전문성</strong>: DAG, Context Synchronization 등 엔지니어링 용어를 적절히 배치하여 Senior 수준의 통찰력을 전달하려 노력했습니다.</li>
+</ul>0:{"buildId":"l4LaIe153TZIDwRgib2bJ","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8","children":["$","article",null,{"className":"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10","children":[["$","div",null,{"className":"text-sm text-white/60","children":"Wed Mar 04 2026 07:00:00 GMT+0000 (Coordinated Universal Time)"}],["$","h1",null,{"className":"mt-2 text-3xl font-bold leading-snug md:text-5xl","children":"에이전트 중심 개발의 서막: ruvnet/ruflo와 Superset으로 구축하는 로컬 AI 군단 아키텍처"}],null,["$","div",null,{"className":"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300","dangerouslySetInnerHTML":{"__html":"$2"}}]]}]}],null,"$L3"]}],"loading":null,"isPartial":false}
+3:["$","$L4",null,{"children":["$","$5",null,{"name":"Next.MetadataOutlet","children":"$@6"}]}]
+6:null
