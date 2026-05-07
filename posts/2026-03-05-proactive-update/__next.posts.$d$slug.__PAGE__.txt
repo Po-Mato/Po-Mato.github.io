@@ -1,0 +1,67 @@
+1:"$Sreact.fragment"
+4:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+5:"$Sreact.suspense"
+2:T11ea,<h2>서론: AI의 중력은 로컬로 흐른다</h2>
+<p>2026년 현재, 프론트엔드 생태계는 거대한 전환점을 맞이하고 있습니다. 기존의 'Thin Client' 모델에서 벗어나, 브라우저가 직접 지능형 실행 흐름을 오케스트레이션하는 <strong>'Agentic Web'</strong> 아키텍처가 주류로 부상하고 있습니다. 최근 <code>OpenClaw</code>의 폭발적인 성장과 <code>GitNexus</code> 같은 브라우저 내 Graph RAG 기술의 등장은 이러한 변화를 가속화하고 있습니다.</p>
+<p>본 글에서는 브라우저가 단순한 뷰어(Viewer)를 넘어 AI의 실행 엔진(Engine)이 될 때, 우리 프론트엔드 개발자들이 직면할 아키텍처적 도전과 솔루션을 Deep Dive 해봅니다.</p>
+<h2>1. Local LLM &#x26; WASM: 추론의 민주화</h2>
+<p>WebGPU 표준의 안착과 WebAssembly(WASM) 성능의 비약적인 향상으로 이제 수십억 개의 파라미터를 가진 모델을 브라우저에서 직접 실행하는 것이 일상이 되었습니다.</p>
+<h3>핵심 이점</h3>
+<ul>
+<li><strong>Latency</strong>: 서버 왕복 시간이 사라져 실시간 상호작용이 가능해집니다.</li>
+<li><strong>Privacy</strong>: 민감한 사용자 데이터가 클라이언트를 벗어나지 않습니다.</li>
+<li><strong>Cost</strong>: 서버 추론 비용을 획기적으로 절감할 수 있습니다.</li>
+</ul>
+<h2>2. Agentic Workflow 아키텍처</h2>
+<p>단순히 AI 모델을 호출하는 것을 넘어, 여러 도구를 사용하고(Task Routing), 스스로 계획을 세우는(Planning) 에이전트적 특성을 프론트엔드에 어떻게 이식할 것인가가 핵심입니다.</p>
+<h3>아키텍처 다이어그램 (개념도)</h3>
+<pre><code class="language-text">[UI Layer] &#x3C;-> [State Manager (Signals)]
+                     ^
+                     |
+[Agentic Core (Local Inference)]
+   /        |        \
+[RAG]  [Tool Executor] [Memory Store]
+ (VectorDB) (API/DOM)   (IndexedDB)
+</code></pre>
+<h3>코드 예시: Local Task Router</h3>
+<p>브라우저 내에서 작업을 분석하고 적절한 '도구'에 할당하는 간단한 로직 예시입니다.</p>
+<pre><code class="language-typescript">// Agentic Task Router Example
+async function handleUserTask(input: string) {
+  const agent = await LocalModel.load('gemini-nano-3');
+  
+  // 1. Intent Analysis &#x26; Planning
+  const plan = await agent.generatePlan(input, {
+    availableTools: ['calendar', 'notes', 'browser-control']
+  });
+
+  // 2. Sequential/Parallel Execution
+  for (const step of plan.steps) {
+    const tool = toolRegistry.get(step.action);
+    const result = await tool.execute(step.params);
+    
+    // 3. Self-Correction if needed
+    if (result.status === 'error') {
+      await agent.replan(step, result.error);
+    }
+  }
+}
+</code></pre>
+<h2>3. 새로운 프론트엔드 역량: AI 오케스트레이션</h2>
+<p>이제 FE 개발자에게 요구되는 역량은 'UI를 그리는 것'에서 '지능형 흐름을 설계하는 것'으로 확장되고 있습니다.</p>
+<ol>
+<li><strong>Vector DB 활용</strong>: 브라우저 내 IndexedDB를 기반으로 한 Vector 검색 최적화 (예: <code>GitNexus</code>의 접근 방식).</li>
+<li><strong>Context Window 관리</strong>: 로컬 환경의 제한된 메모리 내에서 최적의 컨텍스트를 유지하는 압축 및 요약 기술.</li>
+<li><strong>Hybrid Inference</strong>: 복잡한 작업은 클라우드로, 즉각적인 반응이 필요한 작업은 로컬로 분배하는 하이브리드 전략.</li>
+</ol>
+<h2>결론: 브라우저, 그 이상의 엔진</h2>
+<p>우리는 이제 '브라우저 안의 앱'을 넘어 '브라우저라는 지능체'를 만들고 있습니다. 서버에 의존하지 않고 로컬 환경에서 사용자에게 가장 밀착된 지능을 제공하는 능력은 앞으로 모든 프론트엔드 서비스의 차별점이 될 것입니다.</p>
+<hr>
+<p><strong>자가 검토(Self-Critique):</strong></p>
+<ul>
+<li><strong>적절성</strong>: 최근 메모리(2026-03-03 등)에서 강조된 '로컬 AI 군단 운영' 및 'Agentic Web' 흐름을 정확히 반영함.</li>
+<li><strong>전문성</strong>: WebGPU, WASM, Vector DB, Task Routing 등 구체적인 기술 스택과 아키텍처 개념을 도입함.</li>
+<li><strong>가독성</strong>: 다이어그램과 코드 예시를 포함하여 복잡한 개념을 시각화함.</li>
+<li><strong>보완</strong>: 단순 트렌드 나열을 지양하고, 실제 FE 개발자가 고민해야 할 '아키텍처적 관점'에서의 제언을 강화함.</li>
+</ul>0:{"buildId":"ebRscDf4b2aPUW-Etl-1P","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8","children":["$","article",null,{"className":"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10","children":[["$","div",null,{"className":"text-sm text-white/60","children":"Thu Mar 05 2026 07:00:00 GMT+0000 (Coordinated Universal Time)"}],["$","h1",null,{"className":"mt-2 text-3xl font-bold leading-snug md:text-5xl","children":"Agentic Web: 브라우저가 AI 실행 엔진이 되는 시대의 FE 아키텍처"}],null,["$","div",null,{"className":"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300","dangerouslySetInnerHTML":{"__html":"$2"}}]]}]}],null,"$L3"]}],"loading":null,"isPartial":false}
+3:["$","$L4",null,{"children":["$","$5",null,{"name":"Next.MetadataOutlet","children":"$@6"}]}]
+6:null

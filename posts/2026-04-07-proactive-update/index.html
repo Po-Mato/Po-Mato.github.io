@@ -1,0 +1,205 @@
+<!DOCTYPE html><!--ebRscDf4b2aPUW_Etl_1P--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/893724321ed0589d.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/329e63eb984ada35.js" async=""></script><meta name="next-size-adjust" content=""/><title>MCP보다 중요한 것: Execution Journal과 Agent SLO로 운영하는 에이전트 시스템 | Mato Po Tech Blog</title><meta name="description" content="2026년의 병목은 MCP 연결 자체가 아니라 운영 가능성이다. 이 글은 HTTP 200만으로는 에이전트 성공을 설명할 수 없는 이유, Agent SLO 설계, Execution Journal 데이터 모델, 그리고 Observability as Code 기반의 실무 도입 패턴을 정리한다."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-04-07-proactive-update/"/><meta property="og:title" content="MCP보다 중요한 것: Execution Journal과 Agent SLO로 운영하는 에이전트 시스템"/><meta property="og:description" content="2026년의 병목은 MCP 연결 자체가 아니라 운영 가능성이다. 이 글은 HTTP 200만으로는 에이전트 성공을 설명할 수 없는 이유, Agent SLO 설계, Execution Journal 데이터 모델, 그리고 Observability as Code 기반의 실무 도입 패턴을 정리한다."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-04-07-proactive-update/"/><meta property="og:image" content="https://po-mato.github.io/og.png"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="MCP보다 중요한 것: Execution Journal과 Agent SLO로 운영하는 에이전트 시스템"/><meta name="twitter:description" content="2026년의 병목은 MCP 연결 자체가 아니라 운영 가능성이다. 이 글은 HTTP 200만으로는 에이전트 성공을 설명할 수 없는 이유, Agent SLO 설계, Execution Journal 데이터 모델, 그리고 Observability as Code 기반의 실무 도입 패턴을 정리한다."/><meta name="twitter:image" content="https://po-mato.github.io/og.png"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><div class="text-sm text-white/60">Tue Apr 07 2026 00:00:00 GMT+0000 (Coordinated Universal Time)</div><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">MCP보다 중요한 것: Execution Journal과 Agent SLO로 운영하는 에이전트 시스템</h1><p class="mt-4 text-base text-white/80 md:text-lg">2026년의 병목은 MCP 연결 자체가 아니라 운영 가능성이다. 이 글은 HTTP 200만으로는 에이전트 성공을 설명할 수 없는 이유, Agent SLO 설계, Execution Journal 데이터 모델, 그리고 Observability as Code 기반의 실무 도입 패턴을 정리한다.</p><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><h2>들어가는 글</h2>
+<p>지금 시장에서 MCP(Model Context Protocol)는 분명 중요한 표준입니다. 하지만 실무에서 더 빨리 병목이 되는 지점은 <strong>"연결 여부"</strong> 가 아니라 <strong>"운영 가능성"</strong> 입니다. 툴을 10개 붙인 에이전트가 HTTP 200으로 응답했다고 해서, 그 작업이 실제로 성공했다고 말할 수는 없습니다.</p>
+<p>최근 관측 트렌드도 같은 방향을 가리킵니다. IBM은 2026 observability 논의에서 AI 시스템을 AI로 관측해야 하며, 비용 관리와 SLO, 개방형 표준이 같이 설계되어야 한다고 짚었습니다. Grafana의 2026 Observability Survey에서도 anomaly 탐지, root cause 분석, dashboard/query 생성 같은 AI 보조 기능은 높은 가치를 인정받았지만, autonomous action은 여전히 신뢰 격차가 컸습니다. 즉, 팀들은 에이전트를 원합니다. 다만 <strong>통제 가능한 에이전트</strong> 를 원합니다.</p>
+<p>오늘의 핵심 주장은 단순합니다.</p>
+<blockquote>
+<p>2026년 에이전트 경쟁력은 MCP 통합 개수보다, 실행을 설명하고 검증할 수 있는 Execution Journal과 Agent SLO를 갖췄는지에서 갈린다.</p>
+</blockquote>
+<h2>왜 HTTP 200과 latency만으로는 agent 성공을 측정할 수 없나</h2>
+<p>전통적인 APM은 요청 성공률, 응답 시간, 오류율을 잘 보여 줍니다. 하지만 에이전트 시스템은 이 세 가지 지표만으로 설명되지 않습니다. 예를 들어 아래 네 경우는 모두 HTTP 관점에서는 성공처럼 보일 수 있습니다.</p>
+<ul>
+<li>올바른 툴을 호출했지만 잘못된 문서를 근거로 답변함</li>
+<li>고객 메일 초안을 생성했지만 개인정보를 과다 노출함</li>
+<li>5단계 작업을 수행하며 토큰 비용을 과하게 소모함</li>
+<li>프롬프트 인젝션을 받아 승인 없이 위험한 행동을 제안함</li>
+</ul>
+<p>즉, 에이전트의 실패는 네트워크 실패보다 <strong>의미 실패(semantic failure)</strong> 에 가깝습니다. 기존 APM이 보는 것은 "서비스가 응답했는가"이고, 우리가 운영에서 알고 싶은 것은 아래입니다.</p>
+<ul>
+<li>사용자가 원하는 결과를 실제로 만들었는가</li>
+<li>중간 단계에서 사람 개입이 필요했는가</li>
+<li>어떤 툴 체인이 실패를 유발했는가</li>
+<li>성공 1건을 만들기 위해 얼마의 비용을 태웠는가</li>
+<li>정책 위반이나 보안 위험이 있었는가</li>
+</ul>
+<p>그래서 agent 운영은 request tracing만으로 끝나지 않습니다. <strong>task-level trace + policy decision + human review + outcome verification</strong> 이 함께 남아야 합니다.</p>
+<h2>Agent SLO: 에이전트 시스템은 무엇을 목표로 운영해야 하나</h2>
+<p>웹 서비스 SLO를 그대로 가져오면 반쪽짜리가 됩니다. 에이전트에는 에이전트다운 지표가 필요합니다. 실무에서는 아래 다섯 가지가 특히 유용합니다.</p>
+<h3>1) task_success_rate</h3>
+<p>사용자가 의도한 작업을 검증 가능한 결과로 끝낸 비율입니다. "응답을 반환한 비율"이 아니라, 사후 검증까지 통과한 비율이어야 합니다.</p>
+<h3>2) time_to_useful_action</h3>
+<p>최종 완료 시간보다 더 중요한 경우가 많습니다. 첫 유의미한 초안, 첫 정확한 요약, 첫 승인 가능한 제안이 나오기까지 걸린 시간을 봐야 사용자 체감 품질을 알 수 있습니다.</p>
+<h3>3) human_escalation_rate</h3>
+<p>사람에게 넘긴 비율입니다. 너무 낮으면 위험한 자동화일 수 있고, 너무 높으면 자동화 가치가 낮습니다. 팀의 리스크 허용도에 맞는 목표 범위를 정해야 합니다.</p>
+<h3>4) tool_failure_budget</h3>
+<p>툴 호출 실패를 얼마나 허용할지 정하는 예산 개념입니다. 단일 task에서 tool error가 몇 번 발생하면 자동 중단하고 사람 검토로 넘길지 정책화해야 합니다.</p>
+<h3>5) cost_per_success</h3>
+<p>성공 1건당 평균 비용입니다. 에이전트는 요청 1회 비용보다, 성공 1건을 만드는 총비용이 더 중요합니다. 실패 재시도와 과도한 체이닝을 포함해 계산해야 합니다.</p>
+<p>아래는 예시 SLO 정의입니다.</p>
+<pre><code class="language-json">{
+  "service": "tech-blog-agent",
+  "window": "7d",
+  "slos": {
+    "task_success_rate": { "target": 0.92 },
+    "p95_time_to_useful_action_ms": { "target": 45000 },
+    "human_escalation_rate": { "target": 0.15, "operator": "&#x3C;=" },
+    "tool_failure_budget": { "target": 0.03, "operator": "&#x3C;=" },
+    "cost_per_success_usd": { "target": 0.35, "operator": "&#x3C;=" }
+  }
+}
+</code></pre>
+<p>포인트는 지표를 많이 만드는 것이 아닙니다. <strong>팀이 실제로 의사결정을 바꾸게 만드는 지표를 고르는 것</strong> 입니다.</p>
+<h2>Execution Journal: 실행을 설명 가능하게 만드는 최소 단위</h2>
+<p>Execution Journal은 에이전트의 실행 과정을 사람이 읽을 수 있고, 시스템이 집계할 수 있는 형태로 남기는 구조화 로그입니다. 일반 로그보다 더 중요하게 봐야 할 것은 "무슨 API를 쳤나"가 아니라 <strong>왜 그 행동이 일어났고, 어떤 정책 판단 아래 어떤 결과를 냈는가</strong> 입니다.</p>
+<p>권장하는 최소 필드는 아래와 같습니다.</p>
+<pre><code class="language-json">{
+  "run_id": "run_2026_04_07_001",
+  "task": "publish_proactive_blog_post",
+  "user_goal": "오늘 기술 트렌드를 반영한 딥다이브 글 게시",
+  "started_at": "2026-04-07T11:05:00Z",
+  "model": "google/gemini-3-flash-preview",
+  "steps": [
+    {
+      "step_id": "s1",
+      "type": "research",
+      "action": "fetch_trend_sources",
+      "inputs": ["IBM", "Grafana", "Iris"],
+      "output_summary": "AI observability, trust gap, SLO focus 확인",
+      "latency_ms": 2480,
+      "cost_usd": 0.02,
+      "status": "ok"
+    },
+    {
+      "step_id": "s2",
+      "type": "policy",
+      "action": "topic_dedup_check",
+      "policy_result": "pass",
+      "reason": "2026-04-05 MCP/data-mesh 글과 주제 분리"
+    },
+    {
+      "step_id": "s3",
+      "type": "tool_call",
+      "action": "write_post_file",
+      "target": "content/posts/2026-04-07-proactive-update.md",
+      "status": "ok"
+    }
+  ],
+  "outcome": {
+    "useful_action_at": "2026-04-07T11:08:30Z",
+    "verification": ["frontmatter_valid", "build_passed", "git_push_passed"],
+    "success": true,
+    "human_escalated": false,
+    "total_cost_usd": 0.19
+  }
+}
+</code></pre>
+<p>이 Journal이 있어야 장애 분석도 쉬워집니다. 예를 들어 성공률이 떨어졌을 때 모델 자체 문제인지, 특정 MCP 서버의 latency 문제인지, 승인 정책이 너무 엄격한지 분리해서 볼 수 있습니다.</p>
+<h2>Observability as Code: 계측도 코드처럼 관리해야 한다</h2>
+<p>에이전트 관측에서 자주 생기는 실수는 "나중에 대시보드 붙이자"입니다. 그렇게 하면 실행 데이터가 제각각이라 결국 비교가 불가능해집니다. 2026년에는 observability 자체를 코드처럼 선언하고 버전 관리하는 방식이 더 적합합니다.</p>
+<ul>
+<li>어떤 step을 trace로 남길지</li>
+<li>어떤 policy decision을 audit 대상으로 볼지</li>
+<li>어떤 SLO를 서비스별로 강제할지</li>
+<li>어떤 태그를 OpenTelemetry span에 넣을지</li>
+<li>어떤 알림이 human escalation을 트리거할지</li>
+</ul>
+<p>이런 규칙을 런타임 코드와 같이 관리해야 합니다. OpenTelemetry는 step trace와 tool call span을 표준화하는 데 유리하고, Prometheus는 집계 지표를 쌓는 데 적합하며, Grafana는 팀별 SLO 대시보드와 경보를 운영하기 좋습니다.</p>
+<p>아키텍처를 단순화하면 아래와 같습니다.</p>
+<pre><code class="language-text">[User Request]
+   |
+   v
+[Planner]
+   |
+   +--> [Policy Gate] ----> [Approval Queue]
+   |
+   v
+[Agent Runtime] --> [MCP Tools / APIs / Browser]
+   |
+   +--> [Execution Journal Store]
+   +--> [OpenTelemetry Collector]
+   +--> [Prometheus Metrics]
+   |
+   v
+[Verifier]
+   |
+   v
+[SLO Evaluator] --> [Grafana Dashboard / Alerting]
+</code></pre>
+<p>이 구조에서 핵심은 모든 행동이 runtime 바깥으로 흩어지지 않고, <strong>Journal·Trace·Metric이 하나의 run_id로 묶인다</strong>는 점입니다.</p>
+<h2>TypeScript 예시 1: Journal emitter</h2>
+<pre><code class="language-ts">import { appendFile } from "node:fs/promises";
+
+export type JournalStep = {
+  stepId: string;
+  type: "research" | "plan" | "tool_call" | "policy" | "verify";
+  action: string;
+  status: "ok" | "error" | "blocked";
+  latencyMs?: number;
+  costUsd?: number;
+  detail?: Record&#x3C;string, unknown>;
+};
+
+export async function emitJournalStep(runId: string, step: JournalStep) {
+  const event = {
+    runId,
+    ts: new Date().toISOString(),
+    ...step,
+  };
+
+  await appendFile(
+    "./var/execution-journal.jsonl",
+    JSON.stringify(event) + "\n",
+    "utf8"
+  );
+}
+</code></pre>
+<p>이렇게 JSONL로 먼저 남기고, 배치 집계 또는 스트리밍 파이프라인에서 후처리하면 운영 부담을 낮출 수 있습니다.</p>
+<h2>TypeScript 예시 2: SLO evaluator + policy gate</h2>
+<pre><code class="language-ts">type RunSummary = {
+  success: boolean;
+  usefulActionMs: number;
+  escalated: boolean;
+  toolFailures: number;
+  toolCalls: number;
+  totalCostUsd: number;
+};
+
+export function evaluateRun(summary: RunSummary) {
+  const toolFailureRate =
+    summary.toolCalls === 0 ? 0 : summary.toolFailures / summary.toolCalls;
+
+  return {
+    taskSuccess: summary.success,
+    usefulActionOk: summary.usefulActionMs &#x3C;= 45_000,
+    escalationOk: !summary.escalated,
+    toolBudgetOk: toolFailureRate &#x3C;= 0.03,
+    costOk: summary.totalCostUsd &#x3C;= 0.35,
+  };
+}
+
+export function shouldBlockAutonomousPublish(input: {
+  containsExternalSideEffect: boolean;
+  verificationPassed: boolean;
+  riskScore: number;
+}) {
+  if (input.containsExternalSideEffect &#x26;&#x26; !input.verificationPassed) return true;
+  if (input.riskScore >= 0.7) return true;
+  return false;
+}
+</code></pre>
+<p>이런 코드는 화려하지 않지만, 실제 운영에서는 이런 단순한 게이트가 큰 사고를 막습니다.</p>
+<h2>실무 도입 로드맵: 한 번에 다 하려 하지 말 것</h2>
+<h3>1단계: Journal 우선</h3>
+<p>가장 먼저 해야 할 일은 모든 고가치 task에 run_id를 부여하고 step 단위 Journal을 남기는 것입니다. 이 단계에서는 완벽한 평가보다 <strong>실행 가시성 확보</strong> 가 목적입니다.</p>
+<h3>2단계: SLO와 verifier 도입</h3>
+<p>다음으로 task_success_rate와 time_to_useful_action부터 측정하십시오. 동시에 성공 여부를 판정하는 verifier를 붙여 "응답 완료"와 "업무 성공"을 분리해야 합니다.</p>
+<h3>3단계: 정책 자동화와 예산 관리</h3>
+<p>마지막으로 human escalation, tool failure budget, cost_per_success를 운영 정책에 연결합니다. 이때부터는 팀이 어떤 작업은 자동 승인하고, 어떤 작업은 사람 검토를 강제할지 근거 기반으로 정할 수 있습니다.</p>
+<h2>결론</h2>
+<p>MCP는 중요합니다. 하지만 그 자체는 연결 표준일 뿐입니다. 실무에서 진짜 차이를 만드는 것은 에이전트가 <strong>무엇을 했는지, 왜 그렇게 했는지, 그 결과가 정말 유효했는지</strong> 를 설명할 수 있는 운영 체계입니다.</p>
+<p>정리하면 다음과 같습니다.</p>
+<ul>
+<li>MCP 도입은 출발점이지 경쟁력이 아니다.</li>
+<li>경쟁력은 Execution Journal, Agent SLO, 정책 게이트, 검증 루프에서 나온다.</li>
+<li>2026년의 우수한 에이전트 팀은 더 많은 툴을 연결한 팀이 아니라, 더 적은 실패를 설명 가능하게 만든 팀이다.</li>
+</ul>
+<p>결국 에이전트 시대의 플랫폼 엔지니어링은 "모델을 붙이는 기술"에서 끝나지 않습니다. <strong>운영할 수 있는 자동화</strong> 를 만드는 팀이 오래 이깁니다.</p></div></article></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/893724321ed0589d.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"ebRscDf4b2aPUW-Etl-1P\",\"c\":[\"\",\"posts\",\"2026-04-07-proactive-update\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-04-07-proactive-update\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/893724321ed0589d.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/329e63eb984ada35.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"11:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n10:T2fc6,"])</script><script>self.__next_f.push([1,"\u003ch2\u003e들어가는 글\u003c/h2\u003e\n\u003cp\u003e지금 시장에서 MCP(Model Context Protocol)는 분명 중요한 표준입니다. 하지만 실무에서 더 빨리 병목이 되는 지점은 \u003cstrong\u003e\"연결 여부\"\u003c/strong\u003e 가 아니라 \u003cstrong\u003e\"운영 가능성\"\u003c/strong\u003e 입니다. 툴을 10개 붙인 에이전트가 HTTP 200으로 응답했다고 해서, 그 작업이 실제로 성공했다고 말할 수는 없습니다.\u003c/p\u003e\n\u003cp\u003e최근 관측 트렌드도 같은 방향을 가리킵니다. IBM은 2026 observability 논의에서 AI 시스템을 AI로 관측해야 하며, 비용 관리와 SLO, 개방형 표준이 같이 설계되어야 한다고 짚었습니다. Grafana의 2026 Observability Survey에서도 anomaly 탐지, root cause 분석, dashboard/query 생성 같은 AI 보조 기능은 높은 가치를 인정받았지만, autonomous action은 여전히 신뢰 격차가 컸습니다. 즉, 팀들은 에이전트를 원합니다. 다만 \u003cstrong\u003e통제 가능한 에이전트\u003c/strong\u003e 를 원합니다.\u003c/p\u003e\n\u003cp\u003e오늘의 핵심 주장은 단순합니다.\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e2026년 에이전트 경쟁력은 MCP 통합 개수보다, 실행을 설명하고 검증할 수 있는 Execution Journal과 Agent SLO를 갖췄는지에서 갈린다.\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003ch2\u003e왜 HTTP 200과 latency만으로는 agent 성공을 측정할 수 없나\u003c/h2\u003e\n\u003cp\u003e전통적인 APM은 요청 성공률, 응답 시간, 오류율을 잘 보여 줍니다. 하지만 에이전트 시스템은 이 세 가지 지표만으로 설명되지 않습니다. 예를 들어 아래 네 경우는 모두 HTTP 관점에서는 성공처럼 보일 수 있습니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e올바른 툴을 호출했지만 잘못된 문서를 근거로 답변함\u003c/li\u003e\n\u003cli\u003e고객 메일 초안을 생성했지만 개인정보를 과다 노출함\u003c/li\u003e\n\u003cli\u003e5단계 작업을 수행하며 토큰 비용을 과하게 소모함\u003c/li\u003e\n\u003cli\u003e프롬프트 인젝션을 받아 승인 없이 위험한 행동을 제안함\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e즉, 에이전트의 실패는 네트워크 실패보다 \u003cstrong\u003e의미 실패(semantic failure)\u003c/strong\u003e 에 가깝습니다. 기존 APM이 보는 것은 \"서비스가 응답했는가\"이고, 우리가 운영에서 알고 싶은 것은 아래입니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e사용자가 원하는 결과를 실제로 만들었는가\u003c/li\u003e\n\u003cli\u003e중간 단계에서 사람 개입이 필요했는가\u003c/li\u003e\n\u003cli\u003e어떤 툴 체인이 실패를 유발했는가\u003c/li\u003e\n\u003cli\u003e성공 1건을 만들기 위해 얼마의 비용을 태웠는가\u003c/li\u003e\n\u003cli\u003e정책 위반이나 보안 위험이 있었는가\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e그래서 agent 운영은 request tracing만으로 끝나지 않습니다. \u003cstrong\u003etask-level trace + policy decision + human review + outcome verification\u003c/strong\u003e 이 함께 남아야 합니다.\u003c/p\u003e\n\u003ch2\u003eAgent SLO: 에이전트 시스템은 무엇을 목표로 운영해야 하나\u003c/h2\u003e\n\u003cp\u003e웹 서비스 SLO를 그대로 가져오면 반쪽짜리가 됩니다. 에이전트에는 에이전트다운 지표가 필요합니다. 실무에서는 아래 다섯 가지가 특히 유용합니다.\u003c/p\u003e\n\u003ch3\u003e1) task_success_rate\u003c/h3\u003e\n\u003cp\u003e사용자가 의도한 작업을 검증 가능한 결과로 끝낸 비율입니다. \"응답을 반환한 비율\"이 아니라, 사후 검증까지 통과한 비율이어야 합니다.\u003c/p\u003e\n\u003ch3\u003e2) time_to_useful_action\u003c/h3\u003e\n\u003cp\u003e최종 완료 시간보다 더 중요한 경우가 많습니다. 첫 유의미한 초안, 첫 정확한 요약, 첫 승인 가능한 제안이 나오기까지 걸린 시간을 봐야 사용자 체감 품질을 알 수 있습니다.\u003c/p\u003e\n\u003ch3\u003e3) human_escalation_rate\u003c/h3\u003e\n\u003cp\u003e사람에게 넘긴 비율입니다. 너무 낮으면 위험한 자동화일 수 있고, 너무 높으면 자동화 가치가 낮습니다. 팀의 리스크 허용도에 맞는 목표 범위를 정해야 합니다.\u003c/p\u003e\n\u003ch3\u003e4) tool_failure_budget\u003c/h3\u003e\n\u003cp\u003e툴 호출 실패를 얼마나 허용할지 정하는 예산 개념입니다. 단일 task에서 tool error가 몇 번 발생하면 자동 중단하고 사람 검토로 넘길지 정책화해야 합니다.\u003c/p\u003e\n\u003ch3\u003e5) cost_per_success\u003c/h3\u003e\n\u003cp\u003e성공 1건당 평균 비용입니다. 에이전트는 요청 1회 비용보다, 성공 1건을 만드는 총비용이 더 중요합니다. 실패 재시도와 과도한 체이닝을 포함해 계산해야 합니다.\u003c/p\u003e\n\u003cp\u003e아래는 예시 SLO 정의입니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-json\"\u003e{\n  \"service\": \"tech-blog-agent\",\n  \"window\": \"7d\",\n  \"slos\": {\n    \"task_success_rate\": { \"target\": 0.92 },\n    \"p95_time_to_useful_action_ms\": { \"target\": 45000 },\n    \"human_escalation_rate\": { \"target\": 0.15, \"operator\": \"\u0026#x3C;=\" },\n    \"tool_failure_budget\": { \"target\": 0.03, \"operator\": \"\u0026#x3C;=\" },\n    \"cost_per_success_usd\": { \"target\": 0.35, \"operator\": \"\u0026#x3C;=\" }\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e포인트는 지표를 많이 만드는 것이 아닙니다. \u003cstrong\u003e팀이 실제로 의사결정을 바꾸게 만드는 지표를 고르는 것\u003c/strong\u003e 입니다.\u003c/p\u003e\n\u003ch2\u003eExecution Journal: 실행을 설명 가능하게 만드는 최소 단위\u003c/h2\u003e\n\u003cp\u003eExecution Journal은 에이전트의 실행 과정을 사람이 읽을 수 있고, 시스템이 집계할 수 있는 형태로 남기는 구조화 로그입니다. 일반 로그보다 더 중요하게 봐야 할 것은 \"무슨 API를 쳤나\"가 아니라 \u003cstrong\u003e왜 그 행동이 일어났고, 어떤 정책 판단 아래 어떤 결과를 냈는가\u003c/strong\u003e 입니다.\u003c/p\u003e\n\u003cp\u003e권장하는 최소 필드는 아래와 같습니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-json\"\u003e{\n  \"run_id\": \"run_2026_04_07_001\",\n  \"task\": \"publish_proactive_blog_post\",\n  \"user_goal\": \"오늘 기술 트렌드를 반영한 딥다이브 글 게시\",\n  \"started_at\": \"2026-04-07T11:05:00Z\",\n  \"model\": \"google/gemini-3-flash-preview\",\n  \"steps\": [\n    {\n      \"step_id\": \"s1\",\n      \"type\": \"research\",\n      \"action\": \"fetch_trend_sources\",\n      \"inputs\": [\"IBM\", \"Grafana\", \"Iris\"],\n      \"output_summary\": \"AI observability, trust gap, SLO focus 확인\",\n      \"latency_ms\": 2480,\n      \"cost_usd\": 0.02,\n      \"status\": \"ok\"\n    },\n    {\n      \"step_id\": \"s2\",\n      \"type\": \"policy\",\n      \"action\": \"topic_dedup_check\",\n      \"policy_result\": \"pass\",\n      \"reason\": \"2026-04-05 MCP/data-mesh 글과 주제 분리\"\n    },\n    {\n      \"step_id\": \"s3\",\n      \"type\": \"tool_call\",\n      \"action\": \"write_post_file\",\n      \"target\": \"content/posts/2026-04-07-proactive-update.md\",\n      \"status\": \"ok\"\n    }\n  ],\n  \"outcome\": {\n    \"useful_action_at\": \"2026-04-07T11:08:30Z\",\n    \"verification\": [\"frontmatter_valid\", \"build_passed\", \"git_push_passed\"],\n    \"success\": true,\n    \"human_escalated\": false,\n    \"total_cost_usd\": 0.19\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 Journal이 있어야 장애 분석도 쉬워집니다. 예를 들어 성공률이 떨어졌을 때 모델 자체 문제인지, 특정 MCP 서버의 latency 문제인지, 승인 정책이 너무 엄격한지 분리해서 볼 수 있습니다.\u003c/p\u003e\n\u003ch2\u003eObservability as Code: 계측도 코드처럼 관리해야 한다\u003c/h2\u003e\n\u003cp\u003e에이전트 관측에서 자주 생기는 실수는 \"나중에 대시보드 붙이자\"입니다. 그렇게 하면 실행 데이터가 제각각이라 결국 비교가 불가능해집니다. 2026년에는 observability 자체를 코드처럼 선언하고 버전 관리하는 방식이 더 적합합니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e어떤 step을 trace로 남길지\u003c/li\u003e\n\u003cli\u003e어떤 policy decision을 audit 대상으로 볼지\u003c/li\u003e\n\u003cli\u003e어떤 SLO를 서비스별로 강제할지\u003c/li\u003e\n\u003cli\u003e어떤 태그를 OpenTelemetry span에 넣을지\u003c/li\u003e\n\u003cli\u003e어떤 알림이 human escalation을 트리거할지\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이런 규칙을 런타임 코드와 같이 관리해야 합니다. OpenTelemetry는 step trace와 tool call span을 표준화하는 데 유리하고, Prometheus는 집계 지표를 쌓는 데 적합하며, Grafana는 팀별 SLO 대시보드와 경보를 운영하기 좋습니다.\u003c/p\u003e\n\u003cp\u003e아키텍처를 단순화하면 아래와 같습니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-text\"\u003e[User Request]\n   |\n   v\n[Planner]\n   |\n   +--\u003e [Policy Gate] ----\u003e [Approval Queue]\n   |\n   v\n[Agent Runtime] --\u003e [MCP Tools / APIs / Browser]\n   |\n   +--\u003e [Execution Journal Store]\n   +--\u003e [OpenTelemetry Collector]\n   +--\u003e [Prometheus Metrics]\n   |\n   v\n[Verifier]\n   |\n   v\n[SLO Evaluator] --\u003e [Grafana Dashboard / Alerting]\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 구조에서 핵심은 모든 행동이 runtime 바깥으로 흩어지지 않고, \u003cstrong\u003eJournal·Trace·Metric이 하나의 run_id로 묶인다\u003c/strong\u003e는 점입니다.\u003c/p\u003e\n\u003ch2\u003eTypeScript 예시 1: Journal emitter\u003c/h2\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003eimport { appendFile } from \"node:fs/promises\";\n\nexport type JournalStep = {\n  stepId: string;\n  type: \"research\" | \"plan\" | \"tool_call\" | \"policy\" | \"verify\";\n  action: string;\n  status: \"ok\" | \"error\" | \"blocked\";\n  latencyMs?: number;\n  costUsd?: number;\n  detail?: Record\u0026#x3C;string, unknown\u003e;\n};\n\nexport async function emitJournalStep(runId: string, step: JournalStep) {\n  const event = {\n    runId,\n    ts: new Date().toISOString(),\n    ...step,\n  };\n\n  await appendFile(\n    \"./var/execution-journal.jsonl\",\n    JSON.stringify(event) + \"\\n\",\n    \"utf8\"\n  );\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이렇게 JSONL로 먼저 남기고, 배치 집계 또는 스트리밍 파이프라인에서 후처리하면 운영 부담을 낮출 수 있습니다.\u003c/p\u003e\n\u003ch2\u003eTypeScript 예시 2: SLO evaluator + policy gate\u003c/h2\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003etype RunSummary = {\n  success: boolean;\n  usefulActionMs: number;\n  escalated: boolean;\n  toolFailures: number;\n  toolCalls: number;\n  totalCostUsd: number;\n};\n\nexport function evaluateRun(summary: RunSummary) {\n  const toolFailureRate =\n    summary.toolCalls === 0 ? 0 : summary.toolFailures / summary.toolCalls;\n\n  return {\n    taskSuccess: summary.success,\n    usefulActionOk: summary.usefulActionMs \u0026#x3C;= 45_000,\n    escalationOk: !summary.escalated,\n    toolBudgetOk: toolFailureRate \u0026#x3C;= 0.03,\n    costOk: summary.totalCostUsd \u0026#x3C;= 0.35,\n  };\n}\n\nexport function shouldBlockAutonomousPublish(input: {\n  containsExternalSideEffect: boolean;\n  verificationPassed: boolean;\n  riskScore: number;\n}) {\n  if (input.containsExternalSideEffect \u0026#x26;\u0026#x26; !input.verificationPassed) return true;\n  if (input.riskScore \u003e= 0.7) return true;\n  return false;\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이런 코드는 화려하지 않지만, 실제 운영에서는 이런 단순한 게이트가 큰 사고를 막습니다.\u003c/p\u003e\n\u003ch2\u003e실무 도입 로드맵: 한 번에 다 하려 하지 말 것\u003c/h2\u003e\n\u003ch3\u003e1단계: Journal 우선\u003c/h3\u003e\n\u003cp\u003e가장 먼저 해야 할 일은 모든 고가치 task에 run_id를 부여하고 step 단위 Journal을 남기는 것입니다. 이 단계에서는 완벽한 평가보다 \u003cstrong\u003e실행 가시성 확보\u003c/strong\u003e 가 목적입니다.\u003c/p\u003e\n\u003ch3\u003e2단계: SLO와 verifier 도입\u003c/h3\u003e\n\u003cp\u003e다음으로 task_success_rate와 time_to_useful_action부터 측정하십시오. 동시에 성공 여부를 판정하는 verifier를 붙여 \"응답 완료\"와 \"업무 성공\"을 분리해야 합니다.\u003c/p\u003e\n\u003ch3\u003e3단계: 정책 자동화와 예산 관리\u003c/h3\u003e\n\u003cp\u003e마지막으로 human escalation, tool failure budget, cost_per_success를 운영 정책에 연결합니다. 이때부터는 팀이 어떤 작업은 자동 승인하고, 어떤 작업은 사람 검토를 강제할지 근거 기반으로 정할 수 있습니다.\u003c/p\u003e\n\u003ch2\u003e결론\u003c/h2\u003e\n\u003cp\u003eMCP는 중요합니다. 하지만 그 자체는 연결 표준일 뿐입니다. 실무에서 진짜 차이를 만드는 것은 에이전트가 \u003cstrong\u003e무엇을 했는지, 왜 그렇게 했는지, 그 결과가 정말 유효했는지\u003c/strong\u003e 를 설명할 수 있는 운영 체계입니다.\u003c/p\u003e\n\u003cp\u003e정리하면 다음과 같습니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eMCP 도입은 출발점이지 경쟁력이 아니다.\u003c/li\u003e\n\u003cli\u003e경쟁력은 Execution Journal, Agent SLO, 정책 게이트, 검증 루프에서 나온다.\u003c/li\u003e\n\u003cli\u003e2026년의 우수한 에이전트 팀은 더 많은 툴을 연결한 팀이 아니라, 더 적은 실패를 설명 가능하게 만든 팀이다.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e결국 에이전트 시대의 플랫폼 엔지니어링은 \"모델을 붙이는 기술\"에서 끝나지 않습니다. \u003cstrong\u003e운영할 수 있는 자동화\u003c/strong\u003e 를 만드는 팀이 오래 이깁니다.\u003c/p\u003e"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"text-sm text-white/60\",\"children\":\"Tue Apr 07 2026 00:00:00 GMT+0000 (Coordinated Universal Time)\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"MCP보다 중요한 것: Execution Journal과 Agent SLO로 운영하는 에이전트 시스템\"}],[\"$\",\"p\",null,{\"className\":\"mt-4 text-base text-white/80 md:text-lg\",\"children\":\"2026년의 병목은 MCP 연결 자체가 아니라 운영 가능성이다. 이 글은 HTTP 200만으로는 에이전트 성공을 설명할 수 없는 이유, Agent SLO 설계, Execution Journal 데이터 모델, 그리고 Observability as Code 기반의 실무 도입 패턴을 정리한다.\"}],[\"$\",\"div\",null,{\"className\":\"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300\",\"dangerouslySetInnerHTML\":{\"__html\":\"$10\"}}]]}]}]\n8:null\n"])</script><script>self.__next_f.push([1,"c:[[\"$\",\"title\",\"0\",{\"children\":\"MCP보다 중요한 것: Execution Journal과 Agent SLO로 운영하는 에이전트 시스템 | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"2026년의 병목은 MCP 연결 자체가 아니라 운영 가능성이다. 이 글은 HTTP 200만으로는 에이전트 성공을 설명할 수 없는 이유, Agent SLO 설계, Execution Journal 데이터 모델, 그리고 Observability as Code 기반의 실무 도입 패턴을 정리한다.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-04-07-proactive-update/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"MCP보다 중요한 것: Execution Journal과 Agent SLO로 운영하는 에이전트 시스템\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"2026년의 병목은 MCP 연결 자체가 아니라 운영 가능성이다. 이 글은 HTTP 200만으로는 에이전트 성공을 설명할 수 없는 이유, Agent SLO 설계, Execution Journal 데이터 모델, 그리고 Observability as Code 기반의 실무 도입 패턴을 정리한다.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-04-07-proactive-update/\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"MCP보다 중요한 것: Execution Journal과 Agent SLO로 운영하는 에이전트 시스템\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"2026년의 병목은 MCP 연결 자체가 아니라 운영 가능성이다. 이 글은 HTTP 200만으로는 에이전트 성공을 설명할 수 없는 이유, Agent SLO 설계, Execution Journal 데이터 모델, 그리고 Observability as Code 기반의 실무 도입 패턴을 정리한다.\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}],[\"$\",\"$L11\",\"13\",{}]]\n"])</script></body></html>

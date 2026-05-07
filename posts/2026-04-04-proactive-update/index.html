@@ -1,0 +1,257 @@
+<!DOCTYPE html><!--ebRscDf4b2aPUW_Etl_1P--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/893724321ed0589d.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/329e63eb984ada35.js" async=""></script><meta name="next-size-adjust" content=""/><title>MCP 시대의 병목은 모델이 아니라 실행 런타임이다 | Mato Po Tech Blog</title><meta name="description" content="2026년의 에이전트 시스템은 더 이상 모델 하나로 승부하지 않습니다. MCP, 브라우저 제어, 로컬 실행, 워크플로 오케스트레이션이 결합되면서 진짜 경쟁력은 &#x27;얼마나 잘 실행시키는가&#x27;로 이동했습니다."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-04-04-proactive-update/"/><meta property="og:title" content="MCP 시대의 병목은 모델이 아니라 실행 런타임이다"/><meta property="og:description" content="2026년의 에이전트 시스템은 더 이상 모델 하나로 승부하지 않습니다. MCP, 브라우저 제어, 로컬 실행, 워크플로 오케스트레이션이 결합되면서 진짜 경쟁력은 &#x27;얼마나 잘 실행시키는가&#x27;로 이동했습니다."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-04-04-proactive-update/"/><meta property="og:image" content="https://po-mato.github.io/og.png"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="MCP 시대의 병목은 모델이 아니라 실행 런타임이다"/><meta name="twitter:description" content="2026년의 에이전트 시스템은 더 이상 모델 하나로 승부하지 않습니다. MCP, 브라우저 제어, 로컬 실행, 워크플로 오케스트레이션이 결합되면서 진짜 경쟁력은 &#x27;얼마나 잘 실행시키는가&#x27;로 이동했습니다."/><meta name="twitter:image" content="https://po-mato.github.io/og.png"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><div class="text-sm text-white/60">Sat Apr 04 2026 00:00:00 GMT+0000 (Coordinated Universal Time)</div><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">MCP 시대의 병목은 모델이 아니라 실행 런타임이다</h1><p class="mt-4 text-base text-white/80 md:text-lg">2026년의 에이전트 시스템은 더 이상 모델 하나로 승부하지 않습니다. MCP, 브라우저 제어, 로컬 실행, 워크플로 오케스트레이션이 결합되면서 진짜 경쟁력은 &#x27;얼마나 잘 실행시키는가&#x27;로 이동했습니다.</p><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><h2>들어가는 글</h2>
+<p>2025년까지의 질문이 "어떤 모델이 더 똑똑한가"였다면, 2026년의 질문은 완전히 달라졌습니다. 이제 실무에서 더 중요한 것은 <strong>모델이 아니라 실행 런타임(runtime)</strong> 입니다. 최근 기술 트렌드에서도 공통적으로 드러나는 신호가 있습니다. 에이전트는 더 강해졌고, MCP(Model Context Protocol)는 사실상의 연결 표준으로 굳어지고 있으며, 브라우저 제어·로컬 실행·워크플로 오케스트레이션이 하나의 제품 경험으로 묶이고 있습니다.</p>
+<p>문제는 여기서부터입니다. 모델 성능이 상향 평준화될수록, 실제 사용자 가치와 생산성은 "무엇을 얼마나 정확하게 실행할 수 있는가"에서 갈립니다. 툴 권한, 상태 관리, 재시도 정책, 관측성, 비용 제어, 안전한 브라우저/파일 실행 같은 런타임 레이어가 허술하면, 아무리 좋은 모델을 붙여도 시스템은 금방 흔들립니다.</p>
+<p>이 글에서는 왜 MCP 시대의 핵심 병목이 모델이 아니라 실행 런타임인지, 그리고 실무에서 어떤 구조로 설계해야 덜 깨지고 더 오래 버티는 에이전트 시스템을 만들 수 있는지 아키텍처 관점에서 정리해 보겠습니다.</p>
+<h2>1. 왜 2026년에는 "모델 선택"보다 "실행 설계"가 중요해졌나</h2>
+<p>최근 업계 리포트에서 반복해서 보이는 키워드는 비슷합니다.</p>
+<ul>
+<li><strong>Agentic loop</strong>: 모델이 답변만 생성하는 것이 아니라, 계획 → 호출 → 검증 → 수정의 루프를 직접 수행</li>
+<li><strong>Cooperative model routing</strong>: 하나의 거대 모델에 올인하지 않고, 작업 유형에 따라 더 빠른 모델과 더 강한 모델을 섞어 쓰는 구조</li>
+<li><strong>MCP / Tool UI 확장</strong>: 외부 데이터와 도구를 표준 방식으로 붙이는 수요 급증</li>
+<li><strong>Workflow orchestration</strong>: 모델 호출 자체보다 실행 흐름의 일관성과 복구 가능성이 경쟁력으로 이동</li>
+</ul>
+<p>이건 꽤 중요한 변화입니다. 예전에는 모델이 좋아지면 제품도 자동으로 좋아진다고 기대할 수 있었습니다. 하지만 지금은 그렇지 않습니다.</p>
+<p>예를 들어 같은 모델을 붙여도 시스템 품질은 아래 요소에서 크게 갈립니다.</p>
+<ol>
+<li><strong>툴 호출이 실패했을 때 복구되는가?</strong></li>
+<li><strong>브라우저/파일/셸 같은 실행 환경이 상태를 유지하는가?</strong></li>
+<li><strong>권한 범위가 안전하게 제한되어 있는가?</strong></li>
+<li><strong>중간 결과를 기억하고 다음 스텝에 반영하는가?</strong></li>
+<li><strong>느린 모델을 꼭 필요한 순간에만 쓰는가?</strong></li>
+</ol>
+<p>즉, LLM은 이제 CPU처럼 "필요한 부품"이 되었고, 실제 제품력은 그 위에 얹힌 <strong>에이전트 런타임 운영체제</strong>에서 결정됩니다.</p>
+<h2>2. MCP가 표준이 될수록 런타임 책임은 더 무거워진다</h2>
+<p>MCP는 도구와 데이터 소스를 모델 친화적으로 연결하는 훌륭한 표준입니다. 하지만 MCP 채택이 늘어날수록 역설적으로 런타임의 책임도 커집니다.</p>
+<p>왜냐하면 MCP는 "연결 방식"을 표준화하지, "실행 품질"까지 보장해 주지는 않기 때문입니다.</p>
+<p>실무에서 MCP 서버를 여러 개 붙이면 금방 아래 문제가 나타납니다.</p>
+<ul>
+<li>같은 요청을 여러 툴이 처리할 수 있어 <strong>선택 기준</strong>이 불명확해짐</li>
+<li>툴별 응답 형식 차이 때문에 <strong>후처리 비용</strong> 증가</li>
+<li>느리거나 flaky한 서버가 전체 에이전트 체인을 흔듦</li>
+<li>인증/권한/레이트리밋이 섞이면서 <strong>실패 원인 파악</strong>이 어려워짐</li>
+<li>도구는 성공했는데 최종 행동은 실패하는 <strong>부분 성공(partial success)</strong> 상황 증가</li>
+</ul>
+<p>그래서 MCP 시대의 핵심 질문은 "툴을 얼마나 많이 붙였나"가 아닙니다.</p>
+<blockquote>
+<p><strong>도구를 연결한 뒤 그 호출을 얼마나 예측 가능하게 오케스트레이션할 수 있나?</strong></p>
+</blockquote>
+<p>이 질문에 답하려면 MCP 레지스트리와 실행 스케줄러를 분리해 설계하는 편이 좋습니다.</p>
+<h3>권장 구조</h3>
+<ul>
+<li><strong>Registry Layer</strong>: 어떤 툴이 어떤 capability를 가지는지 선언</li>
+<li><strong>Planner Layer</strong>: 요청을 capability 단위로 분해</li>
+<li><strong>Runtime Layer</strong>: timeout, retry, budget, auth, sandbox를 실제로 집행</li>
+<li><strong>Verifier Layer</strong>: 실행 결과를 검증하고 다음 행동을 결정</li>
+<li><strong>Memory Layer</strong>: 작업 컨텍스트와 중간 산출물을 저장</li>
+</ul>
+<p>모델은 여기서 Planner/Verifier 역할을 도와줄 뿐이고, 시스템의 안정성은 Runtime Layer가 사실상 책임집니다.</p>
+<h2>3. 브라우저는 이제 단순 뷰어가 아니라 실행 엔진이다</h2>
+<p>최근 메모리와 기술 흐름을 보면, 브라우저는 더 이상 UI 렌더러에 머무르지 않습니다. 브라우저는 다음 역할을 동시에 수행합니다.</p>
+<ul>
+<li>인증이 이미 걸려 있는 <strong>실제 업무 환경의 게이트웨이</strong></li>
+<li>사람이 하던 클릭/입력/검증을 대신하는 <strong>실행 인터페이스</strong></li>
+<li>DOM, accessibility tree, visual state를 읽는 <strong>관측 지점</strong></li>
+<li>최종 결과를 확인하는 <strong>검증 환경</strong></li>
+</ul>
+<p>즉, 브라우저를 다룬다는 것은 단순히 "자동화 스크립트 하나 만든다"가 아니라, <strong>사람의 작업 표면 전체를 런타임에 편입</strong>하는 일에 가깝습니다.</p>
+<p>이때 가장 흔한 실패는 모델이 아닙니다.</p>
+<ul>
+<li>탭 상태가 바뀌어 ref가 무효화됨</li>
+<li>로그인 세션 만료</li>
+<li>느린 페이지 전환으로 race condition 발생</li>
+<li>버튼은 눌렸지만 실제 비즈니스 상태 반영 실패</li>
+<li>보이는 텍스트와 실제 접근성 트리가 달라 잘못된 액션 수행</li>
+</ul>
+<p>그래서 브라우저 제어형 에이전트는 "더 똑똑한 모델"보다 아래 4가지를 먼저 가져야 합니다.</p>
+<ol>
+<li><strong>안정적인 참조 체계(ref/selector/aria snapshot)</strong></li>
+<li><strong>명시적 대기 조건(loadState, textGone, timeout)</strong></li>
+<li><strong>행동 후 검증(post-action verification)</strong></li>
+<li><strong>실패 시 재진입 가능한 상태 저장(checkpointing)</strong></li>
+</ol>
+<h2>4. 추천 아키텍처: Planner와 Runtime을 절대 한 덩어리로 두지 말 것</h2>
+<p>많은 팀이 첫 버전에서 하는 실수는 모델에게 계획과 실행을 동시에 맡기는 것입니다. 처음에는 빨라 보이지만, 툴 수가 늘고 실패 케이스가 쌓이면 디버깅이 거의 불가능해집니다.</p>
+<p>아래처럼 레이어를 쪼개면 운영이 훨씬 편해집니다.</p>
+<h3>4.1 Capability Registry</h3>
+<pre><code class="language-ts">// runtime/capabilities.ts
+export type Capability =
+  | 'notes.search'
+  | 'browser.open'
+  | 'browser.act'
+  | 'git.write'
+  | 'blog.publish';
+
+export interface ToolSpec {
+  name: string;
+  capabilities: Capability[];
+  timeoutMs: number;
+  costHint: 'low' | 'medium' | 'high';
+  sideEffect: boolean;
+}
+
+export const toolRegistry: ToolSpec[] = [
+  {
+    name: 'memory-search',
+    capabilities: ['notes.search'],
+    timeoutMs: 1500,
+    costHint: 'low',
+    sideEffect: false,
+  },
+  {
+    name: 'browser',
+    capabilities: ['browser.open', 'browser.act'],
+    timeoutMs: 12000,
+    costHint: 'medium',
+    sideEffect: true,
+  },
+  {
+    name: 'git-publisher',
+    capabilities: ['git.write', 'blog.publish'],
+    timeoutMs: 20000,
+    costHint: 'medium',
+    sideEffect: true,
+  },
+];
+
+export function resolveTools(capability: Capability) {
+  return toolRegistry
+    .filter((tool) => tool.capabilities.includes(capability))
+    .sort((a, b) => a.timeoutMs - b.timeoutMs);
+}
+</code></pre>
+<p>핵심은 모델이 "이름이 예쁜 툴"을 고르게 하지 말고, <strong>capability 기반으로 선택지를 제한</strong>하는 것입니다. 이렇게 해야 planner가 바뀌어도 runtime 계약은 유지됩니다.</p>
+<h3>4.2 Runtime Orchestrator</h3>
+<pre><code class="language-ts">// runtime/orchestrator.ts
+type Step = {
+  capability: string;
+  input: Record&#x3C;string, unknown>;
+  verify?: (output: unknown) => boolean;
+};
+
+type ExecutionContext = {
+  traceId: string;
+  budgetMs: number;
+  remainingRetries: number;
+  state: Map&#x3C;string, unknown>;
+};
+
+async function runPlan(steps: Step[], ctx: ExecutionContext) {
+  for (const step of steps) {
+    const candidates = resolveTools(step.capability as any);
+    if (candidates.length === 0) {
+      throw new Error(`No tool for capability: ${step.capability}`);
+    }
+
+    let lastError: unknown;
+
+    for (const tool of candidates) {
+      try {
+        const output = await invokeTool(tool.name, step.input, {
+          timeoutMs: tool.timeoutMs,
+          traceId: ctx.traceId,
+        });
+
+        const verified = step.verify ? step.verify(output) : true;
+        if (!verified) {
+          throw new Error(`Verification failed for ${step.capability}`);
+        }
+
+        ctx.state.set(step.capability, output);
+        lastError = undefined;
+        break;
+      } catch (error) {
+        lastError = error;
+        if (tool.sideEffect) {
+          await captureCheckpoint(ctx.traceId, step, error);
+        }
+      }
+    }
+
+    if (lastError) {
+      throw lastError;
+    }
+  }
+
+  return Object.fromEntries(ctx.state.entries());
+}
+</code></pre>
+<p>이 구조의 장점은 분명합니다.</p>
+<ul>
+<li>planner가 만든 단계별 계획을 <strong>검증 가능한 실행 단위</strong>로 바꿉니다.</li>
+<li>툴 실패를 모델 품질 문제와 분리해 디버깅할 수 있습니다.</li>
+<li>재시도와 checkpoint를 런타임이 책임지므로, 모델 프롬프트가 지저분해지지 않습니다.</li>
+<li>같은 작업에서도 빠른 모델/저렴한 모델/강한 모델을 섞는 <strong>routing 전략</strong>을 붙이기 쉽습니다.</li>
+</ul>
+<h2>5. 실무에서 진짜 중요한 것은 "정답률"이 아니라 "복구 가능성"이다</h2>
+<p>에이전트 시스템을 운영하다 보면 100% 성공보다 더 중요한 지표가 있습니다.</p>
+<p>바로 <strong>Recoverability(복구 가능성)</strong> 입니다.</p>
+<p>왜냐하면 현실의 툴 환경은 항상 흔들리기 때문입니다.</p>
+<ul>
+<li>API 레이트리밋 발생</li>
+<li>브라우저 attach 실패</li>
+<li>로컬 파일 lock 충돌</li>
+<li>Git push 거절</li>
+<li>외부 페이지 구조 변경</li>
+</ul>
+<p>이런 상황에서 좋은 런타임은 두 가지를 해냅니다.</p>
+<ol>
+<li><strong>실패를 빨리 표면화한다.</strong></li>
+<li><strong>다시 시작할 때 어디서부터 이어갈지 안다.</strong></li>
+</ol>
+<p>이 관점에서 체크해야 할 운영 지표는 다음과 같습니다.</p>
+<ul>
+<li>모델 응답 품질 점수</li>
+<li>툴별 성공률 / 평균 지연시간</li>
+<li>플랜 단계별 재시도 횟수</li>
+<li>side effect 작업 후 검증 성공률</li>
+<li>세션 재개(resume) 성공률</li>
+<li>작업당 총 비용과 wall-clock latency</li>
+</ul>
+<p>LLM 애플리케이션이 제품이 되는 순간, 품질의 중심은 prompt engineering에서 <strong>runtime observability</strong>로 이동합니다.</p>
+<h2>6. 한국어 실무 팀에 특히 중요한 설계 포인트</h2>
+<p>국내 팀은 글로벌 트렌드를 빠르게 흡수하지만, 실제 배포 단계에서 아래 문제를 자주 겪습니다.</p>
+<ul>
+<li>SaaS 의존도가 높아지며 데이터 반출 이슈 발생</li>
+<li>UI 자동화는 되는데 운영 감사 로그가 약함</li>
+<li>파일/브라우저/사내 시스템을 묶는 순간 권한 모델이 무너짐</li>
+<li>데모는 잘 되는데 장애 복구 절차가 없음</li>
+</ul>
+<p>그래서 한국어 실무 팀이라면 다음 우선순위를 권합니다.</p>
+<h3>우선순위 1. 로컬/프라이빗 실행 경로 확보</h3>
+<p>민감 데이터가 들어가는 작업은 최소한 대체 가능한 로컬 실행 경로가 있어야 합니다.</p>
+<h3>우선순위 2. 관측성 먼저</h3>
+<p>트레이스 ID, 단계별 로그, 툴 응답 원문, 검증 결과를 남기지 않으면 운영이 불가능합니다.</p>
+<h3>우선순위 3. 승인 경계 명확화</h3>
+<p>읽기와 쓰기, 내부 작업과 외부 전송, 제안과 실행을 명확히 분리해야 합니다.</p>
+<h3>우선순위 4. 브라우저 자동화는 "행동"이 아니라 "상태 전이"로 기록</h3>
+<p>"버튼 클릭"보다 "초안 생성됨", "게시 완료됨", "푸시 검증됨" 같은 상태 중심 로그가 더 중요합니다.</p>
+<h2>7. 지금 만들어야 할 팀의 공통 런타임 체크리스트</h2>
+<p>아래 항목이 없다면, 모델 업그레이드보다 런타임 정비가 먼저입니다.</p>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> capability registry가 있는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> planner와 executor가 분리되어 있는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> side effect 작업마다 post-action verification이 있는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> retry가 무한 반복이 아니라 정책화되어 있는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> trace/log/checkpoint가 남는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> 같은 작업을 빠른 모델과 강한 모델로 라우팅할 수 있는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> 브라우저/파일/셸 권한 경계가 분리되어 있는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> 실패 시 사람에게 넘기는 escalation 경로가 있는가?</li>
+</ul>
+<h2>마치며</h2>
+<p>2026년의 에이전트 시스템은 더 이상 "좋은 모델 하나"로 설명되지 않습니다. MCP가 표준이 되고, 브라우저와 로컬 환경이 실행 표면으로 편입되면서, 병목은 점점 더 런타임으로 이동하고 있습니다.</p>
+<p>정리하면 이렇습니다.</p>
+<ul>
+<li>모델은 점점 더 범용화된다.</li>
+<li>도구 연결은 MCP 같은 표준으로 쉬워진다.</li>
+<li>하지만 실행 안정성, 검증, 재시도, 관측성, 권한 제어는 여전히 팀이 직접 설계해야 한다.</li>
+</ul>
+<p>이제 경쟁력은 "누가 더 똑똑한 모델을 썼나"가 아니라, <strong>누가 더 덜 깨지고 더 예측 가능하게 실행하는 런타임을 만들었나</strong> 에서 갈립니다.</p>
+<hr>
+<h3>자가 검토 및 개선 사항</h3>
+<ol>
+<li><strong>전문성 강화</strong>: 단순 트렌드 요약이 아니라 MCP, 브라우저 제어, 런타임 오케스트레이션을 하나의 시스템 관점으로 연결했습니다.</li>
+<li><strong>실무성 보강</strong>: 추상적인 비전 대신 capability registry, orchestrator, verification, checkpoint 같은 구현 포인트를 코드와 함께 제시했습니다.</li>
+<li><strong>가독성 개선</strong>: "왜 중요한가 → 어디서 깨지는가 → 어떻게 설계할 것인가" 순서로 재구성해 읽는 흐름을 정리했습니다.</li>
+<li><strong>과장 제거</strong>: 특정 도구를 과도하게 홍보하지 않고, 모델 상향 평준화 이후의 구조적 병목이라는 관찰에 집중했습니다.</li>
+<li><strong>독자 적합성 조정</strong>: 주인님의 관심사인 자동화, 브라우저 실행, 로컬 실행, 업무 효율화 맥락과 맞도록 실무 팀 관점의 제언을 강화했습니다.</li>
+</ol></div></article></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/893724321ed0589d.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"ebRscDf4b2aPUW-Etl-1P\",\"c\":[\"\",\"posts\",\"2026-04-04-proactive-update\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-04-04-proactive-update\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/893724321ed0589d.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/329e63eb984ada35.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"11:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n10:T3ecb,"])</script><script>self.__next_f.push([1,"\u003ch2\u003e들어가는 글\u003c/h2\u003e\n\u003cp\u003e2025년까지의 질문이 \"어떤 모델이 더 똑똑한가\"였다면, 2026년의 질문은 완전히 달라졌습니다. 이제 실무에서 더 중요한 것은 \u003cstrong\u003e모델이 아니라 실행 런타임(runtime)\u003c/strong\u003e 입니다. 최근 기술 트렌드에서도 공통적으로 드러나는 신호가 있습니다. 에이전트는 더 강해졌고, MCP(Model Context Protocol)는 사실상의 연결 표준으로 굳어지고 있으며, 브라우저 제어·로컬 실행·워크플로 오케스트레이션이 하나의 제품 경험으로 묶이고 있습니다.\u003c/p\u003e\n\u003cp\u003e문제는 여기서부터입니다. 모델 성능이 상향 평준화될수록, 실제 사용자 가치와 생산성은 \"무엇을 얼마나 정확하게 실행할 수 있는가\"에서 갈립니다. 툴 권한, 상태 관리, 재시도 정책, 관측성, 비용 제어, 안전한 브라우저/파일 실행 같은 런타임 레이어가 허술하면, 아무리 좋은 모델을 붙여도 시스템은 금방 흔들립니다.\u003c/p\u003e\n\u003cp\u003e이 글에서는 왜 MCP 시대의 핵심 병목이 모델이 아니라 실행 런타임인지, 그리고 실무에서 어떤 구조로 설계해야 덜 깨지고 더 오래 버티는 에이전트 시스템을 만들 수 있는지 아키텍처 관점에서 정리해 보겠습니다.\u003c/p\u003e\n\u003ch2\u003e1. 왜 2026년에는 \"모델 선택\"보다 \"실행 설계\"가 중요해졌나\u003c/h2\u003e\n\u003cp\u003e최근 업계 리포트에서 반복해서 보이는 키워드는 비슷합니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eAgentic loop\u003c/strong\u003e: 모델이 답변만 생성하는 것이 아니라, 계획 → 호출 → 검증 → 수정의 루프를 직접 수행\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eCooperative model routing\u003c/strong\u003e: 하나의 거대 모델에 올인하지 않고, 작업 유형에 따라 더 빠른 모델과 더 강한 모델을 섞어 쓰는 구조\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eMCP / Tool UI 확장\u003c/strong\u003e: 외부 데이터와 도구를 표준 방식으로 붙이는 수요 급증\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eWorkflow orchestration\u003c/strong\u003e: 모델 호출 자체보다 실행 흐름의 일관성과 복구 가능성이 경쟁력으로 이동\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이건 꽤 중요한 변화입니다. 예전에는 모델이 좋아지면 제품도 자동으로 좋아진다고 기대할 수 있었습니다. 하지만 지금은 그렇지 않습니다.\u003c/p\u003e\n\u003cp\u003e예를 들어 같은 모델을 붙여도 시스템 품질은 아래 요소에서 크게 갈립니다.\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e툴 호출이 실패했을 때 복구되는가?\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e브라우저/파일/셸 같은 실행 환경이 상태를 유지하는가?\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e권한 범위가 안전하게 제한되어 있는가?\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e중간 결과를 기억하고 다음 스텝에 반영하는가?\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e느린 모델을 꼭 필요한 순간에만 쓰는가?\u003c/strong\u003e\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003e즉, LLM은 이제 CPU처럼 \"필요한 부품\"이 되었고, 실제 제품력은 그 위에 얹힌 \u003cstrong\u003e에이전트 런타임 운영체제\u003c/strong\u003e에서 결정됩니다.\u003c/p\u003e\n\u003ch2\u003e2. MCP가 표준이 될수록 런타임 책임은 더 무거워진다\u003c/h2\u003e\n\u003cp\u003eMCP는 도구와 데이터 소스를 모델 친화적으로 연결하는 훌륭한 표준입니다. 하지만 MCP 채택이 늘어날수록 역설적으로 런타임의 책임도 커집니다.\u003c/p\u003e\n\u003cp\u003e왜냐하면 MCP는 \"연결 방식\"을 표준화하지, \"실행 품질\"까지 보장해 주지는 않기 때문입니다.\u003c/p\u003e\n\u003cp\u003e실무에서 MCP 서버를 여러 개 붙이면 금방 아래 문제가 나타납니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e같은 요청을 여러 툴이 처리할 수 있어 \u003cstrong\u003e선택 기준\u003c/strong\u003e이 불명확해짐\u003c/li\u003e\n\u003cli\u003e툴별 응답 형식 차이 때문에 \u003cstrong\u003e후처리 비용\u003c/strong\u003e 증가\u003c/li\u003e\n\u003cli\u003e느리거나 flaky한 서버가 전체 에이전트 체인을 흔듦\u003c/li\u003e\n\u003cli\u003e인증/권한/레이트리밋이 섞이면서 \u003cstrong\u003e실패 원인 파악\u003c/strong\u003e이 어려워짐\u003c/li\u003e\n\u003cli\u003e도구는 성공했는데 최종 행동은 실패하는 \u003cstrong\u003e부분 성공(partial success)\u003c/strong\u003e 상황 증가\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e그래서 MCP 시대의 핵심 질문은 \"툴을 얼마나 많이 붙였나\"가 아닙니다.\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\u003cstrong\u003e도구를 연결한 뒤 그 호출을 얼마나 예측 가능하게 오케스트레이션할 수 있나?\u003c/strong\u003e\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003e이 질문에 답하려면 MCP 레지스트리와 실행 스케줄러를 분리해 설계하는 편이 좋습니다.\u003c/p\u003e\n\u003ch3\u003e권장 구조\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eRegistry Layer\u003c/strong\u003e: 어떤 툴이 어떤 capability를 가지는지 선언\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003ePlanner Layer\u003c/strong\u003e: 요청을 capability 단위로 분해\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eRuntime Layer\u003c/strong\u003e: timeout, retry, budget, auth, sandbox를 실제로 집행\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eVerifier Layer\u003c/strong\u003e: 실행 결과를 검증하고 다음 행동을 결정\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eMemory Layer\u003c/strong\u003e: 작업 컨텍스트와 중간 산출물을 저장\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e모델은 여기서 Planner/Verifier 역할을 도와줄 뿐이고, 시스템의 안정성은 Runtime Layer가 사실상 책임집니다.\u003c/p\u003e\n\u003ch2\u003e3. 브라우저는 이제 단순 뷰어가 아니라 실행 엔진이다\u003c/h2\u003e\n\u003cp\u003e최근 메모리와 기술 흐름을 보면, 브라우저는 더 이상 UI 렌더러에 머무르지 않습니다. 브라우저는 다음 역할을 동시에 수행합니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e인증이 이미 걸려 있는 \u003cstrong\u003e실제 업무 환경의 게이트웨이\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e사람이 하던 클릭/입력/검증을 대신하는 \u003cstrong\u003e실행 인터페이스\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003eDOM, accessibility tree, visual state를 읽는 \u003cstrong\u003e관측 지점\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e최종 결과를 확인하는 \u003cstrong\u003e검증 환경\u003c/strong\u003e\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e즉, 브라우저를 다룬다는 것은 단순히 \"자동화 스크립트 하나 만든다\"가 아니라, \u003cstrong\u003e사람의 작업 표면 전체를 런타임에 편입\u003c/strong\u003e하는 일에 가깝습니다.\u003c/p\u003e\n\u003cp\u003e이때 가장 흔한 실패는 모델이 아닙니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e탭 상태가 바뀌어 ref가 무효화됨\u003c/li\u003e\n\u003cli\u003e로그인 세션 만료\u003c/li\u003e\n\u003cli\u003e느린 페이지 전환으로 race condition 발생\u003c/li\u003e\n\u003cli\u003e버튼은 눌렸지만 실제 비즈니스 상태 반영 실패\u003c/li\u003e\n\u003cli\u003e보이는 텍스트와 실제 접근성 트리가 달라 잘못된 액션 수행\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e그래서 브라우저 제어형 에이전트는 \"더 똑똑한 모델\"보다 아래 4가지를 먼저 가져야 합니다.\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e안정적인 참조 체계(ref/selector/aria snapshot)\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e명시적 대기 조건(loadState, textGone, timeout)\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e행동 후 검증(post-action verification)\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e실패 시 재진입 가능한 상태 저장(checkpointing)\u003c/strong\u003e\u003c/li\u003e\n\u003c/ol\u003e\n\u003ch2\u003e4. 추천 아키텍처: Planner와 Runtime을 절대 한 덩어리로 두지 말 것\u003c/h2\u003e\n\u003cp\u003e많은 팀이 첫 버전에서 하는 실수는 모델에게 계획과 실행을 동시에 맡기는 것입니다. 처음에는 빨라 보이지만, 툴 수가 늘고 실패 케이스가 쌓이면 디버깅이 거의 불가능해집니다.\u003c/p\u003e\n\u003cp\u003e아래처럼 레이어를 쪼개면 운영이 훨씬 편해집니다.\u003c/p\u003e\n\u003ch3\u003e4.1 Capability Registry\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003e// runtime/capabilities.ts\nexport type Capability =\n  | 'notes.search'\n  | 'browser.open'\n  | 'browser.act'\n  | 'git.write'\n  | 'blog.publish';\n\nexport interface ToolSpec {\n  name: string;\n  capabilities: Capability[];\n  timeoutMs: number;\n  costHint: 'low' | 'medium' | 'high';\n  sideEffect: boolean;\n}\n\nexport const toolRegistry: ToolSpec[] = [\n  {\n    name: 'memory-search',\n    capabilities: ['notes.search'],\n    timeoutMs: 1500,\n    costHint: 'low',\n    sideEffect: false,\n  },\n  {\n    name: 'browser',\n    capabilities: ['browser.open', 'browser.act'],\n    timeoutMs: 12000,\n    costHint: 'medium',\n    sideEffect: true,\n  },\n  {\n    name: 'git-publisher',\n    capabilities: ['git.write', 'blog.publish'],\n    timeoutMs: 20000,\n    costHint: 'medium',\n    sideEffect: true,\n  },\n];\n\nexport function resolveTools(capability: Capability) {\n  return toolRegistry\n    .filter((tool) =\u003e tool.capabilities.includes(capability))\n    .sort((a, b) =\u003e a.timeoutMs - b.timeoutMs);\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e핵심은 모델이 \"이름이 예쁜 툴\"을 고르게 하지 말고, \u003cstrong\u003ecapability 기반으로 선택지를 제한\u003c/strong\u003e하는 것입니다. 이렇게 해야 planner가 바뀌어도 runtime 계약은 유지됩니다.\u003c/p\u003e\n\u003ch3\u003e4.2 Runtime Orchestrator\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003e// runtime/orchestrator.ts\ntype Step = {\n  capability: string;\n  input: Record\u0026#x3C;string, unknown\u003e;\n  verify?: (output: unknown) =\u003e boolean;\n};\n\ntype ExecutionContext = {\n  traceId: string;\n  budgetMs: number;\n  remainingRetries: number;\n  state: Map\u0026#x3C;string, unknown\u003e;\n};\n\nasync function runPlan(steps: Step[], ctx: ExecutionContext) {\n  for (const step of steps) {\n    const candidates = resolveTools(step.capability as any);\n    if (candidates.length === 0) {\n      throw new Error(`No tool for capability: ${step.capability}`);\n    }\n\n    let lastError: unknown;\n\n    for (const tool of candidates) {\n      try {\n        const output = await invokeTool(tool.name, step.input, {\n          timeoutMs: tool.timeoutMs,\n          traceId: ctx.traceId,\n        });\n\n        const verified = step.verify ? step.verify(output) : true;\n        if (!verified) {\n          throw new Error(`Verification failed for ${step.capability}`);\n        }\n\n        ctx.state.set(step.capability, output);\n        lastError = undefined;\n        break;\n      } catch (error) {\n        lastError = error;\n        if (tool.sideEffect) {\n          await captureCheckpoint(ctx.traceId, step, error);\n        }\n      }\n    }\n\n    if (lastError) {\n      throw lastError;\n    }\n  }\n\n  return Object.fromEntries(ctx.state.entries());\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 구조의 장점은 분명합니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eplanner가 만든 단계별 계획을 \u003cstrong\u003e검증 가능한 실행 단위\u003c/strong\u003e로 바꿉니다.\u003c/li\u003e\n\u003cli\u003e툴 실패를 모델 품질 문제와 분리해 디버깅할 수 있습니다.\u003c/li\u003e\n\u003cli\u003e재시도와 checkpoint를 런타임이 책임지므로, 모델 프롬프트가 지저분해지지 않습니다.\u003c/li\u003e\n\u003cli\u003e같은 작업에서도 빠른 모델/저렴한 모델/강한 모델을 섞는 \u003cstrong\u003erouting 전략\u003c/strong\u003e을 붙이기 쉽습니다.\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch2\u003e5. 실무에서 진짜 중요한 것은 \"정답률\"이 아니라 \"복구 가능성\"이다\u003c/h2\u003e\n\u003cp\u003e에이전트 시스템을 운영하다 보면 100% 성공보다 더 중요한 지표가 있습니다.\u003c/p\u003e\n\u003cp\u003e바로 \u003cstrong\u003eRecoverability(복구 가능성)\u003c/strong\u003e 입니다.\u003c/p\u003e\n\u003cp\u003e왜냐하면 현실의 툴 환경은 항상 흔들리기 때문입니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eAPI 레이트리밋 발생\u003c/li\u003e\n\u003cli\u003e브라우저 attach 실패\u003c/li\u003e\n\u003cli\u003e로컬 파일 lock 충돌\u003c/li\u003e\n\u003cli\u003eGit push 거절\u003c/li\u003e\n\u003cli\u003e외부 페이지 구조 변경\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이런 상황에서 좋은 런타임은 두 가지를 해냅니다.\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e실패를 빨리 표면화한다.\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e다시 시작할 때 어디서부터 이어갈지 안다.\u003c/strong\u003e\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003e이 관점에서 체크해야 할 운영 지표는 다음과 같습니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e모델 응답 품질 점수\u003c/li\u003e\n\u003cli\u003e툴별 성공률 / 평균 지연시간\u003c/li\u003e\n\u003cli\u003e플랜 단계별 재시도 횟수\u003c/li\u003e\n\u003cli\u003eside effect 작업 후 검증 성공률\u003c/li\u003e\n\u003cli\u003e세션 재개(resume) 성공률\u003c/li\u003e\n\u003cli\u003e작업당 총 비용과 wall-clock latency\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eLLM 애플리케이션이 제품이 되는 순간, 품질의 중심은 prompt engineering에서 \u003cstrong\u003eruntime observability\u003c/strong\u003e로 이동합니다.\u003c/p\u003e\n\u003ch2\u003e6. 한국어 실무 팀에 특히 중요한 설계 포인트\u003c/h2\u003e\n\u003cp\u003e국내 팀은 글로벌 트렌드를 빠르게 흡수하지만, 실제 배포 단계에서 아래 문제를 자주 겪습니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eSaaS 의존도가 높아지며 데이터 반출 이슈 발생\u003c/li\u003e\n\u003cli\u003eUI 자동화는 되는데 운영 감사 로그가 약함\u003c/li\u003e\n\u003cli\u003e파일/브라우저/사내 시스템을 묶는 순간 권한 모델이 무너짐\u003c/li\u003e\n\u003cli\u003e데모는 잘 되는데 장애 복구 절차가 없음\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e그래서 한국어 실무 팀이라면 다음 우선순위를 권합니다.\u003c/p\u003e\n\u003ch3\u003e우선순위 1. 로컬/프라이빗 실행 경로 확보\u003c/h3\u003e\n\u003cp\u003e민감 데이터가 들어가는 작업은 최소한 대체 가능한 로컬 실행 경로가 있어야 합니다.\u003c/p\u003e\n\u003ch3\u003e우선순위 2. 관측성 먼저\u003c/h3\u003e\n\u003cp\u003e트레이스 ID, 단계별 로그, 툴 응답 원문, 검증 결과를 남기지 않으면 운영이 불가능합니다.\u003c/p\u003e\n\u003ch3\u003e우선순위 3. 승인 경계 명확화\u003c/h3\u003e\n\u003cp\u003e읽기와 쓰기, 내부 작업과 외부 전송, 제안과 실행을 명확히 분리해야 합니다.\u003c/p\u003e\n\u003ch3\u003e우선순위 4. 브라우저 자동화는 \"행동\"이 아니라 \"상태 전이\"로 기록\u003c/h3\u003e\n\u003cp\u003e\"버튼 클릭\"보다 \"초안 생성됨\", \"게시 완료됨\", \"푸시 검증됨\" 같은 상태 중심 로그가 더 중요합니다.\u003c/p\u003e\n\u003ch2\u003e7. 지금 만들어야 할 팀의 공통 런타임 체크리스트\u003c/h2\u003e\n\u003cp\u003e아래 항목이 없다면, 모델 업그레이드보다 런타임 정비가 먼저입니다.\u003c/p\u003e\n\u003cul class=\"contains-task-list\"\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e capability registry가 있는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e planner와 executor가 분리되어 있는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e side effect 작업마다 post-action verification이 있는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e retry가 무한 반복이 아니라 정책화되어 있는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e trace/log/checkpoint가 남는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e 같은 작업을 빠른 모델과 강한 모델로 라우팅할 수 있는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e 브라우저/파일/셸 권한 경계가 분리되어 있는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e 실패 시 사람에게 넘기는 escalation 경로가 있는가?\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch2\u003e마치며\u003c/h2\u003e\n\u003cp\u003e2026년의 에이전트 시스템은 더 이상 \"좋은 모델 하나\"로 설명되지 않습니다. MCP가 표준이 되고, 브라우저와 로컬 환경이 실행 표면으로 편입되면서, 병목은 점점 더 런타임으로 이동하고 있습니다.\u003c/p\u003e\n\u003cp\u003e정리하면 이렇습니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e모델은 점점 더 범용화된다.\u003c/li\u003e\n\u003cli\u003e도구 연결은 MCP 같은 표준으로 쉬워진다.\u003c/li\u003e\n\u003cli\u003e하지만 실행 안정성, 검증, 재시도, 관측성, 권한 제어는 여전히 팀이 직접 설계해야 한다.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이제 경쟁력은 \"누가 더 똑똑한 모델을 썼나\"가 아니라, \u003cstrong\u003e누가 더 덜 깨지고 더 예측 가능하게 실행하는 런타임을 만들었나\u003c/strong\u003e 에서 갈립니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch3\u003e자가 검토 및 개선 사항\u003c/h3\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e전문성 강화\u003c/strong\u003e: 단순 트렌드 요약이 아니라 MCP, 브라우저 제어, 런타임 오케스트레이션을 하나의 시스템 관점으로 연결했습니다.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e실무성 보강\u003c/strong\u003e: 추상적인 비전 대신 capability registry, orchestrator, verification, checkpoint 같은 구현 포인트를 코드와 함께 제시했습니다.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e가독성 개선\u003c/strong\u003e: \"왜 중요한가 → 어디서 깨지는가 → 어떻게 설계할 것인가\" 순서로 재구성해 읽는 흐름을 정리했습니다.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e과장 제거\u003c/strong\u003e: 특정 도구를 과도하게 홍보하지 않고, 모델 상향 평준화 이후의 구조적 병목이라는 관찰에 집중했습니다.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e독자 적합성 조정\u003c/strong\u003e: 주인님의 관심사인 자동화, 브라우저 실행, 로컬 실행, 업무 효율화 맥락과 맞도록 실무 팀 관점의 제언을 강화했습니다.\u003c/li\u003e\n\u003c/ol\u003e"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"text-sm text-white/60\",\"children\":\"Sat Apr 04 2026 00:00:00 GMT+0000 (Coordinated Universal Time)\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"MCP 시대의 병목은 모델이 아니라 실행 런타임이다\"}],[\"$\",\"p\",null,{\"className\":\"mt-4 text-base text-white/80 md:text-lg\",\"children\":\"2026년의 에이전트 시스템은 더 이상 모델 하나로 승부하지 않습니다. MCP, 브라우저 제어, 로컬 실행, 워크플로 오케스트레이션이 결합되면서 진짜 경쟁력은 '얼마나 잘 실행시키는가'로 이동했습니다.\"}],[\"$\",\"div\",null,{\"className\":\"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300\",\"dangerouslySetInnerHTML\":{\"__html\":\"$10\"}}]]}]}]\n8:null\n"])</script><script>self.__next_f.push([1,"c:[[\"$\",\"title\",\"0\",{\"children\":\"MCP 시대의 병목은 모델이 아니라 실행 런타임이다 | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"2026년의 에이전트 시스템은 더 이상 모델 하나로 승부하지 않습니다. MCP, 브라우저 제어, 로컬 실행, 워크플로 오케스트레이션이 결합되면서 진짜 경쟁력은 '얼마나 잘 실행시키는가'로 이동했습니다.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-04-04-proactive-update/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"MCP 시대의 병목은 모델이 아니라 실행 런타임이다\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"2026년의 에이전트 시스템은 더 이상 모델 하나로 승부하지 않습니다. MCP, 브라우저 제어, 로컬 실행, 워크플로 오케스트레이션이 결합되면서 진짜 경쟁력은 '얼마나 잘 실행시키는가'로 이동했습니다.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-04-04-proactive-update/\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"MCP 시대의 병목은 모델이 아니라 실행 런타임이다\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"2026년의 에이전트 시스템은 더 이상 모델 하나로 승부하지 않습니다. MCP, 브라우저 제어, 로컬 실행, 워크플로 오케스트레이션이 결합되면서 진짜 경쟁력은 '얼마나 잘 실행시키는가'로 이동했습니다.\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}],[\"$\",\"$L11\",\"13\",{}]]\n"])</script></body></html>

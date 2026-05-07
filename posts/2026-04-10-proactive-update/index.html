@@ -1,0 +1,371 @@
+<!DOCTYPE html><!--ebRscDf4b2aPUW_Etl_1P--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/893724321ed0589d.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/329e63eb984ada35.js" async=""></script><meta name="next-size-adjust" content=""/><title>Agent SLO: AI Agent를 &#x27;신뢰할 수 있는 서비스&#x27;로 만드는 런타임 관측성 프레임워크 | Mato Po Tech Blog</title><meta name="description" content="AI Agent를 단순히 &#x27;연결&#x27;하는 시대는 끝났다. 이제 질문은 &#x27;얼마나 신뢰할 수 있는 결과를 내는가&#x27;다. 이 글은 Task Success Rate, Time-to-First-Useful-Action, Execution Journal 같은 Agent SLO를 정의하고, 프로덕션 환경에서 이를 지속적으로 측정·개선하는 런타임 관측성 프레임워크를 TypeScript 예시와 함께 정리한다."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-04-10-proactive-update/"/><meta property="og:title" content="Agent SLO: AI Agent를 &#x27;신뢰할 수 있는 서비스&#x27;로 만드는 런타임 관측성 프레임워크"/><meta property="og:description" content="AI Agent를 단순히 &#x27;연결&#x27;하는 시대는 끝났다. 이제 질문은 &#x27;얼마나 신뢰할 수 있는 결과를 내는가&#x27;다. 이 글은 Task Success Rate, Time-to-First-Useful-Action, Execution Journal 같은 Agent SLO를 정의하고, 프로덕션 환경에서 이를 지속적으로 측정·개선하는 런타임 관측성 프레임워크를 TypeScript 예시와 함께 정리한다."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-04-10-proactive-update/"/><meta property="og:image" content="https://po-mato.github.io/og.png"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Agent SLO: AI Agent를 &#x27;신뢰할 수 있는 서비스&#x27;로 만드는 런타임 관측성 프레임워크"/><meta name="twitter:description" content="AI Agent를 단순히 &#x27;연결&#x27;하는 시대는 끝났다. 이제 질문은 &#x27;얼마나 신뢰할 수 있는 결과를 내는가&#x27;다. 이 글은 Task Success Rate, Time-to-First-Useful-Action, Execution Journal 같은 Agent SLO를 정의하고, 프로덕션 환경에서 이를 지속적으로 측정·개선하는 런타임 관측성 프레임워크를 TypeScript 예시와 함께 정리한다."/><meta name="twitter:image" content="https://po-mato.github.io/og.png"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><div class="text-sm text-white/60">Fri Apr 10 2026 00:00:00 GMT+0000 (Coordinated Universal Time)</div><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">Agent SLO: AI Agent를 &#x27;신뢰할 수 있는 서비스&#x27;로 만드는 런타임 관측성 프레임워크</h1><p class="mt-4 text-base text-white/80 md:text-lg">AI Agent를 단순히 &#x27;연결&#x27;하는 시대는 끝났다. 이제 질문은 &#x27;얼마나 신뢰할 수 있는 결과를 내는가&#x27;다. 이 글은 Task Success Rate, Time-to-First-Useful-Action, Execution Journal 같은 Agent SLO를 정의하고, 프로덕션 환경에서 이를 지속적으로 측정·개선하는 런타임 관측성 프레임워크를 TypeScript 예시와 함께 정리한다.</p><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><h2>서론: 연결을 넘어 신뢰로</h2>
+<p>MCP와 A2A 같은 프로토콜이 Agent 간 연결 표준을 만들어가고 있습니다. 하지만 연결이 가능해졌다고 해서 Agent가 <strong>신뢰할 수 있는 서비스</strong>가 된 것은 아닙니다. 마치 마이크로서비스가 HTTP로 연결되지만 SLO 없이는 운영 불가능한 것과 같은 문제입니다.</p>
+<p>실무에서 Agent를 운영할 때 가장 먼저 나오는 질문은 이것입니다.</p>
+<blockquote>
+<p>"이 Agent가 어떤 조건에서, 어떤 비율로, 올바른 결과를 내는가?"</p>
+</blockquote>
+<p>이 질문에 답하려면 전통적인 API 서비스와 같은 관측성 체계가 필요합니다. 바로 <strong>Agent SLO</strong>와 <strong>Execution Journal</strong>입니다.</p>
+<h2>전통적 SLO와 Agent SLO의 근본적 차이</h2>
+<p>전통적 SLO는 명확합니다. API 서비스라면:</p>
+<ul>
+<li><strong>Availability</strong>: 99.9% uptime</li>
+<li><strong>Latency</strong>: p99 &#x3C; 200ms</li>
+<li><strong>Error Rate</strong>: &#x3C; 0.1%</li>
+</ul>
+<p>모두 측정 가능하고, 자동화也比较 쉽습니다.</p>
+<p>하지만 Agent는 다릅니다. 같은 입력에 대해서도 모델이 매번 다른 출력을 내릴 수 있고, "성공"의 정의 자체가 모호합니다. 그래서 Agent SLO는 <strong>행위적 지표(behavioral metrics)</strong> 와 <strong>산출물 지표(outcome metrics)</strong> 두 축으로 나뉩니다.</p>
+<h3>Agent SLO의 다층 구조</h3>
+<pre><code>Agent SLO
+├── Availability Layer
+│   ├── Agent Uptime: Agent가 응답 가능한 시간 비율
+│   ├── Tool Availability: 설정된 도구 중 사용 가능한 비율
+│   └── Context Freshness: 세션 컨텍스트가 유효한 비율
+│
+├── Latency Layer
+│   ├── Time to First Token: 첫 응답까지 시간
+│   ├── Time to First Tool Call: 첫 도구 호출까지 시간
+│   ├── Time to First Useful Action: 실질적 행동 첫 개시 시간
+│   └── Total Execution Time: 작업 완수 총 시간
+│
+├── Quality Layer
+│   ├── Task Completion Rate: 완료로 인정된 작업 비율
+│   ├── Output Validity Rate: 출력 스키마/형식 유효 비율
+│   ├── Self-Correction Rate: 자가 수정 빈도
+│   └── Escalation Rate: 사람에게エスカレーション 비율
+│
+└── Reliability Layer
+    ├── Idempotency: 같은 요청 반복 시 일관된 결과 비율
+    ├── Rollback Feasibility: 실패 시 이전 상태 복원 가능 비율
+    └── Context Preservation Rate: 긴 작업 중 컨텍스트 유지 비율
+</code></pre>
+<p>핵심은 <strong>Quality Layer</strong>입니다. 단순히 "응답이 왔다"가 아니라 "의미 있는 결과를 냈다"를 측정해야 합니다.</p>
+<h2>Task Completion Rate: 성공의 정의를 내리는 기술</h2>
+<p>Task Completion Rate(TCR)는 Agent SLO의 핵심입니다. 정의하기 어렵지만, 측정 가능해야 합니다.</p>
+<h3>TCR 측정 프레임워크</h3>
+<p>TCR을 측정하려면 먼저 <strong>task taxonomy</strong>를 만들어야 합니다.</p>
+<pre><code class="language-ts">enum TaskType {
+  INFORMATIONAL = "informational",    // 질문 응답, 검색
+  TRANSACTIONAL = "transactional",     // 예약, 주문, 알림
+  CREATIVE = "creative",              // 글쓰기, 코드 생성
+  ANALYTICAL = "analytical",           // 분석, 비교, 추론
+  ORCHESTRATION = "orchestration",     // 다단계 워크플로우
+}
+
+enum CompletionGrade {
+  FULL = "full",           // 완벽히 완료, 추가 조치 불필요
+  PARTIAL = "partial",     // 완료는 됐으나 사소한 보완 필요
+  FAILED = "failed",       // 명백한 실패
+  HUNG = "hung",           // 시간 초과, 응답 없음
+  ESCALATED = "escalated", // 사람에게 전달
+}
+
+type TaskRecord = {
+  taskId: string;
+  taskType: TaskType;
+  input: Record&#x3C;string, unknown>;
+  startedAt: number;
+  completedAt?: number;
+  grade: CompletionGrade;
+  retryCount: number;
+  escalationReason?: string;
+  executionJournal: ExecutionEntry[];
+};
+
+function calculateTCR(records: TaskRecord[]): {
+  overall: number;
+  byType: Record&#x3C;TaskType, number>;
+  byGrade: Record&#x3C;CompletionGrade, number>;
+} {
+  const total = records.length;
+
+  const gradeCounts = records.reduce((acc, r) => {
+    acc[r.grade] = (acc[r.grade] || 0) + 1;
+    return acc;
+  }, {} as Record&#x3C;CompletionGrade, number>);
+
+  const byType = Object.values(TaskType).reduce((acc, type) => {
+    const typeRecords = records.filter((r) => r.taskType === type);
+    const completed = typeRecords.filter(
+      (r) => r.grade === CompletionGrade.FULL || r.grade === CompletionGrade.PARTIAL
+    );
+    acc[type] = typeRecords.length > 0 ? completed.length / typeRecords.length : 0;
+    return acc;
+  }, {} as Record&#x3C;TaskType, number>);
+
+  const completed = records.filter(
+    (r) => r.grade === CompletionGrade.FULL || r.grade === CompletionGrade.PARTIAL
+  );
+
+  return {
+    overall: total > 0 ? completed.length / total : 0,
+    byType,
+    byGrade: gradeCounts,
+  };
+}
+</code></pre>
+<p>이 구조의 핵심은 <strong>task type별로 SLO 기준이 다르다</strong>는 점입니다. INFORMATIONAL은 FULL completion이 높아야 하고, ANALYTICAL은 PARTIAL도容認할 수 있습니다. 모든 태스크에 하나의 성공률을 적용하면 의미 없는 숫자가 됩니다.</p>
+<h2>Execution Journal: Agent의飞行データレコーダー</h2>
+<p>비행기의 black box가 사고 원인을 추적하듯, Agent에게는 <strong>Execution Journal</strong>이 필요합니다. LLM의 reasoning은 블랙박스이지만, <strong>tool calls, decisions, state transitions은 기록 가능</strong>합니다.</p>
+<h3>Execution Journal의 구조</h3>
+<pre><code class="language-ts">type ExecutionEntry = {
+  timestamp: number;
+  sequence: number;
+  phase: "planning" | "execution" | "verification" | "escalation";
+  action: string;
+  input: Record&#x3C;string, unknown>;
+  output?: unknown;
+  durationMs?: number;
+  error?: string;
+  contextSnapshot?: {
+    memorySize: number;
+    toolCount: number;
+    conversationTurns: number;
+  };
+};
+
+type ExecutionJournal = {
+  runId: string;
+  agentId: string;
+  taskType: TaskType;
+  startedAt: number;
+  entries: ExecutionEntry[];
+  finalGrade: CompletionGrade;
+  ttl: number; // 레tainment 기간
+};
+
+class ExecutionJournalStore {
+  private db: /* durable storage */ unknown;
+
+  async append(runId: string, entry: Omit&#x3C;ExecutionEntry, "sequence">): Promise&#x3C;void> {
+    const fullEntry: ExecutionEntry = {
+      ...entry,
+      sequence: await this.getNextSequence(runId),
+    };
+    await this.db.append(runId, fullEntry);
+  }
+
+  async getJournal(runId: string): Promise&#x3C;ExecutionJournal> {
+    return await this.db.read(runId);
+  }
+
+  async search(opts: {
+    agentId?: string;
+    taskType?: TaskType;
+    grade?: CompletionGrade;
+    from?: number;
+    to?: number;
+    limit?: number;
+  }): Promise&#x3C;ExecutionJournal[]> {
+    return await this.db.query(opts);
+  }
+}
+</code></pre>
+<p>Execution Journal이 있으면 무엇이 가능해지냐면, <strong>실패 건만 별도 추출</strong>하여 패턴을 분석할 수 있습니다.</p>
+<pre><code class="language-ts">async function diagnoseFailurePatterns(agentId: string, lookbackDays: number) {
+  const from = Date.now() - lookbackDays * 24 * 60 * 60 * 1000;
+  const journals = await journalStore.search({
+    agentId,
+    from,
+    limit: 1000,
+  });
+
+  const failed = journals.filter(
+    (j) => j.finalGrade === CompletionGrade.FAILED || j.finalGrade === CompletionGrade.HUNG
+  );
+
+  // Phase별 실패 빈도 분석
+  const phaseFailureCounts = failed.flatMap((j) =>
+    j.entries.filter((e) => e.error).map((e) => e.phase)
+  ).reduce((acc, phase) => {
+    acc[phase] = (acc[phase] || 0) + 1;
+    return acc;
+  }, {} as Record&#x3C;string, number>);
+
+  // Escalation 사유 분석
+  const escalationReasons = failed
+    .filter((j) => j.finalGrade === CompletionGrade.ESCALATED)
+    .flatMap((j) =>
+      j.entries
+        .filter((e) => e.action === "escalate")
+        .map((e) => e.input.reason as string)
+    );
+
+  return { phaseFailureCounts, escalationReasons, totalFailed: failed.length };
+}
+</code></pre>
+<p>이 결과를 보면 Agent가 어느 단계에서 주로 실패하는지, 어떤 사유로 사람에게 エスカレーション하는지가 데이터로 드러납니다.</p>
+<h2>Time-to-First-Useful-Action: 지연의 진짜 원인 찾기</h2>
+<p>기존 Latency SLO의盲点是 "첫 토큰"은 빠르지만 <strong>실질적 행동</strong>은 느린 경우입니다. 모델이思索만 하고 도구를 호출하지 않으면 사용자는 답을 받지 못합니다.</p>
+<p>그래서 필요한 지표가 <strong>Time-to-First-Useful-Action (TTFUA)</strong> 입니다.</p>
+<pre><code class="language-ts">type ActionUtilityScore = {
+  action: string;
+  utilityScore: number; // 0.0 ~ 1.0
+  reasoning: string;
+};
+
+async function measureTTFUA(runId: string): Promise&#x3C;{
+  ttft: number;           // Time to First Token (ms)
+  ttfua: number;           // Time to First Useful Action (ms)
+  uselessActions: number;  // utilityScore &#x3C; 0.3인 행동 수
+  effectiveActions: number;
+} | null> {
+  const journal = await journalStore.getJournal(runId);
+  if (!journal) return null;
+
+  const planningEntry = journal.entries.find((e) => e.phase === "planning");
+  const firstExecutionEntry = journal.entries.find(
+    (e) => e.phase === "execution" &#x26;&#x26; e.action !== "think"
+  );
+
+  if (!planningEntry || !firstExecutionEntry) return null;
+
+  const utilityScores: ActionUtilityScore[] = await scoreActionUtility(
+    journal.entries.filter((e) => e.phase === "execution")
+  );
+
+  const usefulActions = utilityScores.filter((a) => a.utilityScore >= 0.3);
+
+  return {
+    ttft: firstExecutionEntry.timestamp - journal.startedAt,
+    ttfua: usefulActions[0]
+      ? utilityScores[0].timestamp - journal.startedAt
+      : -1,
+    uselessActions: utilityScores.filter((a) => a.utilityScore &#x3C; 0.3).length,
+    effectiveActions: usefulActions.length,
+  };
+}
+</code></pre>
+<p>TTFUA가 TTFT보다 훨씬 크면, Agent가思索을 오래하거나 잘못된 도구를 먼저 호출하는 것입니다. 이 데이터로 <strong>planning 프롬프트를 튜닝</strong>하거나 <strong>도구 우선순위를 조정</strong>할 근거가 됩니다.</p>
+<h2>Agent SLO Dashboard: 무엇을监控해야 하는가</h2>
+<p>단순한 dashboard가 아니라 <strong>의사결정에 즉시 연결되는 dashboard</strong>를 만들어야 합니다.</p>
+<pre><code>┌─────────────────────────────────────────────────────────┐
+│  Agent SLO Dashboard                          [Refresh]  │
+├──────────────────┬──────────────────┬───────────────────┤
+│ Task Completion   │ TTFUA (p50/p99) │ Escalation Rate   │
+│ TCR: 87.3% [⚠️]   │ 1.2s / 8.4s [✅] │ 4.1% [✅]          │
+├──────────────────┴──────────────────┴───────────────────┤
+│  TCR by Task Type                                       │
+│  [CREATIVE ████████████░░░░ 72%] [TRANSACTIONAL ███████]│
+│  [INFORMATIONAL ██████████████ 96%] [ORCHESTRATION ███] │
+├─────────────────────────────────────────────────────────┤
+│  Failure Phase Distribution (last 7 days)               │
+│  planning  ████████████████  52%                         │
+│  execution ████████  28%                                 │
+│  verification ████  14%                                  │
+│  escalation ██  6%                                       │
+└─────────────────────────────────────────────────────────┘
+</code></pre>
+<p>이 dashboard에서 <strong>가장 즉각적 행동으로 연결되는 지표</strong>는 TCR by Task Type입니다. CREATIVE가 72%라면 creative 태스크의 프롬프트를 검토해야 합니다. planning phase 실패가 52%라면 planning capability를 높여야 합니다.</p>
+<h2>Alerting: SLO Breach에 대한 반응 설계</h2>
+<p>SLO는 측정이 목적이 아니라 <strong>행동 트리거</strong>가 목적입니다.</p>
+<pre><code class="language-ts">type SLOConfig = {
+  taskCompletionRate: { target: number; alertBelow: number; windowDays: number };
+  ttlua: { target: number; alertAbove: number; percentile: "p50" | "p99" };
+  escalationRate: { target: number; alertAbove: number; windowDays: number };
+};
+
+async function checkSLOBreaches(config: SLOConfig, agentId: string): Promise&#x3C;void> {
+  const now = Date.now();
+  const windowMs = config.taskCompletionRate.windowDays * 24 * 60 * 60 * 1000;
+
+  const journals = await journalStore.search({
+    agentId,
+    from: now - windowMs,
+  });
+
+  const tcr = calculateTCR(journals);
+
+  // TCR breach
+  if (tcr.overall &#x3C; config.taskCompletionRate.alertBelow) {
+    await sendAlert({
+      severity: "warning",
+      agentId,
+      metric: "Task Completion Rate",
+      value: tcr.overall,
+      threshold: config.taskCompletionRate.alertBelow,
+      recommendation: "Check planning phase failures and creative task prompts",
+    });
+  }
+
+  // TCR by type deep dive
+  for (const [taskType, rate] of Object.entries(tcr.byType)) {
+    if (rate &#x3C; config.taskCompletionRate.alertBelow) {
+      await sendAlert({
+        severity: "critical",
+        agentId,
+        metric: `Task Completion Rate (${taskType})`,
+        value: rate,
+        threshold: config.taskCompletionRate.alertBelow,
+        recommendation: `Investigate ${taskType} task execution journal entries`,
+      });
+    }
+  }
+}
+</code></pre>
+<p>중요한 것은 <strong>alert에 recommendation이 포함</strong>되어야 한다는 점입니다. "TCR 72%"라는 숫자보다 "CREATIVE 태스크 TCR이 72%입니다. planning phase 실패 패턴을 확인하세요"가 훨씬 실행 가능합니다.</p>
+<h2>Execution Journal 기반 Self-Improvement</h2>
+<p>SLO가 측정이라면, <strong>Execution Journal 기반 self-improvement</strong>는 학습입니다.</p>
+<pre><code class="language-ts">async function selfImprove(agentId: string): Promise&#x3C;{
+  improvementsApplied: string[];
+  insights: string[];
+}> {
+  const patterns = await diagnoseFailurePatterns(agentId, 7);
+  const insights: string[] = [];
+  const improvementsApplied: string[] = [];
+
+  // 패턴 1: planning phase 실패가 전체의 50% 이상
+  if ((patterns.phaseFailureCounts["planning"] ?? 0) / patterns.totalFailed > 0.5) {
+    insights.push("Planning phase 실패가 과반입니다. planner 모델 전환 또는 프롬프트 강화가 필요합니다.");
+    improvementsApplied.push("planner_prompt_v2");
+  }
+
+  // 패턴 2: 특정 escalation 사유가 반복
+  const topEscalation = mostFrequent(patterns.escalationReasons);
+  if (topEscalation &#x26;&#x26; topEscalation.count > 5) {
+    insights.push(`'${topEscalation.value}' 사유로 ${topEscalation.count}회 escalation 발생. 이 케이스를 처리 가능하도록 tool 또는 policy를 확장합니다.`);
+    improvementsApplied.push(`escalation_handler_${sanitize(topEscalation.value)}`);
+  }
+
+  return { improvementsApplied, insights };
+}
+</code></pre>
+<p>이것이 전통적 APM(APM: Application Performance Monitoring)과 Agent Observability의根本적 차이입니다. APM은"무엇이 잘못됐는지"만 말하지만, Agent Observability는"왜 잘못됐는지"를 Execution Journal에서 추적하고"다음엔 어떻게 개선할지"까지 제안합니다.</p>
+<h2>practical한 Agent SLO 도입 순서</h2>
+<h3>1단계: Execution Journal 먼저 구축 (Day 1)</h3>
+<p>SLO 계산보다 먼저 Agent의 행동 log를 남기는 것이 가장 중요합니다. journal 없이는 SLO 측정도 불가능합니다.</p>
+<h3>2단계: Task Taxonomy 정의 (Week 1)</h3>
+<p>작업 유형을 정의하고 각각의 성공 기준을 문서화합니다. 이 기준이 없으면 TCR 계산이 의미 없습니다.</p>
+<h3>3단계: 기본 SLO 계산 + Dashboard (Week 2)</h3>
+<p>TCR, TTFT, escalation rate를 계산하고 dashboard를 구축합니다. Dashboard가 없는 SLO는 잊혀집니다.</p>
+<h3>4단계: Alerting 규칙 설정 (Week 3)</h3>
+<p>SLO breach 시 즉시 담당자에게通知되는 체계를 만듭니다. Alert fatigue를 방지하려면閾値を 신중하게 설정해야 합니다.</p>
+<h3>5단계: Self-Improvement Automation (Month 2)</h3>
+<p>Execution Journal 기반 자동 분석을 돌리고, 주기적으로 개선 아이디어를生成하는 봇을 운영합니다.</p>
+<h2>팀 체크리스트</h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> Execution Journal이 모든 Agent 실행 시 기록되는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> Task taxonomy가 정의되어 있는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> Task Completion Rate가 task type별로 측정되는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> Time-to-First-Useful-Action이 TTFT와 함께 추적되는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> Escalation 사유가 분류되고 빈도 분석되는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> SLO breach 시 담당자에게 즉각通知되는 alerting이 있는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> 주기적으로 self-improvement 분석이 실행되는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> SLO trend가 개선 방향으로 가고 있는지 확인하는 회기가 있는가?</li>
+</ul>
+<h2>결론</h2>
+<p>MCP와 A2A가 Agent의<strong>연결</strong>을 표준화했다면, Agent SLO와 Execution Journal은 Agent의<strong>신뢰성</strong>을 표준화하는 작업입니다. 이 둘은 별개가 아니라一套입니다.</p>
+<ul>
+<li>연결 표준: Agent가 서로通信할 수 있는가</li>
+<li>SLO + Journal: Agent가 믿을 수 있는 결과를 내는가</li>
+</ul>
+<p>이 두 축이 갖춰져야 "AI Agent를 프로덕션 환경에서 운영한다"는 문장이 실용적인 의미를 갖습니다. 연결이 잘 되는 세상에서 남는 경쟁력은 결국 <strong>얼마나 일관되고 예측 가능한 결과물을 내는가</strong>입니다.</p>
+<p>SLO 도입은 기술적 선택이 아니라 조직적决心입니다. 숫자로 서비스를 운영하는 문화가 있는 팀이라면 Agent SLO도 반드시 구현할 수 있습니다.</p>
+<hr>
+<h3>자가 검토 및 개선 사항</h3>
+<ol>
+<li><strong>주제 차별화</strong>: 최근 Planning/Workflow Engine 글과 겹치지 않도록, 이번 글은"측정과 관측"에 집중했습니다.Planning이 설계라면, SLO는 운영이며, 이 둘은 자연스러운 연결고리입니다.</li>
+<li><strong>구체성 강화</strong>: 추상적 개념이 아니라 <code>TaskRecord</code>, <code>TCR</code>, <code>TTFUA</code>, <code>ExecutionJournal</code>까지 TypeScript 타입으로 정의하여 실무 적용이 가능하도록 했습니다.</li>
+<li><strong>실용성 강조</strong>: Dashboard, Alerting, Self-Improvement 순서로 도입 전략을 배치하여"여기서 무엇을 해야 하는가"가 명확하도록 했습니다.</li>
+<li><strong>한글 자연스러움</strong>: 기술 용어를 자연스럽게 섞되, 설명은 한국어 위주로 작성하여 주인님의 선호도에 맞췄습니다.</li>
+<li><strong>네이밍 일관성</strong>: TCR, TTFUA 등 축약어를 도입부에 미리 정의하고 본문에서 일관되게 사용했습니다.</li>
+</ol></div></article></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/893724321ed0589d.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"ebRscDf4b2aPUW-Etl-1P\",\"c\":[\"\",\"posts\",\"2026-04-10-proactive-update\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-04-10-proactive-update\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/893724321ed0589d.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/329e63eb984ada35.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"11:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n10:T4f30,"])</script><script>self.__next_f.push([1,"\u003ch2\u003e서론: 연결을 넘어 신뢰로\u003c/h2\u003e\n\u003cp\u003eMCP와 A2A 같은 프로토콜이 Agent 간 연결 표준을 만들어가고 있습니다. 하지만 연결이 가능해졌다고 해서 Agent가 \u003cstrong\u003e신뢰할 수 있는 서비스\u003c/strong\u003e가 된 것은 아닙니다. 마치 마이크로서비스가 HTTP로 연결되지만 SLO 없이는 운영 불가능한 것과 같은 문제입니다.\u003c/p\u003e\n\u003cp\u003e실무에서 Agent를 운영할 때 가장 먼저 나오는 질문은 이것입니다.\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\"이 Agent가 어떤 조건에서, 어떤 비율로, 올바른 결과를 내는가?\"\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003e이 질문에 답하려면 전통적인 API 서비스와 같은 관측성 체계가 필요합니다. 바로 \u003cstrong\u003eAgent SLO\u003c/strong\u003e와 \u003cstrong\u003eExecution Journal\u003c/strong\u003e입니다.\u003c/p\u003e\n\u003ch2\u003e전통적 SLO와 Agent SLO의 근본적 차이\u003c/h2\u003e\n\u003cp\u003e전통적 SLO는 명확합니다. API 서비스라면:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eAvailability\u003c/strong\u003e: 99.9% uptime\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eLatency\u003c/strong\u003e: p99 \u0026#x3C; 200ms\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eError Rate\u003c/strong\u003e: \u0026#x3C; 0.1%\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e모두 측정 가능하고, 자동화也比较 쉽습니다.\u003c/p\u003e\n\u003cp\u003e하지만 Agent는 다릅니다. 같은 입력에 대해서도 모델이 매번 다른 출력을 내릴 수 있고, \"성공\"의 정의 자체가 모호합니다. 그래서 Agent SLO는 \u003cstrong\u003e행위적 지표(behavioral metrics)\u003c/strong\u003e 와 \u003cstrong\u003e산출물 지표(outcome metrics)\u003c/strong\u003e 두 축으로 나뉩니다.\u003c/p\u003e\n\u003ch3\u003eAgent SLO의 다층 구조\u003c/h3\u003e\n\u003cpre\u003e\u003ccode\u003eAgent SLO\n├── Availability Layer\n│   ├── Agent Uptime: Agent가 응답 가능한 시간 비율\n│   ├── Tool Availability: 설정된 도구 중 사용 가능한 비율\n│   └── Context Freshness: 세션 컨텍스트가 유효한 비율\n│\n├── Latency Layer\n│   ├── Time to First Token: 첫 응답까지 시간\n│   ├── Time to First Tool Call: 첫 도구 호출까지 시간\n│   ├── Time to First Useful Action: 실질적 행동 첫 개시 시간\n│   └── Total Execution Time: 작업 완수 총 시간\n│\n├── Quality Layer\n│   ├── Task Completion Rate: 완료로 인정된 작업 비율\n│   ├── Output Validity Rate: 출력 스키마/형식 유효 비율\n│   ├── Self-Correction Rate: 자가 수정 빈도\n│   └── Escalation Rate: 사람에게エスカレーション 비율\n│\n└── Reliability Layer\n    ├── Idempotency: 같은 요청 반복 시 일관된 결과 비율\n    ├── Rollback Feasibility: 실패 시 이전 상태 복원 가능 비율\n    └── Context Preservation Rate: 긴 작업 중 컨텍스트 유지 비율\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e핵심은 \u003cstrong\u003eQuality Layer\u003c/strong\u003e입니다. 단순히 \"응답이 왔다\"가 아니라 \"의미 있는 결과를 냈다\"를 측정해야 합니다.\u003c/p\u003e\n\u003ch2\u003eTask Completion Rate: 성공의 정의를 내리는 기술\u003c/h2\u003e\n\u003cp\u003eTask Completion Rate(TCR)는 Agent SLO의 핵심입니다. 정의하기 어렵지만, 측정 가능해야 합니다.\u003c/p\u003e\n\u003ch3\u003eTCR 측정 프레임워크\u003c/h3\u003e\n\u003cp\u003eTCR을 측정하려면 먼저 \u003cstrong\u003etask taxonomy\u003c/strong\u003e를 만들어야 합니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003eenum TaskType {\n  INFORMATIONAL = \"informational\",    // 질문 응답, 검색\n  TRANSACTIONAL = \"transactional\",     // 예약, 주문, 알림\n  CREATIVE = \"creative\",              // 글쓰기, 코드 생성\n  ANALYTICAL = \"analytical\",           // 분석, 비교, 추론\n  ORCHESTRATION = \"orchestration\",     // 다단계 워크플로우\n}\n\nenum CompletionGrade {\n  FULL = \"full\",           // 완벽히 완료, 추가 조치 불필요\n  PARTIAL = \"partial\",     // 완료는 됐으나 사소한 보완 필요\n  FAILED = \"failed\",       // 명백한 실패\n  HUNG = \"hung\",           // 시간 초과, 응답 없음\n  ESCALATED = \"escalated\", // 사람에게 전달\n}\n\ntype TaskRecord = {\n  taskId: string;\n  taskType: TaskType;\n  input: Record\u0026#x3C;string, unknown\u003e;\n  startedAt: number;\n  completedAt?: number;\n  grade: CompletionGrade;\n  retryCount: number;\n  escalationReason?: string;\n  executionJournal: ExecutionEntry[];\n};\n\nfunction calculateTCR(records: TaskRecord[]): {\n  overall: number;\n  byType: Record\u0026#x3C;TaskType, number\u003e;\n  byGrade: Record\u0026#x3C;CompletionGrade, number\u003e;\n} {\n  const total = records.length;\n\n  const gradeCounts = records.reduce((acc, r) =\u003e {\n    acc[r.grade] = (acc[r.grade] || 0) + 1;\n    return acc;\n  }, {} as Record\u0026#x3C;CompletionGrade, number\u003e);\n\n  const byType = Object.values(TaskType).reduce((acc, type) =\u003e {\n    const typeRecords = records.filter((r) =\u003e r.taskType === type);\n    const completed = typeRecords.filter(\n      (r) =\u003e r.grade === CompletionGrade.FULL || r.grade === CompletionGrade.PARTIAL\n    );\n    acc[type] = typeRecords.length \u003e 0 ? completed.length / typeRecords.length : 0;\n    return acc;\n  }, {} as Record\u0026#x3C;TaskType, number\u003e);\n\n  const completed = records.filter(\n    (r) =\u003e r.grade === CompletionGrade.FULL || r.grade === CompletionGrade.PARTIAL\n  );\n\n  return {\n    overall: total \u003e 0 ? completed.length / total : 0,\n    byType,\n    byGrade: gradeCounts,\n  };\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 구조의 핵심은 \u003cstrong\u003etask type별로 SLO 기준이 다르다\u003c/strong\u003e는 점입니다. INFORMATIONAL은 FULL completion이 높아야 하고, ANALYTICAL은 PARTIAL도容認할 수 있습니다. 모든 태스크에 하나의 성공률을 적용하면 의미 없는 숫자가 됩니다.\u003c/p\u003e\n\u003ch2\u003eExecution Journal: Agent의飞行データレコーダー\u003c/h2\u003e\n\u003cp\u003e비행기의 black box가 사고 원인을 추적하듯, Agent에게는 \u003cstrong\u003eExecution Journal\u003c/strong\u003e이 필요합니다. LLM의 reasoning은 블랙박스이지만, \u003cstrong\u003etool calls, decisions, state transitions은 기록 가능\u003c/strong\u003e합니다.\u003c/p\u003e\n\u003ch3\u003eExecution Journal의 구조\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003etype ExecutionEntry = {\n  timestamp: number;\n  sequence: number;\n  phase: \"planning\" | \"execution\" | \"verification\" | \"escalation\";\n  action: string;\n  input: Record\u0026#x3C;string, unknown\u003e;\n  output?: unknown;\n  durationMs?: number;\n  error?: string;\n  contextSnapshot?: {\n    memorySize: number;\n    toolCount: number;\n    conversationTurns: number;\n  };\n};\n\ntype ExecutionJournal = {\n  runId: string;\n  agentId: string;\n  taskType: TaskType;\n  startedAt: number;\n  entries: ExecutionEntry[];\n  finalGrade: CompletionGrade;\n  ttl: number; // 레tainment 기간\n};\n\nclass ExecutionJournalStore {\n  private db: /* durable storage */ unknown;\n\n  async append(runId: string, entry: Omit\u0026#x3C;ExecutionEntry, \"sequence\"\u003e): Promise\u0026#x3C;void\u003e {\n    const fullEntry: ExecutionEntry = {\n      ...entry,\n      sequence: await this.getNextSequence(runId),\n    };\n    await this.db.append(runId, fullEntry);\n  }\n\n  async getJournal(runId: string): Promise\u0026#x3C;ExecutionJournal\u003e {\n    return await this.db.read(runId);\n  }\n\n  async search(opts: {\n    agentId?: string;\n    taskType?: TaskType;\n    grade?: CompletionGrade;\n    from?: number;\n    to?: number;\n    limit?: number;\n  }): Promise\u0026#x3C;ExecutionJournal[]\u003e {\n    return await this.db.query(opts);\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eExecution Journal이 있으면 무엇이 가능해지냐면, \u003cstrong\u003e실패 건만 별도 추출\u003c/strong\u003e하여 패턴을 분석할 수 있습니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003easync function diagnoseFailurePatterns(agentId: string, lookbackDays: number) {\n  const from = Date.now() - lookbackDays * 24 * 60 * 60 * 1000;\n  const journals = await journalStore.search({\n    agentId,\n    from,\n    limit: 1000,\n  });\n\n  const failed = journals.filter(\n    (j) =\u003e j.finalGrade === CompletionGrade.FAILED || j.finalGrade === CompletionGrade.HUNG\n  );\n\n  // Phase별 실패 빈도 분석\n  const phaseFailureCounts = failed.flatMap((j) =\u003e\n    j.entries.filter((e) =\u003e e.error).map((e) =\u003e e.phase)\n  ).reduce((acc, phase) =\u003e {\n    acc[phase] = (acc[phase] || 0) + 1;\n    return acc;\n  }, {} as Record\u0026#x3C;string, number\u003e);\n\n  // Escalation 사유 분석\n  const escalationReasons = failed\n    .filter((j) =\u003e j.finalGrade === CompletionGrade.ESCALATED)\n    .flatMap((j) =\u003e\n      j.entries\n        .filter((e) =\u003e e.action === \"escalate\")\n        .map((e) =\u003e e.input.reason as string)\n    );\n\n  return { phaseFailureCounts, escalationReasons, totalFailed: failed.length };\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 결과를 보면 Agent가 어느 단계에서 주로 실패하는지, 어떤 사유로 사람에게 エスカレーション하는지가 데이터로 드러납니다.\u003c/p\u003e\n\u003ch2\u003eTime-to-First-Useful-Action: 지연의 진짜 원인 찾기\u003c/h2\u003e\n\u003cp\u003e기존 Latency SLO의盲点是 \"첫 토큰\"은 빠르지만 \u003cstrong\u003e실질적 행동\u003c/strong\u003e은 느린 경우입니다. 모델이思索만 하고 도구를 호출하지 않으면 사용자는 답을 받지 못합니다.\u003c/p\u003e\n\u003cp\u003e그래서 필요한 지표가 \u003cstrong\u003eTime-to-First-Useful-Action (TTFUA)\u003c/strong\u003e 입니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003etype ActionUtilityScore = {\n  action: string;\n  utilityScore: number; // 0.0 ~ 1.0\n  reasoning: string;\n};\n\nasync function measureTTFUA(runId: string): Promise\u0026#x3C;{\n  ttft: number;           // Time to First Token (ms)\n  ttfua: number;           // Time to First Useful Action (ms)\n  uselessActions: number;  // utilityScore \u0026#x3C; 0.3인 행동 수\n  effectiveActions: number;\n} | null\u003e {\n  const journal = await journalStore.getJournal(runId);\n  if (!journal) return null;\n\n  const planningEntry = journal.entries.find((e) =\u003e e.phase === \"planning\");\n  const firstExecutionEntry = journal.entries.find(\n    (e) =\u003e e.phase === \"execution\" \u0026#x26;\u0026#x26; e.action !== \"think\"\n  );\n\n  if (!planningEntry || !firstExecutionEntry) return null;\n\n  const utilityScores: ActionUtilityScore[] = await scoreActionUtility(\n    journal.entries.filter((e) =\u003e e.phase === \"execution\")\n  );\n\n  const usefulActions = utilityScores.filter((a) =\u003e a.utilityScore \u003e= 0.3);\n\n  return {\n    ttft: firstExecutionEntry.timestamp - journal.startedAt,\n    ttfua: usefulActions[0]\n      ? utilityScores[0].timestamp - journal.startedAt\n      : -1,\n    uselessActions: utilityScores.filter((a) =\u003e a.utilityScore \u0026#x3C; 0.3).length,\n    effectiveActions: usefulActions.length,\n  };\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eTTFUA가 TTFT보다 훨씬 크면, Agent가思索을 오래하거나 잘못된 도구를 먼저 호출하는 것입니다. 이 데이터로 \u003cstrong\u003eplanning 프롬프트를 튜닝\u003c/strong\u003e하거나 \u003cstrong\u003e도구 우선순위를 조정\u003c/strong\u003e할 근거가 됩니다.\u003c/p\u003e\n\u003ch2\u003eAgent SLO Dashboard: 무엇을监控해야 하는가\u003c/h2\u003e\n\u003cp\u003e단순한 dashboard가 아니라 \u003cstrong\u003e의사결정에 즉시 연결되는 dashboard\u003c/strong\u003e를 만들어야 합니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e┌─────────────────────────────────────────────────────────┐\n│  Agent SLO Dashboard                          [Refresh]  │\n├──────────────────┬──────────────────┬───────────────────┤\n│ Task Completion   │ TTFUA (p50/p99) │ Escalation Rate   │\n│ TCR: 87.3% [⚠️]   │ 1.2s / 8.4s [✅] │ 4.1% [✅]          │\n├──────────────────┴──────────────────┴───────────────────┤\n│  TCR by Task Type                                       │\n│  [CREATIVE ████████████░░░░ 72%] [TRANSACTIONAL ███████]│\n│  [INFORMATIONAL ██████████████ 96%] [ORCHESTRATION ███] │\n├─────────────────────────────────────────────────────────┤\n│  Failure Phase Distribution (last 7 days)               │\n│  planning  ████████████████  52%                         │\n│  execution ████████  28%                                 │\n│  verification ████  14%                                  │\n│  escalation ██  6%                                       │\n└─────────────────────────────────────────────────────────┘\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 dashboard에서 \u003cstrong\u003e가장 즉각적 행동으로 연결되는 지표\u003c/strong\u003e는 TCR by Task Type입니다. CREATIVE가 72%라면 creative 태스크의 프롬프트를 검토해야 합니다. planning phase 실패가 52%라면 planning capability를 높여야 합니다.\u003c/p\u003e\n\u003ch2\u003eAlerting: SLO Breach에 대한 반응 설계\u003c/h2\u003e\n\u003cp\u003eSLO는 측정이 목적이 아니라 \u003cstrong\u003e행동 트리거\u003c/strong\u003e가 목적입니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003etype SLOConfig = {\n  taskCompletionRate: { target: number; alertBelow: number; windowDays: number };\n  ttlua: { target: number; alertAbove: number; percentile: \"p50\" | \"p99\" };\n  escalationRate: { target: number; alertAbove: number; windowDays: number };\n};\n\nasync function checkSLOBreaches(config: SLOConfig, agentId: string): Promise\u0026#x3C;void\u003e {\n  const now = Date.now();\n  const windowMs = config.taskCompletionRate.windowDays * 24 * 60 * 60 * 1000;\n\n  const journals = await journalStore.search({\n    agentId,\n    from: now - windowMs,\n  });\n\n  const tcr = calculateTCR(journals);\n\n  // TCR breach\n  if (tcr.overall \u0026#x3C; config.taskCompletionRate.alertBelow) {\n    await sendAlert({\n      severity: \"warning\",\n      agentId,\n      metric: \"Task Completion Rate\",\n      value: tcr.overall,\n      threshold: config.taskCompletionRate.alertBelow,\n      recommendation: \"Check planning phase failures and creative task prompts\",\n    });\n  }\n\n  // TCR by type deep dive\n  for (const [taskType, rate] of Object.entries(tcr.byType)) {\n    if (rate \u0026#x3C; config.taskCompletionRate.alertBelow) {\n      await sendAlert({\n        severity: \"critical\",\n        agentId,\n        metric: `Task Completion Rate (${taskType})`,\n        value: rate,\n        threshold: config.taskCompletionRate.alertBelow,\n        recommendation: `Investigate ${taskType} task execution journal entries`,\n      });\n    }\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e중요한 것은 \u003cstrong\u003ealert에 recommendation이 포함\u003c/strong\u003e되어야 한다는 점입니다. \"TCR 72%\"라는 숫자보다 \"CREATIVE 태스크 TCR이 72%입니다. planning phase 실패 패턴을 확인하세요\"가 훨씬 실행 가능합니다.\u003c/p\u003e\n\u003ch2\u003eExecution Journal 기반 Self-Improvement\u003c/h2\u003e\n\u003cp\u003eSLO가 측정이라면, \u003cstrong\u003eExecution Journal 기반 self-improvement\u003c/strong\u003e는 학습입니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003easync function selfImprove(agentId: string): Promise\u0026#x3C;{\n  improvementsApplied: string[];\n  insights: string[];\n}\u003e {\n  const patterns = await diagnoseFailurePatterns(agentId, 7);\n  const insights: string[] = [];\n  const improvementsApplied: string[] = [];\n\n  // 패턴 1: planning phase 실패가 전체의 50% 이상\n  if ((patterns.phaseFailureCounts[\"planning\"] ?? 0) / patterns.totalFailed \u003e 0.5) {\n    insights.push(\"Planning phase 실패가 과반입니다. planner 모델 전환 또는 프롬프트 강화가 필요합니다.\");\n    improvementsApplied.push(\"planner_prompt_v2\");\n  }\n\n  // 패턴 2: 특정 escalation 사유가 반복\n  const topEscalation = mostFrequent(patterns.escalationReasons);\n  if (topEscalation \u0026#x26;\u0026#x26; topEscalation.count \u003e 5) {\n    insights.push(`'${topEscalation.value}' 사유로 ${topEscalation.count}회 escalation 발생. 이 케이스를 처리 가능하도록 tool 또는 policy를 확장합니다.`);\n    improvementsApplied.push(`escalation_handler_${sanitize(topEscalation.value)}`);\n  }\n\n  return { improvementsApplied, insights };\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이것이 전통적 APM(APM: Application Performance Monitoring)과 Agent Observability의根本적 차이입니다. APM은\"무엇이 잘못됐는지\"만 말하지만, Agent Observability는\"왜 잘못됐는지\"를 Execution Journal에서 추적하고\"다음엔 어떻게 개선할지\"까지 제안합니다.\u003c/p\u003e\n\u003ch2\u003epractical한 Agent SLO 도입 순서\u003c/h2\u003e\n\u003ch3\u003e1단계: Execution Journal 먼저 구축 (Day 1)\u003c/h3\u003e\n\u003cp\u003eSLO 계산보다 먼저 Agent의 행동 log를 남기는 것이 가장 중요합니다. journal 없이는 SLO 측정도 불가능합니다.\u003c/p\u003e\n\u003ch3\u003e2단계: Task Taxonomy 정의 (Week 1)\u003c/h3\u003e\n\u003cp\u003e작업 유형을 정의하고 각각의 성공 기준을 문서화합니다. 이 기준이 없으면 TCR 계산이 의미 없습니다.\u003c/p\u003e\n\u003ch3\u003e3단계: 기본 SLO 계산 + Dashboard (Week 2)\u003c/h3\u003e\n\u003cp\u003eTCR, TTFT, escalation rate를 계산하고 dashboard를 구축합니다. Dashboard가 없는 SLO는 잊혀집니다.\u003c/p\u003e\n\u003ch3\u003e4단계: Alerting 규칙 설정 (Week 3)\u003c/h3\u003e\n\u003cp\u003eSLO breach 시 즉시 담당자에게通知되는 체계를 만듭니다. Alert fatigue를 방지하려면閾値を 신중하게 설정해야 합니다.\u003c/p\u003e\n\u003ch3\u003e5단계: Self-Improvement Automation (Month 2)\u003c/h3\u003e\n\u003cp\u003eExecution Journal 기반 자동 분석을 돌리고, 주기적으로 개선 아이디어를生成하는 봇을 운영합니다.\u003c/p\u003e\n\u003ch2\u003e팀 체크리스트\u003c/h2\u003e\n\u003cul class=\"contains-task-list\"\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e Execution Journal이 모든 Agent 실행 시 기록되는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e Task taxonomy가 정의되어 있는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e Task Completion Rate가 task type별로 측정되는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e Time-to-First-Useful-Action이 TTFT와 함께 추적되는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e Escalation 사유가 분류되고 빈도 분석되는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e SLO breach 시 담당자에게 즉각通知되는 alerting이 있는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e 주기적으로 self-improvement 분석이 실행되는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e SLO trend가 개선 방향으로 가고 있는지 확인하는 회기가 있는가?\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch2\u003e결론\u003c/h2\u003e\n\u003cp\u003eMCP와 A2A가 Agent의\u003cstrong\u003e연결\u003c/strong\u003e을 표준화했다면, Agent SLO와 Execution Journal은 Agent의\u003cstrong\u003e신뢰성\u003c/strong\u003e을 표준화하는 작업입니다. 이 둘은 별개가 아니라一套입니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e연결 표준: Agent가 서로通信할 수 있는가\u003c/li\u003e\n\u003cli\u003eSLO + Journal: Agent가 믿을 수 있는 결과를 내는가\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이 두 축이 갖춰져야 \"AI Agent를 프로덕션 환경에서 운영한다\"는 문장이 실용적인 의미를 갖습니다. 연결이 잘 되는 세상에서 남는 경쟁력은 결국 \u003cstrong\u003e얼마나 일관되고 예측 가능한 결과물을 내는가\u003c/strong\u003e입니다.\u003c/p\u003e\n\u003cp\u003eSLO 도입은 기술적 선택이 아니라 조직적决心입니다. 숫자로 서비스를 운영하는 문화가 있는 팀이라면 Agent SLO도 반드시 구현할 수 있습니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch3\u003e자가 검토 및 개선 사항\u003c/h3\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e주제 차별화\u003c/strong\u003e: 최근 Planning/Workflow Engine 글과 겹치지 않도록, 이번 글은\"측정과 관측\"에 집중했습니다.Planning이 설계라면, SLO는 운영이며, 이 둘은 자연스러운 연결고리입니다.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e구체성 강화\u003c/strong\u003e: 추상적 개념이 아니라 \u003ccode\u003eTaskRecord\u003c/code\u003e, \u003ccode\u003eTCR\u003c/code\u003e, \u003ccode\u003eTTFUA\u003c/code\u003e, \u003ccode\u003eExecutionJournal\u003c/code\u003e까지 TypeScript 타입으로 정의하여 실무 적용이 가능하도록 했습니다.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e실용성 강조\u003c/strong\u003e: Dashboard, Alerting, Self-Improvement 순서로 도입 전략을 배치하여\"여기서 무엇을 해야 하는가\"가 명확하도록 했습니다.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e한글 자연스러움\u003c/strong\u003e: 기술 용어를 자연스럽게 섞되, 설명은 한국어 위주로 작성하여 주인님의 선호도에 맞췄습니다.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e네이밍 일관성\u003c/strong\u003e: TCR, TTFUA 등 축약어를 도입부에 미리 정의하고 본문에서 일관되게 사용했습니다.\u003c/li\u003e\n\u003c/ol\u003e"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"text-sm text-white/60\",\"children\":\"Fri Apr 10 2026 00:00:00 GMT+0000 (Coordinated Universal Time)\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"Agent SLO: AI Agent를 '신뢰할 수 있는 서비스'로 만드는 런타임 관측성 프레임워크\"}],[\"$\",\"p\",null,{\"className\":\"mt-4 text-base text-white/80 md:text-lg\",\"children\":\"AI Agent를 단순히 '연결'하는 시대는 끝났다. 이제 질문은 '얼마나 신뢰할 수 있는 결과를 내는가'다. 이 글은 Task Success Rate, Time-to-First-Useful-Action, Execution Journal 같은 Agent SLO를 정의하고, 프로덕션 환경에서 이를 지속적으로 측정·개선하는 런타임 관측성 프레임워크를 TypeScript 예시와 함께 정리한다.\"}],[\"$\",\"div\",null,{\"className\":\"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300\",\"dangerouslySetInnerHTML\":{\"__html\":\"$10\"}}]]}]}]\n8:null\n"])</script><script>self.__next_f.push([1,"c:[[\"$\",\"title\",\"0\",{\"children\":\"Agent SLO: AI Agent를 '신뢰할 수 있는 서비스'로 만드는 런타임 관측성 프레임워크 | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"AI Agent를 단순히 '연결'하는 시대는 끝났다. 이제 질문은 '얼마나 신뢰할 수 있는 결과를 내는가'다. 이 글은 Task Success Rate, Time-to-First-Useful-Action, Execution Journal 같은 Agent SLO를 정의하고, 프로덕션 환경에서 이를 지속적으로 측정·개선하는 런타임 관측성 프레임워크를 TypeScript 예시와 함께 정리한다.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-04-10-proactive-update/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"Agent SLO: AI Agent를 '신뢰할 수 있는 서비스'로 만드는 런타임 관측성 프레임워크\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"AI Agent를 단순히 '연결'하는 시대는 끝났다. 이제 질문은 '얼마나 신뢰할 수 있는 결과를 내는가'다. 이 글은 Task Success Rate, Time-to-First-Useful-Action, Execution Journal 같은 Agent SLO를 정의하고, 프로덕션 환경에서 이를 지속적으로 측정·개선하는 런타임 관측성 프레임워크를 TypeScript 예시와 함께 정리한다.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-04-10-proactive-update/\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"Agent SLO: AI Agent를 '신뢰할 수 있는 서비스'로 만드는 런타임 관측성 프레임워크\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"AI Agent를 단순히 '연결'하는 시대는 끝났다. 이제 질문은 '얼마나 신뢰할 수 있는 결과를 내는가'다. 이 글은 Task Success Rate, Time-to-First-Useful-Action, Execution Journal 같은 Agent SLO를 정의하고, 프로덕션 환경에서 이를 지속적으로 측정·개선하는 런타임 관측성 프레임워크를 TypeScript 예시와 함께 정리한다.\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}],[\"$\",\"$L11\",\"13\",{}]]\n"])</script></body></html>

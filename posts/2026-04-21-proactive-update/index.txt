@@ -1,0 +1,327 @@
+1:"$Sreact.fragment"
+3:I[5035,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"default"]
+4:I[28921,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"default"]
+6:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+7:"$Sreact.suspense"
+9:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"ViewportBoundary"]
+b:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"MetadataBoundary"]
+d:I[80036,[],"default"]
+:HL["/_next/static/chunks/893724321ed0589d.css","style"]
+:HL["/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"P":null,"b":"ebRscDf4b2aPUW-Etl-1P","c":["","posts","2026-04-21-proactive-update",""],"q":"","i":false,"f":[[["",{"children":["posts",{"children":[["slug","2026-04-21-proactive-update","d"],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",true],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/893724321ed0589d.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/_next/static/chunks/329e63eb984ada35.js","async":true,"nonce":"$undefined"}]],"$L2"]}],{"children":[["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":["$L5",null,["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],["$","$1","h",{"children":[null,["$","$L9",null,{"children":"$La"}],["$","div",null,{"hidden":true,"children":["$","$Lb",null,{"children":["$","$7",null,{"name":"Next.Metadata","children":"$Lc"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],false]],"m":"$undefined","G":["$d",[]],"S":true}
+e:I[2407,["/_next/static/chunks/329e63eb984ada35.js"],"default"]
+f:I[20531,["/_next/static/chunks/329e63eb984ada35.js"],"default"]
+2:["$","html",null,{"lang":"ko-KR","dir":"ltr","className":"h-full","children":["$","body",null,{"className":"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500","children":[["$","$Le",null,{}],["$","div",null,{"className":"relative z-10 min-h-full","children":[["$","$Lf",null,{}],["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]]}]]}]}]
+a:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+11:I[94966,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"IconMark"]
+10:T382c,<h2>TL;DR</h2>
+<ul>
+<li><strong>Microsoft Agent Framework 1.0</strong>은 Semantic Kernel(Planning/Orchestration) + AutoGen(Multi-Agent 협업)을 단일 NuGet/npm 패키지로 통합했다. 기존 두 SDK의 분기점에서 자유로워진다.</li>
+<li><strong>MCP 네이티브 지원</strong>: <code>Microsoft.MCP.Agent</code> 패키지로 에이전트가 외부 MCP 서버에 연결하며, 별도 어댑터 없이 <code>tools/call</code>을 그대로 사용한다.</li>
+<li><strong>A2A 호환</strong>: Google A2A Protocol을 기반으로 agent card와 협업 스택을 구성하되, Microsoft 고유의 확장도 존재한다.</li>
+<li><strong>Linux Foundation 거버넌스</strong>: 기존 <code>microsoft/autogen</code> → <code>FoundationDB/autogen</code>으로의 이전이 진행 중이다. 1.0은 이-governance 구조 위에서 첫 번째 정식 릴리스다.</li>
+<li><strong>도입 판단</strong>: 기존 SK/AutoGen 프로젝트가 있다면 마이그레이션 검토 warranted (Breaking Changes 있음). 신규 프로젝트는 1.0을 표준으로 채택하는 것이 장기적으로 유리하다.</li>
+</ul>
+<hr>
+<h2>1. 왜 지금 통합이었는가</h2>
+<h3>두 SDK의 탄생 배경 차이</h3>
+<p>Semantic Kernel(SK)과 AutoGen은 같은 "AI Agent"를 목표로しながらも根本上 다른 문제 의식에서 출발했다:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Semantic Kernel</th>
+<th>AutoGen</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>출시</strong></td>
+<td>2023년 초</td>
+<td>2023년 중반(Microsoft Research)</td>
+</tr>
+<tr>
+<td><strong>핵심 추상화</strong></td>
+<td>Planner → Goal Decomposition</td>
+<td>Agent → Conversation</td>
+</tr>
+<tr>
+<td><strong>주도 사용 사례</strong></td>
+<td>Enterprise Copilot, Plugins</td>
+<td>Multi-Agent 협업 시뮬레이션</td>
+</tr>
+<tr>
+<td><strong>디자인 철학</strong></td>
+<td>"도구를 계획대로 조합하라"</td>
+<td>"대화에서 행위가涌现하라"</td>
+</tr>
+<tr>
+<td><strong>주요 사용자</strong></td>
+<td>Azure Copilot 팀</td>
+<td>연구팀, Hackathon</td>
+</tr>
+</tbody>
+</table>
+<p>2025년 들어 두 프레임워크가enterprise 시장을 동시에 공략하면서 <strong>런타임 충돌</strong>이 증가했다. SK 기반 앱에 AutoGen 에이전트를 붙이려면 자체 브릿지를 개발해야 했고, 이는 DX를 해쳤다. Agent Framework 1.0은 이 런타임 통합의 필요성에서 출발했다.</p>
+<h3>2026년 4월의 시장 압박</h3>
+<ul>
+<li>Google A2A Protocol이 1周年을 맞아 v1.0 정식 채택</li>
+<li>AWS Bedrock, Cloudflare Workers AI가 MCP 서버 호스팅을 공식 지원</li>
+<li>"pure-text models no longer ship" — multimodal 에이전트가 기본 요구사항이 된 시장</li>
+<li>Elgato Stream Deck가 하드웨어에서 MCP를 네이티브 지원하기 시작</li>
+</ul>
+<p>Microsoft 입장에서 Agent Framework 1.0은 <strong>단일 SDK로 프로토콜 전쟁에 대응</strong>하는 전략적 결정이었다.</p>
+<hr>
+<h2>2. 아키텍처: 하나의 SDK, 두 개의 런타임</h2>
+<h3>패키지 구조</h3>
+<pre><code class="language-bash"># .NET
+dotnet add package Microsoft.AgentFramework --version 1.0.0
+
+# Node.js / TypeScript
+npm install @microsoft/agent-framework@1.0.0
+</code></pre>
+<p>1.0 SDK는 내부적으로 두 개의 런타임을 제공한다:</p>
+<pre><code class="language-csharp">// Microsoft.AgentFramework.Abstractions (공통 레이어)
+public interface IAgentRuntime
+{
+    Task&#x3C;AgentResponse> ExecuteAsync(AgentRequest request, CancellationToken ct);
+    IAsyncEnumerable&#x3C;StreamingResponse> StreamAsync(AgentRequest request);
+}
+
+// 두 런타임 구현
+public class SemanticKernelRuntime : IAgentRuntime { /* SK 2.x 기반 */ }
+public class AutoGenRuntime     : IAgentRuntime { /* AutoGen 1.x 기반 */ }
+
+// 1.0 신규: 통합 런타임
+public class UnifiedAgentRuntime : IAgentRuntime
+{
+    private readonly IOrchestrator _orchestrator;   // SK Planner
+    private readonly IConversationRouter _router;  // AutoGen Router
+    private readonly IMcpClient _mcpClient;        // MCP 네이티브 클라이언트
+}
+</code></pre>
+<p>핵심 변화: **<code>UnifiedAgentRuntime</code>**이 SK의 목표 분해 능력과 AutoGen의 대화형 협업 능력을 단일 파이프라인에서 mixing할 수 있게 되었다.</p>
+<h3>코드 예시: MCP 도구呼叫 + Multi-Agent 협업</h3>
+<pre><code class="language-csharp">using Microsoft.AgentFramework;
+using Microsoft.AgentFramework.MCP;
+
+// 1. MCP 서버 등록 (MCP 네이티브)
+var builder = AgentRuntime.CreateBuilder()
+    .WithMCPServer("github", new MCPServerConfig
+    {
+        Transport = MCPTransport.StdIO,
+        Command = "npx",
+        Args = new[] { "-y", "@modelcontextprotocol/server-github" },
+        Env = new Dictionary&#x3C;string, string>
+        {
+            ["GITHUB_TOKEN"] = Env.GITHUB_TOKEN
+        }
+    })
+    .WithMCPServer("filesystem", new MCPServerConfig
+    {
+        Transport = MCPTransport.HTTP,
+        Url = "http://localhost:3000"
+    });
+
+// 2. Planner + Researcher 에이전트 정의
+builder.AddAgent("planner", new SemanticKernelAgent
+{
+    Instructions = "사용자의 목표를 분해하고 Researcher에게子任務을 할당한다.",
+    Model = "gpt-4o",
+    MaxIterations = 5
+});
+
+builder.AddAgent("researcher", new AutoGenAgent
+{
+    SystemMessage = "GitHub 코드와 문서를調査し、結果を报告する。",
+    Model = "claude-sonnet-4",
+    MaxTurns = 3
+});
+
+// 3. 협업 규칙 (A2A 기반)
+builder.AddCollaborationRule("planner", "researcher", new CollaborationRule
+{
+    Protocol = AgentProtocol.A2A,
+    TaskBroadcast = true,
+    ResultAggregation = AggregationMode.LastWriterWins
+});
+
+// 4. 실행
+var runtime = builder.Build();
+var response = await runtime.ExecuteAsync(new AgentRequest
+{
+    Goal = "이 저장소의 最近 commit 5개를 분석하고, 어떤 기능이 开发中인지 보고해줘",
+    Context = new Dictionary&#x3C;string, object> { ["repo"] = "Po-Mato/tech-blog" }
+});
+
+await foreach (var chunk in response.Stream())
+{
+    Console.WriteLine(chunk.Content);
+}
+</code></pre>
+<p>이 예시에서 주목할 점:</p>
+<ul>
+<li><strong>MCP 도구</strong>가 에이전트 런타임에 직접 등록됨 (<code>WithMCPServer</code>)</li>
+<li><strong>Planner → Researcher</strong>로의 작업 분배가 A2A Collaboration Rule로 선언적 관리</li>
+<li><strong>Streaming Response</strong>가 통합 파이프라인에서 end-to-end로 흐른다</li>
+</ul>
+<h3>3. MCP 네이티브 지원의 실체</h3>
+<p>기존 SK/AutoGen에서 MCP를 쓰려면 커뮤니티 어댑터를��다:</p>
+<pre><code class="language-csharp">// ❌ Old: Community 어댑터 (비공식, 불안정)
+var adapter = new McpToolAdapter("github-server");
+await planner.Add_plugin(adapter.GetTools());
+</code></pre>
+<p>1.0의 네이티브 지원은 이 어댑터 계층을 <strong><code>IMcpClient</code> 추상화</strong>로 대체한다:</p>
+<pre><code class="language-csharp">// ✅ New: 네이티브 MCP 클라이언트
+public interface IMcpClient
+{
+    Task&#x3C;McpListToolsResult> ListToolsAsync(string serverName);
+    Task&#x3C;McpCallToolResult> CallToolAsync(string serverName, string tool, object args);
+    IAsyncEnumerable&#x3C;McpResource> StreamResources(string serverName);
+    Task GuardAsync(McpSecurityPolicy policy);  // 1.0 신규: 보안 거버넌스
+}
+</code></pre>
+<p><code>GuardAsync</code>는 1.0의 신규 기능으로, MCP 서버에 적용할 수 있는 <strong>security policy를 선언적</strong>으로 적용한다:</p>
+<pre><code class="language-csharp">// MCP 서버별 보안 정책
+runtime.ApplyMcpGuard("github", new McpSecurityPolicy
+{
+    AllowedTools = new[] { "search_code", "list_repos" },  // read-only 도구만 허용
+    BlockedTools = new[] { "delete_repo", "create_issue" },
+    RateLimitPerMinute = 30
+});
+</code></pre>
+<h3>4. A2A Protocol 통합: 어디까지 Google's 것인가</h3>
+<p>A2A Protocol의 핵심 스펙:</p>
+<pre><code class="language-json">// Agent Card (A2A의 발견 메커니즘)
+{
+  "agent_id": "researcher-agent",
+  "name": "Researcher Agent",
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": false,
+    "handoff": true
+  },
+  "skills": [
+    { "id": "github-code-search", "name": "GitHub Code Search" }
+  ],
+  "protocol": "A2A/1.0"
+}
+</code></pre>
+<p>1.0 SDK는 A2A Agent Card를 다음과 같이 생성하고 advertising한다:</p>
+<pre><code class="language-csharp">// Agent Card 자동 생성 및 등록
+builder.AddAgent("researcher", agent)
+    .WithA2ACard(new A2ACapability
+    {
+        Streaming = true,
+        Handoff = true,
+        Skills = new[] { "github-code-search", "web-fetch" }
+    });
+
+// 에이전트 검색
+var matched = await runtime.DiscoverAgentsAsync(
+    skill: "github-code-search",
+    protocol: AgentProtocol.A2A
+);
+</code></pre>
+<p><strong>그러나 주의할 점</strong>: 1.0은 A2A의 <strong>core spec만 지원</strong>하며, Microsoft 고유의 확장 (예: Teams 채널 연계, Azure AD 통합)은 별도 proprietary plugin으로 제공한다. A2A 순수 호환을 원하는 팀은 <code>WithA2AExtensions(false)</code> 옵션을 사용해야 한다.</p>
+<hr>
+<h2>5. Breaking Changes 및 마이그레이션</h2>
+<h3>Semantic Kernel 1.x → Agent Framework 1.0</h3>
+<table>
+<thead>
+<tr>
+<th>변경점</th>
+<th>SK 1.x</th>
+<th>AF 1.0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NuGet 패키지</td>
+<td><code>Microsoft.SemanticKernel</code></td>
+<td><code>Microsoft.AgentFramework</code></td>
+</tr>
+<tr>
+<td>Plugin 등록</td>
+<td><code>.AddSemanticSkill()</code></td>
+<td><code>.AddMCPPlugin()</code> (MCP 기반)</td>
+</tr>
+<tr>
+<td>Planner</td>
+<td><code>KernelPlanner</code> 추상화</td>
+<td><code>IOrchestrator</code> 인터페이스</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td><code>ISemanticTextMemory</code></td>
+<td><code>IAgentMemory</code> (추가: vector + graph)</td>
+</tr>
+</tbody>
+</table>
+<p>마이그레이션 예시:</p>
+<pre><code class="language-csharp">// ❌ SK 1.x
+kernel.Plugins.AddFromType&#x3C;MyPlugin>();
+var plan = await kernel.Planner.CreatePlanAsync(userGoal);
+
+// ✅ AF 1.0
+runtime.RegisterCapability&#x3C;MyCapability>();
+var result = await runtime.OrchestrateAsync(userGoal);
+</code></pre>
+<h3>AutoGen 0.x → Agent Framework 1.0</h3>
+<p>AutoGen의 GroupChat, RepresentativeAgent 패턴은 <code>AutoGenRuntime</code> 위에서 그대로 동작한다:</p>
+<pre><code class="language-python"># ❌ AutoGen 0.x
+groupchat = GroupChat(agents=[planner, researcher], max_round=10)
+manager = GroupChatManager(groupchat=groupchat)
+await agent.a_initiate_chat(manager, message=task)
+
+# ✅ AF 1.0 (AutoGenRuntime 사용 시 완전 호환)
+runtime = AgentRuntime.CreateBuilder()
+    .UseRuntime(AutoGenRuntime())  # 완전 호환 모드
+    .Build()
+# 코드 변경 없음 — 기존 AutoGen 스크립트가 그대로 동작
+</code></pre>
+<hr>
+<h2>6. OpenClaw에서의 활용 가능성</h2>
+<p>주인님의 OpenClaw 환경은 이미 MCP 런타임으로 동작한다:</p>
+<pre><code>OpenClaw Plugin ← MCP → Camera, Sonos, Things3, Notion ...
+</code></pre>
+<p>Agent Framework 1.0의 <code>IMCPClient</code> 추상화는 OpenClaw의 <strong>capability- 중심 설계와 구조적으로 일치</strong>한다. 가능성 있는 통합 방향:</p>
+<ol>
+<li><strong>OpenClaw Plugin을 MCP Server로 formalize</strong>:现有的 imsg, sonoscli, camsnap技能을 MCP 스펙에 맞춰 server로 추출</li>
+<li><strong>Multi-Agent Planner로서 OpenClaw 활용</strong>: 복잡한 목표 분해가 필요한 작업에서 OpenClaw를 "도구 실행 에이전트"로 활용</li>
+<li><strong>A2A Agent Card 기반 발견</strong>: 여러 OpenClaw 인스턴스가 A2A로 서로를 발견하고 자원을 공유하는 시나리오</li>
+</ol>
+<p>OpenClaw의 런타임이 Linux/macOS에서 동작하므로, <code>.NET</code> SDK보다는 <strong><code>@microsoft/agent-framework</code></strong> (Node.js) 또는 <strong>Python 포팅</strong>이 더 실용적이다.</p>
+<hr>
+<h2>7. 도입 판단: Adopt / Trial / Assess</h2>
+<p><strong>도입 권장(Adopt)</strong> — 아래 조건에 해당하면 즉시 도입:</p>
+<ul>
+<li>기존 Semantic Kernel 또는 AutoGen 기반 프로젝트를 유지 중이며, 두 프레임워크를 동시에 사용하고 있는 팀</li>
+<li>Enterprise 환경에서 MCP 서버 거버넌스(보안 정책, rate limit)가 필요한 경우</li>
+<li>Multi-Agent 협업에 A2A를 표준으로 채택하려는 경우</li>
+</ul>
+<p><strong>검증 필요(Trial)</strong> — PoC 후 판단:</p>
+<ul>
+<li>OpenClaw Plugin을 MCP 서버로 formalize하려는 실험적 작업</li>
+<li>Microsoft 생태계(Azure Copilot, Teams)와의 tight한 연계를 계획 중인 경우</li>
+</ul>
+<p><strong>관찰 필요(Assess)</strong> — 추가 정보 대기:</p>
+<ul>
+<li>Linux Foundation 거버넌스 전환(<code>microsoft/autogen</code> → <code>FoundationDB/autogen</code>) 완료 시점 확인</li>
+<li>Python SDK (<code>microsoft-autogen</code> 또는 <code>agentframework-python</code>) 정식 출시 여부</li>
+</ul>
+<hr>
+<h2>8. 요약 및 다음 단계</h2>
+<p>Microsoft Agent Framework 1.0은 2023~2025년에 걸쳐 분화했던 enterprise AI agent SDK를 다시 수렴시키는 릴리스다. Semantic Kernel의 구조적Planner와 AutoGen의 협업 에이전트 모델이 <code>UnifiedAgentRuntime</code>에서 만나고, MCP/A2A가 네이티브 레벨에서 지원된다.</p>
+<p>이는 "<strong>도구 연결 + 에이전트 협업 + 프로토콜 표준</strong>"이 단일 SDK에서 모두 해결되는 시대를 의미한다. 기존 분산 아키텍처를 운영 중인 팀에게는 마이그레이션 비용이 있고, 신규 프로젝트에게는 강력한 기본값이다.</p>
+<p><strong>실행 가능한 다음 액션:</strong></p>
+<ol>
+<li>기존 SK/AutoGen 프로젝트의 의존성 그래프를审计하고, 공통 기능 영역 파악</li>
+<li><code>Microsoft.AgentFramework</code> 또는 <code>@microsoft/agent-framework</code>를andbox에서 간단한 MCP 연결 테스트</li>
+<li>A2A Agent Card 생성 및discovery 테스트</li>
+</ol>
+<hr>
+<p><em>References: <a href="https://learn.microsoft.com/en-us/semantic-kernel/">Microsoft Agent Framework 1.0 Release Notes</a>, <a href="https://github.com/google/a2a">A2A Protocol 1.0 Spec</a>, <a href="https://foundationdb.org/">Linux Foundation AAIF</a></em></p>5:["$","main",null,{"className":"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8","children":["$","article",null,{"className":"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10","children":[["$","div",null,{"className":"text-sm text-white/60","children":"Tue Apr 21 2026 00:00:00 GMT+0000 (Coordinated Universal Time)"}],["$","h1",null,{"className":"mt-2 text-3xl font-bold leading-snug md:text-5xl","children":"Microsoft Agent Framework 1.0: Semantic Kernel과 AutoGen 통합, 그리고 Agentic AI의 새로운 기준"}],["$","p",null,{"className":"mt-4 text-base text-white/80 md:text-lg","children":"2026년 4월 3일 출시된 Microsoft Agent Framework 1.0은 Semantic Kernel과 AutoGen을 하나의 SDK로 통합하고, Linux Foundation Agentic AI Foundation의 거버넌스 아래에서 MCP/A2A 네이티브 지원을標榜한다. 통합 아키텍처의 실체를 파고들고 기존 프레임워크からの移行 전략을 제시한다."}],["$","div",null,{"className":"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300","dangerouslySetInnerHTML":{"__html":"$10"}}]]}]}]
+8:null
+c:[["$","title","0",{"children":"Microsoft Agent Framework 1.0: Semantic Kernel과 AutoGen 통합, 그리고 Agentic AI의 새로운 기준 | Mato Po Tech Blog"}],["$","meta","1",{"name":"description","content":"2026년 4월 3일 출시된 Microsoft Agent Framework 1.0은 Semantic Kernel과 AutoGen을 하나의 SDK로 통합하고, Linux Foundation Agentic AI Foundation의 거버넌스 아래에서 MCP/A2A 네이티브 지원을標榜한다. 통합 아키텍처의 실체를 파고들고 기존 프레임워크からの移行 전략을 제시한다."}],["$","link","2",{"rel":"canonical","href":"https://po-mato.github.io/posts/2026-04-21-proactive-update/"}],["$","meta","3",{"property":"og:title","content":"Microsoft Agent Framework 1.0: Semantic Kernel과 AutoGen 통합, 그리고 Agentic AI의 새로운 기준"}],["$","meta","4",{"property":"og:description","content":"2026년 4월 3일 출시된 Microsoft Agent Framework 1.0은 Semantic Kernel과 AutoGen을 하나의 SDK로 통합하고, Linux Foundation Agentic AI Foundation의 거버넌스 아래에서 MCP/A2A 네이티브 지원을標榜한다. 통합 아키텍처의 실체를 파고들고 기존 프레임워크からの移行 전략을 제시한다."}],["$","meta","5",{"property":"og:url","content":"https://po-mato.github.io/posts/2026-04-21-proactive-update/"}],["$","meta","6",{"property":"og:image","content":"https://po-mato.github.io/og.png"}],["$","meta","7",{"property":"og:type","content":"article"}],["$","meta","8",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","9",{"name":"twitter:title","content":"Microsoft Agent Framework 1.0: Semantic Kernel과 AutoGen 통합, 그리고 Agentic AI의 새로운 기준"}],["$","meta","10",{"name":"twitter:description","content":"2026년 4월 3일 출시된 Microsoft Agent Framework 1.0은 Semantic Kernel과 AutoGen을 하나의 SDK로 통합하고, Linux Foundation Agentic AI Foundation의 거버넌스 아래에서 MCP/A2A 네이티브 지원을標榜한다. 통합 아키텍처의 실체를 파고들고 기존 프레임워크からの移行 전략을 제시한다."}],["$","meta","11",{"name":"twitter:image","content":"https://po-mato.github.io/og.png"}],["$","link","12",{"rel":"icon","href":"/favicon.ico?favicon.0b3bf435.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L11","13",{}]]

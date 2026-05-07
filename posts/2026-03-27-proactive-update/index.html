@@ -1,0 +1,363 @@
+<!DOCTYPE html><!--ebRscDf4b2aPUW_Etl_1P--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/893724321ed0589d.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/329e63eb984ada35.js" async=""></script><meta name="next-size-adjust" content=""/><title>코딩 에이전트의 다음 병목은 모델이 아니라 브라우저다: MCP 시대의 실행·검증 아키텍처 | Mato Po Tech Blog</title><meta name="description" content="개발하면서 배운 것과 삽질 로그를 기록합니다."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-03-27-proactive-update/"/><meta property="og:title" content="코딩 에이전트의 다음 병목은 모델이 아니라 브라우저다: MCP 시대의 실행·검증 아키텍처"/><meta property="og:description" content="개발하면서 배운 것과 삽질 로그를 기록합니다."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-03-27-proactive-update/"/><meta property="og:image" content="https://po-mato.github.io/og.png"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="코딩 에이전트의 다음 병목은 모델이 아니라 브라우저다: MCP 시대의 실행·검증 아키텍처"/><meta name="twitter:description" content="개발하면서 배운 것과 삽질 로그를 기록합니다."/><meta name="twitter:image" content="https://po-mato.github.io/og.png"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><div class="text-sm text-white/60">Fri Mar 27 2026 00:00:00 GMT+0000 (Coordinated Universal Time)</div><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">코딩 에이전트의 다음 병목은 모델이 아니라 브라우저다: MCP 시대의 실행·검증 아키텍처</h1><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><h1>코딩 에이전트의 다음 병목은 모델이 아니라 브라우저다: MCP 시대의 실행·검증 아키텍처</h1>
+<p>지난 한 달 동안 반복적으로 보이는 신호가 있습니다. <strong>브라우저 제어 도구의 고도화</strong>, <strong>MCP(Model Context Protocol) 기반 도구 표준화</strong>, 그리고 <strong>에이전트 결과를 브라우저에서 직접 검증하려는 흐름</strong> 입니다. <code>agent-browser</code>, <code>chrome-devtools-mcp</code>, 그리고 멀티 에이전트 오케스트레이션 계열 도구들은 서로 다른 층위의 프로젝트처럼 보이지만, 실은 같은 방향을 가리킵니다.</p>
+<blockquote>
+<p><strong>이제 브라우저는 “출력물을 확인하는 최종 화면”이 아니라, 코딩 에이전트의 실행과 검증이 만나는 런타임 계층이 되고 있습니다.</strong></p>
+</blockquote>
+<p>많은 팀이 아직도 에이전트 시스템을 이렇게 생각합니다.</p>
+<pre><code class="language-text">LLM -> code patch 생성 -> CI 실행 -> 성공/실패 반환
+</code></pre>
+<p>이 모델은 너무 낙관적입니다. 실제 제품 개발에서는 CI 이전에 훨씬 많은 문제가 터집니다.</p>
+<ul>
+<li>버튼은 렌더됐지만 클릭할 수 없는 상태일 수 있다.</li>
+<li>API는 200인데 hydration mismatch 때문에 화면이 깨질 수 있다.</li>
+<li>기능은 동작하지만 성능 회귀가 발생할 수 있다.</li>
+<li>수정은 맞지만 기존 사용자 플로우를 조용히 망가뜨릴 수 있다.</li>
+</ul>
+<p>즉, 코드 생성 능력만 높아져서는 부족합니다. <strong>에이전트는 결국 사용자 환경에 가장 가까운 실행 표면(surface)에서 결과를 확인해야</strong> 합니다. 그 표면이 바로 브라우저입니다.</p>
+<p>오늘은 이 변화를 “툴이 하나 더 생겼다” 수준이 아니라, <strong>에이전트 시스템 아키텍처가 어떻게 바뀌어야 하는가</strong> 관점에서 뜯어보겠습니다.</p>
+<hr>
+<h2>1. 왜 브라우저가 다시 아키텍처 중심으로 올라오는가</h2>
+<p>과거 웹 개발에서 브라우저는 대체로 얇은 클라이언트로 취급됐습니다.</p>
+<pre><code class="language-text">Browser = UI renderer
+Server = state + logic + search + verification
+</code></pre>
+<p>하지만 에이전트 시대에는 이 분리가 어색해집니다. 이유는 간단합니다. 사용자가 최종적으로 경험하는 장애는 서버 로그가 아니라 <strong>렌더링 결과, 상호작용 가능성, 네트워크 타이밍, 콘솔 에러, 레이아웃 안정성</strong> 으로 나타나기 때문입니다.</p>
+<p>특히 코딩 에이전트가 실무에 들어오면 브라우저는 다음 역할을 동시에 맡게 됩니다.</p>
+<ol>
+<li><strong>Execution Surface</strong> — 실제 사용자 플로우 실행</li>
+<li><strong>Verification Surface</strong> — DOM, 네트워크, 콘솔, 성능 흔적 확인</li>
+<li><strong>Constraint Surface</strong> — 권한, 세션, CSP, 샌드박스 등 현실 제약 반영</li>
+<li><strong>Feedback Surface</strong> — 모델이 다음 수정을 할 근거 수집</li>
+</ol>
+<p>여기서 중요한 포인트는 하나입니다.</p>
+<blockquote>
+<p><strong>에이전트가 고쳐야 하는 것은 코드 자체가 아니라, 코드가 브라우저에서 만들어내는 행위와 결과다.</strong></p>
+</blockquote>
+<p>그래서 앞으로의 병목은 “모델이 코드를 얼마나 잘 짜는가”보다, <strong>생성된 코드가 실제 브라우저 상태와 얼마나 빠르게 닫힌 루프를 이루는가</strong> 쪽으로 이동합니다.</p>
+<hr>
+<h2>2. MCP가 중요한 이유: 도구 호출의 표준화보다 ‘검증 루프의 정규화’가 더 크다</h2>
+<p>MCP를 단순히 “도구를 붙이는 프로토콜” 정도로 보면 절반만 본 겁니다. 진짜 변화는 모델이 브라우저, 파일시스템, DevTools, 테스트 러너 같은 주변 능력을 <strong>일관된 계약(contract)</strong> 으로 다루게 된다는 점입니다.</p>
+<p>이게 왜 중요할까요?</p>
+<p>이전 세대 에이전트는 보통 다음과 같은 안티패턴을 가졌습니다.</p>
+<ul>
+<li>셸 스크립트에 강하게 묶인 ad-hoc 자동화</li>
+<li>결과가 문자열 로그로만 남아 구조화가 약함</li>
+<li>같은 실패를 반복해도 상태를 일반화하지 못함</li>
+<li>도구별 예외 처리 방식이 제각각임</li>
+</ul>
+<p>반면 MCP 기반 접근은 적어도 다음을 가능하게 합니다.</p>
+<ul>
+<li><strong>도구 능력(capability)을 명시적으로 선언</strong></li>
+<li><strong>입출력을 구조화</strong></li>
+<li><strong>실패 원인을 브라우저/네트워크/성능/권한 문제로 분류</strong></li>
+<li><strong>다음 추론 단계가 소비하기 쉬운 관찰 결과를 반환</strong></li>
+</ul>
+<p>즉, MCP의 본질은 “툴 연결이 편해진다”가 아니라, <strong>에이전트가 세상을 더 규격화된 방식으로 관측하고 수정할 수 있게 된다</strong>는 데 있습니다.</p>
+<p>특히 브라우저 계층과 결합되면 파급력이 큽니다. <code>chrome-devtools-mcp</code> 류 접근은 단순 클릭 자동화를 넘어서,</p>
+<ul>
+<li>네트워크 요청</li>
+<li>콘솔 에러</li>
+<li>퍼포먼스 트레이스</li>
+<li>화면 스냅샷</li>
+<li>DOM 상태</li>
+</ul>
+<p>를 같은 작업 맥락 안에 넣어줍니다.</p>
+<p>이 순간 에이전트는 “버튼을 클릭했다” 수준이 아니라, <strong>“버튼 클릭 이후 어떤 요청이 나갔고, 어떤 콘솔 오류가 났고, 그 결과 LCP와 레이아웃이 어떻게 변했는지”</strong> 까지 동일한 검증 루프 안에서 다룰 수 있습니다.</p>
+<hr>
+<h2>3. 새 기준: Generate → Execute → Observe → Critique → Patch</h2>
+<p>이제 코딩 에이전트 파이프라인의 기본형은 아래처럼 바뀌는 게 맞습니다.</p>
+<pre><code class="language-text">Plan
+  -> Generate patch
+  -> Execute in browser-like environment
+  -> Observe DOM/network/console/perf
+  -> Critique against task + invariants
+  -> Patch again
+  -> Escalate to CI only when local/browser checks pass
+</code></pre>
+<p>이 구조에서 CI는 여전히 중요합니다. 다만 <strong>최초 검증자</strong> 가 아니라 <strong>최종 승인자</strong> 에 가까워집니다.</p>
+<p>실무적으로는 다음 3계층으로 나누는 게 가장 깔끔합니다.</p>
+<h3>계층 A. 생성 계층</h3>
+<ul>
+<li>코드 수정안 생성</li>
+<li>테스트 보강</li>
+<li>위험 지점 후보 식별</li>
+</ul>
+<h3>계층 B. 브라우저 실행·관측 계층</h3>
+<ul>
+<li>실제 플로우 재현</li>
+<li>DOM/네트워크/콘솔 상태 수집</li>
+<li>시각적/상호작용적 회귀 탐지</li>
+</ul>
+<h3>계층 C. 정책·품질 계층</h3>
+<ul>
+<li>접근성 기준</li>
+<li>성능 예산</li>
+<li>보안 제약</li>
+<li>변경 범위 통제</li>
+</ul>
+<p>이렇게 설계하면 모델은 “한 번에 정답 코드 쓰기” 부담에서 벗어나고, 시스템은 <strong>빠른 국소 수정(local repair)</strong> 에 강해집니다.</p>
+<hr>
+<h2>4. 추천 아키텍처: Browser Verification Bus를 별도 계층으로 두자</h2>
+<p>제가 보기엔 앞으로 많은 팀이 놓칠 포인트가 하나 있습니다. 브라우저 자동화 도구를 그냥 테스트 러너 옆에 붙이는 정도로는 부족합니다.</p>
+<p>브라우저는 <strong>검증 버스(verification bus)</strong> 로 분리하는 편이 낫습니다.</p>
+<pre><code class="language-text">+------------------------+
+| Planner / Orchestrator |
++-----------+------------+
+            |
+            v
++------------------------+
+| Patch Generator        |
+| - code changes         |
+| - test changes         |
++-----------+------------+
+            |
+            v
++------------------------+
+| Browser Verification   |
+| Bus                    |
+| - DOM snapshot         |
+| - console logs         |
+| - network traces       |
+| - perf metrics         |
+| - screenshots          |
++-----------+------------+
+            |
+            v
++------------------------+
+| Critique / Policy      |
+| - pass/fail            |
+| - rollback suggestion  |
+| - next patch hints     |
++------------------------+
+</code></pre>
+<p>핵심은 브라우저 관측치를 각 도구의 임시 출력으로 버리지 말고, <strong>에이전트가 다시 추론할 수 있는 구조화된 데이터 자산</strong> 으로 다루는 것입니다.</p>
+<p>예를 들면 이런 타입을 둘 수 있습니다.</p>
+<pre><code class="language-ts">export type BrowserObservation = {
+  url: string;
+  timestamp: string;
+  domSummary: {
+    missingSelectors: string[];
+    interactiveIssues: string[];
+    accessibilityWarnings: string[];
+  };
+  console: Array&#x3C;{
+    level: "log" | "warn" | "error";
+    message: string;
+    source?: string;
+  }>;
+  network: Array&#x3C;{
+    method: string;
+    url: string;
+    status: number;
+    durationMs: number;
+  }>;
+  performance: {
+    lcpMs?: number;
+    cls?: number;
+    tbtMs?: number;
+  };
+  screenshots: string[];
+};
+</code></pre>
+<p>이 관찰값을 한 번 모아두면, 다음 모델 호출은 훨씬 날카로워집니다.</p>
+<ul>
+<li>“왜 실패했는지”를 추론할 수 있고</li>
+<li>“다음 수정이 어디를 건드려야 하는지”를 좁힐 수 있고</li>
+<li>“겉보기 성공인데 실제로는 망가진 상태”를 걸러낼 수 있습니다.</li>
+</ul>
+<p>즉, 브라우저 자동화의 핵심 가치는 클릭 자체가 아니라 <strong>관찰을 구조화하는 능력</strong> 입니다.</p>
+<hr>
+<h2>5. TypeScript 예시 1: 에이전트 패치 결과를 브라우저 관찰값으로 채점하기</h2>
+<p>아래는 간단한 형태의 브라우저 검증 채점기입니다. 실제로는 <code>agent-browser</code>나 DevTools 계열 MCP 서버에서 수집한 결과를 넣어 판단할 수 있습니다.</p>
+<pre><code class="language-ts">export type PatchScore = {
+  pass: boolean;
+  score: number;
+  reasons: string[];
+};
+
+export function scoreObservation(obs: BrowserObservation): PatchScore {
+  const reasons: string[] = [];
+  let score = 100;
+
+  const errorCount = obs.console.filter((item) => item.level === "error").length;
+  if (errorCount > 0) {
+    score -= errorCount * 15;
+    reasons.push(`콘솔 에러 ${errorCount}건 발생`);
+  }
+
+  const failedRequests = obs.network.filter((req) => req.status >= 400);
+  if (failedRequests.length > 0) {
+    score -= failedRequests.length * 10;
+    reasons.push(`실패한 네트워크 요청 ${failedRequests.length}건`);
+  }
+
+  if ((obs.performance.lcpMs ?? 0) > 2500) {
+    score -= 10;
+    reasons.push("LCP 예산 초과");
+  }
+
+  if ((obs.performance.cls ?? 0) > 0.1) {
+    score -= 10;
+    reasons.push("CLS 예산 초과");
+  }
+
+  if (obs.domSummary.missingSelectors.length > 0) {
+    score -= 20;
+    reasons.push("필수 셀렉터 누락");
+  }
+
+  if (obs.domSummary.interactiveIssues.length > 0) {
+    score -= 20;
+    reasons.push("상호작용 불능 상태 감지");
+  }
+
+  return {
+    pass: score >= 80 &#x26;&#x26; reasons.every((reason) => !reason.includes("누락")),
+    score: Math.max(0, score),
+    reasons,
+  };
+}
+</code></pre>
+<p>이런 식으로 해두면 에이전트는 단순히 “테스트 통과/실패”가 아니라, <strong>어떤 종류의 실패가 발생했는지 의미적으로 분류된 피드백</strong> 을 받습니다. 그리고 이 정보는 다음 패치 프롬프트의 품질을 크게 올립니다.</p>
+<hr>
+<h2>6. TypeScript 예시 2: 브라우저 검증 결과를 다음 패치 프롬프트로 압축하기</h2>
+<p>모델은 raw trace를 그대로 받는 것보다, 실패를 요약한 구조화 맥락을 받는 편이 훨씬 잘 움직입니다.</p>
+<pre><code class="language-ts">export function buildRepairPrompt(
+  task: string,
+  changedFiles: string[],
+  obs: BrowserObservation,
+  score: PatchScore,
+): string {
+  const topConsoleErrors = obs.console
+    .filter((item) => item.level === "error")
+    .slice(0, 5)
+    .map((item) => `- ${item.message}`)
+    .join("\n");
+
+  const failedRequests = obs.network
+    .filter((req) => req.status >= 400)
+    .slice(0, 5)
+    .map((req) => `- ${req.method} ${req.url} -> ${req.status}`)
+    .join("\n");
+
+  return [
+    `Task: ${task}`,
+    `Changed files: ${changedFiles.join(", ")}`,
+    `Browser verification score: ${score.score}`,
+    `Failure reasons: ${score.reasons.join("; ") || "none"}`,
+    `Top console errors:\n${topConsoleErrors || "- none"}`,
+    `Failed requests:\n${failedRequests || "- none"}`,
+    `Missing selectors: ${obs.domSummary.missingSelectors.join(", ") || "none"}`,
+    `Interactive issues: ${obs.domSummary.interactiveIssues.join(", ") || "none"}`,
+    "Revise the patch with the smallest safe change that restores the user flow without expanding scope.",
+  ].join("\n\n");
+}
+</code></pre>
+<p>여기서 중요한 건 마지막 문장입니다.</p>
+<blockquote>
+<p><strong>브라우저 기반 수정 루프는 ‘더 많이 고치는 모델’보다 ‘더 적게, 더 정확히 고치는 모델’을 선호합니다.</strong></p>
+</blockquote>
+<p>브라우저 관찰값이 강해질수록, 큰 리팩터링보다 <strong>작고 검증 가능한 패치</strong> 가 승률이 높아집니다.</p>
+<hr>
+<h2>7. 멀티 에이전트가 붙으면 뭐가 달라지나</h2>
+<p>MassGen 같은 멀티 에이전트 계열이 시사하는 바도 분명합니다. 앞으로는 하나의 모델이 혼자 답을 내는 구조보다,</p>
+<ul>
+<li>한 에이전트는 패치를 만들고</li>
+<li>다른 에이전트는 브라우저에서 검증하고</li>
+<li>또 다른 에이전트는 성능/보안 기준을 감시하고</li>
+<li>마지막 에이전트가 합의된 수정안을 채택</li>
+</ul>
+<p>하는 식의 분업이 늘어날 겁니다.</p>
+<p>이때 브라우저 계층이 더 중요해집니다. 이유는 <strong>합의의 기준점</strong> 이 되기 때문입니다.</p>
+<p>모델끼리 서로를 비평하게 하면 말은 그럴듯해질 수 있습니다. 하지만 브라우저 관찰값은 상대적으로 덜 정치적입니다.</p>
+<ul>
+<li>콘솔 에러가 있나?</li>
+<li>필수 요소가 나타났나?</li>
+<li>네트워크 요청이 실패했나?</li>
+<li>성능 예산을 넘었나?</li>
+</ul>
+<p>이런 사실 기반 피드백이 있어야 멀티 에이전트가 “말싸움”이 아니라 <strong>검증 가능한 수렴</strong> 으로 갑니다.</p>
+<p>제 의견은 명확합니다.</p>
+<blockquote>
+<p><strong>멀티 에이전트의 핵심은 에이전트 수가 아니라, 에이전트들이 공유하는 검증 현실(shared verification reality)을 갖고 있느냐 입니다.</strong></p>
+</blockquote>
+<p>브라우저는 그 현실을 가장 잘 제공하는 계층입니다.</p>
+<hr>
+<h2>8. 보안과 운영: 브라우저를 열어준다고 끝이 아니다</h2>
+<p>여기서 많은 팀이 과하게 낙관적입니다. 브라우저 제어 능력은 매우 강력하고, 그만큼 위험합니다.</p>
+<p>최소한 아래 원칙은 기본값으로 깔아야 합니다.</p>
+<h3>8.1 Capability를 분리하라</h3>
+<ul>
+<li>읽기 전용 탐색</li>
+<li>클릭/입력 가능</li>
+<li>파일 업로드 가능</li>
+<li>인증 세션 접근 가능</li>
+<li>DevTools/네트워크 관찰 가능</li>
+</ul>
+<p>이 권한은 한 덩어리로 주면 안 됩니다. “브라우저 접근 가능”은 실제로 다섯 개 이상의 서로 다른 위험 수준을 뜻합니다.</p>
+<h3>8.2 세션 경계를 분리하라</h3>
+<ul>
+<li>실제 사용자 로그인 세션과</li>
+<li>테스트 계정 세션과</li>
+<li>완전 격리된 헤드리스 세션</li>
+</ul>
+<p>을 반드시 분리해야 합니다. 특히 코딩 에이전트의 자동 수정 루프는 테스트 계정에서 먼저 돌고, 사람 승인 후에만 더 높은 권한 환경으로 올라가는 편이 맞습니다.</p>
+<h3>8.3 관찰 데이터도 민감 정보다</h3>
+<p>DevTools 계층은 네트워크 payload, 쿠키 맥락, 콘솔 로그, 내부 API 응답 일부를 볼 수 있습니다. 즉 <strong>검증 로그 자체가 민감 정보 저장소</strong> 가 됩니다. 브라우저 관찰값을 장기 보관할 때는 마스킹과 TTL 정책이 필요합니다.</p>
+<h3>8.4 “보이는 성공”과 “실제 성공”을 구분하라</h3>
+<p>스크린샷 하나가 정상처럼 보여도, 실제로는 클릭이 막혀 있거나 포커스 트랩이 걸려 있거나 스크린 리더에서 망가져 있을 수 있습니다. 브라우저 검증은 스크린샷 중심이 아니라,</p>
+<ul>
+<li>DOM 접근성 트리</li>
+<li>상호작용 가능 여부</li>
+<li>네트워크/콘솔 상태</li>
+<li>성능 지표</li>
+</ul>
+<p>를 함께 봐야 합니다.</p>
+<hr>
+<h2>9. 도입 전략: 어디까지 자동화하고 어디서 멈춰야 하나</h2>
+<p>실무에서는 한 번에 “완전 자율 수정 에이전트”로 가려 하면 실패 확률이 높습니다. 단계적으로 가는 편이 좋습니다.</p>
+<h3>1단계 — Browser-aware QA Agent</h3>
+<ul>
+<li>코드 수정 권한 없이</li>
+<li>브라우저 실행과 관찰만 수행</li>
+<li>버그 재현 및 보고 자동화</li>
+</ul>
+<p>이 단계만으로도 가치가 큽니다. 팀은 어떤 종류의 프런트 장애가 자주 발생하는지 빠르게 패턴을 잡을 수 있습니다.</p>
+<h3>2단계 — Suggest-only Repair Agent</h3>
+<ul>
+<li>수정안은 제안만 하고</li>
+<li>브라우저 검증 결과와 함께 diff를 제출</li>
+<li>사람 승인 후 병합</li>
+</ul>
+<p>대부분의 팀은 여기서 이미 ROI가 나옵니다.</p>
+<h3>3단계 — Scoped Auto-fix Agent</h3>
+<ul>
+<li>스타일/문구/소규모 UI 플로우 등</li>
+<li>영향 범위가 작은 패치만 자동 반영</li>
+<li>브라우저 검증 + 테스트 + 정책 통과 시 자동 머지</li>
+</ul>
+<p>핵심은 <strong>변경 범위가 작은 영역부터 자동화</strong> 하는 것입니다.</p>
+<h3>4단계 — Policy-driven Multi-agent Repair</h3>
+<ul>
+<li>패치, 검증, 성능, 보안 에이전트 분리</li>
+<li>공통 Browser Verification Bus 기반 합의</li>
+<li>사람이 예외 정책과 권한 경계만 관리</li>
+</ul>
+<p>이 단계는 가능하지만, 생각보다 운영 난도가 높습니다. 브라우저 관찰값 스키마와 권한 분리를 먼저 잘 설계하지 않으면 금방 복잡도에 짓눌립니다.</p>
+<hr>
+<h2>10. 제 결론: 2026년 코딩 에이전트 경쟁력은 ‘코드 생성력’보다 ‘브라우저 폐루프(closed loop)’에서 갈린다</h2>
+<p>앞으로 좋은 코딩 에이전트는 단순히 코드를 잘 쓰는 모델이 아닙니다. <strong>코드 변경이 실제 사용자 경험에 어떤 결과를 만들었는지 빠르게 확인하고, 그 피드백으로 다시 패치를 좁혀가는 시스템</strong> 이 좋은 에이전트입니다.</p>
+<p>이 관점에서 보면 최근 흐름은 꽤 선명합니다.</p>
+<ul>
+<li><code>agent-browser</code> 류 도구는 브라우저 조작을 더 쉽게 만든다.</li>
+<li><code>chrome-devtools-mcp</code> 류 도구는 브라우저 내부 상태를 에이전트가 더 풍부하게 관찰하게 만든다.</li>
+<li>멀티 에이전트 오케스트레이션은 이 관찰 결과를 여러 관점에서 비평하고 수렴하게 만든다.</li>
+</ul>
+<p>이 셋이 합쳐지면, 브라우저는 더 이상 끝단 UI가 아닙니다. <strong>브라우저는 에이전트 시스템의 실행·검증·비평을 연결하는 핵심 런타임</strong> 입니다.</p>
+<p>제 판단은 단호합니다.</p>
+<blockquote>
+<p><strong>이제 코딩 에이전트의 성패는 “어떤 모델을 붙였는가”보다, “브라우저에서 얼마나 짧고 안전한 검증 루프를 만들었는가”에서 갈립니다.</strong></p>
+</blockquote>
+<p>모델은 계속 좋아질 겁니다. 하지만 모델이 아무리 좋아져도, 브라우저에서 실패한 코드는 결국 실패한 코드입니다.</p>
+<p>그래서 다음으로 투자해야 할 곳은 모델 교체 스크립트가 아니라, <strong>Browser Verification Bus, capability 설계, 그리고 작은 패치 중심의 수정 루프</strong> 입니다.</p>
+<p>그걸 먼저 만든 팀이, 에이전트를 ‘데모’에서 ‘생산성 시스템’으로 넘길 겁니다.</p></div></article></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/893724321ed0589d.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"ebRscDf4b2aPUW-Etl-1P\",\"c\":[\"\",\"posts\",\"2026-03-27-proactive-update\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-03-27-proactive-update\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/893724321ed0589d.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/329e63eb984ada35.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"11:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n10:T4f9b,"])</script><script>self.__next_f.push([1,"\u003ch1\u003e코딩 에이전트의 다음 병목은 모델이 아니라 브라우저다: MCP 시대의 실행·검증 아키텍처\u003c/h1\u003e\n\u003cp\u003e지난 한 달 동안 반복적으로 보이는 신호가 있습니다. \u003cstrong\u003e브라우저 제어 도구의 고도화\u003c/strong\u003e, \u003cstrong\u003eMCP(Model Context Protocol) 기반 도구 표준화\u003c/strong\u003e, 그리고 \u003cstrong\u003e에이전트 결과를 브라우저에서 직접 검증하려는 흐름\u003c/strong\u003e 입니다. \u003ccode\u003eagent-browser\u003c/code\u003e, \u003ccode\u003echrome-devtools-mcp\u003c/code\u003e, 그리고 멀티 에이전트 오케스트레이션 계열 도구들은 서로 다른 층위의 프로젝트처럼 보이지만, 실은 같은 방향을 가리킵니다.\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\u003cstrong\u003e이제 브라우저는 “출력물을 확인하는 최종 화면”이 아니라, 코딩 에이전트의 실행과 검증이 만나는 런타임 계층이 되고 있습니다.\u003c/strong\u003e\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003e많은 팀이 아직도 에이전트 시스템을 이렇게 생각합니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-text\"\u003eLLM -\u003e code patch 생성 -\u003e CI 실행 -\u003e 성공/실패 반환\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 모델은 너무 낙관적입니다. 실제 제품 개발에서는 CI 이전에 훨씬 많은 문제가 터집니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e버튼은 렌더됐지만 클릭할 수 없는 상태일 수 있다.\u003c/li\u003e\n\u003cli\u003eAPI는 200인데 hydration mismatch 때문에 화면이 깨질 수 있다.\u003c/li\u003e\n\u003cli\u003e기능은 동작하지만 성능 회귀가 발생할 수 있다.\u003c/li\u003e\n\u003cli\u003e수정은 맞지만 기존 사용자 플로우를 조용히 망가뜨릴 수 있다.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e즉, 코드 생성 능력만 높아져서는 부족합니다. \u003cstrong\u003e에이전트는 결국 사용자 환경에 가장 가까운 실행 표면(surface)에서 결과를 확인해야\u003c/strong\u003e 합니다. 그 표면이 바로 브라우저입니다.\u003c/p\u003e\n\u003cp\u003e오늘은 이 변화를 “툴이 하나 더 생겼다” 수준이 아니라, \u003cstrong\u003e에이전트 시스템 아키텍처가 어떻게 바뀌어야 하는가\u003c/strong\u003e 관점에서 뜯어보겠습니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e1. 왜 브라우저가 다시 아키텍처 중심으로 올라오는가\u003c/h2\u003e\n\u003cp\u003e과거 웹 개발에서 브라우저는 대체로 얇은 클라이언트로 취급됐습니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-text\"\u003eBrowser = UI renderer\nServer = state + logic + search + verification\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e하지만 에이전트 시대에는 이 분리가 어색해집니다. 이유는 간단합니다. 사용자가 최종적으로 경험하는 장애는 서버 로그가 아니라 \u003cstrong\u003e렌더링 결과, 상호작용 가능성, 네트워크 타이밍, 콘솔 에러, 레이아웃 안정성\u003c/strong\u003e 으로 나타나기 때문입니다.\u003c/p\u003e\n\u003cp\u003e특히 코딩 에이전트가 실무에 들어오면 브라우저는 다음 역할을 동시에 맡게 됩니다.\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003eExecution Surface\u003c/strong\u003e — 실제 사용자 플로우 실행\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eVerification Surface\u003c/strong\u003e — DOM, 네트워크, 콘솔, 성능 흔적 확인\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eConstraint Surface\u003c/strong\u003e — 권한, 세션, CSP, 샌드박스 등 현실 제약 반영\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eFeedback Surface\u003c/strong\u003e — 모델이 다음 수정을 할 근거 수집\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003e여기서 중요한 포인트는 하나입니다.\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\u003cstrong\u003e에이전트가 고쳐야 하는 것은 코드 자체가 아니라, 코드가 브라우저에서 만들어내는 행위와 결과다.\u003c/strong\u003e\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003e그래서 앞으로의 병목은 “모델이 코드를 얼마나 잘 짜는가”보다, \u003cstrong\u003e생성된 코드가 실제 브라우저 상태와 얼마나 빠르게 닫힌 루프를 이루는가\u003c/strong\u003e 쪽으로 이동합니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e2. MCP가 중요한 이유: 도구 호출의 표준화보다 ‘검증 루프의 정규화’가 더 크다\u003c/h2\u003e\n\u003cp\u003eMCP를 단순히 “도구를 붙이는 프로토콜” 정도로 보면 절반만 본 겁니다. 진짜 변화는 모델이 브라우저, 파일시스템, DevTools, 테스트 러너 같은 주변 능력을 \u003cstrong\u003e일관된 계약(contract)\u003c/strong\u003e 으로 다루게 된다는 점입니다.\u003c/p\u003e\n\u003cp\u003e이게 왜 중요할까요?\u003c/p\u003e\n\u003cp\u003e이전 세대 에이전트는 보통 다음과 같은 안티패턴을 가졌습니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e셸 스크립트에 강하게 묶인 ad-hoc 자동화\u003c/li\u003e\n\u003cli\u003e결과가 문자열 로그로만 남아 구조화가 약함\u003c/li\u003e\n\u003cli\u003e같은 실패를 반복해도 상태를 일반화하지 못함\u003c/li\u003e\n\u003cli\u003e도구별 예외 처리 방식이 제각각임\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e반면 MCP 기반 접근은 적어도 다음을 가능하게 합니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003e도구 능력(capability)을 명시적으로 선언\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e입출력을 구조화\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e실패 원인을 브라우저/네트워크/성능/권한 문제로 분류\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e다음 추론 단계가 소비하기 쉬운 관찰 결과를 반환\u003c/strong\u003e\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e즉, MCP의 본질은 “툴 연결이 편해진다”가 아니라, \u003cstrong\u003e에이전트가 세상을 더 규격화된 방식으로 관측하고 수정할 수 있게 된다\u003c/strong\u003e는 데 있습니다.\u003c/p\u003e\n\u003cp\u003e특히 브라우저 계층과 결합되면 파급력이 큽니다. \u003ccode\u003echrome-devtools-mcp\u003c/code\u003e 류 접근은 단순 클릭 자동화를 넘어서,\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e네트워크 요청\u003c/li\u003e\n\u003cli\u003e콘솔 에러\u003c/li\u003e\n\u003cli\u003e퍼포먼스 트레이스\u003c/li\u003e\n\u003cli\u003e화면 스냅샷\u003c/li\u003e\n\u003cli\u003eDOM 상태\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e를 같은 작업 맥락 안에 넣어줍니다.\u003c/p\u003e\n\u003cp\u003e이 순간 에이전트는 “버튼을 클릭했다” 수준이 아니라, \u003cstrong\u003e“버튼 클릭 이후 어떤 요청이 나갔고, 어떤 콘솔 오류가 났고, 그 결과 LCP와 레이아웃이 어떻게 변했는지”\u003c/strong\u003e 까지 동일한 검증 루프 안에서 다룰 수 있습니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e3. 새 기준: Generate → Execute → Observe → Critique → Patch\u003c/h2\u003e\n\u003cp\u003e이제 코딩 에이전트 파이프라인의 기본형은 아래처럼 바뀌는 게 맞습니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-text\"\u003ePlan\n  -\u003e Generate patch\n  -\u003e Execute in browser-like environment\n  -\u003e Observe DOM/network/console/perf\n  -\u003e Critique against task + invariants\n  -\u003e Patch again\n  -\u003e Escalate to CI only when local/browser checks pass\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 구조에서 CI는 여전히 중요합니다. 다만 \u003cstrong\u003e최초 검증자\u003c/strong\u003e 가 아니라 \u003cstrong\u003e최종 승인자\u003c/strong\u003e 에 가까워집니다.\u003c/p\u003e\n\u003cp\u003e실무적으로는 다음 3계층으로 나누는 게 가장 깔끔합니다.\u003c/p\u003e\n\u003ch3\u003e계층 A. 생성 계층\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003e코드 수정안 생성\u003c/li\u003e\n\u003cli\u003e테스트 보강\u003c/li\u003e\n\u003cli\u003e위험 지점 후보 식별\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e계층 B. 브라우저 실행·관측 계층\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003e실제 플로우 재현\u003c/li\u003e\n\u003cli\u003eDOM/네트워크/콘솔 상태 수집\u003c/li\u003e\n\u003cli\u003e시각적/상호작용적 회귀 탐지\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e계층 C. 정책·품질 계층\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003e접근성 기준\u003c/li\u003e\n\u003cli\u003e성능 예산\u003c/li\u003e\n\u003cli\u003e보안 제약\u003c/li\u003e\n\u003cli\u003e변경 범위 통제\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이렇게 설계하면 모델은 “한 번에 정답 코드 쓰기” 부담에서 벗어나고, 시스템은 \u003cstrong\u003e빠른 국소 수정(local repair)\u003c/strong\u003e 에 강해집니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e4. 추천 아키텍처: Browser Verification Bus를 별도 계층으로 두자\u003c/h2\u003e\n\u003cp\u003e제가 보기엔 앞으로 많은 팀이 놓칠 포인트가 하나 있습니다. 브라우저 자동화 도구를 그냥 테스트 러너 옆에 붙이는 정도로는 부족합니다.\u003c/p\u003e\n\u003cp\u003e브라우저는 \u003cstrong\u003e검증 버스(verification bus)\u003c/strong\u003e 로 분리하는 편이 낫습니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-text\"\u003e+------------------------+\n| Planner / Orchestrator |\n+-----------+------------+\n            |\n            v\n+------------------------+\n| Patch Generator        |\n| - code changes         |\n| - test changes         |\n+-----------+------------+\n            |\n            v\n+------------------------+\n| Browser Verification   |\n| Bus                    |\n| - DOM snapshot         |\n| - console logs         |\n| - network traces       |\n| - perf metrics         |\n| - screenshots          |\n+-----------+------------+\n            |\n            v\n+------------------------+\n| Critique / Policy      |\n| - pass/fail            |\n| - rollback suggestion  |\n| - next patch hints     |\n+------------------------+\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e핵심은 브라우저 관측치를 각 도구의 임시 출력으로 버리지 말고, \u003cstrong\u003e에이전트가 다시 추론할 수 있는 구조화된 데이터 자산\u003c/strong\u003e 으로 다루는 것입니다.\u003c/p\u003e\n\u003cp\u003e예를 들면 이런 타입을 둘 수 있습니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003eexport type BrowserObservation = {\n  url: string;\n  timestamp: string;\n  domSummary: {\n    missingSelectors: string[];\n    interactiveIssues: string[];\n    accessibilityWarnings: string[];\n  };\n  console: Array\u0026#x3C;{\n    level: \"log\" | \"warn\" | \"error\";\n    message: string;\n    source?: string;\n  }\u003e;\n  network: Array\u0026#x3C;{\n    method: string;\n    url: string;\n    status: number;\n    durationMs: number;\n  }\u003e;\n  performance: {\n    lcpMs?: number;\n    cls?: number;\n    tbtMs?: number;\n  };\n  screenshots: string[];\n};\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 관찰값을 한 번 모아두면, 다음 모델 호출은 훨씬 날카로워집니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e“왜 실패했는지”를 추론할 수 있고\u003c/li\u003e\n\u003cli\u003e“다음 수정이 어디를 건드려야 하는지”를 좁힐 수 있고\u003c/li\u003e\n\u003cli\u003e“겉보기 성공인데 실제로는 망가진 상태”를 걸러낼 수 있습니다.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e즉, 브라우저 자동화의 핵심 가치는 클릭 자체가 아니라 \u003cstrong\u003e관찰을 구조화하는 능력\u003c/strong\u003e 입니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e5. TypeScript 예시 1: 에이전트 패치 결과를 브라우저 관찰값으로 채점하기\u003c/h2\u003e\n\u003cp\u003e아래는 간단한 형태의 브라우저 검증 채점기입니다. 실제로는 \u003ccode\u003eagent-browser\u003c/code\u003e나 DevTools 계열 MCP 서버에서 수집한 결과를 넣어 판단할 수 있습니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003eexport type PatchScore = {\n  pass: boolean;\n  score: number;\n  reasons: string[];\n};\n\nexport function scoreObservation(obs: BrowserObservation): PatchScore {\n  const reasons: string[] = [];\n  let score = 100;\n\n  const errorCount = obs.console.filter((item) =\u003e item.level === \"error\").length;\n  if (errorCount \u003e 0) {\n    score -= errorCount * 15;\n    reasons.push(`콘솔 에러 ${errorCount}건 발생`);\n  }\n\n  const failedRequests = obs.network.filter((req) =\u003e req.status \u003e= 400);\n  if (failedRequests.length \u003e 0) {\n    score -= failedRequests.length * 10;\n    reasons.push(`실패한 네트워크 요청 ${failedRequests.length}건`);\n  }\n\n  if ((obs.performance.lcpMs ?? 0) \u003e 2500) {\n    score -= 10;\n    reasons.push(\"LCP 예산 초과\");\n  }\n\n  if ((obs.performance.cls ?? 0) \u003e 0.1) {\n    score -= 10;\n    reasons.push(\"CLS 예산 초과\");\n  }\n\n  if (obs.domSummary.missingSelectors.length \u003e 0) {\n    score -= 20;\n    reasons.push(\"필수 셀렉터 누락\");\n  }\n\n  if (obs.domSummary.interactiveIssues.length \u003e 0) {\n    score -= 20;\n    reasons.push(\"상호작용 불능 상태 감지\");\n  }\n\n  return {\n    pass: score \u003e= 80 \u0026#x26;\u0026#x26; reasons.every((reason) =\u003e !reason.includes(\"누락\")),\n    score: Math.max(0, score),\n    reasons,\n  };\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이런 식으로 해두면 에이전트는 단순히 “테스트 통과/실패”가 아니라, \u003cstrong\u003e어떤 종류의 실패가 발생했는지 의미적으로 분류된 피드백\u003c/strong\u003e 을 받습니다. 그리고 이 정보는 다음 패치 프롬프트의 품질을 크게 올립니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e6. TypeScript 예시 2: 브라우저 검증 결과를 다음 패치 프롬프트로 압축하기\u003c/h2\u003e\n\u003cp\u003e모델은 raw trace를 그대로 받는 것보다, 실패를 요약한 구조화 맥락을 받는 편이 훨씬 잘 움직입니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003eexport function buildRepairPrompt(\n  task: string,\n  changedFiles: string[],\n  obs: BrowserObservation,\n  score: PatchScore,\n): string {\n  const topConsoleErrors = obs.console\n    .filter((item) =\u003e item.level === \"error\")\n    .slice(0, 5)\n    .map((item) =\u003e `- ${item.message}`)\n    .join(\"\\n\");\n\n  const failedRequests = obs.network\n    .filter((req) =\u003e req.status \u003e= 400)\n    .slice(0, 5)\n    .map((req) =\u003e `- ${req.method} ${req.url} -\u003e ${req.status}`)\n    .join(\"\\n\");\n\n  return [\n    `Task: ${task}`,\n    `Changed files: ${changedFiles.join(\", \")}`,\n    `Browser verification score: ${score.score}`,\n    `Failure reasons: ${score.reasons.join(\"; \") || \"none\"}`,\n    `Top console errors:\\n${topConsoleErrors || \"- none\"}`,\n    `Failed requests:\\n${failedRequests || \"- none\"}`,\n    `Missing selectors: ${obs.domSummary.missingSelectors.join(\", \") || \"none\"}`,\n    `Interactive issues: ${obs.domSummary.interactiveIssues.join(\", \") || \"none\"}`,\n    \"Revise the patch with the smallest safe change that restores the user flow without expanding scope.\",\n  ].join(\"\\n\\n\");\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e여기서 중요한 건 마지막 문장입니다.\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\u003cstrong\u003e브라우저 기반 수정 루프는 ‘더 많이 고치는 모델’보다 ‘더 적게, 더 정확히 고치는 모델’을 선호합니다.\u003c/strong\u003e\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003e브라우저 관찰값이 강해질수록, 큰 리팩터링보다 \u003cstrong\u003e작고 검증 가능한 패치\u003c/strong\u003e 가 승률이 높아집니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e7. 멀티 에이전트가 붙으면 뭐가 달라지나\u003c/h2\u003e\n\u003cp\u003eMassGen 같은 멀티 에이전트 계열이 시사하는 바도 분명합니다. 앞으로는 하나의 모델이 혼자 답을 내는 구조보다,\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e한 에이전트는 패치를 만들고\u003c/li\u003e\n\u003cli\u003e다른 에이전트는 브라우저에서 검증하고\u003c/li\u003e\n\u003cli\u003e또 다른 에이전트는 성능/보안 기준을 감시하고\u003c/li\u003e\n\u003cli\u003e마지막 에이전트가 합의된 수정안을 채택\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e하는 식의 분업이 늘어날 겁니다.\u003c/p\u003e\n\u003cp\u003e이때 브라우저 계층이 더 중요해집니다. 이유는 \u003cstrong\u003e합의의 기준점\u003c/strong\u003e 이 되기 때문입니다.\u003c/p\u003e\n\u003cp\u003e모델끼리 서로를 비평하게 하면 말은 그럴듯해질 수 있습니다. 하지만 브라우저 관찰값은 상대적으로 덜 정치적입니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e콘솔 에러가 있나?\u003c/li\u003e\n\u003cli\u003e필수 요소가 나타났나?\u003c/li\u003e\n\u003cli\u003e네트워크 요청이 실패했나?\u003c/li\u003e\n\u003cli\u003e성능 예산을 넘었나?\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이런 사실 기반 피드백이 있어야 멀티 에이전트가 “말싸움”이 아니라 \u003cstrong\u003e검증 가능한 수렴\u003c/strong\u003e 으로 갑니다.\u003c/p\u003e\n\u003cp\u003e제 의견은 명확합니다.\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\u003cstrong\u003e멀티 에이전트의 핵심은 에이전트 수가 아니라, 에이전트들이 공유하는 검증 현실(shared verification reality)을 갖고 있느냐 입니다.\u003c/strong\u003e\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003e브라우저는 그 현실을 가장 잘 제공하는 계층입니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e8. 보안과 운영: 브라우저를 열어준다고 끝이 아니다\u003c/h2\u003e\n\u003cp\u003e여기서 많은 팀이 과하게 낙관적입니다. 브라우저 제어 능력은 매우 강력하고, 그만큼 위험합니다.\u003c/p\u003e\n\u003cp\u003e최소한 아래 원칙은 기본값으로 깔아야 합니다.\u003c/p\u003e\n\u003ch3\u003e8.1 Capability를 분리하라\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003e읽기 전용 탐색\u003c/li\u003e\n\u003cli\u003e클릭/입력 가능\u003c/li\u003e\n\u003cli\u003e파일 업로드 가능\u003c/li\u003e\n\u003cli\u003e인증 세션 접근 가능\u003c/li\u003e\n\u003cli\u003eDevTools/네트워크 관찰 가능\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이 권한은 한 덩어리로 주면 안 됩니다. “브라우저 접근 가능”은 실제로 다섯 개 이상의 서로 다른 위험 수준을 뜻합니다.\u003c/p\u003e\n\u003ch3\u003e8.2 세션 경계를 분리하라\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003e실제 사용자 로그인 세션과\u003c/li\u003e\n\u003cli\u003e테스트 계정 세션과\u003c/li\u003e\n\u003cli\u003e완전 격리된 헤드리스 세션\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e을 반드시 분리해야 합니다. 특히 코딩 에이전트의 자동 수정 루프는 테스트 계정에서 먼저 돌고, 사람 승인 후에만 더 높은 권한 환경으로 올라가는 편이 맞습니다.\u003c/p\u003e\n\u003ch3\u003e8.3 관찰 데이터도 민감 정보다\u003c/h3\u003e\n\u003cp\u003eDevTools 계층은 네트워크 payload, 쿠키 맥락, 콘솔 로그, 내부 API 응답 일부를 볼 수 있습니다. 즉 \u003cstrong\u003e검증 로그 자체가 민감 정보 저장소\u003c/strong\u003e 가 됩니다. 브라우저 관찰값을 장기 보관할 때는 마스킹과 TTL 정책이 필요합니다.\u003c/p\u003e\n\u003ch3\u003e8.4 “보이는 성공”과 “실제 성공”을 구분하라\u003c/h3\u003e\n\u003cp\u003e스크린샷 하나가 정상처럼 보여도, 실제로는 클릭이 막혀 있거나 포커스 트랩이 걸려 있거나 스크린 리더에서 망가져 있을 수 있습니다. 브라우저 검증은 스크린샷 중심이 아니라,\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eDOM 접근성 트리\u003c/li\u003e\n\u003cli\u003e상호작용 가능 여부\u003c/li\u003e\n\u003cli\u003e네트워크/콘솔 상태\u003c/li\u003e\n\u003cli\u003e성능 지표\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e를 함께 봐야 합니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e9. 도입 전략: 어디까지 자동화하고 어디서 멈춰야 하나\u003c/h2\u003e\n\u003cp\u003e실무에서는 한 번에 “완전 자율 수정 에이전트”로 가려 하면 실패 확률이 높습니다. 단계적으로 가는 편이 좋습니다.\u003c/p\u003e\n\u003ch3\u003e1단계 — Browser-aware QA Agent\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003e코드 수정 권한 없이\u003c/li\u003e\n\u003cli\u003e브라우저 실행과 관찰만 수행\u003c/li\u003e\n\u003cli\u003e버그 재현 및 보고 자동화\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이 단계만으로도 가치가 큽니다. 팀은 어떤 종류의 프런트 장애가 자주 발생하는지 빠르게 패턴을 잡을 수 있습니다.\u003c/p\u003e\n\u003ch3\u003e2단계 — Suggest-only Repair Agent\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003e수정안은 제안만 하고\u003c/li\u003e\n\u003cli\u003e브라우저 검증 결과와 함께 diff를 제출\u003c/li\u003e\n\u003cli\u003e사람 승인 후 병합\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e대부분의 팀은 여기서 이미 ROI가 나옵니다.\u003c/p\u003e\n\u003ch3\u003e3단계 — Scoped Auto-fix Agent\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003e스타일/문구/소규모 UI 플로우 등\u003c/li\u003e\n\u003cli\u003e영향 범위가 작은 패치만 자동 반영\u003c/li\u003e\n\u003cli\u003e브라우저 검증 + 테스트 + 정책 통과 시 자동 머지\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e핵심은 \u003cstrong\u003e변경 범위가 작은 영역부터 자동화\u003c/strong\u003e 하는 것입니다.\u003c/p\u003e\n\u003ch3\u003e4단계 — Policy-driven Multi-agent Repair\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003e패치, 검증, 성능, 보안 에이전트 분리\u003c/li\u003e\n\u003cli\u003e공통 Browser Verification Bus 기반 합의\u003c/li\u003e\n\u003cli\u003e사람이 예외 정책과 권한 경계만 관리\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이 단계는 가능하지만, 생각보다 운영 난도가 높습니다. 브라우저 관찰값 스키마와 권한 분리를 먼저 잘 설계하지 않으면 금방 복잡도에 짓눌립니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e10. 제 결론: 2026년 코딩 에이전트 경쟁력은 ‘코드 생성력’보다 ‘브라우저 폐루프(closed loop)’에서 갈린다\u003c/h2\u003e\n\u003cp\u003e앞으로 좋은 코딩 에이전트는 단순히 코드를 잘 쓰는 모델이 아닙니다. \u003cstrong\u003e코드 변경이 실제 사용자 경험에 어떤 결과를 만들었는지 빠르게 확인하고, 그 피드백으로 다시 패치를 좁혀가는 시스템\u003c/strong\u003e 이 좋은 에이전트입니다.\u003c/p\u003e\n\u003cp\u003e이 관점에서 보면 최근 흐름은 꽤 선명합니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ccode\u003eagent-browser\u003c/code\u003e 류 도구는 브라우저 조작을 더 쉽게 만든다.\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003echrome-devtools-mcp\u003c/code\u003e 류 도구는 브라우저 내부 상태를 에이전트가 더 풍부하게 관찰하게 만든다.\u003c/li\u003e\n\u003cli\u003e멀티 에이전트 오케스트레이션은 이 관찰 결과를 여러 관점에서 비평하고 수렴하게 만든다.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이 셋이 합쳐지면, 브라우저는 더 이상 끝단 UI가 아닙니다. \u003cstrong\u003e브라우저는 에이전트 시스템의 실행·검증·비평을 연결하는 핵심 런타임\u003c/strong\u003e 입니다.\u003c/p\u003e\n\u003cp\u003e제 판단은 단호합니다.\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\u003cstrong\u003e이제 코딩 에이전트의 성패는 “어떤 모델을 붙였는가”보다, “브라우저에서 얼마나 짧고 안전한 검증 루프를 만들었는가”에서 갈립니다.\u003c/strong\u003e\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003e모델은 계속 좋아질 겁니다. 하지만 모델이 아무리 좋아져도, 브라우저에서 실패한 코드는 결국 실패한 코드입니다.\u003c/p\u003e\n\u003cp\u003e그래서 다음으로 투자해야 할 곳은 모델 교체 스크립트가 아니라, \u003cstrong\u003eBrowser Verification Bus, capability 설계, 그리고 작은 패치 중심의 수정 루프\u003c/strong\u003e 입니다.\u003c/p\u003e\n\u003cp\u003e그걸 먼저 만든 팀이, 에이전트를 ‘데모’에서 ‘생산성 시스템’으로 넘길 겁니다.\u003c/p\u003e"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"text-sm text-white/60\",\"children\":\"Fri Mar 27 2026 00:00:00 GMT+0000 (Coordinated Universal Time)\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"코딩 에이전트의 다음 병목은 모델이 아니라 브라우저다: MCP 시대의 실행·검증 아키텍처\"}],null,[\"$\",\"div\",null,{\"className\":\"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300\",\"dangerouslySetInnerHTML\":{\"__html\":\"$10\"}}]]}]}]\n8:null\nc:[[\"$\",\"title\",\"0\",{\"children\":\"코딩 에이전트의 다음 병목은 모델이 아니라 브라우저다: MCP 시대의 실행·검증 아키텍처 | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"개발하면서 배운 것과 삽질 로그를 기록합니다.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-03-27-proactive-update/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"코딩 에이전트의 다음 병목은 모델이 아니라 브라우저다: MCP 시대의 실행·검증 아키텍처\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"개발하면서 배운 것과 삽질 로그를 기록합니다.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-03-27-proactive-update/\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"코딩 에이전트의 다음 병목은 모델이 아니라 브라우저다: MCP 시대의 실행·검증 아키텍처\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"개발하면서 배운 것과 삽질 로그를 기록합니다.\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}],[\"$\",\"$L11\",\"13\",{}]]\n"])</script></body></html>

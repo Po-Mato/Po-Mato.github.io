@@ -1,0 +1,402 @@
+<!DOCTYPE html><!--ebRscDf4b2aPUW_Etl_1P--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/893724321ed0589d.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/329e63eb984ada35.js" async=""></script><meta name="next-size-adjust" content=""/><title>Agent Sprawl: AI 에이전트 인프라의 미кро서비스 독Canonical 문제와 SRE적 접근 | Mato Po Tech Blog</title><meta name="description" content="AI 에이전트 생태계가 빠르게 확장하는 가운데, 에이전트 인프라 복잡성이 신뢰성을 능가하는 &#x27;Agent Sprawl&#x27;이 새로운 운영 과제로 떠오르고 있습니다. 2026년 현재 micorservices sprawl을 겪었던 SRE 팀이 어떻게 이 문제에 접근하는지, 그리고 Agent-specific SLO/SLI를 어떻게 설계하는지深人 분석합니다."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-05-02-agent-sprawl-sre-approach/"/><meta property="og:title" content="Agent Sprawl: AI 에이전트 인프라의 미кро서비스 독Canonical 문제와 SRE적 접근"/><meta property="og:description" content="AI 에이전트 생태계가 빠르게 확장하는 가운데, 에이전트 인프라 복잡성이 신뢰성을 능가하는 &#x27;Agent Sprawl&#x27;이 새로운 운영 과제로 떠오르고 있습니다. 2026년 현재 micorservices sprawl을 겪었던 SRE 팀이 어떻게 이 문제에 접근하는지, 그리고 Agent-specific SLO/SLI를 어떻게 설계하는지深人 분석합니다."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-05-02-agent-sprawl-sre-approach/"/><meta property="og:image" content="https://po-mato.github.io/og.png"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Agent Sprawl: AI 에이전트 인프라의 미кро서비스 독Canonical 문제와 SRE적 접근"/><meta name="twitter:description" content="AI 에이전트 생태계가 빠르게 확장하는 가운데, 에이전트 인프라 복잡성이 신뢰성을 능가하는 &#x27;Agent Sprawl&#x27;이 새로운 운영 과제로 떠오르고 있습니다. 2026년 현재 micorservices sprawl을 겪었던 SRE 팀이 어떻게 이 문제에 접근하는지, 그리고 Agent-specific SLO/SLI를 어떻게 설계하는지深人 분석합니다."/><meta name="twitter:image" content="https://po-mato.github.io/og.png"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><div class="text-sm text-white/60">2026-05-02</div><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">Agent Sprawl: AI 에이전트 인프라의 미кро서비스 독Canonical 문제와 SRE적 접근</h1><p class="mt-4 text-base text-white/80 md:text-lg">AI 에이전트 생태계가 빠르게 확장하는 가운데, 에이전트 인프라 복잡성이 신뢰성을 능가하는 &#x27;Agent Sprawl&#x27;이 새로운 운영 과제로 떠오르고 있습니다. 2026년 현재 micorservices sprawl을 겪었던 SRE 팀이 어떻게 이 문제에 접근하는지, 그리고 Agent-specific SLO/SLI를 어떻게 설계하는지深人 분석합니다.</p><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><h2>들어가며</h2>
+<p>2026년, AI 에이전트 기반 시스템의 운영 복잡성이 놀라운 속도로 증가하고 있습니다.</p>
+<p>一个新概念이 빠르게 확산되고 있습니다: <strong>Agent Sprawl</strong> — 에이전트 인프라 복잡성(프레임워크, 모델, 도구 레이어, 오케스트레이션 패턴)이 신뢰성을 측정하고 관리하는能力을 능가하는 상태<a href="https://dev.to/ajaydevineni/agent-sprawl-is-your-next-production-incident-an-sre-response-to-datadogs-state-of-ai-engineering-3k83">[1]</a>.</p>
+<p>이 상태는 구조적으로 2015~2020년 사이 SRE 팀이 겪었던 <strong>microservices sprawl</strong>과 동일합니다. 팀들은 서비스를 SLO보다 빠르게 추가했고, 결국 운영 비용이 폭발했습니다.</p>
+<p>이 글에서는:</p>
+<ol>
+<li>Agent Sprawl이 발생하는 구조적 원인을 분석</li>
+<li>에이전트-specific SLI/SLO 프레임워크를 설계</li>
+<li>실제 적용 가능한 비용 절감 전략을 제시합니다</li>
+</ol>
+<hr>
+<h2>1. Agent Sprawl의 anatomy</h2>
+<h3>1.1 microservices sprawl과의 비교</h3>
+<pre><code>microservices sprawl (2015-2020)          Agent Sprawl (2025-2026)
+─────────────────────────────────────────────────────────────────────
+서비스 추가 속도 > SLO 정의 속도            에이전트 추가 속도 > 신뢰성 측정 속도
+추적되지 않는 서비스 의존성                   추적되지 않는 에이전트 간 통신
+ falloCHAOS 문서화되지 않은 장애              에이전트 결정 경로 추적 불가
+ 팀당 서비스 수 증가 → 운영 비용 증가         에이전트 수 증가 → 비용/지연 증가
+</code></pre>
+<p>핵심 similarity: <strong>복잡성의 성장 속도가 운영 역량의 성장 속도를 앞서간다.</strong></p>
+<h3>1.2 2026년 현재 상태</h3>
+<p>Datadog의 "State of AI Engineering 2026"<a href="https://www.datadoghq.com/state-of-ai/">[2]</a>에 따르면:</p>
+<ul>
+<li>기업당 평균 에이전트 배포 수가 2024년 12개에서 2026년 현재 <strong>47개</strong>로 증가</li>
+<li>하지만 SLO가 정의된 에이전트는 <strong>8%</strong> 미만</li>
+<li>에이전트 관련 인시던트가 전체 AI 인시던트의 **62%**를 차지</li>
+</ul>
+<p>이는 microservices 초기 단계와 매우 유사합니다.</p>
+<hr>
+<h2>2. 에이전트-specific SLI 설계</h2>
+<h3>2.1 기존 SRE 개념의 확장</h3>
+<p>전통적인 SLI는 다음과 같습니다:</p>
+<ul>
+<li><strong>Availability</strong>: 시스템이 요청을 처리할 수 있는 시간 비율</li>
+<li><strong>Latency</strong>: 요청에 대한 응답 시간</li>
+<li><strong>Throughput</strong>: 단위 시간당 처리량</li>
+</ul>
+<p>에이전트 시스템에서는这些 개념이 달라집니다. Komodor의 AI SRE Summit 2026<a href="https://komodor.com/ai-sre-summit-2026/">[3]</a>에서 제시된 5가지 에이전트-specific SLI를深人 분석합니다.</p>
+<h3>2.2 5가지 핵심 SLI</h3>
+<h4>SLI-1: Calibration Error (교정 오차)</h4>
+<p><strong>정의</strong>: 에이전트가 제시한 신뢰도와 실제 정확도 간의 차이</p>
+<pre><code>Calibration Error = |Stated Confidence - Actual Accuracy|
+
+예시:
+- 에이전트가 "이 답변의 정확도는 95%"라고 주장
+- 실제 검증 결과 87% 정확 → Calibration Error = 8%
+</code></pre>
+<p><strong>측정 방법</strong>:</p>
+<pre><code class="language-python">def calculate_calibration_error(agent_id: str, samples: list[dict]) -> float:
+    """
+    각 샘플에서 stated_confidence와 actual_outcome을 비교
+    """
+    errors = []
+    for sample in samples:
+        stated = sample["stated_confidence"]  # 0.0 ~ 1.0
+        actual = sample["actual_accuracy"]    # 0.0 ~ 1.0
+        
+        # calibration error는 절대값
+        error = abs(stated - actual)
+        errors.append(error)
+    
+    # 평균 calibration error 반환
+    return sum(errors) / len(errors)
+
+# 기준선 예시
+# CE &#x3C; 0.05: Excellent (90% 이상 정답률)
+# CE &#x3C; 0.10: Good
+# CE &#x3C; 0.15: Acceptable
+# CE >= 0.15: Needs calibration training
+</code></pre>
+<h4>SLI-2: Evidence Completeness (증거 완전성)</h4>
+<p><strong>정의</strong>: 에이전트의 판단 근거가 충분한 정보를 포함하고 있는지</p>
+<pre><code>Evidence Completeness = 도구 호출로 확보한 맥락 / 최적 맥락
+
+예시:
+- 최적 맥락: 사용자 히스토리 10개 + 실시간 DB + 외부 API
+- 실제 확보: 사용자 히스토리 3개만 → Evidence Completeness = 30%
+</code></pre>
+<p><strong>측정 방법</strong>:</p>
+<pre><code class="language-python">def measure_evidence_completeness(task: dict, context: dict) -> float:
+    """
+    필수 정보 목록과 실제 확보 정보를 비교
+    """
+    required_contexts = task["required_contexts"]  # ["user_history", "db", "api"]
+    available_contexts = context.keys()            # ["user_history"]
+    
+    # 집합 비교
+    coverage = len(available_contexts &#x26; set(required_contexts))
+    total = len(required_contexts)
+    
+    return coverage / total if total > 0 else 0.0
+</code></pre>
+<h4>SLI-3: Data Currency (데이터 신선도)</h4>
+<p><strong>정의</strong>: 에이전트가 사용하는 데이터가 현재 시점에서 얼마나 최신인지</p>
+<pre><code>Data Currency = min(마지막 업데이트 경과 시간 / 최대 허용 경과 시간)
+
+예시:
+- 실시간 가격 정보: 최대 5분 전까지 허용
+- 사용자 프로필: 최대 24시간 전까지 허용
+- 규제 정보: 최대 1시간 전까지 허용
+</code></pre>
+<p><strong>측정 방법</strong>:</p>
+<pre><code class="language-python">from datetime import datetime, timedelta
+
+class DataCurrencyMonitor:
+    def __init__(self, thresholds: dict[str, timedelta]):
+        # thresholds: {"price_data": timedelta(minutes=5), ...}
+        self.thresholds = thresholds
+    
+    def check_currency(self, data_source: str, last_updated: datetime) -> float:
+        """
+        0.0 ~ 1.0 반환
+        1.0 = 최상 (최대 허용 시간 이내)
+        0.0 = 최악 (시간 초과)
+        """
+        max_age = self.thresholds.get(data_source, timedelta(hours=24))
+        age = datetime.now() - last_updated
+        
+        if age &#x3C;= max_age:
+            # 비율 계산 (여유 시간 대비 사용 가능 비율)
+            return 1.0 - (age / max_age) * 0.5
+        else:
+            # 시간 초과 시 점진적 페널티
+            overage = age - max_age
+            penalty = min(overage / max_age, 1.0)
+            return max(0.0, 1.0 - penalty - 0.5)
+</code></pre>
+<h4>SLI-4: Contradiction Rate (모순율)</h4>
+<p><strong>정의</strong>: 동일 질문에 대한 연속 응답 간 모순 발생 비율</p>
+<pre><code>Contradiction Rate = 모순이 발생한 연속 응답 쌍 / 전체 연속 응답 쌍
+</code></pre>
+<p><strong>왜 중요한가</strong>:</p>
+<ul>
+<li>동일한 질문에 다른 답변 → 사용자 신뢰도 하락</li>
+<li>내부 로직 불일치 → 디버깅 복잡성 증가</li>
+<li>규정 준수 문제 (audit trail에서 모순 발견)</li>
+</ul>
+<p><strong>측정 방법</strong>:</p>
+<pre><code class="language-python">def detect_contradiction(response_a: dict, response_b: dict, task_type: str) -> bool:
+    """
+    두 연속 응답 간 모순 检测
+    """
+    if task_type == "factual_qa":
+        # 사실 기반 질문: 핵심 답변이 상반되는지 확인
+        answer_a = extract_key_fact(response_a["answer"])
+        answer_b = extract_key_fact(response_b["answer"])
+        return is_contradictory(answer_a, answer_b)
+    
+    elif task_type == "process_execution":
+        # 프로세스 실행: 단계 순서/파라미터 불일치
+        steps_a = response_a["execution_plan"]["steps"]
+        steps_b = response_b["execution_plan"]["steps"]
+        return steps_a != steps_b
+    
+    else:
+        # 기본: 같을 것으로 예상
+        return response_a["answer"] != response_b["answer"]
+</code></pre>
+<h4>SLI-5: Decision Tier Distribution (결정 계층 분포)</h4>
+<p><strong>정의</strong>: 에이전트의 결정이 자동 실행 / 검토 요청 / 에스컬레이션 중 어디에 해당하는지</p>
+<pre><code>Tier 0: 자동 실행 (즉시 처리)
+Tier 1: 자동 실행 + 로깅 (후처리 검토)
+Tier 2: 인간 검토 필요 (승인 대기)
+Tier 3: 에스컬레이션 (전문가 참여)
+</code></pre>
+<p><strong>측정 방법</strong>:</p>
+<pre><code class="language-python">def analyze_decision_tier_distribution(agent_id: str, period: str) -> dict:
+    """
+    각 tier에 속하는 결정 수를 카운트
+    """
+    decisions = query_decision_log(agent_id, period)
+    
+    tier_counts = {0: 0, 1: 0, 2: 0, 3: 0}
+    
+    for decision in decisions:
+        tier = classify_decision_tier(decision)
+        tier_counts[tier] += 1
+    
+    total = sum(tier_counts.values())
+    
+    return {
+        tier: {
+            "count": count,
+            "percentage": count / total if total > 0 else 0
+        }
+        for tier, count in tier_counts.items()
+    }
+
+# 기준선 예시
+# Tier 0-1이 80% 이상: 자동화 잘 되고 있음
+# Tier 2-3이 30% 이상: 검토/에스컬레이션 병목 확인 필요
+</code></pre>
+<hr>
+<h2>3. SLO 설계 프레임워크</h2>
+<h3>3.1 목표 지향적 SLO 설정</h3>
+<pre><code class="language-yaml"># 예시: 고객 서비스 에이전트의 SLO
+
+service_level_objectives:
+  calibration_error:
+    target: "&#x3C; 0.08"
+    window: "30d"
+    alert_threshold: ">= 0.12"
+    
+  evidence_completeness:
+    target: ">= 0.85"
+    window: "7d"
+    alert_threshold: "&#x3C; 0.75"
+    
+  data_currency:
+    target: ">= 0.90"
+    window: "1d"
+    alert_threshold: "&#x3C; 0.80"
+    
+  contradiction_rate:
+    target: "&#x3C; 0.02"
+    window: "14d"
+    alert_threshold: ">= 0.05"
+    
+  decision_tier_distribution:
+    target: "Tier 0-1 >= 0.75"
+    window: "7d"
+    alert_threshold: "Tier 2-3 >= 0.35"
+</code></pre>
+<h3>3.2 Error Budget 정책</h3>
+<pre><code class="language-python">class AgentErrorBudget:
+    """
+    SLO 위반을 위한 error budget 관리
+    """
+    
+    def __init__(self, slo: dict, burn_rate_threshold: float = 1.5):
+        self.slo = slo
+        self.burn_rate_threshold = burn_rate_threshold
+        self.consumed_budget = {k: 0.0 for k in slo.keys()}
+    
+    def consume(self, sli_name: str, error_percentage: float):
+        """
+        error budget 소모 기록
+        """
+        if sli_name not in self.consumed_budget:
+            return
+        
+        # 1%를 소비하면 1% budget 사용
+        self.consumed_budget[sli_name] += error_percentage
+    
+    def check_burn_rate(self, sli_name: str, window_hours: int) -> float:
+        """
+        현재 소진 속도 계산
+        """
+        budget = self.slo[sli_name]
+        consumed = self.consumed_budget[sli_name]
+        
+        # 시간 대비 소진율
+        burn_rate = consumed / (window_hours / 24)
+        
+        return burn_rate
+    
+    def should_alert(self, sli_name: str, window_hours: int) -> bool:
+        """
+        alerting 필요 여부 판단
+        """
+        burn_rate = self.check_burn_rate(sli_name, window_hours)
+        return burn_rate >= self.burn_rate_threshold
+</code></pre>
+<hr>
+<h2>4. Agent Sprawl 관리 전략</h2>
+<h3>4.1 감축 원칙: 불필요한 에이전트 제거</h3>
+<p>microservices에서 했던 것처럼<a href="https://www.infoq.com/news/2025/10/ai-agent-orchestration-patterns/">[4]</a>, 에이전트 भी 정기적으로 검토해야 합니다.</p>
+<pre><code class="language-python">class AgentPortfolioReview:
+    """
+    에이전트 포트폴리오 정기 검토
+    """
+    
+    def evaluate_agent(self, agent_id: str) -> dict:
+        """
+        에이전트의 기여도/비용 분석
+        """
+        metrics = self.collect_metrics(agent_id)
+        
+        return {
+            "utilization": metrics.task_count / metrics.capacity,
+            "cost_per_task": metrics.total_cost / metrics.task_count,
+            "reliability_score": metrics.overall_slo_compliance,
+            "strategic_value": self.assess_strategic_value(agent_id)
+        }
+    
+    def should_retain(self, evaluation: dict) -> bool:
+        """
+        에이전트 유지 여부 판단
+        """
+        # 기준: 활용도 20% 이상, 신뢰도 0.8 이상, 전략적 가치 있음
+        return (
+            evaluation["utilization"] >= 0.20 and
+            evaluation["reliability_score"] >= 0.80 and
+            evaluation["strategic_value"] >= 2
+        )
+</code></pre>
+<h3>4.2 통신 복잡성 관리: A2A 계약 최소화</h3>
+<p>A2A 통신<a href="https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/">[5]</a>이 증가하면 추적 복잡성이指数적으로 증가합니다.</p>
+<p><strong>原则</strong>:</p>
+<ol>
+<li><strong>계약 계약은 명시적으로 문서화</strong> — capability 스키마 버저닝</li>
+<li><strong>비동기 우선</strong> — 동기 호출은 비용이 높음</li>
+<li><strong>장애 격리</strong> — 에이전트 단위의 circuit breaker</li>
+</ol>
+<pre><code class="language-python">class AgentCircuitBreaker:
+    """
+    에이전트 간 통신의 circuit breaker
+    """
+    
+    def __init__(self, failure_threshold: int = 5, timeout_seconds: int = 60):
+        self.failure_threshold = failure_threshold
+        self.timeout = timeout_seconds
+        self.failures = {}
+        self.states = {}
+    
+    def call(self, agent_id: str, func: callable) -> Any:
+        """
+        에이전트 호출前的 circuit check
+        """
+        if self.is_open(agent_id):
+            raise CircuitOpenException(f"Agent {agent_id} circuit is open")
+        
+        try:
+            result = func()
+            self.record_success(agent_id)
+            return result
+        except Exception as e:
+            self.record_failure(agent_id)
+            
+            if self.failures[agent_id] >= self.failure_threshold:
+                self.open_circuit(agent_id)
+            
+            raise
+</code></pre>
+<hr>
+<h2>5. 비용 최적화: Tiered Agent Model</h2>
+<h3>5.1 비용/신뢰도 trade-off</h3>
+<p>acecloud.ai의 2026 트렌드 분석<a href="https://acecloud.ai/blog/agentic-ai-trends/">[6]</a>에 따르면:</p>
+<ul>
+<li><strong>Task Success Rate</strong>와 <strong>Cost per Successful Outcome</strong>이 핵심 지표</li>
+<li>소형 모델(SLM)로 처리 가능한 작업에 대형 모델(LLM)을 사용하면 비용만 낭비</li>
+</ul>
+<h3>5.2 Tiered 실행 패턴</h3>
+<pre><code class="language-python">from enum import Enum
+from dataclasses import dataclass
+
+class TaskComplexity(Enum):
+    TRIVIAL = 1   # 단순 조희, 정형 응답
+    STANDARD = 2  # 일반적인 워크플로우
+    COMPLEX = 3   # 멀티 스텝推理, 불확실성 높음
+    CRITICAL = 4 # 법적/재무적 영향
+
+@dataclass
+class AgentConfig:
+    model: str
+    max_retries: int
+    timeout_seconds: int
+    escalation_threshold: float
+
+AGENT_TIERS = {
+    TaskComplexity.TRIVIAL: AgentConfig(
+        model="gpt-4o-mini", max_retries=1, timeout_seconds=5, escalation_threshold=0.5
+    ),
+    TaskComplexity.STANDARD: AgentConfig(
+        model="gpt-4o", max_retries=2, timeout_seconds=30, escalation_threshold=0.7
+    ),
+    TaskComplexity.COMPLEX: AgentConfig(
+        model="claude-sonnet-4", max_retries=3, timeout_seconds=120, escalation_threshold=0.85
+    ),
+    TaskComplexity.CRITICAL: AgentConfig(
+        model="claude-opus-4", max_retries=5, timeout_seconds=300, escalation_threshold=0.95
+    ),
+}
+
+def route_task(task: dict) -> AgentConfig:
+    """
+    작업 복잡도에 따라 에이전트 티어 선택
+    """
+    complexity = assess_complexity(task)
+    return AGENT_TIERS[complexity]
+</code></pre>
+<hr>
+<h2>6. 결론: Sprawl을 방지하려면</h2>
+<p>Agent Sprawl은 아직 초기 단계입니다. 지금 적절한 관심을 기울이면 microservices에서 했던 실수를 반복하지 않을 수 있습니다.</p>
+<p><strong>핵심 행동 요약</strong>:</p>
+<ol>
+<li><strong>측정 없는 배포 금지</strong>: 에이전트 추가 시 반드시 SLI/SLO를 함께 정의</li>
+<li><strong>정기적 포트폴리오 검토</strong>: 분기별 에이전트 감사 실시</li>
+<li><strong>Tiered 모델 도입</strong>: 작업 복잡도에 따라 적절한 리소스 배분</li>
+<li><strong>Circuit Breaker 필수</strong>: 에이전트 간 통신의 장애 격리</li>
+<li><strong>A2A 계약 문서화</strong>: 명시적 버전 관리로 통신 복잡성 관리</li>
+</ol>
+<p>SRE 원칙은 특정 기술에 종속되지 않습니다. 신뢰성 확보를 위한 기본 원칙은 에이전트 시대에도 변하지 않습니다.</p>
+<hr>
+<h2>references</h2>
+<p><a href="https://dev.to/ajaydevineni/agent-sprawl-is-your-next-production-incident-an-sre-response-to-datadogs-state-of-ai-engineering-3k83">[1] Agent Sprawl is Your Next Production Incident - DEV Community</a>
+<a href="https://www.datadoghq.com/state-of-ai/">[2] Datadog State of AI Engineering 2026</a>
+<a href="https://komodor.com/ai-sre-summit-2026/">[3] AI SRE Summit 2026 - Komodor</a>
+<a href="https://www.infoq.com/news/2025/10/ai-agent-orchestration-patterns/">[4] AI Agent Orchestration Patterns - InfoQ</a>
+<a href="https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/">[5] A2A: A New Era of Agent Interoperability - Google Developers Blog</a>
+<a href="https://acecloud.ai/blog/agentic-ai-trends/">[6] Agentic AI Trends 2026: From Pilots To Production - AceCloud</a></p></div></article></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/893724321ed0589d.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"ebRscDf4b2aPUW-Etl-1P\",\"c\":[\"\",\"posts\",\"2026-05-02-agent-sprawl-sre-approach\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-05-02-agent-sprawl-sre-approach\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/893724321ed0589d.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/329e63eb984ada35.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"11:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n10:T4511,"])</script><script>self.__next_f.push([1,"\u003ch2\u003e들어가며\u003c/h2\u003e\n\u003cp\u003e2026년, AI 에이전트 기반 시스템의 운영 복잡성이 놀라운 속도로 증가하고 있습니다.\u003c/p\u003e\n\u003cp\u003e一个新概念이 빠르게 확산되고 있습니다: \u003cstrong\u003eAgent Sprawl\u003c/strong\u003e — 에이전트 인프라 복잡성(프레임워크, 모델, 도구 레이어, 오케스트레이션 패턴)이 신뢰성을 측정하고 관리하는能力을 능가하는 상태\u003ca href=\"https://dev.to/ajaydevineni/agent-sprawl-is-your-next-production-incident-an-sre-response-to-datadogs-state-of-ai-engineering-3k83\"\u003e[1]\u003c/a\u003e.\u003c/p\u003e\n\u003cp\u003e이 상태는 구조적으로 2015~2020년 사이 SRE 팀이 겪었던 \u003cstrong\u003emicroservices sprawl\u003c/strong\u003e과 동일합니다. 팀들은 서비스를 SLO보다 빠르게 추가했고, 결국 운영 비용이 폭발했습니다.\u003c/p\u003e\n\u003cp\u003e이 글에서는:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003eAgent Sprawl이 발생하는 구조적 원인을 분석\u003c/li\u003e\n\u003cli\u003e에이전트-specific SLI/SLO 프레임워크를 설계\u003c/li\u003e\n\u003cli\u003e실제 적용 가능한 비용 절감 전략을 제시합니다\u003c/li\u003e\n\u003c/ol\u003e\n\u003chr\u003e\n\u003ch2\u003e1. Agent Sprawl의 anatomy\u003c/h2\u003e\n\u003ch3\u003e1.1 microservices sprawl과의 비교\u003c/h3\u003e\n\u003cpre\u003e\u003ccode\u003emicroservices sprawl (2015-2020)          Agent Sprawl (2025-2026)\n─────────────────────────────────────────────────────────────────────\n서비스 추가 속도 \u003e SLO 정의 속도            에이전트 추가 속도 \u003e 신뢰성 측정 속도\n추적되지 않는 서비스 의존성                   추적되지 않는 에이전트 간 통신\n falloCHAOS 문서화되지 않은 장애              에이전트 결정 경로 추적 불가\n 팀당 서비스 수 증가 → 운영 비용 증가         에이전트 수 증가 → 비용/지연 증가\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e핵심 similarity: \u003cstrong\u003e복잡성의 성장 속도가 운영 역량의 성장 속도를 앞서간다.\u003c/strong\u003e\u003c/p\u003e\n\u003ch3\u003e1.2 2026년 현재 상태\u003c/h3\u003e\n\u003cp\u003eDatadog의 \"State of AI Engineering 2026\"\u003ca href=\"https://www.datadoghq.com/state-of-ai/\"\u003e[2]\u003c/a\u003e에 따르면:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e기업당 평균 에이전트 배포 수가 2024년 12개에서 2026년 현재 \u003cstrong\u003e47개\u003c/strong\u003e로 증가\u003c/li\u003e\n\u003cli\u003e하지만 SLO가 정의된 에이전트는 \u003cstrong\u003e8%\u003c/strong\u003e 미만\u003c/li\u003e\n\u003cli\u003e에이전트 관련 인시던트가 전체 AI 인시던트의 **62%**를 차지\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이는 microservices 초기 단계와 매우 유사합니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e2. 에이전트-specific SLI 설계\u003c/h2\u003e\n\u003ch3\u003e2.1 기존 SRE 개념의 확장\u003c/h3\u003e\n\u003cp\u003e전통적인 SLI는 다음과 같습니다:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eAvailability\u003c/strong\u003e: 시스템이 요청을 처리할 수 있는 시간 비율\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eLatency\u003c/strong\u003e: 요청에 대한 응답 시간\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eThroughput\u003c/strong\u003e: 단위 시간당 처리량\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e에이전트 시스템에서는这些 개념이 달라집니다. Komodor의 AI SRE Summit 2026\u003ca href=\"https://komodor.com/ai-sre-summit-2026/\"\u003e[3]\u003c/a\u003e에서 제시된 5가지 에이전트-specific SLI를深人 분석합니다.\u003c/p\u003e\n\u003ch3\u003e2.2 5가지 핵심 SLI\u003c/h3\u003e\n\u003ch4\u003eSLI-1: Calibration Error (교정 오차)\u003c/h4\u003e\n\u003cp\u003e\u003cstrong\u003e정의\u003c/strong\u003e: 에이전트가 제시한 신뢰도와 실제 정확도 간의 차이\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eCalibration Error = |Stated Confidence - Actual Accuracy|\n\n예시:\n- 에이전트가 \"이 답변의 정확도는 95%\"라고 주장\n- 실제 검증 결과 87% 정확 → Calibration Error = 8%\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e측정 방법\u003c/strong\u003e:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003edef calculate_calibration_error(agent_id: str, samples: list[dict]) -\u003e float:\n    \"\"\"\n    각 샘플에서 stated_confidence와 actual_outcome을 비교\n    \"\"\"\n    errors = []\n    for sample in samples:\n        stated = sample[\"stated_confidence\"]  # 0.0 ~ 1.0\n        actual = sample[\"actual_accuracy\"]    # 0.0 ~ 1.0\n        \n        # calibration error는 절대값\n        error = abs(stated - actual)\n        errors.append(error)\n    \n    # 평균 calibration error 반환\n    return sum(errors) / len(errors)\n\n# 기준선 예시\n# CE \u0026#x3C; 0.05: Excellent (90% 이상 정답률)\n# CE \u0026#x3C; 0.10: Good\n# CE \u0026#x3C; 0.15: Acceptable\n# CE \u003e= 0.15: Needs calibration training\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch4\u003eSLI-2: Evidence Completeness (증거 완전성)\u003c/h4\u003e\n\u003cp\u003e\u003cstrong\u003e정의\u003c/strong\u003e: 에이전트의 판단 근거가 충분한 정보를 포함하고 있는지\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eEvidence Completeness = 도구 호출로 확보한 맥락 / 최적 맥락\n\n예시:\n- 최적 맥락: 사용자 히스토리 10개 + 실시간 DB + 외부 API\n- 실제 확보: 사용자 히스토리 3개만 → Evidence Completeness = 30%\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e측정 방법\u003c/strong\u003e:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003edef measure_evidence_completeness(task: dict, context: dict) -\u003e float:\n    \"\"\"\n    필수 정보 목록과 실제 확보 정보를 비교\n    \"\"\"\n    required_contexts = task[\"required_contexts\"]  # [\"user_history\", \"db\", \"api\"]\n    available_contexts = context.keys()            # [\"user_history\"]\n    \n    # 집합 비교\n    coverage = len(available_contexts \u0026#x26; set(required_contexts))\n    total = len(required_contexts)\n    \n    return coverage / total if total \u003e 0 else 0.0\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch4\u003eSLI-3: Data Currency (데이터 신선도)\u003c/h4\u003e\n\u003cp\u003e\u003cstrong\u003e정의\u003c/strong\u003e: 에이전트가 사용하는 데이터가 현재 시점에서 얼마나 최신인지\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eData Currency = min(마지막 업데이트 경과 시간 / 최대 허용 경과 시간)\n\n예시:\n- 실시간 가격 정보: 최대 5분 전까지 허용\n- 사용자 프로필: 최대 24시간 전까지 허용\n- 규제 정보: 최대 1시간 전까지 허용\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e측정 방법\u003c/strong\u003e:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003efrom datetime import datetime, timedelta\n\nclass DataCurrencyMonitor:\n    def __init__(self, thresholds: dict[str, timedelta]):\n        # thresholds: {\"price_data\": timedelta(minutes=5), ...}\n        self.thresholds = thresholds\n    \n    def check_currency(self, data_source: str, last_updated: datetime) -\u003e float:\n        \"\"\"\n        0.0 ~ 1.0 반환\n        1.0 = 최상 (최대 허용 시간 이내)\n        0.0 = 최악 (시간 초과)\n        \"\"\"\n        max_age = self.thresholds.get(data_source, timedelta(hours=24))\n        age = datetime.now() - last_updated\n        \n        if age \u0026#x3C;= max_age:\n            # 비율 계산 (여유 시간 대비 사용 가능 비율)\n            return 1.0 - (age / max_age) * 0.5\n        else:\n            # 시간 초과 시 점진적 페널티\n            overage = age - max_age\n            penalty = min(overage / max_age, 1.0)\n            return max(0.0, 1.0 - penalty - 0.5)\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch4\u003eSLI-4: Contradiction Rate (모순율)\u003c/h4\u003e\n\u003cp\u003e\u003cstrong\u003e정의\u003c/strong\u003e: 동일 질문에 대한 연속 응답 간 모순 발생 비율\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eContradiction Rate = 모순이 발생한 연속 응답 쌍 / 전체 연속 응답 쌍\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e왜 중요한가\u003c/strong\u003e:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e동일한 질문에 다른 답변 → 사용자 신뢰도 하락\u003c/li\u003e\n\u003cli\u003e내부 로직 불일치 → 디버깅 복잡성 증가\u003c/li\u003e\n\u003cli\u003e규정 준수 문제 (audit trail에서 모순 발견)\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003e측정 방법\u003c/strong\u003e:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003edef detect_contradiction(response_a: dict, response_b: dict, task_type: str) -\u003e bool:\n    \"\"\"\n    두 연속 응답 간 모순 检测\n    \"\"\"\n    if task_type == \"factual_qa\":\n        # 사실 기반 질문: 핵심 답변이 상반되는지 확인\n        answer_a = extract_key_fact(response_a[\"answer\"])\n        answer_b = extract_key_fact(response_b[\"answer\"])\n        return is_contradictory(answer_a, answer_b)\n    \n    elif task_type == \"process_execution\":\n        # 프로세스 실행: 단계 순서/파라미터 불일치\n        steps_a = response_a[\"execution_plan\"][\"steps\"]\n        steps_b = response_b[\"execution_plan\"][\"steps\"]\n        return steps_a != steps_b\n    \n    else:\n        # 기본: 같을 것으로 예상\n        return response_a[\"answer\"] != response_b[\"answer\"]\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch4\u003eSLI-5: Decision Tier Distribution (결정 계층 분포)\u003c/h4\u003e\n\u003cp\u003e\u003cstrong\u003e정의\u003c/strong\u003e: 에이전트의 결정이 자동 실행 / 검토 요청 / 에스컬레이션 중 어디에 해당하는지\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eTier 0: 자동 실행 (즉시 처리)\nTier 1: 자동 실행 + 로깅 (후처리 검토)\nTier 2: 인간 검토 필요 (승인 대기)\nTier 3: 에스컬레이션 (전문가 참여)\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e측정 방법\u003c/strong\u003e:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003edef analyze_decision_tier_distribution(agent_id: str, period: str) -\u003e dict:\n    \"\"\"\n    각 tier에 속하는 결정 수를 카운트\n    \"\"\"\n    decisions = query_decision_log(agent_id, period)\n    \n    tier_counts = {0: 0, 1: 0, 2: 0, 3: 0}\n    \n    for decision in decisions:\n        tier = classify_decision_tier(decision)\n        tier_counts[tier] += 1\n    \n    total = sum(tier_counts.values())\n    \n    return {\n        tier: {\n            \"count\": count,\n            \"percentage\": count / total if total \u003e 0 else 0\n        }\n        for tier, count in tier_counts.items()\n    }\n\n# 기준선 예시\n# Tier 0-1이 80% 이상: 자동화 잘 되고 있음\n# Tier 2-3이 30% 이상: 검토/에스컬레이션 병목 확인 필요\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e3. SLO 설계 프레임워크\u003c/h2\u003e\n\u003ch3\u003e3.1 목표 지향적 SLO 설정\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-yaml\"\u003e# 예시: 고객 서비스 에이전트의 SLO\n\nservice_level_objectives:\n  calibration_error:\n    target: \"\u0026#x3C; 0.08\"\n    window: \"30d\"\n    alert_threshold: \"\u003e= 0.12\"\n    \n  evidence_completeness:\n    target: \"\u003e= 0.85\"\n    window: \"7d\"\n    alert_threshold: \"\u0026#x3C; 0.75\"\n    \n  data_currency:\n    target: \"\u003e= 0.90\"\n    window: \"1d\"\n    alert_threshold: \"\u0026#x3C; 0.80\"\n    \n  contradiction_rate:\n    target: \"\u0026#x3C; 0.02\"\n    window: \"14d\"\n    alert_threshold: \"\u003e= 0.05\"\n    \n  decision_tier_distribution:\n    target: \"Tier 0-1 \u003e= 0.75\"\n    window: \"7d\"\n    alert_threshold: \"Tier 2-3 \u003e= 0.35\"\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e3.2 Error Budget 정책\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003eclass AgentErrorBudget:\n    \"\"\"\n    SLO 위반을 위한 error budget 관리\n    \"\"\"\n    \n    def __init__(self, slo: dict, burn_rate_threshold: float = 1.5):\n        self.slo = slo\n        self.burn_rate_threshold = burn_rate_threshold\n        self.consumed_budget = {k: 0.0 for k in slo.keys()}\n    \n    def consume(self, sli_name: str, error_percentage: float):\n        \"\"\"\n        error budget 소모 기록\n        \"\"\"\n        if sli_name not in self.consumed_budget:\n            return\n        \n        # 1%를 소비하면 1% budget 사용\n        self.consumed_budget[sli_name] += error_percentage\n    \n    def check_burn_rate(self, sli_name: str, window_hours: int) -\u003e float:\n        \"\"\"\n        현재 소진 속도 계산\n        \"\"\"\n        budget = self.slo[sli_name]\n        consumed = self.consumed_budget[sli_name]\n        \n        # 시간 대비 소진율\n        burn_rate = consumed / (window_hours / 24)\n        \n        return burn_rate\n    \n    def should_alert(self, sli_name: str, window_hours: int) -\u003e bool:\n        \"\"\"\n        alerting 필요 여부 판단\n        \"\"\"\n        burn_rate = self.check_burn_rate(sli_name, window_hours)\n        return burn_rate \u003e= self.burn_rate_threshold\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e4. Agent Sprawl 관리 전략\u003c/h2\u003e\n\u003ch3\u003e4.1 감축 원칙: 불필요한 에이전트 제거\u003c/h3\u003e\n\u003cp\u003emicroservices에서 했던 것처럼\u003ca href=\"https://www.infoq.com/news/2025/10/ai-agent-orchestration-patterns/\"\u003e[4]\u003c/a\u003e, 에이전트 भी 정기적으로 검토해야 합니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003eclass AgentPortfolioReview:\n    \"\"\"\n    에이전트 포트폴리오 정기 검토\n    \"\"\"\n    \n    def evaluate_agent(self, agent_id: str) -\u003e dict:\n        \"\"\"\n        에이전트의 기여도/비용 분석\n        \"\"\"\n        metrics = self.collect_metrics(agent_id)\n        \n        return {\n            \"utilization\": metrics.task_count / metrics.capacity,\n            \"cost_per_task\": metrics.total_cost / metrics.task_count,\n            \"reliability_score\": metrics.overall_slo_compliance,\n            \"strategic_value\": self.assess_strategic_value(agent_id)\n        }\n    \n    def should_retain(self, evaluation: dict) -\u003e bool:\n        \"\"\"\n        에이전트 유지 여부 판단\n        \"\"\"\n        # 기준: 활용도 20% 이상, 신뢰도 0.8 이상, 전략적 가치 있음\n        return (\n            evaluation[\"utilization\"] \u003e= 0.20 and\n            evaluation[\"reliability_score\"] \u003e= 0.80 and\n            evaluation[\"strategic_value\"] \u003e= 2\n        )\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e4.2 통신 복잡성 관리: A2A 계약 최소화\u003c/h3\u003e\n\u003cp\u003eA2A 통신\u003ca href=\"https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/\"\u003e[5]\u003c/a\u003e이 증가하면 추적 복잡성이指数적으로 증가합니다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e原则\u003c/strong\u003e:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e계약 계약은 명시적으로 문서화\u003c/strong\u003e — capability 스키마 버저닝\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e비동기 우선\u003c/strong\u003e — 동기 호출은 비용이 높음\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e장애 격리\u003c/strong\u003e — 에이전트 단위의 circuit breaker\u003c/li\u003e\n\u003c/ol\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003eclass AgentCircuitBreaker:\n    \"\"\"\n    에이전트 간 통신의 circuit breaker\n    \"\"\"\n    \n    def __init__(self, failure_threshold: int = 5, timeout_seconds: int = 60):\n        self.failure_threshold = failure_threshold\n        self.timeout = timeout_seconds\n        self.failures = {}\n        self.states = {}\n    \n    def call(self, agent_id: str, func: callable) -\u003e Any:\n        \"\"\"\n        에이전트 호출前的 circuit check\n        \"\"\"\n        if self.is_open(agent_id):\n            raise CircuitOpenException(f\"Agent {agent_id} circuit is open\")\n        \n        try:\n            result = func()\n            self.record_success(agent_id)\n            return result\n        except Exception as e:\n            self.record_failure(agent_id)\n            \n            if self.failures[agent_id] \u003e= self.failure_threshold:\n                self.open_circuit(agent_id)\n            \n            raise\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e5. 비용 최적화: Tiered Agent Model\u003c/h2\u003e\n\u003ch3\u003e5.1 비용/신뢰도 trade-off\u003c/h3\u003e\n\u003cp\u003eacecloud.ai의 2026 트렌드 분석\u003ca href=\"https://acecloud.ai/blog/agentic-ai-trends/\"\u003e[6]\u003c/a\u003e에 따르면:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eTask Success Rate\u003c/strong\u003e와 \u003cstrong\u003eCost per Successful Outcome\u003c/strong\u003e이 핵심 지표\u003c/li\u003e\n\u003cli\u003e소형 모델(SLM)로 처리 가능한 작업에 대형 모델(LLM)을 사용하면 비용만 낭비\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e5.2 Tiered 실행 패턴\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003efrom enum import Enum\nfrom dataclasses import dataclass\n\nclass TaskComplexity(Enum):\n    TRIVIAL = 1   # 단순 조희, 정형 응답\n    STANDARD = 2  # 일반적인 워크플로우\n    COMPLEX = 3   # 멀티 스텝推理, 불확실성 높음\n    CRITICAL = 4 # 법적/재무적 영향\n\n@dataclass\nclass AgentConfig:\n    model: str\n    max_retries: int\n    timeout_seconds: int\n    escalation_threshold: float\n\nAGENT_TIERS = {\n    TaskComplexity.TRIVIAL: AgentConfig(\n        model=\"gpt-4o-mini\", max_retries=1, timeout_seconds=5, escalation_threshold=0.5\n    ),\n    TaskComplexity.STANDARD: AgentConfig(\n        model=\"gpt-4o\", max_retries=2, timeout_seconds=30, escalation_threshold=0.7\n    ),\n    TaskComplexity.COMPLEX: AgentConfig(\n        model=\"claude-sonnet-4\", max_retries=3, timeout_seconds=120, escalation_threshold=0.85\n    ),\n    TaskComplexity.CRITICAL: AgentConfig(\n        model=\"claude-opus-4\", max_retries=5, timeout_seconds=300, escalation_threshold=0.95\n    ),\n}\n\ndef route_task(task: dict) -\u003e AgentConfig:\n    \"\"\"\n    작업 복잡도에 따라 에이전트 티어 선택\n    \"\"\"\n    complexity = assess_complexity(task)\n    return AGENT_TIERS[complexity]\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e6. 결론: Sprawl을 방지하려면\u003c/h2\u003e\n\u003cp\u003eAgent Sprawl은 아직 초기 단계입니다. 지금 적절한 관심을 기울이면 microservices에서 했던 실수를 반복하지 않을 수 있습니다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e핵심 행동 요약\u003c/strong\u003e:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e측정 없는 배포 금지\u003c/strong\u003e: 에이전트 추가 시 반드시 SLI/SLO를 함께 정의\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e정기적 포트폴리오 검토\u003c/strong\u003e: 분기별 에이전트 감사 실시\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eTiered 모델 도입\u003c/strong\u003e: 작업 복잡도에 따라 적절한 리소스 배분\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eCircuit Breaker 필수\u003c/strong\u003e: 에이전트 간 통신의 장애 격리\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eA2A 계약 문서화\u003c/strong\u003e: 명시적 버전 관리로 통신 복잡성 관리\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003eSRE 원칙은 특정 기술에 종속되지 않습니다. 신뢰성 확보를 위한 기본 원칙은 에이전트 시대에도 변하지 않습니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003ereferences\u003c/h2\u003e\n\u003cp\u003e\u003ca href=\"https://dev.to/ajaydevineni/agent-sprawl-is-your-next-production-incident-an-sre-response-to-datadogs-state-of-ai-engineering-3k83\"\u003e[1] Agent Sprawl is Your Next Production Incident - DEV Community\u003c/a\u003e\n\u003ca href=\"https://www.datadoghq.com/state-of-ai/\"\u003e[2] Datadog State of AI Engineering 2026\u003c/a\u003e\n\u003ca href=\"https://komodor.com/ai-sre-summit-2026/\"\u003e[3] AI SRE Summit 2026 - Komodor\u003c/a\u003e\n\u003ca href=\"https://www.infoq.com/news/2025/10/ai-agent-orchestration-patterns/\"\u003e[4] AI Agent Orchestration Patterns - InfoQ\u003c/a\u003e\n\u003ca href=\"https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/\"\u003e[5] A2A: A New Era of Agent Interoperability - Google Developers Blog\u003c/a\u003e\n\u003ca href=\"https://acecloud.ai/blog/agentic-ai-trends/\"\u003e[6] Agentic AI Trends 2026: From Pilots To Production - AceCloud\u003c/a\u003e\u003c/p\u003e"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"text-sm text-white/60\",\"children\":\"2026-05-02\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"Agent Sprawl: AI 에이전트 인프라의 미кро서비스 독Canonical 문제와 SRE적 접근\"}],[\"$\",\"p\",null,{\"className\":\"mt-4 text-base text-white/80 md:text-lg\",\"children\":\"AI 에이전트 생태계가 빠르게 확장하는 가운데, 에이전트 인프라 복잡성이 신뢰성을 능가하는 'Agent Sprawl'이 새로운 운영 과제로 떠오르고 있습니다. 2026년 현재 micorservices sprawl을 겪었던 SRE 팀이 어떻게 이 문제에 접근하는지, 그리고 Agent-specific SLO/SLI를 어떻게 설계하는지深人 분석합니다.\"}],[\"$\",\"div\",null,{\"className\":\"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300\",\"dangerouslySetInnerHTML\":{\"__html\":\"$10\"}}]]}]}]\n8:null\n"])</script><script>self.__next_f.push([1,"c:[[\"$\",\"title\",\"0\",{\"children\":\"Agent Sprawl: AI 에이전트 인프라의 미кро서비스 독Canonical 문제와 SRE적 접근 | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"AI 에이전트 생태계가 빠르게 확장하는 가운데, 에이전트 인프라 복잡성이 신뢰성을 능가하는 'Agent Sprawl'이 새로운 운영 과제로 떠오르고 있습니다. 2026년 현재 micorservices sprawl을 겪었던 SRE 팀이 어떻게 이 문제에 접근하는지, 그리고 Agent-specific SLO/SLI를 어떻게 설계하는지深人 분석합니다.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-05-02-agent-sprawl-sre-approach/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"Agent Sprawl: AI 에이전트 인프라의 미кро서비스 독Canonical 문제와 SRE적 접근\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"AI 에이전트 생태계가 빠르게 확장하는 가운데, 에이전트 인프라 복잡성이 신뢰성을 능가하는 'Agent Sprawl'이 새로운 운영 과제로 떠오르고 있습니다. 2026년 현재 micorservices sprawl을 겪었던 SRE 팀이 어떻게 이 문제에 접근하는지, 그리고 Agent-specific SLO/SLI를 어떻게 설계하는지深人 분석합니다.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-05-02-agent-sprawl-sre-approach/\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"Agent Sprawl: AI 에이전트 인프라의 미кро서비스 독Canonical 문제와 SRE적 접근\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"AI 에이전트 생태계가 빠르게 확장하는 가운데, 에이전트 인프라 복잡성이 신뢰성을 능가하는 'Agent Sprawl'이 새로운 운영 과제로 떠오르고 있습니다. 2026년 현재 micorservices sprawl을 겪었던 SRE 팀이 어떻게 이 문제에 접근하는지, 그리고 Agent-specific SLO/SLI를 어떻게 설계하는지深人 분석합니다.\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}],[\"$\",\"$L11\",\"13\",{}]]\n"])</script></body></html>

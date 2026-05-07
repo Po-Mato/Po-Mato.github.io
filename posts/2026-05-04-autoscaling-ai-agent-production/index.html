@@ -1,0 +1,466 @@
+<!DOCTYPE html><!--ebRscDf4b2aPUW_Etl_1P--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/893724321ed0589d.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/329e63eb984ada35.js" async=""></script><meta name="next-size-adjust" content=""/><title>AI 에이전트 Production의 숨은 영웅: 오토스케일링이 에이전트 신뢰성을 결정하는 원리 | Mato Po Tech Blog</title><meta name="description" content="트래픽이 불규칙하게 들어오는 AI 에이전트 환경에서 &#x27;언제 늘리고 언제 줄일 것인가&#x27;는生死를 가르는 질문입니다. 이 글에서는 오토스케일링의 네 가지 알고리즘, Kubernetes HPA vs KEDA, 그리고 AI 에이전트 작업 부하에 특화된 실전 오토스케일링 전략을 Infrastructure 레벨부터深掘り합니다."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-05-04-autoscaling-ai-agent-production/"/><meta property="og:title" content="AI 에이전트 Production의 숨은 영웅: 오토스케일링이 에이전트 신뢰성을 결정하는 원리"/><meta property="og:description" content="트래픽이 불규칙하게 들어오는 AI 에이전트 환경에서 &#x27;언제 늘리고 언제 줄일 것인가&#x27;는生死를 가르는 질문입니다. 이 글에서는 오토스케일링의 네 가지 알고리즘, Kubernetes HPA vs KEDA, 그리고 AI 에이전트 작업 부하에 특화된 실전 오토스케일링 전략을 Infrastructure 레벨부터深掘り합니다."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-05-04-autoscaling-ai-agent-production/"/><meta property="og:image" content="https://po-mato.github.io/og.png"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="AI 에이전트 Production의 숨은 영웅: 오토스케일링이 에이전트 신뢰성을 결정하는 원리"/><meta name="twitter:description" content="트래픽이 불규칙하게 들어오는 AI 에이전트 환경에서 &#x27;언제 늘리고 언제 줄일 것인가&#x27;는生死를 가르는 질문입니다. 이 글에서는 오토스케일링의 네 가지 알고리즘, Kubernetes HPA vs KEDA, 그리고 AI 에이전트 작업 부하에 특화된 실전 오토스케일링 전략을 Infrastructure 레벨부터深掘り합니다."/><meta name="twitter:image" content="https://po-mato.github.io/og.png"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><div class="text-sm text-white/60">2026-05-04</div><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">AI 에이전트 Production의 숨은 영웅: 오토스케일링이 에이전트 신뢰성을 결정하는 원리</h1><p class="mt-4 text-base text-white/80 md:text-lg">트래픽이 불규칙하게 들어오는 AI 에이전트 환경에서 &#x27;언제 늘리고 언제 줄일 것인가&#x27;는生死를 가르는 질문입니다. 이 글에서는 오토스케일링의 네 가지 알고리즘, Kubernetes HPA vs KEDA, 그리고 AI 에이전트 작업 부하에 특화된 실전 오토스케일링 전략을 Infrastructure 레벨부터深掘り합니다.</p><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><h2>들어가며</h2>
+<p>A2A 프로토콜로 여러 에이전트가 협업하고, MCP로 외부 도구를 호출하는 Production AI 시스템에서 가장 큰 고통中的一个는 **"요청이 갑자기 밀려올 때 시스템이 무너지는 것"**입니다.</p>
+<p>에이전트가 Concurrent하게 동작하고, 사용자가 에이전트에게 자연스럽게 여러 태스크를 동시에 밀어 넣으면서, AI inference는Compute-intensive 특성上 CPU/메모리 사용률이 예츣할 수 없이 치솟습니다.</p>
+<p>이 글에서는:</p>
+<ol>
+<li>오토스케일링의 4가지 알고리즘 비교</li>
+<li>Kubernetes HPA v2 vs KEDA 차이와 선택 기준</li>
+<li>AI 에이전트 작업 부하에 최적화된 오토스케일링 아키텍처</li>
+<li>실제 Production 사례에서 추출한 튜닝 패턴</li>
+</ol>
+<p>을 정리합니다.</p>
+<hr>
+<h2>1. 오토스케일링의 네 가지 알고리즘</h2>
+<h3>1.1 Vertical Scaling (수직 스케일링)</h3>
+<p>가장 단순한 접근입니다. Pod의 resource request/limit을 높이고, 더 큰 노드로 스케줄링합니다.</p>
+<pre><code class="language-yaml"># Vertical Pod Autoscaler (VPA) — Recommendation Mode
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: agent-inference-vpa
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: agent-inference
+  updatePolicy:
+    updateMode: "Off"  # recommendation만 보고 실제 적용은 "Auto"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: inference
+      minAllowed:
+        cpu: "100m"
+        memory: "256Mi"
+      maxAllowed:
+        cpu: "8"
+        memory: "16Gi"
+</code></pre>
+<p><strong>장점:</strong> 설정이非常简单, 노트북 한 대에서 크게 하는 것처럼 바로 적용 가능
+<strong>단점:</strong> 노드 크기の上限에 도달하면 더 이상 확장 불가, 적용 순간 Pod 재시작 발생</p>
+<h3>1.2 Horizontal Scaling (수평 스케일링) — HPA</h3>
+<p>Pod 레플리카 수를 늘리는 방식입니다. 가장 널리 쓰이는 패턴.</p>
+<pre><code class="language-yaml"># Kubernetes Horizontal Pod Autoscaler (HPA) v2
+apiVersion: autoscaling.k2.x-k8s.io/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: agent-worker-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: agent-worker-pool
+  minReplicas: 2
+  maxReplicas: 50
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300  # 5분 동안缩尺DOWN 안 함
+      policies:
+      - type: Pods
+        value: 2
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 0  # 즉시 확장 (급증 대응)
+      policies:
+      - type: Pods
+        value: 4
+        periodSeconds: 15
+</code></pre>
+<p><strong>핵심 포인트:</strong> <code>stabilizationWindowSeconds</code>는 <strong>스케일링 히스테리시스</strong>를 구현합니다. 너무 짧으면 thrashing(확장→축소→확장 반복), 너무 길면 반응 지연.</p>
+<h3>1.3 Predictive Scaling (예측 스케일링)</h3>
+<p>ML 모델로 미래 트래픽을 예측하고 미리 용량을 늘리는 방식입니다.</p>
+<pre><code class="language-python"># AWS Auto Scaling — Predictive Scaling (Python boto3 예시)
+import boto3
+
+autoscaling = boto3.client('autoscaling')
+
+# Predictive Scaling Policy 설정
+autoscaling.put_scaling_policy(
+    AutoScalingGroupName='agent-inference-asg',
+    PolicyName='predictive-scaling',
+    PolicyType='PredictiveScaling',
+    PredictiveScalingConfiguration={
+        'MetricSpecifications': [
+            {
+                'TargetResourceType': 'ComputeEnvironment',
+                'CustomizedCapacityMetric': {
+                    'MetricDataQueries': [
+                        {
+                            'Id': 'agent_active_tasks',
+                            'Expression': 'agent_running_tasks / agent_max_capacity',
+                            'Label': 'Agent Active Task Ratio'
+                        }
+                    ]
+                },
+                'TargetValue': 70,  # 70% 이상이면 확장
+                'ScaleInCooldown': 300,
+                'ScaleOutCooldown': 60
+            }
+        ],
+        'Mode': 'ForecastAndScale',  # 예측 + 실시간 하이브리드
+        'SchedulingBufferTime': 300   # 예측 시간より5분先に 확장
+    }
+)
+</code></pre>
+<p><strong>AI 에이전트 활용:</strong> 사용자가 작업을 등록하면 작업 큐에积まれる데, Predictive Scaling은 <strong>작업 제출 패턴</strong>을 학습해서 에이전트 풀 크기를 미리 늘립니다.</p>
+<h3>1.4 Event-Driven Scaling — KEDA</h3>
+<p>AI 에이전트 Workload에 가장 적합한 패턴입니다. 메트릭 기반이 아니라 <strong>이벤트 소스</strong> 기반으로 스케일링합니다.</p>
+<pre><code class="language-yaml"># KEDA (Kubernetes Event-Driven Autoscaling)
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: agent-task-queue-scaler
+spec:
+  scaleTargetRef:
+    name: agent-worker-pool
+  pollingInterval: 5      # 5초마다 체크
+  cooldownPeriod: 30      # 확장 후 30초间 축소 안 함
+  minReplicaCount: 2
+  maxReplicaCount: 100
+
+  triggers:
+  # 트리거 1: RabbitMQ 큐 깊이
+  - type: rabbitmq
+    metadata:
+      host: amqp://guest:guest@rabbitmq:5672/
+      queueName: agent_tasks
+      activationThreshold: "10"       # 10개 이상일 때만 스케일 아웃
+      threshold: "50"                  # 50개면 max까지 확장
+
+  # 트리거 2: Prometheus — LLM API 에러율
+  - type: prometheus
+    metadata:
+      serverAddress: http://prometheus:9090
+      metricName: llm_api_error_rate
+      threshold: "0.05"               # 5% 이상 에러율이면 추가 에이전트 배치
+      query: |
+        sum(rate(llm_api_errors_total{agent_id=~".*"}[2m]))
+        /
+        sum(rate(llm_api_requests_total{agent_id=~".*"}[2m]))
+
+  # 트리&#x3C;minimax:tool_call> 3: Cron — 근무 시간 패턴
+  - type: cron
+    metadata:
+      timezone: Asia/Seoul
+      start: "0 9 * * 1-5"   # 월~금 09:00에 최소 10개副本
+      end: "0 18 * * 1-5"    # 오후 6시에 원복
+      desiredReplicas: "10"
+</code></pre>
+<p><strong>KEDA가 AI 에이전트에最强的인 이유:</strong></p>
+<table>
+<thead>
+<tr>
+<th>트리거 유형</th>
+<th>AI 에이전트 활용 시나리오</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RabbitMQ / Kafka queue depth</td>
+<td>대기 중인 태스크 수로_worker 수 조정</td>
+</tr>
+<tr>
+<td>Prometheus custom metric</td>
+<td>LLM API latency / error rate</td>
+</tr>
+<tr>
+<td>Cron</td>
+<td>업무 시간대 preemptive 확장</td>
+</tr>
+<tr>
+<td>AWS SQS</td>
+<td>S3에 문서 업로드 이벤트 → 문서 처리 에이전트 확장</td>
+</tr>
+<tr>
+<td>Datadog / CloudWatch</td>
+<td>에이전트 에러율 기반</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>2. HPA vs KEDA: 언제 무엇을 선택하는가</h2>
+<h3>2.1 결정 매트릭스</h3>
+<pre><code>                    HPA                              KEDA
+─────────────────────────────────────────────────────────────────
+기본 원리            메트릭 기반 스케일링             이벤트 소스 기반 스케일링
+확장 속도            moderate (1~3분 딜레이)          빠름 (5초 폴링)
+축소 속도            느림 (hist窗口 길다)             중간 (cooldownPeriod 튜닝)
+커스텀 메트릭        가능하나 설정 복잡             非常简单 (메트릭 쿼리만)
+외부 이벤트 소스     불가                             매우 다양함 (30+ 트리거)
+구성 복잡도          낮음 ~ 중간                      중간
+비용 효율성          배치 작업에 불리                배치 + 이벤트 드리븐에 최적
+</code></pre>
+<h3>2.2 Hybrid 아키텍처 (실무 권장)</h3>
+<p>HPA와 KEDA를 동시에 쓰는 구성입니다.</p>
+<pre><code class="language-yaml"># HPA — CPU/메모리 기반 안전망 (fallback)
+apiVersion: autoscaling.k2s.io/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: agent-hpa-fallback
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: agent-worker-pool
+  minReplicas: 2
+  maxReplicas: 100
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+
+---
+# KEDA — 큐 기반 최적 확장 (Primary)
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: agent-keda-primary
+spec:
+  scaleTargetRef:
+    name: agent-worker-pool
+  minReplicaCount: 2
+  maxReplicaCount: 100
+  cooldownPeriod: 30
+  triggers:
+  - type: rabbitmq
+    metadata:
+      host: amqp://guest:guest@rabbitmq:5672/
+      queueName: agent_tasks
+      threshold: "20"
+</code></pre>
+<p><strong>이 구성의 효과:</strong></p>
+<ul>
+<li>KEDA가 큐 메시지 수로 빠르게 확장</li>
+<li>CPU/메모리가 비정상적으로 치솟으면 HPA가 백업으로 동작
+-平常時は KEDA만 동작, 이상 발생 시 HPA가 안전망 역할</li>
+</ul>
+<hr>
+<h2>3. AI 에이전트 Workload 특성별 오토스케일링 전략</h2>
+<h3>3.1 LLM Inference Worker Pool</h3>
+<p>LLM inference는 <strong>GPU 바운드</strong>이면서 동시에 <strong>메모리 바운드</strong>입니다.</p>
+<pre><code class="language-yaml"># GPU 노드 스케일링 — Karpenter 사용
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: agent-gpu-pool
+spec:
+  template:
+    spec:
+      requirements:
+      - key: node.kubernetes.io/gpu-count
+        operator: Gt
+        values: ["1"]
+      - key: scheduling.k8s.io/ec2-capacity-type
+        operator: Exists
+      limits:
+        gpu: "8"
+        cpu: "32"
+        memory: "256Gi"
+  disruption:
+    consolidationPolicy: WhenUnderutilized
+    consolidateAfter: "3m"
+  weight: 100
+
+---
+# Inference Worker — GPU 활용률 기반 스케일링
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: llm-inference-scaler
+spec:
+  scaleTargetRef:
+    name: llm-inference-worker
+  minReplicaCount: 1
+  maxReplicaCount: 8
+  triggers:
+  - type: prometheus
+    metadata:
+      serverAddress: http://prometheus:9090
+      metricName: gpu_utilization_avg
+      threshold: "60"         # GPU 60% 이상이면 확장
+      query: |
+        avg(gpu_utilization{gpu_model=~"A100|H100"}) by (job)
+</code></pre>
+<h3>3.2 에이전트 태스크 큐 (Work Queue Driven)</h3>
+<pre><code class="language-python"># 에이전트 태스크 상태 머신
+"""
+에이전트 태스크 생명주기:
+  PENDING → QUEUED → DISPATCHED → RUNNING → COMPLETED/FAILED
+                  ↑
+                  └─ KEDA가 이 상태만 보고 확장
+"""
+
+# RabbitMQ Exchange 구성
+# 에이전트가 태스크를 등록하면 agent_tasks 큐에 쌓임
+# KEDA가 이 큐의 message count를 읽어서 replica 수 결정
+</code></pre>
+<h3>3.3 Multi-Agent 협업 (A2A 프로토콜)</h3>
+<p>A2A로 여러 에이전트가 협업할 때, <strong>Orchestrator Agent</strong>와 <strong>Worker Agent</strong>의 스케일링 전략이 다릅니다.</p>
+<pre><code class="language-yaml"># Orchestrator — Concurrent 연결 수 기준
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: orchestrator-scaler
+spec:
+  scaleTargetRef:
+    name: orchestrator-agent
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  triggers:
+  - type: prometheus
+    metadata:
+      metricName: active_agent_sessions
+      threshold: "50"           # 50개 이상 세션이면 확장
+      query: |
+        sum(agent_active_sessions{type="orchestrator"})
+
+---
+# Worker Agents — 태스크 큐 처리량 기준
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: worker-agent-scaler
+spec:
+  scaleTargetRef:
+    name: worker-agents
+  minReplicaCount: 5
+  maxReplicaCount: 200         # 태스크가 많이 쌓이면 대량 확장
+  cooldownPeriod: 15
+  triggers:
+  - type: rabbitmq
+    metadata:
+      host: amqp://guest:guest@rabbitmq:5672/
+      queueName: agent_task_queue
+      threshold: "5"            # 5개 이상 대기하면 점진적 확장
+      activationThreshold: "20" # 20개부터 스케일 아웃 시작
+</code></pre>
+<hr>
+<h2>4. 실전 튜닝: Production에서 얻은教训</h2>
+<h3>4.1 스케일링 Thrashing 방지</h3>
+<p>가장 흔한 실수는 <strong>cooldownPeriod를 너무 짧게 설정</strong>하는 것입니다.</p>
+<pre><code class="language-yaml"># ❌ 잘못된 설정 — Thrashing 발생
+cooldownPeriod: 5   # 5초면 확장과 축소가 반복됨
+
+# ✅ 수정된 설정
+cooldownPeriod: 300  # 5분간 축소 안 함
+</code></pre>
+<p><strong>경험적 규칙:</strong> 에이전트 태스크 하나의 평균 실행 시간이 30초라면, cooldownPeriod는 최소 **10배 이상(300초)**으로 설정.</p>
+<h3>4.2 Panic Mode (급격 확장 방지)</h3>
+<pre><code class="language-yaml">behavior:
+  scaleUp:
+    stabilizationWindowSeconds: 0  # 즉각 확장
+  scaleDown:
+    stabilizationWindowSeconds: 600 # 10분간 축소 안 함 (Panic 방지)
+    policies:
+    - type: Percent
+      value: 10                       # 한 번에 10% 이상 축소 불가
+      periodSeconds: 600
+</code></pre>
+<p>급격한 축소로 인한 <strong>OOM restart cascading failure</strong>를 방지합니다.</p>
+<h3>4.3 Cost Cap으로 예산 관리</h3>
+<pre><code class="language-yaml"># Kubernetes Resource Claim으로 비용 상한 제어
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: agent-cost-cap
+spec:
+  limits:
+  - max:
+      cpu: "64"
+      memory: "128Gi"
+    min:
+      cpu: "100m"
+      memory: "128Mi"
+    type: Container
+  - max:
+      pods: "200"    # 전체 Pod 수로 비용 상한 관리
+    type: Pod
+</code></pre>
+<hr>
+<h2>5. 모니터링: SLO 달성을 위한 핵심 메트릭</h2>
+<p>오토스케일링이 제대로 되고 있는지 확인하려면:</p>
+<table>
+<thead>
+<tr>
+<th>메트릭</th>
+<th>목적</th>
+<th>Alert 임계값</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scaler_replicas_count</code></td>
+<td>현재 replica 수</td>
+<td>sudden drop to min</td>
+</tr>
+<tr>
+<td><code>scaler_trigger_value</code></td>
+<td>트리거 메트릭 값</td>
+<td>queue depth > threshold sustained</td>
+</tr>
+<tr>
+<td><code>task_queue_latency_p99</code></td>
+<td>태스크 대기 시간</td>
+<td>> 60초</td>
+</tr>
+<tr>
+<td><code>agent_session_active_count</code></td>
+<td>활성 에이전트 세션</td>
+<td>> capacity 80% sustained</td>
+</tr>
+<tr>
+<td><code>gpu_utilization_avg</code></td>
+<td>GPU 활용률</td>
+<td>&#x3C; 30% sustained (리소스 낭비)</td>
+</tr>
+<tr>
+<td><code>pod_restart_count</code></td>
+<td>Pod 재시작</td>
+<td>> 5/hour</td>
+</tr>
+<tr>
+<td><code>llm_api_latency_p99</code></td>
+<td>LLM 응답 시간</td>
+<td>> 30초</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-python"># Grafana Dashboard — 오토스케일링 상태 패널
+dashboard_config = {
+    "panels": [
+        {"title": "Active Replicas vs Queue Depth", "metrics": [
+            "keda_scaler_replicas",
+            "rabbitmq_queue_messages{queue='agent_tasks'}"
+        ]},
+        {"title": "Task Latency P99", "metrics": [
+            "histogram_quantile(0.99, task_processing_duration_seconds)"
+        ]},
+        {"title": "GPU Utilization Heatmap", "metrics": [
+            "gpu_utilization"
+        ]}
+    ]
+}
+</code></pre>
+<hr>
+<h2>마무리</h2>
+<p>AI 에이전트 시스템에서 오토스케일링은 단순한 infrastructure 설정이 아니라, <strong>서비스 신뢰성(SRE)의 핵심 구성 요소</strong>입니다.</p>
+<p>핵심 정리:</p>
+<ol>
+<li><strong>HPA + KEDA hybrid 구성</strong>이 AI 에이전트 Workload에 가장 효과적</li>
+<li><strong>KEDA의 이벤트 드리븐 확장</strong>은 큐 기반 에이전트 태스크에 최적</li>
+<li><strong>Panic mode 설정</strong>으로 스케일링 Thrashing과 cascading failure 방지</li>
+<li><strong>Cost cap</strong>으로 예산 초과 리스크 관리</li>
+<li><strong>실시간 모니터링</strong>으로 SLO 유지 여부 확인</li>
+</ol>
+<p>오토스케일링을 제대로 구성하면, 에이전트 시스템은 트래픽 급증에도 안정적으로 동작하면서 불필요한 비용은最小화할 수 있습니다.</p>
+<hr>
+<p><strong>References:</strong></p>
+<ul>
+<li><a href="https://keda.sh/">KEDA Documentation</a></li>
+<li><a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">Kubernetes HPA v2 Behavior Configuration</a></li>
+<li><a href="https://karpenter.sh/">Karpenter — Node Provisioning for Kubernetes</a></li>
+<li><a href="https://docs.aws.amazon.com/autoscaling/ec2/userguide/predictive-scaling-how-it-works.html">AWS Auto Scaling — Predictive Scaling</a></li>
+<li>Datadog "State of AI Engineering 2026"</li>
+</ul></div></article></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/893724321ed0589d.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"ebRscDf4b2aPUW-Etl-1P\",\"c\":[\"\",\"posts\",\"2026-05-04-autoscaling-ai-agent-production\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-05-04-autoscaling-ai-agent-production\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/893724321ed0589d.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/329e63eb984ada35.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"11:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n10:T4178,"])</script><script>self.__next_f.push([1,"\u003ch2\u003e들어가며\u003c/h2\u003e\n\u003cp\u003eA2A 프로토콜로 여러 에이전트가 협업하고, MCP로 외부 도구를 호출하는 Production AI 시스템에서 가장 큰 고통中的一个는 **\"요청이 갑자기 밀려올 때 시스템이 무너지는 것\"**입니다.\u003c/p\u003e\n\u003cp\u003e에이전트가 Concurrent하게 동작하고, 사용자가 에이전트에게 자연스럽게 여러 태스크를 동시에 밀어 넣으면서, AI inference는Compute-intensive 특성上 CPU/메모리 사용률이 예츣할 수 없이 치솟습니다.\u003c/p\u003e\n\u003cp\u003e이 글에서는:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e오토스케일링의 4가지 알고리즘 비교\u003c/li\u003e\n\u003cli\u003eKubernetes HPA v2 vs KEDA 차이와 선택 기준\u003c/li\u003e\n\u003cli\u003eAI 에이전트 작업 부하에 최적화된 오토스케일링 아키텍처\u003c/li\u003e\n\u003cli\u003e실제 Production 사례에서 추출한 튜닝 패턴\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003e을 정리합니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e1. 오토스케일링의 네 가지 알고리즘\u003c/h2\u003e\n\u003ch3\u003e1.1 Vertical Scaling (수직 스케일링)\u003c/h3\u003e\n\u003cp\u003e가장 단순한 접근입니다. Pod의 resource request/limit을 높이고, 더 큰 노드로 스케줄링합니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-yaml\"\u003e# Vertical Pod Autoscaler (VPA) — Recommendation Mode\napiVersion: autoscaling.k8s.io/v1\nkind: VerticalPodAutoscaler\nmetadata:\n  name: agent-inference-vpa\nspec:\n  targetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: agent-inference\n  updatePolicy:\n    updateMode: \"Off\"  # recommendation만 보고 실제 적용은 \"Auto\"\n  resourcePolicy:\n    containerPolicies:\n    - containerName: inference\n      minAllowed:\n        cpu: \"100m\"\n        memory: \"256Mi\"\n      maxAllowed:\n        cpu: \"8\"\n        memory: \"16Gi\"\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e장점:\u003c/strong\u003e 설정이非常简单, 노트북 한 대에서 크게 하는 것처럼 바로 적용 가능\n\u003cstrong\u003e단점:\u003c/strong\u003e 노드 크기の上限에 도달하면 더 이상 확장 불가, 적용 순간 Pod 재시작 발생\u003c/p\u003e\n\u003ch3\u003e1.2 Horizontal Scaling (수평 스케일링) — HPA\u003c/h3\u003e\n\u003cp\u003ePod 레플리카 수를 늘리는 방식입니다. 가장 널리 쓰이는 패턴.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-yaml\"\u003e# Kubernetes Horizontal Pod Autoscaler (HPA) v2\napiVersion: autoscaling.k2.x-k8s.io/v1\nkind: HorizontalPodAutoscaler\nmetadata:\n  name: agent-worker-hpa\nspec:\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: agent-worker-pool\n  minReplicas: 2\n  maxReplicas: 50\n  behavior:\n    scaleDown:\n      stabilizationWindowSeconds: 300  # 5분 동안缩尺DOWN 안 함\n      policies:\n      - type: Pods\n        value: 2\n        periodSeconds: 60\n    scaleUp:\n      stabilizationWindowSeconds: 0  # 즉시 확장 (급증 대응)\n      policies:\n      - type: Pods\n        value: 4\n        periodSeconds: 15\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e핵심 포인트:\u003c/strong\u003e \u003ccode\u003estabilizationWindowSeconds\u003c/code\u003e는 \u003cstrong\u003e스케일링 히스테리시스\u003c/strong\u003e를 구현합니다. 너무 짧으면 thrashing(확장→축소→확장 반복), 너무 길면 반응 지연.\u003c/p\u003e\n\u003ch3\u003e1.3 Predictive Scaling (예측 스케일링)\u003c/h3\u003e\n\u003cp\u003eML 모델로 미래 트래픽을 예측하고 미리 용량을 늘리는 방식입니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003e# AWS Auto Scaling — Predictive Scaling (Python boto3 예시)\nimport boto3\n\nautoscaling = boto3.client('autoscaling')\n\n# Predictive Scaling Policy 설정\nautoscaling.put_scaling_policy(\n    AutoScalingGroupName='agent-inference-asg',\n    PolicyName='predictive-scaling',\n    PolicyType='PredictiveScaling',\n    PredictiveScalingConfiguration={\n        'MetricSpecifications': [\n            {\n                'TargetResourceType': 'ComputeEnvironment',\n                'CustomizedCapacityMetric': {\n                    'MetricDataQueries': [\n                        {\n                            'Id': 'agent_active_tasks',\n                            'Expression': 'agent_running_tasks / agent_max_capacity',\n                            'Label': 'Agent Active Task Ratio'\n                        }\n                    ]\n                },\n                'TargetValue': 70,  # 70% 이상이면 확장\n                'ScaleInCooldown': 300,\n                'ScaleOutCooldown': 60\n            }\n        ],\n        'Mode': 'ForecastAndScale',  # 예측 + 실시간 하이브리드\n        'SchedulingBufferTime': 300   # 예측 시간より5분先に 확장\n    }\n)\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003eAI 에이전트 활용:\u003c/strong\u003e 사용자가 작업을 등록하면 작업 큐에积まれる데, Predictive Scaling은 \u003cstrong\u003e작업 제출 패턴\u003c/strong\u003e을 학습해서 에이전트 풀 크기를 미리 늘립니다.\u003c/p\u003e\n\u003ch3\u003e1.4 Event-Driven Scaling — KEDA\u003c/h3\u003e\n\u003cp\u003eAI 에이전트 Workload에 가장 적합한 패턴입니다. 메트릭 기반이 아니라 \u003cstrong\u003e이벤트 소스\u003c/strong\u003e 기반으로 스케일링합니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-yaml\"\u003e# KEDA (Kubernetes Event-Driven Autoscaling)\napiVersion: keda.sh/v1alpha1\nkind: ScaledObject\nmetadata:\n  name: agent-task-queue-scaler\nspec:\n  scaleTargetRef:\n    name: agent-worker-pool\n  pollingInterval: 5      # 5초마다 체크\n  cooldownPeriod: 30      # 확장 후 30초间 축소 안 함\n  minReplicaCount: 2\n  maxReplicaCount: 100\n\n  triggers:\n  # 트리거 1: RabbitMQ 큐 깊이\n  - type: rabbitmq\n    metadata:\n      host: amqp://guest:guest@rabbitmq:5672/\n      queueName: agent_tasks\n      activationThreshold: \"10\"       # 10개 이상일 때만 스케일 아웃\n      threshold: \"50\"                  # 50개면 max까지 확장\n\n  # 트리거 2: Prometheus — LLM API 에러율\n  - type: prometheus\n    metadata:\n      serverAddress: http://prometheus:9090\n      metricName: llm_api_error_rate\n      threshold: \"0.05\"               # 5% 이상 에러율이면 추가 에이전트 배치\n      query: |\n        sum(rate(llm_api_errors_total{agent_id=~\".*\"}[2m]))\n        /\n        sum(rate(llm_api_requests_total{agent_id=~\".*\"}[2m]))\n\n  # 트리\u0026#x3C;minimax:tool_call\u003e 3: Cron — 근무 시간 패턴\n  - type: cron\n    metadata:\n      timezone: Asia/Seoul\n      start: \"0 9 * * 1-5\"   # 월~금 09:00에 최소 10개副本\n      end: \"0 18 * * 1-5\"    # 오후 6시에 원복\n      desiredReplicas: \"10\"\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003eKEDA가 AI 에이전트에最强的인 이유:\u003c/strong\u003e\u003c/p\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e트리거 유형\u003c/th\u003e\n\u003cth\u003eAI 에이전트 활용 시나리오\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003eRabbitMQ / Kafka queue depth\u003c/td\u003e\n\u003ctd\u003e대기 중인 태스크 수로_worker 수 조정\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003ePrometheus custom metric\u003c/td\u003e\n\u003ctd\u003eLLM API latency / error rate\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eCron\u003c/td\u003e\n\u003ctd\u003e업무 시간대 preemptive 확장\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eAWS SQS\u003c/td\u003e\n\u003ctd\u003eS3에 문서 업로드 이벤트 → 문서 처리 에이전트 확장\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eDatadog / CloudWatch\u003c/td\u003e\n\u003ctd\u003e에이전트 에러율 기반\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003chr\u003e\n\u003ch2\u003e2. HPA vs KEDA: 언제 무엇을 선택하는가\u003c/h2\u003e\n\u003ch3\u003e2.1 결정 매트릭스\u003c/h3\u003e\n\u003cpre\u003e\u003ccode\u003e                    HPA                              KEDA\n─────────────────────────────────────────────────────────────────\n기본 원리            메트릭 기반 스케일링             이벤트 소스 기반 스케일링\n확장 속도            moderate (1~3분 딜레이)          빠름 (5초 폴링)\n축소 속도            느림 (hist窗口 길다)             중간 (cooldownPeriod 튜닝)\n커스텀 메트릭        가능하나 설정 복잡             非常简单 (메트릭 쿼리만)\n외부 이벤트 소스     불가                             매우 다양함 (30+ 트리거)\n구성 복잡도          낮음 ~ 중간                      중간\n비용 효율성          배치 작업에 불리                배치 + 이벤트 드리븐에 최적\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e2.2 Hybrid 아키텍처 (실무 권장)\u003c/h3\u003e\n\u003cp\u003eHPA와 KEDA를 동시에 쓰는 구성입니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-yaml\"\u003e# HPA — CPU/메모리 기반 안전망 (fallback)\napiVersion: autoscaling.k2s.io/v2\nkind: HorizontalPodAutoscaler\nmetadata:\n  name: agent-hpa-fallback\nspec:\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: agent-worker-pool\n  minReplicas: 2\n  maxReplicas: 100\n  metrics:\n  - type: Resource\n    resource:\n      name: cpu\n      target:\n        type: Utilization\n        averageUtilization: 70\n\n---\n# KEDA — 큐 기반 최적 확장 (Primary)\napiVersion: keda.sh/v1alpha1\nkind: ScaledObject\nmetadata:\n  name: agent-keda-primary\nspec:\n  scaleTargetRef:\n    name: agent-worker-pool\n  minReplicaCount: 2\n  maxReplicaCount: 100\n  cooldownPeriod: 30\n  triggers:\n  - type: rabbitmq\n    metadata:\n      host: amqp://guest:guest@rabbitmq:5672/\n      queueName: agent_tasks\n      threshold: \"20\"\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e이 구성의 효과:\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eKEDA가 큐 메시지 수로 빠르게 확장\u003c/li\u003e\n\u003cli\u003eCPU/메모리가 비정상적으로 치솟으면 HPA가 백업으로 동작\n-平常時は KEDA만 동작, 이상 발생 시 HPA가 안전망 역할\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003ch2\u003e3. AI 에이전트 Workload 특성별 오토스케일링 전략\u003c/h2\u003e\n\u003ch3\u003e3.1 LLM Inference Worker Pool\u003c/h3\u003e\n\u003cp\u003eLLM inference는 \u003cstrong\u003eGPU 바운드\u003c/strong\u003e이면서 동시에 \u003cstrong\u003e메모리 바운드\u003c/strong\u003e입니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-yaml\"\u003e# GPU 노드 스케일링 — Karpenter 사용\napiVersion: karpenter.sh/v1\nkind: NodePool\nmetadata:\n  name: agent-gpu-pool\nspec:\n  template:\n    spec:\n      requirements:\n      - key: node.kubernetes.io/gpu-count\n        operator: Gt\n        values: [\"1\"]\n      - key: scheduling.k8s.io/ec2-capacity-type\n        operator: Exists\n      limits:\n        gpu: \"8\"\n        cpu: \"32\"\n        memory: \"256Gi\"\n  disruption:\n    consolidationPolicy: WhenUnderutilized\n    consolidateAfter: \"3m\"\n  weight: 100\n\n---\n# Inference Worker — GPU 활용률 기반 스케일링\napiVersion: keda.sh/v1alpha1\nkind: ScaledObject\nmetadata:\n  name: llm-inference-scaler\nspec:\n  scaleTargetRef:\n    name: llm-inference-worker\n  minReplicaCount: 1\n  maxReplicaCount: 8\n  triggers:\n  - type: prometheus\n    metadata:\n      serverAddress: http://prometheus:9090\n      metricName: gpu_utilization_avg\n      threshold: \"60\"         # GPU 60% 이상이면 확장\n      query: |\n        avg(gpu_utilization{gpu_model=~\"A100|H100\"}) by (job)\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e3.2 에이전트 태스크 큐 (Work Queue Driven)\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003e# 에이전트 태스크 상태 머신\n\"\"\"\n에이전트 태스크 생명주기:\n  PENDING → QUEUED → DISPATCHED → RUNNING → COMPLETED/FAILED\n                  ↑\n                  └─ KEDA가 이 상태만 보고 확장\n\"\"\"\n\n# RabbitMQ Exchange 구성\n# 에이전트가 태스크를 등록하면 agent_tasks 큐에 쌓임\n# KEDA가 이 큐의 message count를 읽어서 replica 수 결정\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e3.3 Multi-Agent 협업 (A2A 프로토콜)\u003c/h3\u003e\n\u003cp\u003eA2A로 여러 에이전트가 협업할 때, \u003cstrong\u003eOrchestrator Agent\u003c/strong\u003e와 \u003cstrong\u003eWorker Agent\u003c/strong\u003e의 스케일링 전략이 다릅니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-yaml\"\u003e# Orchestrator — Concurrent 연결 수 기준\napiVersion: keda.sh/v1alpha1\nkind: ScaledObject\nmetadata:\n  name: orchestrator-scaler\nspec:\n  scaleTargetRef:\n    name: orchestrator-agent\n  minReplicaCount: 1\n  maxReplicaCount: 10\n  triggers:\n  - type: prometheus\n    metadata:\n      metricName: active_agent_sessions\n      threshold: \"50\"           # 50개 이상 세션이면 확장\n      query: |\n        sum(agent_active_sessions{type=\"orchestrator\"})\n\n---\n# Worker Agents — 태스크 큐 처리량 기준\napiVersion: keda.sh/v1alpha1\nkind: ScaledObject\nmetadata:\n  name: worker-agent-scaler\nspec:\n  scaleTargetRef:\n    name: worker-agents\n  minReplicaCount: 5\n  maxReplicaCount: 200         # 태스크가 많이 쌓이면 대량 확장\n  cooldownPeriod: 15\n  triggers:\n  - type: rabbitmq\n    metadata:\n      host: amqp://guest:guest@rabbitmq:5672/\n      queueName: agent_task_queue\n      threshold: \"5\"            # 5개 이상 대기하면 점진적 확장\n      activationThreshold: \"20\" # 20개부터 스케일 아웃 시작\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e4. 실전 튜닝: Production에서 얻은教训\u003c/h2\u003e\n\u003ch3\u003e4.1 스케일링 Thrashing 방지\u003c/h3\u003e\n\u003cp\u003e가장 흔한 실수는 \u003cstrong\u003ecooldownPeriod를 너무 짧게 설정\u003c/strong\u003e하는 것입니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-yaml\"\u003e# ❌ 잘못된 설정 — Thrashing 발생\ncooldownPeriod: 5   # 5초면 확장과 축소가 반복됨\n\n# ✅ 수정된 설정\ncooldownPeriod: 300  # 5분간 축소 안 함\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e경험적 규칙:\u003c/strong\u003e 에이전트 태스크 하나의 평균 실행 시간이 30초라면, cooldownPeriod는 최소 **10배 이상(300초)**으로 설정.\u003c/p\u003e\n\u003ch3\u003e4.2 Panic Mode (급격 확장 방지)\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-yaml\"\u003ebehavior:\n  scaleUp:\n    stabilizationWindowSeconds: 0  # 즉각 확장\n  scaleDown:\n    stabilizationWindowSeconds: 600 # 10분간 축소 안 함 (Panic 방지)\n    policies:\n    - type: Percent\n      value: 10                       # 한 번에 10% 이상 축소 불가\n      periodSeconds: 600\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e급격한 축소로 인한 \u003cstrong\u003eOOM restart cascading failure\u003c/strong\u003e를 방지합니다.\u003c/p\u003e\n\u003ch3\u003e4.3 Cost Cap으로 예산 관리\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-yaml\"\u003e# Kubernetes Resource Claim으로 비용 상한 제어\napiVersion: v1\nkind: LimitRange\nmetadata:\n  name: agent-cost-cap\nspec:\n  limits:\n  - max:\n      cpu: \"64\"\n      memory: \"128Gi\"\n    min:\n      cpu: \"100m\"\n      memory: \"128Mi\"\n    type: Container\n  - max:\n      pods: \"200\"    # 전체 Pod 수로 비용 상한 관리\n    type: Pod\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e5. 모니터링: SLO 달성을 위한 핵심 메트릭\u003c/h2\u003e\n\u003cp\u003e오토스케일링이 제대로 되고 있는지 확인하려면:\u003c/p\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e메트릭\u003c/th\u003e\n\u003cth\u003e목적\u003c/th\u003e\n\u003cth\u003eAlert 임계값\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003escaler_replicas_count\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e현재 replica 수\u003c/td\u003e\n\u003ctd\u003esudden drop to min\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003escaler_trigger_value\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e트리거 메트릭 값\u003c/td\u003e\n\u003ctd\u003equeue depth \u003e threshold sustained\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003etask_queue_latency_p99\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e태스크 대기 시간\u003c/td\u003e\n\u003ctd\u003e\u003e 60초\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003eagent_session_active_count\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003e활성 에이전트 세션\u003c/td\u003e\n\u003ctd\u003e\u003e capacity 80% sustained\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003egpu_utilization_avg\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003eGPU 활용률\u003c/td\u003e\n\u003ctd\u003e\u0026#x3C; 30% sustained (리소스 낭비)\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003epod_restart_count\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003ePod 재시작\u003c/td\u003e\n\u003ctd\u003e\u003e 5/hour\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003ellm_api_latency_p99\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003eLLM 응답 시간\u003c/td\u003e\n\u003ctd\u003e\u003e 30초\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003e# Grafana Dashboard — 오토스케일링 상태 패널\ndashboard_config = {\n    \"panels\": [\n        {\"title\": \"Active Replicas vs Queue Depth\", \"metrics\": [\n            \"keda_scaler_replicas\",\n            \"rabbitmq_queue_messages{queue='agent_tasks'}\"\n        ]},\n        {\"title\": \"Task Latency P99\", \"metrics\": [\n            \"histogram_quantile(0.99, task_processing_duration_seconds)\"\n        ]},\n        {\"title\": \"GPU Utilization Heatmap\", \"metrics\": [\n            \"gpu_utilization\"\n        ]}\n    ]\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e마무리\u003c/h2\u003e\n\u003cp\u003eAI 에이전트 시스템에서 오토스케일링은 단순한 infrastructure 설정이 아니라, \u003cstrong\u003e서비스 신뢰성(SRE)의 핵심 구성 요소\u003c/strong\u003e입니다.\u003c/p\u003e\n\u003cp\u003e핵심 정리:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003eHPA + KEDA hybrid 구성\u003c/strong\u003e이 AI 에이전트 Workload에 가장 효과적\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eKEDA의 이벤트 드리븐 확장\u003c/strong\u003e은 큐 기반 에이전트 태스크에 최적\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003ePanic mode 설정\u003c/strong\u003e으로 스케일링 Thrashing과 cascading failure 방지\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eCost cap\u003c/strong\u003e으로 예산 초과 리스크 관리\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e실시간 모니터링\u003c/strong\u003e으로 SLO 유지 여부 확인\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003e오토스케일링을 제대로 구성하면, 에이전트 시스템은 트래픽 급증에도 안정적으로 동작하면서 불필요한 비용은最小화할 수 있습니다.\u003c/p\u003e\n\u003chr\u003e\n\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ca href=\"https://keda.sh/\"\u003eKEDA Documentation\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href=\"https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/\"\u003eKubernetes HPA v2 Behavior Configuration\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href=\"https://karpenter.sh/\"\u003eKarpenter — Node Provisioning for Kubernetes\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href=\"https://docs.aws.amazon.com/autoscaling/ec2/userguide/predictive-scaling-how-it-works.html\"\u003eAWS Auto Scaling — Predictive Scaling\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003eDatadog \"State of AI Engineering 2026\"\u003c/li\u003e\n\u003c/ul\u003e"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"text-sm text-white/60\",\"children\":\"2026-05-04\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"AI 에이전트 Production의 숨은 영웅: 오토스케일링이 에이전트 신뢰성을 결정하는 원리\"}],[\"$\",\"p\",null,{\"className\":\"mt-4 text-base text-white/80 md:text-lg\",\"children\":\"트래픽이 불규칙하게 들어오는 AI 에이전트 환경에서 '언제 늘리고 언제 줄일 것인가'는生死를 가르는 질문입니다. 이 글에서는 오토스케일링의 네 가지 알고리즘, Kubernetes HPA vs KEDA, 그리고 AI 에이전트 작업 부하에 특화된 실전 오토스케일링 전략을 Infrastructure 레벨부터深掘り합니다.\"}],[\"$\",\"div\",null,{\"className\":\"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300\",\"dangerouslySetInnerHTML\":{\"__html\":\"$10\"}}]]}]}]\n8:null\n"])</script><script>self.__next_f.push([1,"c:[[\"$\",\"title\",\"0\",{\"children\":\"AI 에이전트 Production의 숨은 영웅: 오토스케일링이 에이전트 신뢰성을 결정하는 원리 | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"트래픽이 불규칙하게 들어오는 AI 에이전트 환경에서 '언제 늘리고 언제 줄일 것인가'는生死를 가르는 질문입니다. 이 글에서는 오토스케일링의 네 가지 알고리즘, Kubernetes HPA vs KEDA, 그리고 AI 에이전트 작업 부하에 특화된 실전 오토스케일링 전략을 Infrastructure 레벨부터深掘り합니다.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-05-04-autoscaling-ai-agent-production/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"AI 에이전트 Production의 숨은 영웅: 오토스케일링이 에이전트 신뢰성을 결정하는 원리\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"트래픽이 불규칙하게 들어오는 AI 에이전트 환경에서 '언제 늘리고 언제 줄일 것인가'는生死를 가르는 질문입니다. 이 글에서는 오토스케일링의 네 가지 알고리즘, Kubernetes HPA vs KEDA, 그리고 AI 에이전트 작업 부하에 특화된 실전 오토스케일링 전략을 Infrastructure 레벨부터深掘り합니다.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-05-04-autoscaling-ai-agent-production/\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"AI 에이전트 Production의 숨은 영웅: 오토스케일링이 에이전트 신뢰성을 결정하는 원리\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"트래픽이 불규칙하게 들어오는 AI 에이전트 환경에서 '언제 늘리고 언제 줄일 것인가'는生死를 가르는 질문입니다. 이 글에서는 오토스케일링의 네 가지 알고리즘, Kubernetes HPA vs KEDA, 그리고 AI 에이전트 작업 부하에 특화된 실전 오토스케일링 전략을 Infrastructure 레벨부터深掘り합니다.\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}],[\"$\",\"$L11\",\"13\",{}]]\n"])</script></body></html>

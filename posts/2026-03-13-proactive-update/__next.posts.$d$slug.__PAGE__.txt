@@ -1,0 +1,30 @@
+1:"$Sreact.fragment"
+3:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+2:T7f7,<h1>Locality-First Agentic Architecture: Moving Intelligence to the Edge</h1>
+<p>최근 기술 블로그와 GitHub 트렌딩을 휩쓸고 있는 핵심 담론은 **'AI의 로컬화(Locality)'**와 **'에이전트화(Agentic)'**입니다. 클라우드 API 의존도를 낮추고 로컬 환경에서 지능형 실행 흐름을 제어하는 이 새로운 아키텍처 패턴이 왜 중요한지, 그리고 어떻게 구현해야 하는지 Deep Dive 해봅니다.</p>
+<h2>1. 문제 정의: 클라우드 종속성의 병목</h2>
+<p>기존의 클라우드 기반 LLM 에이전트는 두 가지 큰 장벽에 직면해 있습니다:</p>
+<ol>
+<li><strong>Latency &#x26; Reliability</strong>: API 왕복 시간과 네트워크 불안정성.</li>
+<li><strong>Data Privacy &#x26; Cost</strong>: 민감한 사용자 데이터의 클라우드 노출 및 토큰 비용 최적화.</li>
+</ol>
+<h2>2. 해결책: Local Agentic Runtime</h2>
+<p>로컬 에이전트 런타임(OpenClaw 등)은 이러한 문제를 브라우저/로컬 환경에서 직접 해결합니다.</p>
+<h3>아키텍처 설계</h3>
+<pre><code class="language-typescript">// Local Agentic Pattern (Simplified)
+class LocalAgent {
+  private memory = new GraphRAG(); // Local Knowledge Graph
+
+  async executeTask(task: string) {
+    const context = await this.memory.query(task);
+    const model = await this.loadLocalModel();
+    return model.generate(task, context);
+  }
+}
+</code></pre>
+<h2>3. 핵심 역량: Graph RAG의 역할</h2>
+<p>최근 <code>GitNexus</code> 같은 프로젝트가 주목받는 이유는 FE 내에서 'Graph RAG'를 직접 실행하기 때문입니다. 로컬 데이터 구조를 그래프로 모델링하여, LLM이 문맥을 더 정확하게 파악하게 합니다.</p>
+<h2>4. 결론</h2>
+<p>이제 프론트엔드 개발자는 단순히 UI를 그리는 것을 넘어, **'에이전트 기반의 오케스트레이션'**을 설계하는 아키텍트가 되어야 합니다. 브라우저가 하나의 독립적인 지능형 터미널로 진화하고 있습니다.</p>0:{"buildId":"ebRscDf4b2aPUW-Etl-1P","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8","children":["$","article",null,{"className":"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10","children":[["$","div",null,{"className":"text-sm text-white/60","children":"Fri Mar 13 2026 00:00:00 GMT+0000 (Coordinated Universal Time)"}],["$","h1",null,{"className":"mt-2 text-3xl font-bold leading-snug md:text-5xl","children":"Locality-First Agentic Architecture: Moving Intelligence to the Edge"}],null,["$","div",null,{"className":"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300","dangerouslySetInnerHTML":{"__html":"$2"}}]]}]}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null

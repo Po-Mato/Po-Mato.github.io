@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Mato Po Tech Blog</title>
+    <link>https://po-mato.github.io/</link>
+    <description>개발하면서 배운 것과 삽질 로그를 기록합니다.</description>
+    <language>ko</language>
+    <lastBuildDate>Thu, 07 May 2026 17:02:25 GMT</lastBuildDate>
+    <item>
+      <title>2026-02-26-gitnexus-deep-dive</title>
+      <link>https://po-mato.github.io/posts/2026-02-26-gitnexus-deep-dive/</link>
+      <guid>https://po-mato.github.io/posts/2026-02-26-gitnexus-deep-dive/</guid>
+      <pubDate>Thu, 07 May 2026 17:02:25 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>AI Agent Authentication in 2026 — NHI, SPIFFE, and the Death of Static API Keys</title>
+      <link>https://po-mato.github.io/posts/2026-05-07-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-05-07-proactive-update/</guid>
+      <pubDate>Thu, 07 May 2026 00:00:00 GMT</pubDate>
+      <description>에이전트가 서로를 신뢰하고, 도구를 호출하고, 권한을 위임하는 세계에서 정적 API 키는 충분하지 않다. 2026년 현재 AI Agent 인증의 핵심 개념(NHI, SPIFFE/SPIRE, mTLS, OAuth 2.0 M2M)을 CISA/NSA/Five Eyes 공동 가이드라인과 함께 깊이 분석하고, 실무에 바로 적용 가능한 코드 예시와 함께 정리한다.</description>
+    </item>
+    <item>
+      <title>Durable Execution for AI Agents — LLM 기반 에이전트의 장시간 태스크를 안전하게 완수하기</title>
+      <link>https://po-mato.github.io/posts/2026-05-06-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-05-06-proactive-update/</guid>
+      <pubDate>Wed, 06 May 2026 00:00:00 GMT</pubDate>
+      <description>AI Agent가 복잡한 작업을 수행하다 중간에 실패했을 때, 처음부터 다시 시작해야 할까? Durable Execution 패턴을 활용해 에이전트의 장시간 태스크를 내구성 있게 설계하는 방법을, Temporal, Inngest, LangGraph Checkpointing과 함께 실전 코드와 함께 다룬다.</description>
+    </item>
+    <item>
+      <title>AI Agent Orchestration Patterns in 2026: Centralized vs Decentralized Architectures</title>
+      <link>https://po-mato.github.io/posts/2026-05-05-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-05-05-proactive-update/</guid>
+      <pubDate>Tue, 05 May 2026 00:00:00 GMT</pubDate>
+      <description>LangGraph, CrewAI, Rufflo의 코어 디자인 패턴을深人 分析하고, 실무에 바로 적용 가능한 멀티-에이전트 오케스트레이션 아키텍처를 제시합니다.</description>
+    </item>
+    <item>
+      <title>AI 에이전트 Production의 숨은 영웅: 오토스케일링이 에이전트 신뢰성을 결정하는 원리</title>
+      <link>https://po-mato.github.io/posts/2026-05-04-autoscaling-ai-agent-production/</link>
+      <guid>https://po-mato.github.io/posts/2026-05-04-autoscaling-ai-agent-production/</guid>
+      <pubDate>Mon, 04 May 2026 00:00:00 GMT</pubDate>
+      <description>트래픽이 불규칙하게 들어오는 AI 에이전트 환경에서 &apos;언제 늘리고 언제 줄일 것인가&apos;는生死를 가르는 질문입니다. 이 글에서는 오토스케일링의 네 가지 알고리즘, Kubernetes HPA vs KEDA, 그리고 AI 에이전트 작업 부하에 특화된 실전 오토스케일링 전략을 Infrastructure 레벨부터深掘り합니다.</description>
+    </item>
+    <item>
+      <title>에이전트 메모리의 진짜 문제: Vector RAG만으로는 에이전트의 기억이 완성되지 않는 이유</title>
+      <link>https://po-mato.github.io/posts/2026-05-03-agent-memory-architecture/</link>
+      <guid>https://po-mato.github.io/posts/2026-05-03-agent-memory-architecture/</guid>
+      <pubDate>Sun, 03 May 2026 00:00:00 GMT</pubDate>
+      <description>2026년 현재 대부분의 AI 에이전트가 &apos;기억&apos; 문제로 고생하고 있습니다. Vector RAG를 붙였는데도 맥락을 잊어버리고, 같은 실수를 반복하며, 장기 작업을 놓쳐버리는 에이전트를 수없이 봤을 것입니다. 이 글에서는 에이전트 메모리를 &apos;Semantic / Episodic / Procedural&apos;의 세 层으로 재설계하고, 각각의 failure mode와 실전 구현 전략을 정리합니다.</description>
+    </item>
+    <item>
+      <title>Agent Sprawl: AI 에이전트 인프라의 미кро서비스 독Canonical 문제와 SRE적 접근</title>
+      <link>https://po-mato.github.io/posts/2026-05-02-agent-sprawl-sre-approach/</link>
+      <guid>https://po-mato.github.io/posts/2026-05-02-agent-sprawl-sre-approach/</guid>
+      <pubDate>Sat, 02 May 2026 00:00:00 GMT</pubDate>
+      <description>AI 에이전트 생태계가 빠르게 확장하는 가운데, 에이전트 인프라 복잡성이 신뢰성을 능가하는 &apos;Agent Sprawl&apos;이 새로운 운영 과제로 떠오르고 있습니다. 2026년 현재 micorservices sprawl을 겪었던 SRE 팀이 어떻게 이 문제에 접근하는지, 그리고 Agent-specific SLO/SLI를 어떻게 설계하는지深人 분석합니다.</description>
+    </item>
+    <item>
+      <title>A2A vs MCP: 에이전트 통신 프로토콜의 현재를 정리하다</title>
+      <link>https://po-mato.github.io/posts/2026-05-01-a2a-vs-mcp-protocol-analysis/</link>
+      <guid>https://po-mato.github.io/posts/2026-05-01-a2a-vs-mcp-protocol-analysis/</guid>
+      <pubDate>Fri, 01 May 2026 00:00:00 GMT</pubDate>
+      <description>MCP가 에이전트-도구 통신의 표준이 된 지금, 에이전트-에이전트 통신을 정의하는 A2A 프로토콜이急速に 현실화되고 있습니다. Google Cloud Next 2026에서 A2A v1.0이 150개 조직에서 production 운영 중이라고 발표한 지금, 두 프로토콜의 관계와 아키텍처적 함의를 정리합니다.</description>
+    </item>
+    <item>
+      <title>AI 에이전트의 진정한 병목: 런타임이说了算</title>
+      <link>https://po-mato.github.io/posts/2026-04-30-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-30-proactive-update/</guid>
+      <pubDate>Thu, 30 Apr 2026 00:00:00 GMT</pubDate>
+      <description>模型迭代 속도를 따라가는 건 어렵지 않지만, 실행 런타임의 신뢰성을 확보하는 건 아직까지 엔지니어링의 핵심 과제입니다. Harness Engineering이라는 새로운 패러다임을深人分析합니다.</description>
+    </item>
+    <item>
+      <title>Agentic AI의 Production SLO 설계: Time-to-Useful-Action로 본 시스템 신뢰성</title>
+      <link>https://po-mato.github.io/posts/2026-04-29-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-29-proactive-update/</guid>
+      <pubDate>Wed, 29 Apr 2026 07:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Agentic AI의 5대 설계 패턴: 자율 에이전트 아키텍처 깊이 파고들기</title>
+      <link>https://po-mato.github.io/posts/2026-04-28-agentic-ai-design-patterns/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-28-agentic-ai-design-patterns/</guid>
+      <pubDate>Tue, 28 Apr 2026 07:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Google Cloud Next 2026: &apos;Pieces&apos;에서 &apos;Platform&apos;으로 — Agentic Cloud의 수직 통합 전략과 A2A/MCP 双層 프로토콜 아키텍처 Deep Dive</title>
+      <link>https://po-mato.github.io/posts/2026-04-27-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-27-proactive-update/</guid>
+      <pubDate>Mon, 27 Apr 2026 00:00:00 GMT</pubDate>
+      <description>Google Cloud Next 2026에서 Google이 공개한 &apos;Agentic Cloud&apos; 전략의 본질을 파고든다. Vertex AI → Gemini Enterprise Agent Platform rebranding, A2A v1.2 + 150개 프로덕션 조직, Apigee의 MCP 브릿지 전환, Chip-to-Inbox 수직 통합의 기술적 의미를 코드 예시와 함께 분석한다.</description>
+    </item>
+    <item>
+      <title>AI Agent의 영속적 메모리: 2026년 새로운 표준 아키텍처 3가지와 SQLite 기반 Minimal 구현</title>
+      <link>https://po-mato.github.io/posts/2026-04-26-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-26-proactive-update/</guid>
+      <pubDate>Sun, 26 Apr 2026 00:00:00 GMT</pubDate>
+      <description>Vector Database頼りの RAG에서 벗어나, SQLite + FTS5 + Durable Objects로 AI Agent에게 &apos;기억&apos;을 부여하는 2026년형 영속적 메모리 아키텍처를 Cloudflare Agent Memory, Google ADK, Engram 3가지 실제 구현체로 비교 분석하고, 완전한 SQLite 기반 Minimal Memory Agent를 코드와 함께 제시한다.</description>
+    </item>
+    <item>
+      <title>Next.js 15 App Router: 50+ Production 프로젝트에서 발견한 7가지 함정과 해결책</title>
+      <link>https://po-mato.github.io/posts/2026-04-25-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-25-proactive-update/</guid>
+      <pubDate>Sat, 25 Apr 2026 00:00:00 GMT</pubDate>
+      <description>React Server Components의 장점만 믿고 도입했다가Production에서 비용과 complexity가 폭발한 경험이 있는가? 50개 이상의 실제 프로젝트를 통해 확인한 Next.js 15 App Router의 위험 패턴 7가지를 아키텍처 레벨에서 분석하고, 각각에 대한 검증된 해법을 코드 수준에서 제시한다.</description>
+    </item>
+    <item>
+      <title>MCP vs A2A vs WebMCP: 3계층 AI 프로토콜 스택이 엔터프라이즈 표준이 되는 이유</title>
+      <link>https://po-mato.github.io/posts/2026-04-24-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-24-proactive-update/</guid>
+      <pubDate>Fri, 24 Apr 2026 00:00:00 GMT</pubDate>
+      <description>2026년 4월 기준, AI 에이전트 통신 프로토콜 환경은 3계층 구조(MCP/A2A/WebMCP)로 수렴하고 있다. 각 프로토콜의 설계 철학, Google&apos;s A2A v1.0 공식 출시 배경, Gartner의 2026년 40% 에이전트 침투율 예측과 맞물려 엔터프라이즈가 반드시 이해해야 할 프로토콜 선택 기준을 아키텍처 레벨에서 분석한다.</description>
+    </item>
+    <item>
+      <title>Mac Mini M4로 운영하는 로컬 AI 코딩 어시스턴트: Ollama + OpenClaw 통합 아키텍처</title>
+      <link>https://po-mato.github.io/posts/2026-04-23-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-23-proactive-update/</guid>
+      <pubDate>Thu, 23 Apr 2026 00:00:00 GMT</pubDate>
+      <description>Apple M4 Mac Mini의 Unified Memory 아키텍처와 Neural Engine이 로컬 LLM 추론에 어떤 특화를 제공하는지 분석하고, Ollama 기반 로컬 모델 실행 + OpenClaw를 코딩 에이전트로 통합하는 실전 아키텍처를 제시한다. DeepSeek-R1, Qwen2.5-Coder, Llama4-Leo를 M4에서 최적 실행하는 설정부터, Ollama MCP 서버를 통해 OpenClaw 스킬 에코시스템과 연동하는 방법까지 다룬다.</description>
+    </item>
+    <item>
+      <title>코딩 에이전트의 신뢰성 전쟁: Agent Harness Engineering이 DevOps의 다음 전장이 되는 이유</title>
+      <link>https://po-mato.github.io/posts/2026-04-22-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-22-proactive-update/</guid>
+      <pubDate>Wed, 22 Apr 2026 00:00:00 GMT</pubDate>
+      <description>LLM의 추론 능력이 상향 평준화된 지금, 코딩 에이전트의 실질적 차이는 &apos;어떤 모델&apos;이 아니라 &apos;어떻게 도구를 조marshaller하고 실행하느냐&apos;에서 갈린다. Agent Harness Engineering이라는 새로운 분야가 emergence하는 이유와, 이 분야가 전통적 DevOpsエンジニア에게 어떤 기회를 주는지 deep dive한다.</description>
+    </item>
+    <item>
+      <title>Microsoft Agent Framework 1.0: Semantic Kernel과 AutoGen 통합, 그리고 Agentic AI의 새로운 기준</title>
+      <link>https://po-mato.github.io/posts/2026-04-21-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-21-proactive-update/</guid>
+      <pubDate>Tue, 21 Apr 2026 00:00:00 GMT</pubDate>
+      <description>2026년 4월 3일 출시된 Microsoft Agent Framework 1.0은 Semantic Kernel과 AutoGen을 하나의 SDK로 통합하고, Linux Foundation Agentic AI Foundation의 거버넌스 아래에서 MCP/A2A 네이티브 지원을標榜한다. 통합 아키텍처의 실체를 파고들고 기존 프레임워크からの移行 전략을 제시한다.</description>
+    </item>
+    <item>
+      <title>MCP + A2A = Agentic AI의 통신 표준, 2026년 현재 위치</title>
+      <link>https://po-mato.github.io/posts/2026-04-20-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-20-proactive-update/</guid>
+      <pubDate>Mon, 20 Apr 2026 00:00:00 GMT</pubDate>
+      <description>Microsoft Agent Framework 1.0과 Google A2A Protocol이 동일한Linux Foundation Governance 아래에서 수렴하기 시작했다. MCP(에이전트-도구)와 A2A(에이전트-에이전트)가 어떻게互补하며 Enterprise AI 스택의 기반이 되는지, 아키텍처 관점에서 심층 분석한다.</description>
+    </item>
+    <item>
+      <title>Evolver와 GEP Protocol: AI Agent가 스스로 진화하는 진짜 구조</title>
+      <link>https://po-mato.github.io/posts/2026-04-19-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-19-proactive-update/</guid>
+      <pubDate>Sun, 19 Apr 2026 00:00:00 GMT</pubDate>
+      <description>GitHub에서 5,100 스타, 하루 1,131 스타를集めた EvoMap/evolver의 심층 분석. AI Agent가 런타임 로그에서 스스로 문제를 찾고, Gene/Capsule 에셋으로 진화 전략을 구성하며, 프로토콜 제약 하에서 안전하게 자기 자신을 개선하는 메커니즘을 아키텍처 관점에서彻底解析한다.</description>
+    </item>
+    <item>
+      <title>Reasoning Models은 왜 추론 속도가 느린가: Test-Time Compute Scaling의 아키텍처적 해부</title>
+      <link>https://po-mato.github.io/posts/2026-04-18-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-18-proactive-update/</guid>
+      <pubDate>Sat, 18 Apr 2026 00:00:00 GMT</pubDate>
+      <description>OpenAI o3, DeepSeek R1, Gemini Thinking이 화제인 지금, &apos;생각하는 AI&apos;가 실제로 무엇을 하는지, 왜 추론 모델은 느린지, 그리고 inference-time scaling이 기존 pretraining-only 시대와 무엇이 다른지 체계적으로 분석한다. 구조적 트레이드오프와 실무 적용 전략을 코드와 함께 다룬다.</description>
+    </item>
+    <item>
+      <title>MCP 다음 단계는 연결이 아니라 운영이다: Observable Agent Runtime 설계</title>
+      <link>https://po-mato.github.io/posts/2026-04-16-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-16-proactive-update/</guid>
+      <pubDate>Thu, 16 Apr 2026 00:00:00 GMT</pubDate>
+      <description>2026년의 Agent 시스템은 더 많은 tool을 붙이는 경쟁에서 벗어나, async execution contract, runtime observability, verification gate를 얼마나 단단하게 설계하느냐로 승부가 갈린다. MCP 이후 실무 팀이 바로 적용할 수 있는 운영 중심 아키텍처를 정리한다.</description>
+    </item>
+    <item>
+      <title>Agent Memory Architecture — 장기 기억, 검색, 그리고 &apos;잊어버림&apos;의 프로덕션 설계 (2026년 4월)</title>
+      <link>https://po-mato.github.io/posts/2026-04-14-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-14-proactive-update/</guid>
+      <pubDate>Tue, 14 Apr 2026 00:00:00 GMT</pubDate>
+      <description>AI Agent가 대화를 넘어 &apos;지속적 학습체&apos;를 만드는 핵심 과제. 단기/중기/장기 기억 분리, 임베딩 기반 검색, forget 전략, 그리고 프로덕션에서 메모리가 신뢰성을左右하는 시나리오를 실제 아키텍처와 코드로 다룬다.</description>
+    </item>
+    <item>
+      <title>AI Agent Production Reliability — SLO 설계와 Failure Recovery 패턴 (2026년 4월)</title>
+      <link>https://po-mato.github.io/posts/2026-04-13-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-13-proactive-update/</guid>
+      <pubDate>Mon, 13 Apr 2026 00:00:00 GMT</pubDate>
+      <description>프레임워크 선택을 넘어, AI Agent를 프로덕션에서 안정적으로 운영하는 데 필요한 핵심 과제. Agent SLO 정의, 실패 복구 메커니즘, 실행 신뢰성을 높이기 위한 아키텍처적 선택지를 실제 코드와 함께 다룬다.</description>
+    </item>
+    <item>
+      <title>Multi-Agent 프레임워크 생산성 비교: LangGraph vs Claude SDK vs CrewAI vs AutoGen (2026년 4월)</title>
+      <link>https://po-mato.github.io/posts/2026-04-12-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-12-proactive-update/</guid>
+      <pubDate>Sun, 12 Apr 2026 00:00:00 GMT</pubDate>
+      <description>2026년 현재 AI Agent 개발者们이 선택을 고민하는 핵심 질문. LangGraph의 체크포인팅, Claude SDK의 안전성, CrewAI의 직관성, AutoGen의 유연성. 각 프레임워크의 생산 아키텍처 패턴과 트레이드오프를 실제 코드와 함께 정리한다.</description>
+    </item>
+    <item>
+      <title>Agentic Memory: AI Agent에게 &apos;기억&apos;을 구현하는 구조적 접근법</title>
+      <link>https://po-mato.github.io/posts/2026-04-11-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-11-proactive-update/</guid>
+      <pubDate>Sat, 11 Apr 2026 00:00:00 GMT</pubDate>
+      <description>AI Agent가 대화를跨いで一貫した文脈을 유지하려면 무엇이 필요할까. 이 글은 Working Memory, Episodic Memory, Semantic Memory, Procedural Memory의 4계층 구조로 Agent Memory를 설계하고, 프로덕션에서 검색-보존-忘记의 균형을 TypeScript 예시와 함께 정리한다.</description>
+    </item>
+    <item>
+      <title>Agent SLO: AI Agent를 &apos;신뢰할 수 있는 서비스&apos;로 만드는 런타임 관측성 프레임워크</title>
+      <link>https://po-mato.github.io/posts/2026-04-10-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-10-proactive-update/</guid>
+      <pubDate>Fri, 10 Apr 2026 00:00:00 GMT</pubDate>
+      <description>AI Agent를 단순히 &apos;연결&apos;하는 시대는 끝났다. 이제 질문은 &apos;얼마나 신뢰할 수 있는 결과를 내는가&apos;다. 이 글은 Task Success Rate, Time-to-First-Useful-Action, Execution Journal 같은 Agent SLO를 정의하고, 프로덕션 환경에서 이를 지속적으로 측정·개선하는 런타임 관측성 프레임워크를 TypeScript 예시와 함께 정리한다.</description>
+    </item>
+    <item>
+      <title>Local-First Agent는 왜 SLO 없이 무너지는가: Zero-Server 시대의 Execution Journal 설계</title>
+      <link>https://po-mato.github.io/posts/2026-04-08-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-08-proactive-update/</guid>
+      <pubDate>Wed, 08 Apr 2026 00:00:00 GMT</pubDate>
+      <description>온디바이스 추론과 zero-server code intelligence가 떠오르는 지금, 실무 경쟁력은 모델 연결 수가 아니라 Agent SLO와 Execution Journal 설계에서 갈린다. 이 글은 local-first agent stack의 병목, 운영 지표, TypeScript 구현 패턴을 딥다이브한다.</description>
+    </item>
+    <item>
+      <title>MCP보다 중요한 것: Execution Journal과 Agent SLO로 운영하는 에이전트 시스템</title>
+      <link>https://po-mato.github.io/posts/2026-04-07-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-07-proactive-update/</guid>
+      <pubDate>Tue, 07 Apr 2026 00:00:00 GMT</pubDate>
+      <description>2026년의 병목은 MCP 연결 자체가 아니라 운영 가능성이다. 이 글은 HTTP 200만으로는 에이전트 성공을 설명할 수 없는 이유, Agent SLO 설계, Execution Journal 데이터 모델, 그리고 Observability as Code 기반의 실무 도입 패턴을 정리한다.</description>
+    </item>
+    <item>
+      <title>MCP는 API 래퍼가 아니다: Enterprise Data Mesh의 실전 설계</title>
+      <link>https://po-mato.github.io/posts/2026-04-05-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-05-proactive-update/</guid>
+      <pubDate>Sun, 05 Apr 2026 00:00:00 GMT</pubDate>
+      <description>2026년의 MCP는 단순한 툴 연결 규약을 넘어, 조직의 데이터와 업무 시스템을 에이전트 친화적으로 재구성하는 핵심 인터페이스가 됐습니다. 이 글은 왜 MCP를 Enterprise Data Mesh 관점에서 설계해야 하는지, 그리고 실무에서 어떤 런타임·권한·검증 구조가 필요한지 정리합니다.</description>
+    </item>
+    <item>
+      <title>MCP 시대의 병목은 모델이 아니라 실행 런타임이다</title>
+      <link>https://po-mato.github.io/posts/2026-04-04-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-04-proactive-update/</guid>
+      <pubDate>Sat, 04 Apr 2026 00:00:00 GMT</pubDate>
+      <description>2026년의 에이전트 시스템은 더 이상 모델 하나로 승부하지 않습니다. MCP, 브라우저 제어, 로컬 실행, 워크플로 오케스트레이션이 결합되면서 진짜 경쟁력은 &apos;얼마나 잘 실행시키는가&apos;로 이동했습니다.</description>
+    </item>
+    <item>
+      <title>2026년 소프트웨어 아키텍처의 핵심: AI 에이전트와 로컬 추론 프레임워크</title>
+      <link>https://po-mato.github.io/posts/2026-04-01-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-04-01-proactive-update/</guid>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 GMT</pubDate>
+      <description>AI 에이전트가 단순한 자동화를 넘어 아키텍처의 중심으로 자리 잡고 있습니다. 로컬 환경에서의 추론과 에이전트 오케스트레이션이 현대 개발의 핵심이 된 이유를 분석합니다.</description>
+    </item>
+    <item>
+      <title>이벤트 기반 에이전트 아키텍처: 폴링에서 리액티브 옵저버 패턴으로의 전환</title>
+      <link>https://po-mato.github.io/posts/2026-03-31-reactive-agent-patterns/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-31-reactive-agent-patterns/</guid>
+      <pubDate>Tue, 31 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>[2026-03-30] Client-Side Vector Search: Wasm-based Indexing Strategies</title>
+      <link>https://po-mato.github.io/posts/2026-03-30-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-30-proactive-update/</guid>
+      <pubDate>Mon, 30 Mar 2026 00:00:00 GMT</pubDate>
+      <description>Why WebAssembly and local HNSW indices are the next frontier for performant, privacy-first AI applications in the browser.</description>
+    </item>
+    <item>
+      <title>MCP/A2A가 보급된 뒤 진짜 차별화는 Agent SLO다: 프로토콜 다음은 운영 계약</title>
+      <link>https://po-mato.github.io/posts/2026-03-29-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-29-proactive-update/</guid>
+      <pubDate>Sun, 29 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>에이전트 런타임의 진짜 전쟁터: 왜 .claude/를 넘어 상태 제어면을 설계해야 하는가</title>
+      <link>https://po-mato.github.io/posts/2026-03-28-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-28-proactive-update/</guid>
+      <pubDate>Sat, 28 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>코딩 에이전트의 다음 병목은 모델이 아니라 브라우저다: MCP 시대의 실행·검증 아키텍처</title>
+      <link>https://po-mato.github.io/posts/2026-03-27-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-27-proactive-update/</guid>
+      <pubDate>Fri, 27 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>브라우저는 이제 AI의 실행 엔진이다: Local-first Graph RAG와 에이전트 친화적 프론트엔드 아키텍처</title>
+      <link>https://po-mato.github.io/posts/2026-03-26-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-26-proactive-update/</guid>
+      <pubDate>Thu, 26 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>2026년 에이전트 앱의 진짜 백엔드는 MCP Gateway다: 툴 호출을 제품 아키텍처로 승격시키는 법</title>
+      <link>https://po-mato.github.io/posts/2026-03-25-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-25-proactive-update/</guid>
+      <pubDate>Wed, 25 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Agent Harness의 승부처는 모델이 아니라 Replayable Memory다: 왜 2026년 코딩 에이전트는 실행 로그를 먼저 설계해야 하는가</title>
+      <link>https://po-mato.github.io/posts/2026-03-24-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-24-proactive-update/</guid>
+      <pubDate>Tue, 24 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>에이전트 브라우저 시대, 프론트엔드는 왜 다시 백엔드처럼 설계되어야 하는가</title>
+      <link>https://po-mato.github.io/posts/2026-03-23-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-23-proactive-update/</guid>
+      <pubDate>Mon, 23 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Context Engineering의 시대: MCP/A2A 표준화가 왜 2026년의 진짜 백엔드를 다시 쓰는가</title>
+      <link>https://po-mato.github.io/posts/2026-03-22-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-22-proactive-update/</guid>
+      <pubDate>Sun, 22 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>2026년의 에이전트 스택: 왜 브라우저와 로컬 실행 계층이 &apos;두 번째 백엔드&apos;가 되는가</title>
+      <link>https://po-mato.github.io/posts/2026-03-21-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-21-proactive-update/</guid>
+      <pubDate>Sat, 21 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>AI가 React 코드를 더 많이 쓸수록, 팀은 컴포넌트보다 아키텍처를 먼저 설계해야 한다</title>
+      <link>https://po-mato.github.io/posts/2026-03-20-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-20-proactive-update/</guid>
+      <pubDate>Fri, 20 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>AI가 코드를 짜는 시대: 마이크로 최적화의 종말과 &apos;에이전트 중심&apos; 아키텍처의 부상</title>
+      <link>https://po-mato.github.io/posts/2026-03-20-ai-architectural-shift/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-20-ai-architectural-shift/</guid>
+      <pubDate>Fri, 20 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>AI-Native Browser Runtime: 왜 2026년의 에이전트는 범용 브라우저 대신 전용 실행 엔진을 원할까</title>
+      <link>https://po-mato.github.io/posts/2026-03-19-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-19-proactive-update/</guid>
+      <pubDate>Thu, 19 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>MCP-Native Frontends: 브라우저가 AI 에이전트의 실행 허브가 되는 순간</title>
+      <link>https://po-mato.github.io/posts/2026-03-18-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-18-proactive-update/</guid>
+      <pubDate>Wed, 18 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Locality-First Agentic Architecture: Moving Intelligence to the Edge</title>
+      <link>https://po-mato.github.io/posts/2026-03-13-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-13-proactive-update/</guid>
+      <pubDate>Fri, 13 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Platform Engineering in 2026: Balancing AI-Driven Autonomy with Governance</title>
+      <link>https://po-mato.github.io/posts/2026-03-12-platform-engineering-2026/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-12-platform-engineering-2026/</guid>
+      <pubDate>Thu, 12 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Agentic Workflow를 활용한 기술 문서 자동화의 아키텍처적 접근</title>
+      <link>https://po-mato.github.io/posts/2026-03-11-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-11-proactive-update/</guid>
+      <pubDate>Wed, 11 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Next.js 프로젝트의 기술 부채 청산 전략: Lint부터 Vitest까지</title>
+      <link>https://po-mato.github.io/posts/2026-03-09-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-09-proactive-update/</guid>
+      <pubDate>Mon, 09 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>브라우저가 에이전트 런타임이 되는 순간: MCP + In-Page Agent 아키텍처 Deep Dive</title>
+      <link>https://po-mato.github.io/posts/2026-03-08-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-08-proactive-update/</guid>
+      <pubDate>Sun, 08 Mar 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Agentic Web: 브라우저가 AI 실행 엔진이 되는 시대의 FE 아키텍처</title>
+      <link>https://po-mato.github.io/posts/2026-03-05-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-05-proactive-update/</guid>
+      <pubDate>Thu, 05 Mar 2026 07:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>에이전트 중심 개발의 서막: ruvnet/ruflo와 Superset으로 구축하는 로컬 AI 군단 아키텍처</title>
+      <link>https://po-mato.github.io/posts/2026-03-04-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-04-proactive-update/</guid>
+      <pubDate>Wed, 04 Mar 2026 07:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Rust와 WASM: 차세대 에이전트 런타임의 핵심 동력</title>
+      <link>https://po-mato.github.io/posts/2026-03-03-proactive-update/</link>
+      <guid>https://po-mato.github.io/posts/2026-03-03-proactive-update/</guid>
+      <pubDate>Tue, 03 Mar 2026 07:45:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Frontend Trends - 2026-02-04</title>
+      <link>https://po-mato.github.io/posts/2026-02-04-frontend-trends/</link>
+      <guid>https://po-mato.github.io/posts/2026-02-04-frontend-trends/</guid>
+      <pubDate>Wed, 04 Feb 2026 00:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>Frontend Trends - 2026-02-01</title>
+      <link>https://po-mato.github.io/posts/2026-02-01-frontend-trends/</link>
+      <guid>https://po-mato.github.io/posts/2026-02-01-frontend-trends/</guid>
+      <pubDate>Sun, 01 Feb 2026 11:00:00 GMT</pubDate>
+      
+    </item>
+    <item>
+      <title>JavaScript 트렌드 - 2026년 1월 31일</title>
+      <link>https://po-mato.github.io/posts/js-trends-2026-01-31/</link>
+      <guid>https://po-mato.github.io/posts/js-trends-2026-01-31/</guid>
+      <pubDate>Sat, 31 Jan 2026 00:00:00 GMT</pubDate>
+      <description>오늘의 GitHub Trending JavaScript 프로젝트 - WhatsApp 자동화, AI 시스템 프롬프트, eBook 관리 도구</description>
+    </item>
+    <item>
+      <title>오늘의 프론트엔드 트렌드/이슈 체크: React 19 · Next 16 · RSC · Tailwind v4</title>
+      <link>https://po-mato.github.io/posts/frontend-trends-2026-01-29/</link>
+      <guid>https://po-mato.github.io/posts/frontend-trends-2026-01-29/</guid>
+      <pubDate>Thu, 29 Jan 2026 00:00:00 GMT</pubDate>
+      <description>요즘 프론트엔드에서 자주 부딪히는 변화(React 19, Next 16/App Router, RSC, Tailwind v4, TS)와 바로 적용할 체크리스트</description>
+    </item>
+    <item>
+      <title>우주 배경(Three.js) 넣어보기</title>
+      <link>https://po-mato.github.io/posts/universe-background/</link>
+      <guid>https://po-mato.github.io/posts/universe-background/</guid>
+      <pubDate>Wed, 17 Dec 2025 00:00:00 GMT</pubDate>
+      <description>배경 캔버스와 콘텐츠 레이어링을 정리합니다</description>
+    </item>
+    <item>
+      <title>안녕하세요, 기술 블로그입니다</title>
+      <link>https://po-mato.github.io/posts/hello-world/</link>
+      <guid>https://po-mato.github.io/posts/hello-world/</guid>
+      <pubDate>Wed, 17 Dec 2025 00:00:00 GMT</pubDate>
+      <description>블로그 첫 글 — 앞으로의 방향과 기록 방식</description>
+    </item>
+  </channel>
+</rss>

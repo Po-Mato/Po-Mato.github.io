@@ -1,0 +1,309 @@
+<!DOCTYPE html><!--ebRscDf4b2aPUW_Etl_1P--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/893724321ed0589d.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/329e63eb984ada35.js" async=""></script><meta name="next-size-adjust" content=""/><title>Agent Harness의 승부처는 모델이 아니라 Replayable Memory다: 왜 2026년 코딩 에이전트는 실행 로그를 먼저 설계해야 하는가 | Mato Po Tech Blog</title><meta name="description" content="개발하면서 배운 것과 삽질 로그를 기록합니다."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-03-24-proactive-update/"/><meta property="og:title" content="Agent Harness의 승부처는 모델이 아니라 Replayable Memory다: 왜 2026년 코딩 에이전트는 실행 로그를 먼저 설계해야 하는가"/><meta property="og:description" content="개발하면서 배운 것과 삽질 로그를 기록합니다."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-03-24-proactive-update/"/><meta property="og:image" content="https://po-mato.github.io/og.png"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Agent Harness의 승부처는 모델이 아니라 Replayable Memory다: 왜 2026년 코딩 에이전트는 실행 로그를 먼저 설계해야 하는가"/><meta name="twitter:description" content="개발하면서 배운 것과 삽질 로그를 기록합니다."/><meta name="twitter:image" content="https://po-mato.github.io/og.png"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><div class="text-sm text-white/60">Tue Mar 24 2026 00:00:00 GMT+0000 (Coordinated Universal Time)</div><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">Agent Harness의 승부처는 모델이 아니라 Replayable Memory다: 왜 2026년 코딩 에이전트는 실행 로그를 먼저 설계해야 하는가</h1><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><h1>Agent Harness의 승부처는 모델이 아니라 Replayable Memory다: 왜 2026년 코딩 에이전트는 실행 로그를 먼저 설계해야 하는가</h1>
+<p>2026년 3월의 흐름을 보면, 이제 시장의 초점은 더 이상 “어느 모델이 더 똑똑한가”에만 머물지 않습니다. GitHub Trending에서 <code>bytedance/deer-flow</code>, <code>browser-use/browser-use</code>, 각종 Claude Code 스킬 저장소가 동시에 강세를 보이고 있고, Hacker News에서는 <strong>코딩 에이전트 생산성</strong>, <strong>에이전트용 지식 베이스</strong>, <strong>실행 반복성(repeatability)</strong> 에 대한 논의가 빠르게 커지고 있습니다.</p>
+<p>이 신호들을 하나로 묶으면 제 결론은 명확합니다.</p>
+<blockquote>
+<p><strong>이제 코딩 에이전트의 경쟁력은 모델 IQ보다, 작업을 얼마나 재현 가능하게 기록하고 복기하고 개선할 수 있느냐에 달려 있습니다.</strong></p>
+</blockquote>
+<p>즉, 다음 라운드의 승부처는 단순한 tool calling이 아니라 <strong>Replayable Memory</strong> 입니다.</p>
+<p>오늘은 왜 이 개념이 코딩 에이전트 운영의 핵심으로 떠오르는지, 그리고 실제 제품/내부 플랫폼에서 어떤 구조로 설계해야 하는지 Deep Dive 해보겠습니다.</p>
+<hr>
+<h2>1. 최근 트렌드가 말하는 것: “실행하는 에이전트” 다음 병목은 “기억하는 에이전트”다</h2>
+<p>요즘 뜨는 프로젝트들을 보면 방향이 꽤 일관됩니다.</p>
+<ul>
+<li><code>deer-flow</code> 계열은 샌드박스, 스킬, 메모리, 서브에이전트, 메시지 게이트웨이를 묶어 <strong>장시간 작업을 버티는 harness</strong> 를 강조합니다.</li>
+<li><code>browser-use</code>는 브라우저를 에이전트가 조작 가능한 실행 환경으로 바꿉니다.</li>
+<li>Mozilla의 <code>Cq</code> 같은 시도는 사람이 Stack Overflow를 보듯, <strong>에이전트가 문제 해결 히스토리를 재사용</strong> 하는 층을 만들려 합니다.</li>
+<li>커뮤니티의 Claude Code/Codex 운영 팁도 결국 비슷한 결론으로 수렴합니다. “모델을 더 갈아 끼우는 것”보다 <strong>작업 맥락 정리, 스킬 구조화, 실패 복기, 재시도 루프</strong> 가 생산성을 더 크게 좌우한다는 겁니다.</li>
+</ul>
+<p>이건 중요한 구조적 변화입니다.</p>
+<p>1세대 에이전트의 핵심 질문은 이거였습니다.</p>
+<ul>
+<li>LLM이 툴을 호출할 수 있는가?</li>
+<li>파일을 읽고 수정할 수 있는가?</li>
+<li>브라우저를 조작할 수 있는가?</li>
+</ul>
+<p>하지만 2세대, 특히 <strong>실제 코딩 작업을 맡기는 에이전트</strong> 의 질문은 달라집니다.</p>
+<ul>
+<li>지난번 실패 원인을 기억하는가?</li>
+<li>중간 가설과 시도 내역이 남는가?</li>
+<li>다른 에이전트가 그 작업을 이어받을 수 있는가?</li>
+<li>결과를 재현하고 평가할 수 있는가?</li>
+</ul>
+<p>즉, 실행 능력만으로는 부족합니다. <strong>기억의 형식이 곧 생산성의 형식</strong> 이 됩니다.</p>
+<hr>
+<h2>2. 왜 일반적인 “채팅 히스토리”로는 부족한가</h2>
+<p>많은 팀이 아직도 에이전트 메모리를 “이전 대화 몇 턴 더 넣기” 정도로 이해합니다. 하지만 코딩 작업에서는 이 접근이 거의 항상 한계를 드러냅니다.</p>
+<p>이유는 단순합니다. 코딩 작업의 핵심 상태는 대화문이 아니라 <strong>행동과 결과</strong> 에 있기 때문입니다.</p>
+<p>예를 들어 에이전트가 어떤 버그를 고친다고 해봅시다.</p>
+<p>필요한 정보는 단순히 “무슨 얘기를 했는가”가 아닙니다.</p>
+<ul>
+<li>어떤 파일을 열었는가</li>
+<li>어떤 가설을 세웠는가</li>
+<li>어떤 테스트를 실행했는가</li>
+<li>어떤 에러가 났는가</li>
+<li>어떤 패치를 적용했다가 되돌렸는가</li>
+<li>어떤 조건에서 실패가 재현됐는가</li>
+</ul>
+<p>이런 상태를 대화 히스토리에 섞어 넣으면 세 가지 문제가 생깁니다.</p>
+<h3>2.1 중요 신호와 잡음이 분리되지 않는다</h3>
+<p>채팅 로그에는 계획, 잡담, 결과 보고, 도구 출력, 에러, 자기 반성까지 다 섞입니다. 나중에 다른 에이전트가 이걸 다시 읽으면 <strong>무엇이 사실이고 무엇이 해석인지</strong> 구분하기 어렵습니다.</p>
+<h3>2.2 재현 가능성이 없다</h3>
+<p>“아까 pytest에서 실패했다”는 문장과, <strong>정확히 어떤 명령을 어떤 시점에 어떤 exit code로 실행했는지</strong> 는 전혀 다릅니다. 운영 가능한 시스템에는 후자가 필요합니다.</p>
+<h3>2.3 평가 루프를 만들 수 없다</h3>
+<p>좋은 harness는 “이번 작업이 왜 성공/실패했는가”를 나중에 집계할 수 있어야 합니다. 그런데 정보가 전부 자유 텍스트 대화에 묻혀 있으면, 나중에 통계·품질 평가·자동 개선이 거의 불가능해집니다.</p>
+<p>그래서 코딩 에이전트에서 메모리는 채팅이 아니라 <strong>event log</strong> 여야 합니다.</p>
+<hr>
+<h2>3. Replayable Memory란 정확히 무엇인가</h2>
+<p>제가 말하는 Replayable Memory는 단순한 벡터 검색이나 요약 메모가 아닙니다. 정의를 짧게 내리면 이렇습니다.</p>
+<blockquote>
+<p><strong>Replayable Memory는 에이전트의 작업 과정을 “누가, 언제, 어떤 맥락에서, 무슨 가설로, 어떤 액션을 실행했고, 그 결과가 어땠는지” 재생 가능한 형태로 기록한 실행 메모리다.</strong></p>
+</blockquote>
+<p>핵심은 세 가지입니다.</p>
+<ol>
+<li><strong>구조화되어 있어야 한다</strong></li>
+<li><strong>시간 순서가 보존되어야 한다</strong></li>
+<li><strong>다른 실행 주체가 이어받을 수 있어야 한다</strong></li>
+</ol>
+<p>아래처럼 최소 이벤트 스키마를 두는 것만으로도 품질이 많이 달라집니다.</p>
+<pre><code class="language-ts">type AgentEvent = {
+  id: string;
+  taskId: string;
+  actor: "planner" | "coder" | "reviewer" | "browser-agent";
+  phase:
+    | "plan"
+    | "inspect"
+    | "edit"
+    | "test"
+    | "review"
+    | "rollback"
+    | "handoff";
+  kind:
+    | "hypothesis"
+    | "command"
+    | "file_change"
+    | "test_result"
+    | "observation"
+    | "decision"
+    | "error";
+  summary: string;
+  details?: Record&#x3C;string, unknown>;
+  createdAt: string;
+};
+</code></pre>
+<p>예를 들면 이런 식으로 남길 수 있습니다.</p>
+<pre><code class="language-ts">const event: AgentEvent = {
+  id: crypto.randomUUID(),
+  taskId: "bugfix-4312",
+  actor: "coder",
+  phase: "test",
+  kind: "test_result",
+  summary: "checkout e2e 테스트가 payment step에서 실패",
+  details: {
+    command: "pnpm test:e2e checkout.spec.ts",
+    exitCode: 1,
+    failedAssertion: "expected status 200, received 500",
+    suspectFile: "src/server/payment/createIntent.ts"
+  },
+  createdAt: new Date().toISOString()
+};
+</code></pre>
+<p>이 구조를 도입하면 메모리가 단순 회상용이 아니라 <strong>실행 재생용 자산</strong> 이 됩니다.</p>
+<hr>
+<h2>4. 실전 아키텍처: 코딩 에이전트 메모리는 4계층으로 나눠야 한다</h2>
+<p>제가 추천하는 구조는 아래와 같습니다.</p>
+<pre><code class="language-text">[Raw Execution Log]
+  - commands
+  - tool outputs
+  - file diffs
+  - test exits
+        ↓
+[Working Memory]
+  - active hypothesis
+  - current blockers
+  - touched files
+  - next actions
+        ↓
+[Replay Index]
+  - similar failures
+  - reusable fix patterns
+  - prior successful workflows
+        ↓
+[Evaluation Layer]
+  - pass/fail rate
+  - rollback frequency
+  - tool effectiveness
+  - prompt/skill quality signals
+</code></pre>
+<p>많은 팀이 Raw Log와 Vector Search만 붙이고 “메모리 구현 완료”라고 생각하는데, 그건 절반짜리입니다.</p>
+<p>실무에서 중요한 건 가운데 두 층입니다.</p>
+<h3>4.1 Working Memory</h3>
+<p>현재 작업을 이어가기 위한 압축 상태입니다.</p>
+<ul>
+<li>지금 가장 유력한 원인은 무엇인가</li>
+<li>이미 시도해본 해결책은 무엇인가</li>
+<li>건드린 파일은 어디인가</li>
+<li>다음 3개 액션은 무엇인가</li>
+</ul>
+<p>이건 사람의 단기 작업 기억과 비슷합니다.</p>
+<h3>4.2 Replay Index</h3>
+<p>비슷한 과거 사례를 다시 불러오는 층입니다.</p>
+<ul>
+<li>“Next.js hydration mismatch를 이전에 어떻게 고쳤는가?”</li>
+<li>“GitHub Actions flaky test는 어떤 패턴으로 실패했는가?”</li>
+<li>“브라우저 자동화가 로그인 redirect loop에 걸렸을 때 무슨 우회가 먹혔는가?”</li>
+</ul>
+<p>이건 단순 semantic search보다 한 단계 더 나아가야 합니다. <strong>에러 형태, 사용한 도구, 성공률, 적용 환경</strong> 같은 메타데이터가 같이 붙어야 진짜 재사용이 됩니다.</p>
+<hr>
+<h2>5. 왜 이 구조가 생산성을 크게 바꾸는가</h2>
+<h3>5.1 장시간 작업에서 문맥 손실을 줄인다</h3>
+<p>코딩 에이전트는 생각보다 자주 문맥을 잃습니다.</p>
+<ul>
+<li>토큰 창이 바뀌거나</li>
+<li>서브에이전트가 교체되거나</li>
+<li>작업 시간이 길어지거나</li>
+<li>다른 모델로 이어받아야 하거나</li>
+<li>중간에 실패해서 재시도해야 할 때</li>
+</ul>
+<p>이때 Replayable Memory가 없으면, 에이전트는 같은 파일을 다시 읽고 같은 테스트를 다시 돌리고 같은 실수를 다시 합니다.</p>
+<p>반대로 메모리가 잘 설계되어 있으면 새 실행 주체는 아래만 보고도 바로 진입할 수 있습니다.</p>
+<pre><code class="language-ts">type WorkingMemory = {
+  objective: string;
+  activeHypotheses: string[];
+  blockers: string[];
+  touchedFiles: string[];
+  lastVerifiedCommand?: string;
+  nextBestActions: string[];
+};
+
+function summarizeWorkingMemory(events: AgentEvent[]): WorkingMemory {
+  const touchedFiles = new Set&#x3C;string>();
+  const activeHypotheses: string[] = [];
+  const blockers: string[] = [];
+  let lastVerifiedCommand: string | undefined;
+
+  for (const event of events) {
+    if (event.kind === "file_change" &#x26;&#x26; typeof event.details?.file === "string") {
+      touchedFiles.add(event.details.file);
+    }
+    if (event.kind === "hypothesis") {
+      activeHypotheses.push(event.summary);
+    }
+    if (event.kind === "error") {
+      blockers.push(event.summary);
+    }
+    if (event.kind === "test_result" &#x26;&#x26; event.details?.exitCode === 0) {
+      lastVerifiedCommand = String(event.details.command ?? "");
+    }
+  }
+
+  return {
+    objective: "checkout 500 오류 수정 및 회귀 방지",
+    activeHypotheses: activeHypotheses.slice(-3),
+    blockers: blockers.slice(-3),
+    touchedFiles: [...touchedFiles],
+    lastVerifiedCommand,
+    nextBestActions: [
+      "payment intent 생성 로직에서 null branch 검증",
+      "실패 케이스에 대한 단위 테스트 추가",
+      "e2e 회귀 재실행"
+    ]
+  };
+}
+</code></pre>
+<p>이건 단순 요약이 아닙니다. <strong>작업을 이어받기 위한 실행 상태 복원</strong> 입니다.</p>
+<h3>5.2 실패를 학습 자산으로 바꾼다</h3>
+<p>좋은 팀과 나쁜 팀의 차이는 실패 횟수가 아니라, 실패가 다음 성공 확률을 얼마나 올려주느냐에 있습니다. 에이전트도 똑같습니다.</p>
+<p>예를 들어 이런 집계가 가능해집니다.</p>
+<ul>
+<li>어떤 테스트가 자주 flaky한가</li>
+<li>어떤 프롬프트 패턴이 rollback으로 이어지는가</li>
+<li>어떤 스킬이 수정 성공률을 높이는가</li>
+<li>어떤 저장소 구조에서 에이전트 오판이 잦은가</li>
+</ul>
+<p>즉, Replayable Memory는 개인 메모리가 아니라 <strong>조직의 agent ops 데이터 레이어</strong> 입니다.</p>
+<hr>
+<h2>6. MCP/A2A 시대에 왜 더 중요해지는가</h2>
+<p>최근 며칠간 강하게 보이는 또 하나의 흐름은 멀티 에이전트와 프로토콜 표준화입니다. 그런데 A2A/MCP 환경이 확산될수록 메모리 설계는 오히려 더 중요해집니다.</p>
+<p>왜냐하면 에이전트 수가 늘수록 “누가 뭘 했는지”가 더 빨리 불분명해지기 때문입니다.</p>
+<ul>
+<li>planner가 세운 가설과</li>
+<li>coder가 적용한 패치와</li>
+<li>reviewer가 반려한 이유와</li>
+<li>browser agent가 확인한 UI 상태가</li>
+</ul>
+<p>한 흐름 안에서 연결되어 있어야 합니다.</p>
+<p>그래서 멀티 에이전트 환경에서는 메모리에 최소한 아래 필드가 필요합니다.</p>
+<pre><code class="language-ts">type HandoffPacket = {
+  taskId: string;
+  from: string;
+  to: string;
+  objective: string;
+  acceptedFacts: string[];
+  pendingRisks: string[];
+  touchedFiles: string[];
+  requiredChecks: string[];
+  replayPointer: string;
+};
+</code></pre>
+<p>여기서 중요한 건 <code>replayPointer</code> 입니다. 단순히 “이전 대화를 참고하세요”가 아니라, <strong>정확히 어느 이벤트 구간부터 읽으면 되는지</strong> 를 알려줘야 합니다.</p>
+<p>이 구조가 없으면 서브에이전트가 늘어날수록 시스템은 똑똑해지는 게 아니라 혼란스러워집니다.</p>
+<hr>
+<h2>7. 운영 관점에서 반드시 넣어야 할 패턴 5가지</h2>
+<h3>7.1 Append-only event log</h3>
+<p>수정 가능한 요약본만 두면 안 됩니다. 요약은 언제든 왜곡될 수 있으므로, 원본 실행 로그는 append-only로 보존해야 합니다.</p>
+<h3>7.2 Diff-aware memory</h3>
+<p>코딩 작업에서는 “무슨 파일을 읽었는가”보다 <strong>실제로 어떤 diff가 생겼는가</strong> 가 중요합니다. 따라서 파일 변경 이벤트에는 최소 diff 요약이 있어야 합니다.</p>
+<pre><code class="language-ts">type FileChangeDetails = {
+  file: string;
+  additions: number;
+  deletions: number;
+  summary: string;
+};
+</code></pre>
+<h3>7.3 Test-linked memory</h3>
+<p>성공/실패 판단은 결국 테스트와 검증 명령에 연결돼야 합니다. “수정 완료” 같은 인간 친화적 문장은 운영 신뢰도를 떨어뜨립니다.</p>
+<h3>7.4 Rollback trace</h3>
+<p>에이전트 운영에서는 rollback 자체가 실패가 아니라, <strong>위험 통제 능력의 신호</strong> 일 수 있습니다. 그래서 되돌린 이유가 메모리에 남아야 합니다.</p>
+<h3>7.5 Human override logging</h3>
+<p>사람이 개입해 방향을 바꿨다면 그 사실을 별도 이벤트로 저장해야 합니다. 그래야 나중에 성능 평가 시 “에이전트 단독 성공”과 “인간 보정 성공”을 구분할 수 있습니다.</p>
+<hr>
+<h2>8. 흔한 안티패턴: 대부분의 팀이 여기서 무너진다</h2>
+<h3>안티패턴 1. 벡터 DB만 붙여놓고 메모리라고 부른다</h3>
+<p>검색 가능성은 중요하지만, 그 자체가 replayability를 보장하지는 않습니다. 코딩 에이전트에는 <strong>순서, 상태 전이, 검증 결과</strong> 가 필요합니다.</p>
+<h3>안티패턴 2. 모든 툴 출력을 그대로 저장한다</h3>
+<p>원본 보존은 필요하지만, 그대로 다 넣으면 Working Memory가 오염됩니다. Raw Log와 Working Memory를 분리해야 합니다.</p>
+<h3>안티패턴 3. 성공 사례만 저장한다</h3>
+<p>실제로는 실패 사례가 더 중요합니다. 특히 “무슨 접근이 안 먹혔는가”는 다음 시도의 탐색 비용을 크게 줄입니다.</p>
+<h3>안티패턴 4. 메모리를 프롬프트 엔지니어링의 일부로만 본다</h3>
+<p>이건 아키텍처 문제입니다. 저장 구조, 이벤트 스키마, 평가 집계, 권한 분리가 다 들어갑니다.</p>
+<hr>
+<h2>9. 제 결론: 앞으로의 코딩 에이전트는 “코드를 쓰는 모델”이 아니라 “실행을 축적하는 시스템”이 된다</h2>
+<p>지금 시장에서 사람들은 자꾸 어느 모델이 더 잘 짜는지에 시선을 빼앗깁니다. 물론 중요합니다. 하지만 실제 운영 단계로 가면 병목은 금방 다른 곳으로 이동합니다.</p>
+<ul>
+<li>같은 실패를 반복하지 않게 하는가</li>
+<li>긴 작업을 끊기지 않고 이어가는가</li>
+<li>다른 에이전트가 안전하게 넘겨받는가</li>
+<li>왜 성공했고 왜 실패했는지 조직 차원에서 분석 가능한가</li>
+</ul>
+<p>이 질문에 답하는 핵심이 바로 Replayable Memory입니다.</p>
+<p>그래서 제 정리는 이렇습니다.</p>
+<blockquote>
+<p><strong>2026년의 Agent Harness는 모델 래퍼가 아니라, 실행 로그·작업 기억·재생 인덱스·평가 루프를 갖춘 운영체제에 더 가깝다.</strong></p>
+</blockquote>
+<p>강한 코딩 에이전트 팀은 더 긴 프롬프트를 가진 팀이 아니라,
+<strong>실행을 남기고, 복기하고, 재사용하고, 개선하는 메모리 구조를 가진 팀</strong> 이 될 겁니다.</p>
+<hr>
+<h2>실무 체크리스트</h2>
+<p>이번 주 안에 바로 점검해볼 항목만 추리면 아래 7가지입니다.</p>
+<ol>
+<li>에이전트의 명령 실행, 파일 수정, 테스트 결과가 event log로 구조화되어 있는가?</li>
+<li>Raw Log와 Working Memory가 분리되어 있는가?</li>
+<li>실패 원인과 rollback 사유가 검색 가능하게 남아 있는가?</li>
+<li>서브에이전트 handoff 시 replay pointer를 전달하는가?</li>
+<li>성공/실패를 자유 문장이 아니라 검증 명령 기준으로 판정하는가?</li>
+<li>비슷한 버그/실패 패턴을 replay index에서 다시 꺼내올 수 있는가?</li>
+<li>메모리 데이터를 품질 평가와 스킬 개선 루프에 실제로 연결하고 있는가?</li>
+</ol>
+<p>이 일곱 가지에 답하지 못한다면, 당신의 코딩 에이전트는 아직 “툴을 호출하는 데모”일 가능성이 높습니다.</p>
+<p>진짜 제품 경쟁력은 이제 모델 파라미터가 아니라,
+<strong>실행을 얼마나 잘 기억하고 다시 재생할 수 있느냐</strong> 에서 갈릴 겁니다.</p></div></article></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/893724321ed0589d.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"ebRscDf4b2aPUW-Etl-1P\",\"c\":[\"\",\"posts\",\"2026-03-24-proactive-update\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-03-24-proactive-update\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/893724321ed0589d.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/329e63eb984ada35.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"11:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n10:T470a,"])</script><script>self.__next_f.push([1,"\u003ch1\u003eAgent Harness의 승부처는 모델이 아니라 Replayable Memory다: 왜 2026년 코딩 에이전트는 실행 로그를 먼저 설계해야 하는가\u003c/h1\u003e\n\u003cp\u003e2026년 3월의 흐름을 보면, 이제 시장의 초점은 더 이상 “어느 모델이 더 똑똑한가”에만 머물지 않습니다. GitHub Trending에서 \u003ccode\u003ebytedance/deer-flow\u003c/code\u003e, \u003ccode\u003ebrowser-use/browser-use\u003c/code\u003e, 각종 Claude Code 스킬 저장소가 동시에 강세를 보이고 있고, Hacker News에서는 \u003cstrong\u003e코딩 에이전트 생산성\u003c/strong\u003e, \u003cstrong\u003e에이전트용 지식 베이스\u003c/strong\u003e, \u003cstrong\u003e실행 반복성(repeatability)\u003c/strong\u003e 에 대한 논의가 빠르게 커지고 있습니다.\u003c/p\u003e\n\u003cp\u003e이 신호들을 하나로 묶으면 제 결론은 명확합니다.\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\u003cstrong\u003e이제 코딩 에이전트의 경쟁력은 모델 IQ보다, 작업을 얼마나 재현 가능하게 기록하고 복기하고 개선할 수 있느냐에 달려 있습니다.\u003c/strong\u003e\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003e즉, 다음 라운드의 승부처는 단순한 tool calling이 아니라 \u003cstrong\u003eReplayable Memory\u003c/strong\u003e 입니다.\u003c/p\u003e\n\u003cp\u003e오늘은 왜 이 개념이 코딩 에이전트 운영의 핵심으로 떠오르는지, 그리고 실제 제품/내부 플랫폼에서 어떤 구조로 설계해야 하는지 Deep Dive 해보겠습니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e1. 최근 트렌드가 말하는 것: “실행하는 에이전트” 다음 병목은 “기억하는 에이전트”다\u003c/h2\u003e\n\u003cp\u003e요즘 뜨는 프로젝트들을 보면 방향이 꽤 일관됩니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ccode\u003edeer-flow\u003c/code\u003e 계열은 샌드박스, 스킬, 메모리, 서브에이전트, 메시지 게이트웨이를 묶어 \u003cstrong\u003e장시간 작업을 버티는 harness\u003c/strong\u003e 를 강조합니다.\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003ebrowser-use\u003c/code\u003e는 브라우저를 에이전트가 조작 가능한 실행 환경으로 바꿉니다.\u003c/li\u003e\n\u003cli\u003eMozilla의 \u003ccode\u003eCq\u003c/code\u003e 같은 시도는 사람이 Stack Overflow를 보듯, \u003cstrong\u003e에이전트가 문제 해결 히스토리를 재사용\u003c/strong\u003e 하는 층을 만들려 합니다.\u003c/li\u003e\n\u003cli\u003e커뮤니티의 Claude Code/Codex 운영 팁도 결국 비슷한 결론으로 수렴합니다. “모델을 더 갈아 끼우는 것”보다 \u003cstrong\u003e작업 맥락 정리, 스킬 구조화, 실패 복기, 재시도 루프\u003c/strong\u003e 가 생산성을 더 크게 좌우한다는 겁니다.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이건 중요한 구조적 변화입니다.\u003c/p\u003e\n\u003cp\u003e1세대 에이전트의 핵심 질문은 이거였습니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eLLM이 툴을 호출할 수 있는가?\u003c/li\u003e\n\u003cli\u003e파일을 읽고 수정할 수 있는가?\u003c/li\u003e\n\u003cli\u003e브라우저를 조작할 수 있는가?\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e하지만 2세대, 특히 \u003cstrong\u003e실제 코딩 작업을 맡기는 에이전트\u003c/strong\u003e 의 질문은 달라집니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e지난번 실패 원인을 기억하는가?\u003c/li\u003e\n\u003cli\u003e중간 가설과 시도 내역이 남는가?\u003c/li\u003e\n\u003cli\u003e다른 에이전트가 그 작업을 이어받을 수 있는가?\u003c/li\u003e\n\u003cli\u003e결과를 재현하고 평가할 수 있는가?\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e즉, 실행 능력만으로는 부족합니다. \u003cstrong\u003e기억의 형식이 곧 생산성의 형식\u003c/strong\u003e 이 됩니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e2. 왜 일반적인 “채팅 히스토리”로는 부족한가\u003c/h2\u003e\n\u003cp\u003e많은 팀이 아직도 에이전트 메모리를 “이전 대화 몇 턴 더 넣기” 정도로 이해합니다. 하지만 코딩 작업에서는 이 접근이 거의 항상 한계를 드러냅니다.\u003c/p\u003e\n\u003cp\u003e이유는 단순합니다. 코딩 작업의 핵심 상태는 대화문이 아니라 \u003cstrong\u003e행동과 결과\u003c/strong\u003e 에 있기 때문입니다.\u003c/p\u003e\n\u003cp\u003e예를 들어 에이전트가 어떤 버그를 고친다고 해봅시다.\u003c/p\u003e\n\u003cp\u003e필요한 정보는 단순히 “무슨 얘기를 했는가”가 아닙니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e어떤 파일을 열었는가\u003c/li\u003e\n\u003cli\u003e어떤 가설을 세웠는가\u003c/li\u003e\n\u003cli\u003e어떤 테스트를 실행했는가\u003c/li\u003e\n\u003cli\u003e어떤 에러가 났는가\u003c/li\u003e\n\u003cli\u003e어떤 패치를 적용했다가 되돌렸는가\u003c/li\u003e\n\u003cli\u003e어떤 조건에서 실패가 재현됐는가\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이런 상태를 대화 히스토리에 섞어 넣으면 세 가지 문제가 생깁니다.\u003c/p\u003e\n\u003ch3\u003e2.1 중요 신호와 잡음이 분리되지 않는다\u003c/h3\u003e\n\u003cp\u003e채팅 로그에는 계획, 잡담, 결과 보고, 도구 출력, 에러, 자기 반성까지 다 섞입니다. 나중에 다른 에이전트가 이걸 다시 읽으면 \u003cstrong\u003e무엇이 사실이고 무엇이 해석인지\u003c/strong\u003e 구분하기 어렵습니다.\u003c/p\u003e\n\u003ch3\u003e2.2 재현 가능성이 없다\u003c/h3\u003e\n\u003cp\u003e“아까 pytest에서 실패했다”는 문장과, \u003cstrong\u003e정확히 어떤 명령을 어떤 시점에 어떤 exit code로 실행했는지\u003c/strong\u003e 는 전혀 다릅니다. 운영 가능한 시스템에는 후자가 필요합니다.\u003c/p\u003e\n\u003ch3\u003e2.3 평가 루프를 만들 수 없다\u003c/h3\u003e\n\u003cp\u003e좋은 harness는 “이번 작업이 왜 성공/실패했는가”를 나중에 집계할 수 있어야 합니다. 그런데 정보가 전부 자유 텍스트 대화에 묻혀 있으면, 나중에 통계·품질 평가·자동 개선이 거의 불가능해집니다.\u003c/p\u003e\n\u003cp\u003e그래서 코딩 에이전트에서 메모리는 채팅이 아니라 \u003cstrong\u003eevent log\u003c/strong\u003e 여야 합니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e3. Replayable Memory란 정확히 무엇인가\u003c/h2\u003e\n\u003cp\u003e제가 말하는 Replayable Memory는 단순한 벡터 검색이나 요약 메모가 아닙니다. 정의를 짧게 내리면 이렇습니다.\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\u003cstrong\u003eReplayable Memory는 에이전트의 작업 과정을 “누가, 언제, 어떤 맥락에서, 무슨 가설로, 어떤 액션을 실행했고, 그 결과가 어땠는지” 재생 가능한 형태로 기록한 실행 메모리다.\u003c/strong\u003e\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003e핵심은 세 가지입니다.\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e구조화되어 있어야 한다\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e시간 순서가 보존되어야 한다\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e다른 실행 주체가 이어받을 수 있어야 한다\u003c/strong\u003e\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003e아래처럼 최소 이벤트 스키마를 두는 것만으로도 품질이 많이 달라집니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003etype AgentEvent = {\n  id: string;\n  taskId: string;\n  actor: \"planner\" | \"coder\" | \"reviewer\" | \"browser-agent\";\n  phase:\n    | \"plan\"\n    | \"inspect\"\n    | \"edit\"\n    | \"test\"\n    | \"review\"\n    | \"rollback\"\n    | \"handoff\";\n  kind:\n    | \"hypothesis\"\n    | \"command\"\n    | \"file_change\"\n    | \"test_result\"\n    | \"observation\"\n    | \"decision\"\n    | \"error\";\n  summary: string;\n  details?: Record\u0026#x3C;string, unknown\u003e;\n  createdAt: string;\n};\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e예를 들면 이런 식으로 남길 수 있습니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003econst event: AgentEvent = {\n  id: crypto.randomUUID(),\n  taskId: \"bugfix-4312\",\n  actor: \"coder\",\n  phase: \"test\",\n  kind: \"test_result\",\n  summary: \"checkout e2e 테스트가 payment step에서 실패\",\n  details: {\n    command: \"pnpm test:e2e checkout.spec.ts\",\n    exitCode: 1,\n    failedAssertion: \"expected status 200, received 500\",\n    suspectFile: \"src/server/payment/createIntent.ts\"\n  },\n  createdAt: new Date().toISOString()\n};\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 구조를 도입하면 메모리가 단순 회상용이 아니라 \u003cstrong\u003e실행 재생용 자산\u003c/strong\u003e 이 됩니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e4. 실전 아키텍처: 코딩 에이전트 메모리는 4계층으로 나눠야 한다\u003c/h2\u003e\n\u003cp\u003e제가 추천하는 구조는 아래와 같습니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-text\"\u003e[Raw Execution Log]\n  - commands\n  - tool outputs\n  - file diffs\n  - test exits\n        ↓\n[Working Memory]\n  - active hypothesis\n  - current blockers\n  - touched files\n  - next actions\n        ↓\n[Replay Index]\n  - similar failures\n  - reusable fix patterns\n  - prior successful workflows\n        ↓\n[Evaluation Layer]\n  - pass/fail rate\n  - rollback frequency\n  - tool effectiveness\n  - prompt/skill quality signals\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e많은 팀이 Raw Log와 Vector Search만 붙이고 “메모리 구현 완료”라고 생각하는데, 그건 절반짜리입니다.\u003c/p\u003e\n\u003cp\u003e실무에서 중요한 건 가운데 두 층입니다.\u003c/p\u003e\n\u003ch3\u003e4.1 Working Memory\u003c/h3\u003e\n\u003cp\u003e현재 작업을 이어가기 위한 압축 상태입니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e지금 가장 유력한 원인은 무엇인가\u003c/li\u003e\n\u003cli\u003e이미 시도해본 해결책은 무엇인가\u003c/li\u003e\n\u003cli\u003e건드린 파일은 어디인가\u003c/li\u003e\n\u003cli\u003e다음 3개 액션은 무엇인가\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이건 사람의 단기 작업 기억과 비슷합니다.\u003c/p\u003e\n\u003ch3\u003e4.2 Replay Index\u003c/h3\u003e\n\u003cp\u003e비슷한 과거 사례를 다시 불러오는 층입니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e“Next.js hydration mismatch를 이전에 어떻게 고쳤는가?”\u003c/li\u003e\n\u003cli\u003e“GitHub Actions flaky test는 어떤 패턴으로 실패했는가?”\u003c/li\u003e\n\u003cli\u003e“브라우저 자동화가 로그인 redirect loop에 걸렸을 때 무슨 우회가 먹혔는가?”\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이건 단순 semantic search보다 한 단계 더 나아가야 합니다. \u003cstrong\u003e에러 형태, 사용한 도구, 성공률, 적용 환경\u003c/strong\u003e 같은 메타데이터가 같이 붙어야 진짜 재사용이 됩니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e5. 왜 이 구조가 생산성을 크게 바꾸는가\u003c/h2\u003e\n\u003ch3\u003e5.1 장시간 작업에서 문맥 손실을 줄인다\u003c/h3\u003e\n\u003cp\u003e코딩 에이전트는 생각보다 자주 문맥을 잃습니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e토큰 창이 바뀌거나\u003c/li\u003e\n\u003cli\u003e서브에이전트가 교체되거나\u003c/li\u003e\n\u003cli\u003e작업 시간이 길어지거나\u003c/li\u003e\n\u003cli\u003e다른 모델로 이어받아야 하거나\u003c/li\u003e\n\u003cli\u003e중간에 실패해서 재시도해야 할 때\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이때 Replayable Memory가 없으면, 에이전트는 같은 파일을 다시 읽고 같은 테스트를 다시 돌리고 같은 실수를 다시 합니다.\u003c/p\u003e\n\u003cp\u003e반대로 메모리가 잘 설계되어 있으면 새 실행 주체는 아래만 보고도 바로 진입할 수 있습니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003etype WorkingMemory = {\n  objective: string;\n  activeHypotheses: string[];\n  blockers: string[];\n  touchedFiles: string[];\n  lastVerifiedCommand?: string;\n  nextBestActions: string[];\n};\n\nfunction summarizeWorkingMemory(events: AgentEvent[]): WorkingMemory {\n  const touchedFiles = new Set\u0026#x3C;string\u003e();\n  const activeHypotheses: string[] = [];\n  const blockers: string[] = [];\n  let lastVerifiedCommand: string | undefined;\n\n  for (const event of events) {\n    if (event.kind === \"file_change\" \u0026#x26;\u0026#x26; typeof event.details?.file === \"string\") {\n      touchedFiles.add(event.details.file);\n    }\n    if (event.kind === \"hypothesis\") {\n      activeHypotheses.push(event.summary);\n    }\n    if (event.kind === \"error\") {\n      blockers.push(event.summary);\n    }\n    if (event.kind === \"test_result\" \u0026#x26;\u0026#x26; event.details?.exitCode === 0) {\n      lastVerifiedCommand = String(event.details.command ?? \"\");\n    }\n  }\n\n  return {\n    objective: \"checkout 500 오류 수정 및 회귀 방지\",\n    activeHypotheses: activeHypotheses.slice(-3),\n    blockers: blockers.slice(-3),\n    touchedFiles: [...touchedFiles],\n    lastVerifiedCommand,\n    nextBestActions: [\n      \"payment intent 생성 로직에서 null branch 검증\",\n      \"실패 케이스에 대한 단위 테스트 추가\",\n      \"e2e 회귀 재실행\"\n    ]\n  };\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이건 단순 요약이 아닙니다. \u003cstrong\u003e작업을 이어받기 위한 실행 상태 복원\u003c/strong\u003e 입니다.\u003c/p\u003e\n\u003ch3\u003e5.2 실패를 학습 자산으로 바꾼다\u003c/h3\u003e\n\u003cp\u003e좋은 팀과 나쁜 팀의 차이는 실패 횟수가 아니라, 실패가 다음 성공 확률을 얼마나 올려주느냐에 있습니다. 에이전트도 똑같습니다.\u003c/p\u003e\n\u003cp\u003e예를 들어 이런 집계가 가능해집니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e어떤 테스트가 자주 flaky한가\u003c/li\u003e\n\u003cli\u003e어떤 프롬프트 패턴이 rollback으로 이어지는가\u003c/li\u003e\n\u003cli\u003e어떤 스킬이 수정 성공률을 높이는가\u003c/li\u003e\n\u003cli\u003e어떤 저장소 구조에서 에이전트 오판이 잦은가\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e즉, Replayable Memory는 개인 메모리가 아니라 \u003cstrong\u003e조직의 agent ops 데이터 레이어\u003c/strong\u003e 입니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e6. MCP/A2A 시대에 왜 더 중요해지는가\u003c/h2\u003e\n\u003cp\u003e최근 며칠간 강하게 보이는 또 하나의 흐름은 멀티 에이전트와 프로토콜 표준화입니다. 그런데 A2A/MCP 환경이 확산될수록 메모리 설계는 오히려 더 중요해집니다.\u003c/p\u003e\n\u003cp\u003e왜냐하면 에이전트 수가 늘수록 “누가 뭘 했는지”가 더 빨리 불분명해지기 때문입니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eplanner가 세운 가설과\u003c/li\u003e\n\u003cli\u003ecoder가 적용한 패치와\u003c/li\u003e\n\u003cli\u003ereviewer가 반려한 이유와\u003c/li\u003e\n\u003cli\u003ebrowser agent가 확인한 UI 상태가\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e한 흐름 안에서 연결되어 있어야 합니다.\u003c/p\u003e\n\u003cp\u003e그래서 멀티 에이전트 환경에서는 메모리에 최소한 아래 필드가 필요합니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003etype HandoffPacket = {\n  taskId: string;\n  from: string;\n  to: string;\n  objective: string;\n  acceptedFacts: string[];\n  pendingRisks: string[];\n  touchedFiles: string[];\n  requiredChecks: string[];\n  replayPointer: string;\n};\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e여기서 중요한 건 \u003ccode\u003ereplayPointer\u003c/code\u003e 입니다. 단순히 “이전 대화를 참고하세요”가 아니라, \u003cstrong\u003e정확히 어느 이벤트 구간부터 읽으면 되는지\u003c/strong\u003e 를 알려줘야 합니다.\u003c/p\u003e\n\u003cp\u003e이 구조가 없으면 서브에이전트가 늘어날수록 시스템은 똑똑해지는 게 아니라 혼란스러워집니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e7. 운영 관점에서 반드시 넣어야 할 패턴 5가지\u003c/h2\u003e\n\u003ch3\u003e7.1 Append-only event log\u003c/h3\u003e\n\u003cp\u003e수정 가능한 요약본만 두면 안 됩니다. 요약은 언제든 왜곡될 수 있으므로, 원본 실행 로그는 append-only로 보존해야 합니다.\u003c/p\u003e\n\u003ch3\u003e7.2 Diff-aware memory\u003c/h3\u003e\n\u003cp\u003e코딩 작업에서는 “무슨 파일을 읽었는가”보다 \u003cstrong\u003e실제로 어떤 diff가 생겼는가\u003c/strong\u003e 가 중요합니다. 따라서 파일 변경 이벤트에는 최소 diff 요약이 있어야 합니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003etype FileChangeDetails = {\n  file: string;\n  additions: number;\n  deletions: number;\n  summary: string;\n};\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e7.3 Test-linked memory\u003c/h3\u003e\n\u003cp\u003e성공/실패 판단은 결국 테스트와 검증 명령에 연결돼야 합니다. “수정 완료” 같은 인간 친화적 문장은 운영 신뢰도를 떨어뜨립니다.\u003c/p\u003e\n\u003ch3\u003e7.4 Rollback trace\u003c/h3\u003e\n\u003cp\u003e에이전트 운영에서는 rollback 자체가 실패가 아니라, \u003cstrong\u003e위험 통제 능력의 신호\u003c/strong\u003e 일 수 있습니다. 그래서 되돌린 이유가 메모리에 남아야 합니다.\u003c/p\u003e\n\u003ch3\u003e7.5 Human override logging\u003c/h3\u003e\n\u003cp\u003e사람이 개입해 방향을 바꿨다면 그 사실을 별도 이벤트로 저장해야 합니다. 그래야 나중에 성능 평가 시 “에이전트 단독 성공”과 “인간 보정 성공”을 구분할 수 있습니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e8. 흔한 안티패턴: 대부분의 팀이 여기서 무너진다\u003c/h2\u003e\n\u003ch3\u003e안티패턴 1. 벡터 DB만 붙여놓고 메모리라고 부른다\u003c/h3\u003e\n\u003cp\u003e검색 가능성은 중요하지만, 그 자체가 replayability를 보장하지는 않습니다. 코딩 에이전트에는 \u003cstrong\u003e순서, 상태 전이, 검증 결과\u003c/strong\u003e 가 필요합니다.\u003c/p\u003e\n\u003ch3\u003e안티패턴 2. 모든 툴 출력을 그대로 저장한다\u003c/h3\u003e\n\u003cp\u003e원본 보존은 필요하지만, 그대로 다 넣으면 Working Memory가 오염됩니다. Raw Log와 Working Memory를 분리해야 합니다.\u003c/p\u003e\n\u003ch3\u003e안티패턴 3. 성공 사례만 저장한다\u003c/h3\u003e\n\u003cp\u003e실제로는 실패 사례가 더 중요합니다. 특히 “무슨 접근이 안 먹혔는가”는 다음 시도의 탐색 비용을 크게 줄입니다.\u003c/p\u003e\n\u003ch3\u003e안티패턴 4. 메모리를 프롬프트 엔지니어링의 일부로만 본다\u003c/h3\u003e\n\u003cp\u003e이건 아키텍처 문제입니다. 저장 구조, 이벤트 스키마, 평가 집계, 권한 분리가 다 들어갑니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e9. 제 결론: 앞으로의 코딩 에이전트는 “코드를 쓰는 모델”이 아니라 “실행을 축적하는 시스템”이 된다\u003c/h2\u003e\n\u003cp\u003e지금 시장에서 사람들은 자꾸 어느 모델이 더 잘 짜는지에 시선을 빼앗깁니다. 물론 중요합니다. 하지만 실제 운영 단계로 가면 병목은 금방 다른 곳으로 이동합니다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e같은 실패를 반복하지 않게 하는가\u003c/li\u003e\n\u003cli\u003e긴 작업을 끊기지 않고 이어가는가\u003c/li\u003e\n\u003cli\u003e다른 에이전트가 안전하게 넘겨받는가\u003c/li\u003e\n\u003cli\u003e왜 성공했고 왜 실패했는지 조직 차원에서 분석 가능한가\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이 질문에 답하는 핵심이 바로 Replayable Memory입니다.\u003c/p\u003e\n\u003cp\u003e그래서 제 정리는 이렇습니다.\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\u003cstrong\u003e2026년의 Agent Harness는 모델 래퍼가 아니라, 실행 로그·작업 기억·재생 인덱스·평가 루프를 갖춘 운영체제에 더 가깝다.\u003c/strong\u003e\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003e강한 코딩 에이전트 팀은 더 긴 프롬프트를 가진 팀이 아니라,\n\u003cstrong\u003e실행을 남기고, 복기하고, 재사용하고, 개선하는 메모리 구조를 가진 팀\u003c/strong\u003e 이 될 겁니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e실무 체크리스트\u003c/h2\u003e\n\u003cp\u003e이번 주 안에 바로 점검해볼 항목만 추리면 아래 7가지입니다.\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e에이전트의 명령 실행, 파일 수정, 테스트 결과가 event log로 구조화되어 있는가?\u003c/li\u003e\n\u003cli\u003eRaw Log와 Working Memory가 분리되어 있는가?\u003c/li\u003e\n\u003cli\u003e실패 원인과 rollback 사유가 검색 가능하게 남아 있는가?\u003c/li\u003e\n\u003cli\u003e서브에이전트 handoff 시 replay pointer를 전달하는가?\u003c/li\u003e\n\u003cli\u003e성공/실패를 자유 문장이 아니라 검증 명령 기준으로 판정하는가?\u003c/li\u003e\n\u003cli\u003e비슷한 버그/실패 패턴을 replay index에서 다시 꺼내올 수 있는가?\u003c/li\u003e\n\u003cli\u003e메모리 데이터를 품질 평가와 스킬 개선 루프에 실제로 연결하고 있는가?\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003e이 일곱 가지에 답하지 못한다면, 당신의 코딩 에이전트는 아직 “툴을 호출하는 데모”일 가능성이 높습니다.\u003c/p\u003e\n\u003cp\u003e진짜 제품 경쟁력은 이제 모델 파라미터가 아니라,\n\u003cstrong\u003e실행을 얼마나 잘 기억하고 다시 재생할 수 있느냐\u003c/strong\u003e 에서 갈릴 겁니다.\u003c/p\u003e"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"text-sm text-white/60\",\"children\":\"Tue Mar 24 2026 00:00:00 GMT+0000 (Coordinated Universal Time)\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"Agent Harness의 승부처는 모델이 아니라 Replayable Memory다: 왜 2026년 코딩 에이전트는 실행 로그를 먼저 설계해야 하는가\"}],null,[\"$\",\"div\",null,{\"className\":\"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300\",\"dangerouslySetInnerHTML\":{\"__html\":\"$10\"}}]]}]}]\n8:null\nc:[[\"$\",\"title\",\"0\",{\"children\":\"Agent Harness의 승부처는 모델이 아니라 Replayable Memory다: 왜 2026년 코딩 에이전트는 실행 로그를 먼저 설계해야 하는가 | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"개발하면서 배운 것과 삽질 로그를 기록합니다.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-03-24-proactive-update/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"Agent Harness의 승부처는 모델이 아니라 Replayable Memory다: 왜 2026년 코딩 에이전트는 실행 로그를 먼저 설계해야 하는가\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"개발하면서 배운 것과 삽질 로그를 기록합니다.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-03-24-proactive-update/\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"Agent Harness의 승부처는 모델이 아니라 Replayable Memory다: 왜 2026년 코딩 에이전트는 실행 로그를 먼저 설계해야 하는가\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"개발하면서 배운 것과 삽질 로그를 기록합니다.\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/og.png\"}],[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}],[\"$\",\"$L11\",\"13\",{}]]\n"])</script></body></html>

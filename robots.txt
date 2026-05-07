@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /
+
+Sitemap: https://po-mato.github.io/sitemap.xml
