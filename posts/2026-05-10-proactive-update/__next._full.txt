@@ -1,0 +1,479 @@
+1:"$Sreact.fragment"
+3:I[5035,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"default"]
+4:I[28921,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"default"]
+6:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+7:"$Sreact.suspense"
+9:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"ViewportBoundary"]
+b:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"MetadataBoundary"]
+d:I[80036,[],"default"]
+:HL["/_next/static/chunks/8ebb049fe9e56ae1.css","style"]
+:HL["/_next/static/media/797e433ab948586e-s.p.479bea2b.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"P":null,"b":"9j2pAYeIWalsNpXNDphe1","c":["","posts","2026-05-10-proactive-update",""],"q":"","i":false,"f":[[["",{"children":["posts",{"children":[["slug","2026-05-10-proactive-update","d"],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",true],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/8ebb049fe9e56ae1.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/_next/static/chunks/329e63eb984ada35.js","async":true,"nonce":"$undefined"}]],"$L2"]}],{"children":[["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":["$L5",null,["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],["$","$1","h",{"children":[null,["$","$L9",null,{"children":"$La"}],["$","div",null,{"hidden":true,"children":["$","$Lb",null,{"children":["$","$7",null,{"name":"Next.Metadata","children":"$Lc"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],false]],"m":"$undefined","G":["$d",[]],"S":true}
+e:I[2407,["/_next/static/chunks/329e63eb984ada35.js"],"default"]
+f:I[20531,["/_next/static/chunks/329e63eb984ada35.js"],"default"]
+2:["$","html",null,{"lang":"ko-KR","dir":"ltr","className":"h-full","children":["$","body",null,{"className":"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500","children":[["$","$Le",null,{}],["$","div",null,{"className":"relative z-10 min-h-full","children":[["$","$Lf",null,{}],["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]]}]]}]}]
+a:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+11:I[94966,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"IconMark"]
+10:T4fdd,<h2>서론: 세 개의 프로토콜, 하나의 생태계</h2>
+<p>2025년 말부터 2026년 초까지, AI 에이전트 분야에서 세 개의 프로토콜이 연이어 등장했다.</p>
+<ul>
+<li><strong>MCP (Model Context Protocol)</strong> — Anthropic이 Linux Foundation에 기부한 에이전트-도구 연결 표준</li>
+<li><strong>A2A (Agent2Agent Protocol)</strong> — Google이 공개한 에이전트 간 협업 프로토콜</li>
+<li><strong>ACP (Agent Communication Protocol)</strong> 및 <strong>UCP</strong> — 에이전트 간 거래/결제 계층을 정의하는 상업용 프로토콜</li>
+</ul>
+<p>"프로토콜이 왜 세 개나 필요하지?"라는 의문이 자연스럽다. 그러나 이 세 프로토콜은 겹치지 않는다. 각각이 <strong>다른 계층의 문제</strong>를 해결한다. 이 글에서는 세 프로토콜의 설계 철학, 역할 분담, 그리고 이들이 결합될 때 만들어지는 multi-agent 아키텍처의全貌를 파헤친다.</p>
+<hr>
+<h2>1. 각 프로토콜의 정체성</h2>
+<h3>1.1 MCP — 에이전트와 도구를 연결하는 다리</h3>
+<p>MCP의 핵심 질문: <strong>"에이전트가 외부 도구를 신뢰성 있게 호출하려면 어떻게 해야 하는가?"</strong></p>
+<p>MCP는 LLM에게 도구를 advertise하는 표준 방식을 정의한다. 마치 USB가 peripheral을 컴퓨터에 연결하는 방식을 표준화한 것처럼, MCP는 에이전트가 capability를 발견하고 호출하는 방식을 표준화한다.</p>
+<p><strong>MCP의 세 가지 핵심 구성 요소:</strong></p>
+<pre><code>┌─────────────────────────────────────────────────┐
+│                   Host (LLM)                     │
+│  ┌─────────────┐    ┌──────────────────────┐   │
+│  │   Tools     │←→  │   MCP Client         │   │
+│  │  (도구 목록)  │    │   (도구 발견 및 호출)  │   │
+│  └─────────────┘    └──────────┬───────────┘   │
+│                                ↓                │
+│                     ┌──────────────────┐      │
+│                     │   MCP Server      │      │
+│                     │   (실제 도구 impl) │      │
+│                     └──────────────────┘      │
+└─────────────────────────────────────────────────┘
+</code></pre>
+<p><strong>MCP의 설계 원칙:</strong></p>
+<ul>
+<li><strong>도구 중심:</strong> 에이전트의 capability를 도구 단위로 advertised한다</li>
+<li><strong>검증된 호출:</strong> 도구 스키마가 명확하므로 LLM이 잘못된 파라미터를 넘길 위험이 적다</li>
+<li><strong>범용성:</strong> 파일 시스템, DB, API, 웹 검색 등 다양한 도구를同一个 protocol로 연결</li>
+</ul>
+<h3>1.2 A2A — 에이전트와 에이전트를 협업시키는 다리</h3>
+<p>A2A의 핵심 질문: <strong>"두 에이전트가 서로의 존재를 믿고, 작업을 위임하려면 어떻게 해야 하는가?"</strong></p>
+<p>A2A는 조직 또는 벤더 경계를 넘어 에이전트가 협업하는 방식을 정의한다. Planner Agent가 Coder Agent에게 작업을 전달하고, Coder Agent가 Tester Agent에게 테스트를 위임하는 과정이 A2A 위에서 동작한다.</p>
+<p><strong>A2A의 세 가지 핵심 구성 요소:</strong></p>
+<table>
+<thead>
+<tr>
+<th>구성 요소</th>
+<th>역할</th>
+<th>비유</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Agent Card</strong></td>
+<td>에이전트가自己能做什么을 advertisement</td>
+<td>名刺</td>
+</tr>
+<tr>
+<td><strong>Task</strong></td>
+<td>에이전트 간 교환되는 작업 단위</td>
+<td>工作任务单</td>
+</tr>
+<tr>
+<td><strong>Transport</strong></td>
+<td>HTTP/SSE + JSON-RPC 2.0</td>
+<td>전송 계층</td>
+</tr>
+</tbody>
+</table>
+<p><strong>A2A의 설계 철학:</strong> "에이전트는 그 자체로 완전한 서비스다." 각 에이전트는 자신의 Agent Card를 통해 capability를 advertising하고, Task를 받아서 처리한 후 결과를 반환한다.</p>
+<h3>1.3 ACP/UCP — 에이전트 간 경제活動を 규칙으로 묶는 다리</h3>
+<p>ACP의 핵심 질문: <strong>"에이전트가 다른 에이전트의 서비스를 사용하고 대가를 지불하려면 어떻게 해야 하는가?"</strong></p>
+<p>ACP와 UCP는 에이전트 간 거래 계층을 정의한다. 한 에이전트가 다른 에이전트에게 작업을 위임하고 그 대가를精算하는 과정이 ACP/UCP 위에서 이루어진다. 이것은 단순한 협업을 넘어 <strong>에이전트 Economy's 토대</strong>를 놓는다.</p>
+<pre><code>┌──────────────────────────────────────────────────────┐
+│                    ACP / UCP 계층                     │
+│  (에이전트 간 거래: 구매, 판매, 대금 결제, SLA 보장)     │
+├──────────────────────────────────────────────────────┤
+│                      A2A 계층                          │
+│  (에이전트 간 협업: 작업 위임, 결과 교환, 협조 프로토콜)  │
+├──────────────────────────────────────────────────────┤
+│                      MCP 계층                          │
+│  (에이전트-도구 연결: capability 발견, 도구 호출)        │
+└──────────────────────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2>2. MCP vs A2A: 설계 의도의 근본적 차이</h2>
+<p>MCP와 A2A는 쉽게 혼동된다. 둘 다 "연결"을 다루는 프로토콜이지만, 연결의 <strong>방향과 주체</strong>가 다르다.</p>
+<table>
+<thead>
+<tr>
+<th>차원</th>
+<th>MCP</th>
+<th>A2A</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>연결 대상</strong></td>
+<td>에이전트 ↔ 도구 (파일시스템, DB, API 등)</td>
+<td>에이전트 ↔ 에이전트</td>
+</tr>
+<tr>
+<td><strong>주체</strong></td>
+<td>LLM (에이전트의 brain)</td>
+<td>에이전트 자체 (서비스처럼 행동하는)</td>
+</tr>
+<tr>
+<td><strong>핵심 추상화</strong></td>
+<td>Tool (함수 호출)</td>
+<td>Agent (서비스)</td>
+</tr>
+<tr>
+<td><strong>정보 흐름</strong></td>
+<td>에이전트가 도구를 호출</td>
+<td>에이전트가 다른 에이전트에게 작업 위임</td>
+</tr>
+<tr>
+<td><strong>상태 관리</strong></td>
+<td>stateless (호출 시마다 fresh)</td>
+<td>stateful (Task lifecycle 전체를 추적)</td>
+</tr>
+<tr>
+<td><strong>주요 사용처</strong></td>
+<td>코드 생성, DB 查询, 파일 操作</td>
+<td>Planner→Coder→Tester 협업 흐름</td>
+</tr>
+<tr>
+<td><strong>표준화 기관</strong></td>
+<td>Linux Foundation (Anthropic 기증)</td>
+<td>Google (A2A Working Group)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>핵심 비유:</strong></p>
+<ul>
+<li><strong>MCP</strong> = USB 프로토콜 (에이전트라는 컴퓨터에 도구라는 peripheral을 연결)</li>
+<li><strong>A2A</strong> = REST API (마이크로서비스 간의 협업 프로토콜)</li>
+</ul>
+<hr>
+<h2>3. Agent Card: 에이전트의 名刺 시스템</h2>
+<p>A2A에서 가장 독창적인 개념은 <strong>Agent Card</strong>다. Agent Card는 에이전트가 자신의 capability, skill, boundary를 advertising하는 JSON 메타데이터 문서다.</p>
+<pre><code class="language-json">{
+  "name": "code-reviewer-agent",
+  "version": "1.0.0",
+  "capabilities": {
+    "skills": ["static-analysis", "security-scan", "performance-review"],
+    "maxConcurrentTasks": 3,
+    "supportedLanguages": ["typescript", "python", "go", "rust"],
+    "inputModes": ["text", "code-snippet", "diff"],
+    "outputModes": ["text", "json", "markdown"]
+  },
+  "security": {
+    "authentication": "bearer-token",
+    "allowedHosts": ["github.com", "gitlab.com"],
+    "dataRetention": "task-completion"
+  },
+  "limits": {
+    "maxFileSize": "10MB",
+    "maxTokensPerTask": 8000,
+    "rateLimit": "100 tasks/hour"
+  },
+  "agentProvider": {
+    "organization": "devteam-acme",
+    "endpoint": "https://agent.devteam-acme.com/code-reviewer"
+  }
+}
+</code></pre>
+<p>이 Agent Card 덕분에, 한 에이전트가 다른 에이전트를 발견하고 그 에이전트가 무엇을 할 수 있는지 파악하는 과정이 <strong>자동화</strong>된다. 마치 마이크로서비스 아키텍처에서 Service Discovery가 동작하는 방식과 유사하다.</p>
+<p><strong>A2A Task 생명주기:</strong></p>
+<pre><code>SUBMITTED → ACTIVE → COMPLETED
+                ↘ PAUSED
+                ↘ FAILED
+</code></pre>
+<p>에이전트가 작업을 받으면 <code>SUBMITTED</code> 상태로 시작하고, 처리를 시작하면 <code>ACTIVE</code>가 된다. 처리가 완료되면 <code>COMPLETED</code>, 실패하면 <code>FAILED</code>가 된다. <code>PAUSED</code>는 인간의 개입이 필요하거나 리소스 대기 상태일 때 사용된다.</p>
+<hr>
+<h2>4. 실전 통합 아키텍처: 세 프로토콜의 결합</h2>
+<p>실제 Production 시스템에서는 세 프로토콜이 동시에 동작한다. 다음은 하나의 완전한 multi-agent 워크플로우다.</p>
+<h3>4.1 아키텍처 개요</h3>
+<pre><code>사용자 (Natural Language Request)
+        ↓
+┌──────────────────┐
+│  Gateway Agent   │  ← A2A: 작업受的 및 분배
+│  (Planner Role)  │
+└────────┬─────────┘
+         ↓ A2A Task Delegation
+    ┌────┴────┐
+    ↓         ↓
+┌────────┐ ┌────────┐
+│ Coder  │ │ Docs   │  ← A2A: 병렬 작업
+│ Agent  │ │ Agent  │
+└───┬────┘ └───┬────┘
+    ↓          ↓ MCP
+┌────────┐ ┌────────┐
+│  Git   │ │ Search │  ← MCP: 도구 호출
+│ Server │ │  API   │
+└────────┘ └────────┘
+    ↓
+┌──────────────────┐
+│  Tester Agent    │  ← A2A: 테스트 결과 취합
+│  (Reviewer)      │
+└────────┬─────────┘
+         ↓ ACP (대금精算)
+┌──────────────────┐
+│ Payment Ledger   │  ← ACP: 트랜잭션 기록
+│ (에이전트 경제)    │
+└──────────────────┘
+</code></pre>
+<h3>4.2 코드 구현</h3>
+<h4>A2A 에이전트 서버 구현</h4>
+<pre><code class="language-typescript">// a2a-server.ts — A2A 프로토콜 기반 에이전트 서버
+import { AgentServer, AgentCard, Task, TaskStatus } from '@google/a2a-sdk';
+
+const agentCard: AgentCard = {
+  name: 'code-generator-agent',
+  version: '1.0.0',
+  capabilities: {
+    skills: ['full-stack-coding', 'api-design', 'database-schema'],
+    supportedLanguages: ['typescript', 'python'],
+    maxConcurrentTasks: 5,
+  },
+  security: {
+    authentication: 'bearer-token',
+    allowedHosts: ['internal.dev'],
+  },
+};
+
+const server = new AgentServer({
+  port: 5001,
+  agentCard,
+});
+
+server.handle('code-generation', async (task: Task) => {
+  const { requirement, language, framework } = task.data as CodeGenRequest;
+
+  // MCP를 통해 코드 생성 도구 호출
+  const generated = await callMcpTool('code-generator', {
+    requirement,
+    language,
+    framework,
+  });
+
+  return {
+    status: TaskStatus.COMPLETED,
+    result: {
+      files: generated.files,
+      lineCount: generated.totalLines,
+    },
+  };
+});
+
+server.listen();
+</code></pre>
+<h4>MCP Server 구현</h4>
+<pre><code class="language-typescript">// mcp-server.ts — MCP 프로토콜 기반 도구 서버
+import { MCPServer, ToolDefinition } from '@modelcontextprotocol/sdk';
+
+const tools: ToolDefinition[] = [
+  {
+    name: 'code-generator',
+    description: '요구사항에서 코드를 생성합니다',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        requirement: { type: 'string' },
+        language: { type: 'string', enum: ['typescript', 'python'] },
+        framework: { type: 'string' },
+      },
+      required: ['requirement', 'language'],
+    },
+  },
+  {
+    name: 'file-search',
+    description: '프로젝트 내에서 관련 파일을 검색합니다',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        extensions: { type: 'array', items: { type: 'string' } },
+      },
+      required: ['query'],
+    },
+  },
+];
+
+const mcpServer = new MCPServer({
+  name: 'devtools-mcp-server',
+  version: '1.0.0',
+  tools,
+});
+
+mcpServer.on('tool-call', async (toolName: string, args: any) => {
+  switch (toolName) {
+    case 'code-generator':
+      return await generateCode(args.requirement, args.language, args.framework);
+    case 'file-search':
+      return await searchFiles(args.query, args.extensions);
+  }
+});
+
+mcpServer.listen();
+</code></pre>
+<h4>A2A + MCP 통합: Planner → Coder 협업</h4>
+<pre><code class="language-typescript">// planner.ts — A2A로 Coder Agent에게 작업 위임, MCP로 Git 도구 호출
+import { A2AClient } from '@google/a2a-sdk';
+
+class PlannerAgent {
+  private a2a: A2AClient;
+  private mcpCaller: MCPCaller;
+
+  async planAndDelegate(requirement: string) {
+    // 1단계: 요구사항 분석
+    const plan = await this.analyzeRequirement(requirement);
+
+    // 2단계: Coder Agent 발견 (Agent Card 조회)
+    const coderCard = await this.discoverAgent('code-generator-agent');
+    console.log(`Discovered: ${coderCard.name} — skills: ${coderCard.capabilities.skills}`);
+
+    // 3단계: A2A로 Coder Agent에 작업 위임
+    const coderTask = await this.a2a.submitTask({
+      agentId: coderCard.agentId,
+      skill: 'full-stack-coding',
+      data: {
+        requirement: plan.featureSpec,
+        language: 'typescript',
+        framework: 'next.js',
+      },
+    });
+
+    // 4단계: 완료 대기 (SSE 스트리밍)
+    for await (const update of coderTask.stream()) {
+      if (update.status === TaskStatus.ACTIVE) {
+        console.log(`Coder progress: ${update.progress}%`);
+      }
+    }
+
+    // 5단계: 결과 취합
+    const result = await coderTask.getResult();
+    return result.result;
+  }
+
+  async discoverAgent(skill: string): Promise&#x3C;AgentCard> {
+    // Agent Card Registry에서 skill 매칭
+    const cards = await this.a2a.listAgents();
+    return cards.find(c => c.capabilities.skills.includes(skill))!;
+  }
+}
+</code></pre>
+<hr>
+<h2>5. ACP/UCP: 에이전트 Economy's 토대</h2>
+<p>ACP(Agent Communication Protocol)와 UCP(Utility Communication Protocol)는 에이전트 간 <strong>상업적 거래</strong>를 처리한다. 이 프로토콜이 없으면, 에이전트가 다른 에이전트의 서비스를 유료로 사용하는 상황에서 대금 정산, SLA 보장, 분쟁 해결 등의 문제를 해결할 수 없다.</p>
+<p><strong>ACP의 핵심 개념:</strong></p>
+<table>
+<thead>
+<tr>
+<th>개념</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Service Registry</strong></td>
+<td>에이전트의 서비스 카탈로그 (가격, SLA,可用성)</td>
+</tr>
+<tr>
+<td><strong>Usage Record</strong></td>
+<td>서비스 사용 내역 (누가, 언제, 무엇을 사용했는가)</td>
+</tr>
+<tr>
+<td><strong>Settlement</strong></td>
+<td>대금 정산 (마이크로 트랜잭션의 aggregation)</td>
+</tr>
+<tr>
+<td><strong>Reputation Score</strong></td>
+<td>에이전트의 신뢰도 점수 (거래 이력 기반)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>ACP 미결제 상태:</strong></p>
+<pre><code class="language-json">// ACP Usage Record 예시
+{
+  "recordId": "ur-2026-05-10-001",
+  "provider": "code-generator-agent@devteam-acme",
+  "consumer": "planner-agent@devteam-xyz",
+  "service": "full-stack-coding",
+  "usage": {
+    "tokens": 12500,
+    "filesGenerated": 8,
+    "durationMs": 23400
+  },
+  "pricing": {
+    "pricePerToken": "0.0001",
+    "currency": "USD"
+  },
+  "totalCost": "1.25 USD",
+  "status": "PENDING_SETTLEMENT",
+  "timestamp": "2026-05-10T15:30:00Z"
+}
+</code></pre>
+<p>ACP는 현재 <strong>초기 단계</strong>에 있으며, 실제로 활발히 사용되지는 않는다. 그러나 2026년 현재 에이전트 Economy's萌芽阶段로서 주목할 가치가 있다. 서비스로서 에이전트를 운영하는 순간, ACP/UCP는 필수 인프라가 된다.</p>
+<hr>
+<h2>6. 2026년 에이전트 프로토콜 현황 정리</h2>
+<table>
+<thead>
+<tr>
+<th>프로토콜</th>
+<th>상태</th>
+<th>주요玩家</th>
+<th>핵심 해결책</th>
+<th>도입 판단</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MCP</strong></td>
+<td>🟢 Production Ready</td>
+<td>Anthropic, Linux Foundation, 50+ providers</td>
+<td>에이전트-도구 연결 표준화</td>
+<td><strong>도입 권장</strong> — 이미 VS Code, JetBrains, 수십 개 도구 지원</td>
+</tr>
+<tr>
+<td><strong>A2A</strong></td>
+<td>🟡 Early Adoption</td>
+<td>Google, Agent Development Kit 팀</td>
+<td>에이전트 간 협업 표준화</td>
+<td><strong>검증 필요</strong> — Working Group 참여 필요,Spec 성숙도 확인 요망</td>
+</tr>
+<tr>
+<td><strong>ACP/UCP</strong></td>
+<td>🔴 Proposal/Ink</td>
+<td>Multi-agent Economy 연구 그룹</td>
+<td>에이전트 간 상업적 거래</td>
+<td><strong>관찰 필요</strong> — 생태계 성숙까지wait-and-see</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>7. 조직 도입을 위한 전략적 Recomendations</h2>
+<h3>Phase 1: MCP부터 도입 (즉시 가능)</h3>
+<p>MCP는 이미 성숙한 프로토콜이다. 에이전트 개발을 시작했다면, 외부 도구(Git, DB, API)를 MCP로 연결하는 것이 가장 먼저 할 일이다.</p>
+<pre><code>도입 체크리스트:
+✅ 기존 도구들을 MCP Server로 wrapping
+✅ 에이전트가 사용하는 모든 도구의 Schema를 문서화
+✅ MCP Server의 authentication 및 authorization 검증
+</code></pre>
+<h3>Phase 2: Multi-agent 협업이 필요하다면 A2A 도입 검토 (3-6개월 내)</h3>
+<p>A2A는 복수의 에이전트가 협업하는 시스템에서만 가치가 있다. 단일 에이전트 시스템이라면 A2A는 과도하다.Planner Agent + Coder Agent + Tester Agent처럼 <strong>복수의 에이전트가 하나의目标任务에 협업</strong>하는 경우에 도입을 검토하라.</p>
+<pre><code>도입 체크리스트:
+□ Agent Card Registry 구축 (Centralized discovery)
+□ Task Lifecycle 추적 시스템 설계
+□ SSE 기반 스트리밍 출력 처리 infrastructure
+□ 에이전트 간 authentication mecanismo
+</code></pre>
+<h3>Phase 3: 에이전트 Economy's 준비 (6-12개월 후)</h3>
+<p>ACP/UCP는 아직 성숙 단계가 아니다. 그러나 에이전트 기반 SaaS 또는 Marketplace를 계획하고 있다면, ACP를 염두에둔 아키텍처를 설계해두면future-proofing에 도움이 된다.</p>
+<hr>
+<h2>결론: 세 프로토콜은 경쟁이 아니라 보완이다</h2>
+<p>MCP, A2A, ACP는 각각 다른 계층의 문제를 해결한다. 이들은 경쟁 관계가 아니라 <strong>보완 관계</strong>다:</p>
+<ul>
+<li><strong>MCP</strong> = 도구를 연결한다 (에이전트의胳膊)</li>
+<li><strong>A2A</strong> = 에이전트를 연결한다 (에이전트의 협업 능력)</li>
+<li><strong>ACP</strong> = 경제를 연결한다 (에이전트의激励 구조)</li>
+</ul>
+<p>2026년 현재, MCP의 도입은 ** immédiate**하게検討할 가치가 있다. A2A는multi-agent 협업이 필요한 프로젝트에서 시범 도입하고, ACP는 생태계 성숙을monitor하면서 장기적으로 따라가면 된다.</p>
+<p>에이전트 기술의 미래는 단일 프로토콜이 아니라, <strong>이 세 프로토콜이 만드는 완전한 계층 구조</strong> 위에서 구축될 것이다.</p>
+<hr>
+<p><em>본 포스트는 매일 오후 4시에 자동으로 생성 및 게시됩니다.</em></p>5:["$","main",null,{"className":"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8","children":["$","article",null,{"className":"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10","children":[["$","div",null,{"className":"text-sm text-white/60","children":"Sun May 10 2026 00:00:00 GMT+0000 (Coordinated Universal Time)"}],["$","h1",null,{"className":"mt-2 text-3xl font-bold leading-snug md:text-5xl","children":"MCP + A2A + ACP: 2026 AI Agent Protocol 생태계 완전 해부"}],null,["$","div",null,{"className":"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300","dangerouslySetInnerHTML":{"__html":"$10"}}]]}]}]
+8:null
+c:[["$","title","0",{"children":"MCP + A2A + ACP: 2026 AI Agent Protocol 생태계 완전 해부 | Mato Po Tech Blog"}],["$","meta","1",{"name":"description","content":"개발하면서 배운 것과 삽질 로그를 기록합니다."}],["$","link","2",{"rel":"canonical","href":"https://po-mato.github.io/posts/2026-05-10-proactive-update/"}],["$","meta","3",{"property":"og:title","content":"MCP + A2A + ACP: 2026 AI Agent Protocol 생태계 완전 해부"}],["$","meta","4",{"property":"og:description","content":"개발하면서 배운 것과 삽질 로그를 기록합니다."}],["$","meta","5",{"property":"og:url","content":"https://po-mato.github.io/posts/2026-05-10-proactive-update/"}],["$","meta","6",{"property":"og:image","content":"https://po-mato.github.io/og.png"}],["$","meta","7",{"property":"og:type","content":"article"}],["$","meta","8",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","9",{"name":"twitter:title","content":"MCP + A2A + ACP: 2026 AI Agent Protocol 생태계 완전 해부"}],["$","meta","10",{"name":"twitter:description","content":"개발하면서 배운 것과 삽질 로그를 기록합니다."}],["$","meta","11",{"name":"twitter:image","content":"https://po-mato.github.io/og.png"}],["$","link","12",{"rel":"icon","href":"/favicon.ico?favicon.0b3bf435.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L11","13",{}]]
