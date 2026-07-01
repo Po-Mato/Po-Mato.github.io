@@ -1,0 +1,1052 @@
+<!DOCTYPE html><!--RvyB42_vuyVkjxFn3f586--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/e303b0af34205b81.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/329e63eb984ada35.js" async=""></script><meta name="next-size-adjust" content=""/><title>AI Agent Observability: OpenTelemetry GenAI Tracing, Execution Journal, 그리고 Production Agent의 가시성 확보 전략 (#046) | Mato Po Tech Blog</title><meta name="description" content="Production AI Agent는 &#x27;200 OK&#x27;만으로는 디버깅할 수 없다. Agent는 잘 포맷된 틀린 답변을 반환하고, 불필요한 Tool Call을 수행하며, 3단계에서 발생한 실패가 10단계에서야 표면화된다. 이 글에서는 OpenTelemetry GenAI v1.41 Semantic Conventions 기반의 Agent Tracing 아키텍처, Spans Propagation 전략, 그리고 Execution Journal이라 명명한 실행 검증 가능 기록 시스템을 TypeScript와 Go 코드 예제와 함께 설계한다."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-06-20-proactive-update/"/><meta property="og:title" content="AI Agent Observability: OpenTelemetry GenAI Tracing, Execution Journal, 그리고 Production Agent의 가시성 확보 전략 (#046)"/><meta property="og:description" content="Production AI Agent는 &#x27;200 OK&#x27;만으로는 디버깅할 수 없다. Agent는 잘 포맷된 틀린 답변을 반환하고, 불필요한 Tool Call을 수행하며, 3단계에서 발생한 실패가 10단계에서야 표면화된다. 이 글에서는 OpenTelemetry GenAI v1.41 Semantic Conventions 기반의 Agent Tracing 아키텍처, Spans Propagation 전략, 그리고 Execution Journal이라 명명한 실행 검증 가능 기록 시스템을 TypeScript와 Go 코드 예제와 함께 설계한다."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-06-20-proactive-update/"/><meta property="og:image" content="https://po-mato.github.io/milkyway.jpg"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="AI Agent Observability: OpenTelemetry GenAI Tracing, Execution Journal, 그리고 Production Agent의 가시성 확보 전략 (#046)"/><meta name="twitter:description" content="Production AI Agent는 &#x27;200 OK&#x27;만으로는 디버깅할 수 없다. Agent는 잘 포맷된 틀린 답변을 반환하고, 불필요한 Tool Call을 수행하며, 3단계에서 발생한 실패가 10단계에서야 표면화된다. 이 글에서는 OpenTelemetry GenAI v1.41 Semantic Conventions 기반의 Agent Tracing 아키텍처, Spans Propagation 전략, 그리고 Execution Journal이라 명명한 실행 검증 가능 기록 시스템을 TypeScript와 Go 코드 예제와 함께 설계한다."/><meta name="twitter:image" content="https://po-mato.github.io/milkyway.jpg"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><div class="text-sm text-white/60">2026-06-20</div><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">AI Agent Observability: OpenTelemetry GenAI Tracing, Execution Journal, 그리고 Production Agent의 가시성 확보 전략 (#046)</h1><p class="mt-4 text-base text-white/80 md:text-lg">Production AI Agent는 &#x27;200 OK&#x27;만으로는 디버깅할 수 없다. Agent는 잘 포맷된 틀린 답변을 반환하고, 불필요한 Tool Call을 수행하며, 3단계에서 발생한 실패가 10단계에서야 표면화된다. 이 글에서는 OpenTelemetry GenAI v1.41 Semantic Conventions 기반의 Agent Tracing 아키텍처, Spans Propagation 전략, 그리고 Execution Journal이라 명명한 실행 검증 가능 기록 시스템을 TypeScript와 Go 코드 예제와 함께 설계한다.</p><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><h2>1. 들어가며: '죄책감 있는 200'과 싸우는 방법</h2>
+<p>2026년 6월, AI Agent Observability는 더 이상 선택이 아니라 Production Agent를 운영하는 모든 팀의 기본 필수 역량이 되었다. OpenTelemetry GenAI Semantic Conventions가 v1.41로 업데이트되면서 vendor-neutral한 Agent Tracing이 현실화되었고, Datadog, Grafana, New Relic 등 주요 백엔드가 이를 네이티브로 수용하기 시작했다.</p>
+<p>하지만 여전히 대부분의 AI Agent 시스템이 직면한 현실은 이것이다:</p>
+<pre><code>// 전형적인 Production Agent 사고 시나리오:
+
+Step 1:  User query → "이번 분기 매출 TOP 5 고객 분석해줘"
+Step 2:  Agent → DB 쿼리 실행 (성공, 200ms)
+Step 3:  Agent → 매출 데이터 수신 (성공, 정상 데이터)
+Step 4:  Agent → SQL 결과 분석 (잘못된 집계 함수 사용)
+Step 5:  Agent → LLM에 전달 (성공, 200 OK)
+Step 6:  LLM → 잘 포맷된 틀린 답변 생성
+Step 7:  Agent → 사용자에게 전달 (성공, 200 OK)
+
+// 결과: 사용자는 예쁘게 포맷된 틀린 리포트를 받았다.
+// 로그에는 단 하나의 에러도 없다. 모든 호출이 '성공'했다.
+</code></pre>
+<p>전통적인 모니터링은 이 상황을 절대 감지하지 못한다. HTTP 200은 성공이고, 로그에 <code>error</code> 레벨은 없으며, 레이턴시도 정상 범위다. 하지만 결과는 '틀렸다'.</p>
+<p>이것이 AI Agent Observability가 기존 APM(Application Performance Monitoring)과 다른 이유다. <strong>Agent는 '잘못된 성공'을 생산하는 시스템</strong>이기 때문에, 프로세스 자체의 가시성(visibility)이 결과의 정확성보다 더 중요해진 경우가 많다.</p>
+<p>이 글에서는 다음 세 가지 레이어로 AI Agent Observability를 설계한다:</p>
+<pre><code>┌──────────────────────────────────────────────┐
+│      AI Agent Observability Stack 2026        │
+├──────────────────────────────────────────────┤
+│  Layer 1: OpenTelemetry GenAI Tracing        │
+│  → Model call × Tool call × Agent span       │
+│  → Vendor-neutral semantic convention         │
+│  → Multi-turn trace stitching                 │
+├──────────────────────────────────────────────┤
+│  Layer 2: Execution Journal                   │
+│  → 모든 결정의 근거(chain-of-thought) 기록    │
+│  → Replay 가능한 실행 증명                    │
+│  → Audit Trail + EU AI Act 대응              │
+├──────────────────────────────────────────────┤
+│  Layer 3: Quality Evaluation Pipeline         │
+│  → Online evaluation (production traffic)     │
+│  → LLM-as-Judge 자동 스코어링                 │
+│  → Circuit Breaker 상태와의 통합              │
+└──────────────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2>2. Layer 1: OpenTelemetry GenAI Tracing — Agent Span 설계</h2>
+<p>2026년 현재, OpenTelemetry GenAI Semantic Conventions는 AI Agent Tracing의 사실상 표준(de facto standard)이다. v1.41 기준으로 네 가지 Agent-specific span operation type이 정의되어 있다:</p>
+<table>
+<thead>
+<tr>
+<th>Span Type</th>
+<th>Span Kind</th>
+<th>언제 사용하는가</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>create_agent</code></td>
+<td>CLIENT 또는 INTERNAL</td>
+<td>Agent 인스턴스 생성 시</td>
+</tr>
+<tr>
+<td><code>invoke_agent</code></td>
+<td>CLIENT (remote) 또는 INTERNAL (local)</td>
+<td>Agent 호출 (싱글/멀티)</td>
+</tr>
+<tr>
+<td><code>invoke_workflow</code></td>
+<td>INTERNAL</td>
+<td>멀티 Agent 간 workflow 라우팅</td>
+</tr>
+<tr>
+<td><code>execute_tool</code></td>
+<td>CLIENT 또는 INTERNAL</td>
+<td>Tool/MCP 서버 호출</td>
+</tr>
+</tbody>
+</table>
+<h3>2.1. Span Hierarchy: Agent 호출의 계층 구조</h3>
+<p>Agent Tracing의 핵심은 span이 단순한 리스트가 아니라 <strong>트리 구조</strong>를 형성해야 한다는 점이다.</p>
+<pre><code>Trace: "분기 매출 분석 요청"
+├── Span: invoke_agent (INTERNAL)
+│   ├── Span: retrieve_context (INTERNAL)
+│   │   ├── Span: vector_search (CLIENT)    → 벡터 DB
+│   │   └── Span: sql_query (CLIENT)        → RDB
+│   ├── Span: invoke_workflow (INTERNAL)    → 분석 워크플로우
+│   │   ├── Span: execute_tool (INTERNAL)   → SQL 분석 도구
+│   │   └── Span: execute_tool (CLIENT)     → LLM 호출
+│   └── Span: execute_tool (CLIENT)         → 리포트 생성 LLM 호출
+└── Span: response_format (INTERNAL)        → 응답 포맷팅
+</code></pre>
+<p>이 구조에서 중요한 것은 <strong>실패 지점을 바로 찾을 수 있다</strong>는 점이다. 위 trace에서 만약 <code>sql_query</code> span이 200ms가 아닌 30초가 걸렸다면, SQL 최적화가 필요한 지점을 정확히 알 수 있다.</p>
+<h3>2.2. TypeScript: OpenTelemetry 기반 Agent Tracing 구현</h3>
+<pre><code class="language-typescript">// TypeScript: OpenTelemetry Agent Tracing Wrapper
+
+import { trace, Span, SpanStatusCode, context as otelContext } from '@opentelemetry/api';
+import { SemanticAttributes } from '@opentelemetry/semantic-conventions';
+
+// GenAI semantic convention constants (OTel v1.41)
+const GEN_AI = {
+  SYSTEM: 'gen_ai.system',
+  REQUEST_MODEL: 'gen_ai.request.model',
+  RESPONSE_MODEL: 'gen_ai.response.model',
+  USAGE_INPUT_TOKENS: 'gen_ai.usage.input_tokens',
+  USAGE_OUTPUT_TOKENS: 'gen_ai.usage.output_tokens',
+  OPERATION_NAME: 'gen_ai.operation.name',
+  AGENT_SPAN_TYPE: 'gen_ai.agent.span.type',
+  TOOL_NAME: 'gen_ai.tool.name',
+  TOOL_CALL_ID: 'gen_ai.tool.call.id',
+} as const;
+
+const TRACER_NAME = 'ai-agent-observability';
+
+// Agent Span type enum
+type AgentSpanType = 'create_agent' | 'invoke_agent' | 'invoke_workflow' | 'execute_tool';
+type SpanKind = 'INTERNAL' | 'CLIENT';
+
+interface SpanConfig {
+  name: string;
+  agentSpanType: AgentSpanType;
+  kind: SpanKind;
+  attributes?: Record&#x3C;string, string | number | boolean>;
+}
+
+class AgentTracer {
+  private tracer = trace.getTracer(TRACER_NAME);
+
+  /**
+   * Agent 호출 span 생성 (invoke_agent)
+   */
+  async traceInvokeAgent&#x3C;T>(
+    agentName: string,
+    input: string,
+    fn: (span: Span) => Promise&#x3C;T>
+  ): Promise&#x3C;T> {
+    const span = this.tracer.startSpan(
+      `${agentName}.invoke`,
+      {
+        attributes: {
+          [GEN_AI.OPERATION_NAME]: agentName,
+          [GEN_AI.AGENT_SPAN_TYPE]: 'invoke_agent',
+          'agent.input': this.sanitizeForSpan(input),
+        },
+      }
+    );
+
+    return this.runWithSpan(span, fn);
+  }
+
+  /**
+   * Tool/MCP 호출 span 생성 (execute_tool)
+   */
+  async traceToolCall&#x3C;T>(
+    toolName: string,
+    toolCallId: string,
+    params: Record&#x3C;string, unknown>,
+    fn: (span: Span) => Promise&#x3C;T>
+  ): Promise&#x3C;T> {
+    const span = this.tracer.startSpan(
+      `tool.${toolName}`,
+      {
+        attributes: {
+          [GEN_AI.TOOL_NAME]: toolName,
+          [GEN_AI.TOOL_CALL_ID]: toolCallId,
+          [GEN_AI.AGENT_SPAN_TYPE]: 'execute_tool',
+          'tool.params': JSON.stringify(this.sanitizeParams(params)),
+        },
+      }
+    );
+
+    return this.runWithSpan(span, fn);
+  }
+
+  /**
+   * LLM 호출 span (model call)
+   */
+  async traceLLMCall&#x3C;T>(
+    model: string,
+    messages: unknown[],
+    fn: (span: Span) => Promise&#x3C;{ result: T; usage?: { inputTokens: number; outputTokens: number } }>
+  ): Promise&#x3C;T> {
+    const span = this.tracer.startSpan(
+      `llm.${model}`,
+      {
+        attributes: {
+          [GEN_AI.SYSTEM]: this.detectProvider(model),
+          [GEN_AI.REQUEST_MODEL]: model,
+          [GEN_AI.AGENT_SPAN_TYPE]: 'execute_tool',
+        },
+      }
+    );
+
+    try {
+      const { result, usage } = await fn(span);
+
+      if (usage) {
+        span.setAttribute(GEN_AI.USAGE_INPUT_TOKENS, usage.inputTokens);
+        span.setAttribute(GEN_AI.USAGE_OUTPUT_TOKENS, usage.outputTokens);
+      }
+
+      span.setStatus({ code: SpanStatusCode.OK });
+      span.end();
+      return result;
+    } catch (error) {
+      span.setStatus({
+        code: SpanStatusCode.ERROR,
+        message: String(error),
+      });
+      span.recordException(error as Error);
+      span.end();
+      throw error;
+    }
+  }
+
+  private async runWithSpan&#x3C;T>(span: Span, fn: (span: Span) => Promise&#x3C;T>): Promise&#x3C;T> {
+    const ctx = trace.setSpan(otelContext.active(), span);
+
+    return otelContext.with(ctx, async () => {
+      try {
+        const result = await fn(span);
+        span.setStatus({ code: SpanStatusCode.OK });
+        return result;
+      } catch (error) {
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: String(error),
+        });
+        span.recordException(error as Error);
+        throw error;
+      } finally {
+        span.end();
+      }
+    });
+  }
+
+  private sanitizeForSpan(input: string): string {
+    // PII 보호: 너무 긴 입력은 자르고, 민감 정보는 마스킹
+    if (input.length > 1000) return input.substring(0, 1000) + '...[truncated]';
+    return input;
+  }
+
+  private sanitizeParams(params: Record&#x3C;string, unknown>): Record&#x3C;string, unknown> {
+    // 민감 파라미터(apiKey, password 등) 자동 마스킹
+    const sensitiveKeys = ['apiKey', 'api_key', 'password', 'token', 'secret', 'credential'];
+    const sanitized: Record&#x3C;string, unknown> = {};
+
+    for (const [key, value] of Object.entries(params)) {
+      if (sensitiveKeys.some(k => key.toLowerCase().includes(k))) {
+        sanitized[key] = '***REDACTED***';
+      } else if (typeof value === 'string' &#x26;&#x26; value.length > 500) {
+        sanitized[key] = value.substring(0, 500) + '...[truncated]';
+      } else {
+        sanitized[key] = value;
+      }
+    }
+
+    return sanitized;
+  }
+
+  private detectProvider(model: string): string {
+    if (model.startsWith('gpt')) return 'openai';
+    if (model.startsWith('claude')) return 'anthropic';
+    if (model.startsWith('gemini')) return 'google';
+    if (model.includes('deepseek')) return 'deepseek';
+    return 'unknown';
+  }
+}
+
+export const agentTracer = new AgentTracer();
+</code></pre>
+<h3>2.3. 실제 Agent에 Tracing 적용하기</h3>
+<pre><code class="language-typescript">// 실제 Agent에 Tracing 통합
+
+class AnalyticsAgent {
+  private tracer = agentTracer;
+
+  async analyzeQuarterlyRevenue(userQuery: string): Promise&#x3C;Report> {
+    return this.tracer.traceInvokeAgent(
+      'QuarterlyRevenueAnalyzer',
+      userQuery,
+      async (span) => {
+        // Step 1: 맥락 검색
+        const context = await this.tracer.traceToolCall(
+          'vector_search',
+          crypto.randomUUID(),
+          { query: userQuery, limit: 5 },
+          async () => {
+            return this.vectorDB.search(userQuery, 5);
+          }
+        );
+
+        span.setAttribute('context.documents_found', context.length);
+
+        // Step 2: SQL 쿼리
+        const rawData = await this.tracer.traceToolCall(
+          'sql_query',
+          crypto.randomUUID(),
+          { table: 'quarterly_revenue', period: '2026-Q1' },
+          async () => {
+            return this.database.query(
+              'SELECT customer, revenue FROM quarterly_revenue WHERE quarter = $1',
+              ['2026-Q1']
+            );
+          }
+        );
+
+        // Step 3: LLM 분석
+        const analysis = await this.tracer.traceLLMCall(
+          'gpt-4o',
+          [{ role: 'user', content: `데이터:\n${JSON.stringify(rawData)}\n\n질문: ${userQuery}` }],
+          async (llmSpan) => {
+            const response = await this.llm.complete(
+              'gpt-4o',
+              `Analyze this revenue data for key insights: ${JSON.stringify(rawData)}`
+            );
+
+            return {
+              result: response.content,
+              usage: {
+                inputTokens: response.usage.prompt_tokens,
+                outputTokens: response.usage.completion_tokens,
+              },
+            };
+          }
+        );
+
+        return { analysis, sourceData: rawData, contextUsed: context };
+      }
+    );
+  }
+}
+</code></pre>
+<h3>2.4. OTel v1.41 함정: Development 상태의 GenAI conventions</h3>
+<p>OpenTelemetry GenAI semantic conventions의 가장 큰 현실적 함정은 <strong>아직 Stable이 아니라는 점</strong>이다. v1.41 기준으로 모든 <code>gen_ai.*</code> 속성은 <strong>Development</strong> 배지를 달고 있다 (유일한 예외: <code>error.type</code>, <code>server.address</code>, <code>server.port</code>).</p>
+<pre><code>// v1.41의 현실:
+// gen_ai.usage.input_tokens → Development status
+// gen_ai.agent.span.type   → Development status
+// gen_ai.tool.name         → Development status
+
+// 이런 속성이 다음 마이너 버전에서 이름이 바뀌어도 spec 위반이 아니다.
+</code></pre>
+<p><strong>해결책: Stability Opt-In 이스케이프 해치</strong></p>
+<pre><code class="language-typescript">// Agent 시작 시:
+// OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental
+
+// 이 옵션을 설정하면 OTel SDK가 Dual Emission을 활성화한다:
+// - 기존 (v1.36.0 이전) 속성 이름
+// - 현재 (v1.41) 속성 이름
+// → 대시보드가 갑자기 깨지지 않도록 보호
+
+// 단, 이 옵션은 프로덕션에서 안정화 v1이 나올 때까지만 유지할 것.
+// Stable 릴리스 이후에는 opt-in을 제거하고 정식 속성 이름으로 마이그레이션.
+</code></pre>
+<hr>
+<h2>3. Layer 2: Execution Journal — 실행 증명 가능한 Agent 기록</h2>
+<p>Tracing은 "무슨 일이 일어났는가"를 알려주지만, Execution Journal은 **"왜 그런 결정을 내렸는가"**를 증명한다.</p>
+<p>Execution Journal은 단순한 로그가 아니다. Agent의 모든 reasoning step, tool call 결정 근거, LLM response의 chain-of-thought, 그리고 최종 출력에 이르기까지 <strong>재현 가능한(replayable) 실행 기록</strong>을 의미한다.</p>
+<h3>3.1. Execution Journal의 구조</h3>
+<pre><code class="language-typescript">// TypeScript: Execution Journal Schema
+
+interface ExecutionJournal {
+  sessionId: string;                    // Agent Session UUID
+  agentName: string;
+  timestamp: string;                    // ISO 8601
+
+  // → Section 1: 입력
+  input: {
+    raw: string;                        // 사용자 원본 입력
+    sanitized: string;                  // PII 제거된 버전
+    intent: string;                     // Agent가 해석한 의도
+    confidence: number;                 // 의도 추론 신뢰도 (0-1)
+  };
+
+  // → Section 2: Reasoning Chain
+  reasoning: ReasoningStep[];
+
+  // → Section 3: Tool Call 기록
+  toolCalls: ToolCallRecord[];
+
+  // → Section 4: LLM Interaction
+  llmInteractions: LLMInteractionRecord[];
+
+  // → Section 5: 출력
+  output: {
+    final: string;                      // 최종 응답
+    alternatives?: string[];            // 고려되었지만 선택되지 않은 응답
+    latency: number;                    // 총 처리 시간 (ms)
+  };
+
+  // → Section 6: 메타데이터
+  metadata: {
+    circuitBreakerState: string;        // 'health' | 'degraded' | 'fallback'
+    modelVersion: string;
+    toolVersions: Record&#x3C;string, string>;
+    evaluationScore?: number;           // LLM-as-Judge 평가 점수
+  };
+}
+
+interface ReasoningStep {
+  step: number;
+  type: 'thought' | 'plan' | 'observation' | 'decision';
+  content: string;
+  timestamp: string;
+  parentStep?: number;                  // reasoning 계층 구조
+  tokensUsed?: number;                  // 이 step에 사용된 토큰
+}
+
+interface ToolCallRecord {
+  toolName: string;
+  callId: string;
+  params: Record&#x3C;string, unknown>;
+  result: unknown;
+  latency: number;                      // ms
+  error?: string;
+  retryCount: number;
+}
+
+interface LLMInteractionRecord {
+  model: string;
+  provider: string;
+  prompt: string;
+  response: string;
+  inputTokens: number;
+  outputTokens: number;
+  latency: number;
+  temperature: number;
+}
+</code></pre>
+<h3>3.2. Execution Journal Recorder 구현</h3>
+<pre><code class="language-typescript">// TypeScript: Execution Journal Recorder
+
+class ExecutionJournalRecorder {
+  private journal: ExecutionJournal;
+  private activeReasoning: ReasoningStep[] = [];
+  private activeToolCalls: ToolCallRecord[] = [];
+  private activeLLMCalls: LLMInteractionRecord[] = [];
+
+  constructor(sessionId: string, agentName: string) {
+    this.journal = {
+      sessionId,
+      agentName,
+      timestamp: new Date().toISOString(),
+      input: { raw: '', sanitized: '', intent: '', confidence: 0 },
+      reasoning: [],
+      toolCalls: [],
+      llmInteractions: [],
+      output: { final: '', latency: 0 },
+      metadata: {
+        circuitBreakerState: 'health',
+        modelVersion: '',
+        toolVersions: {},
+      },
+    };
+  }
+
+  recordInput(raw: string, intent: string, confidence: number): void {
+    this.journal.input = {
+      raw,
+      sanitized: this.sanitizePII(raw),
+      intent,
+      confidence,
+    };
+  }
+
+  addReasoningStep(type: ReasoningStep['type'], content: string, parentStep?: number): number {
+    const step: ReasoningStep = {
+      step: this.activeReasoning.length + 1,
+      type,
+      content,
+      timestamp: new Date().toISOString(),
+      parentStep,
+    };
+    this.activeReasoning.push(step);
+    return step.step;
+  }
+
+  async recordToolCall&#x3C;T>(
+    toolName: string,
+    params: Record&#x3C;string, unknown>,
+    fn: () => Promise&#x3C;T>
+  ): Promise&#x3C;{ result: T; callId: string }> {
+    const callId = crypto.randomUUID();
+    const start = performance.now();
+    let retryCount = 0;
+    let lastError: string | undefined;
+
+    const record: ToolCallRecord = {
+      toolName,
+      callId,
+      params: this.sanitizeParams(params),
+      result: null,
+      latency: 0,
+      retryCount: 0,
+    };
+
+    try {
+      const result = await fn();
+      record.result = result;
+      record.latency = performance.now() - start;
+      this.activeToolCalls.push(record);
+      return { result, callId };
+    } catch (error) {
+      record.error = String(error);
+      record.latency = performance.now() - start;
+      this.activeToolCalls.push(record);
+      throw error;
+    } finally {
+      this.journal.toolCalls = [...this.activeToolCalls];
+    }
+  }
+
+  async recordLLMInteraction(
+    model: string,
+    provider: string,
+    prompt: string,
+    fn: () => Promise&#x3C;{ response: string; inputTokens: number; outputTokens: number }>
+  ): Promise&#x3C;string> {
+    const start = performance.now();
+
+    const { response, inputTokens, outputTokens } = await fn();
+
+    this.activeLLMCalls.push({
+      model,
+      provider,
+      prompt: this.truncate(prompt, 2000),
+      response: this.truncate(response, 2000),
+      inputTokens,
+      outputTokens,
+      latency: performance.now() - start,
+      temperature: 0.7, // 실제로는 config에서 읽어옴
+    });
+
+    this.journal.llmInteractions = [...this.activeLLMCalls];
+    return response;
+  }
+
+  finalize(output: string, latency: number, metadata: Partial&#x3C;ExecutionJournal['metadata']>): ExecutionJournal {
+    this.journal.output = { final: output, latency };
+    this.journal.reasoning = [...this.activeReasoning];
+    this.journal.metadata = { ...this.journal.metadata, ...metadata };
+    return this.journal;
+  }
+
+  /**
+   * Journal을 JSON-Lines 형식으로 직렬화 (로그 저장 및 전송용)
+   */
+  serialize(): string[] {
+    return [
+      JSON.stringify({ event: 'journal:start', sessionId: this.journal.sessionId, agentName: this.journal.agentName, timestamp: this.journal.timestamp }),
+      JSON.stringify({ event: 'journal:input', ...this.journal.input }),
+      ...this.activeReasoning.map(r => JSON.stringify({ event: 'journal:reasoning', ...r })),
+      ...this.activeToolCalls.map(t => JSON.stringify({ event: 'journal:tool_call', toolName: t.toolName, callId: t.callId, latency: t.latency, error: t.error })),
+      ...this.activeLLMCalls.map(l => JSON.stringify({ event: 'journal:llm', model: l.model, inputTokens: l.inputTokens, outputTokens: l.outputTokens, latency: l.latency })),
+      JSON.stringify({ event: 'journal:output', ...this.journal.output, metadata: this.journal.metadata }),
+    ];
+  }
+
+  /**
+   * Journal을 Audit Trail 형식으로 변환 (EU AI Act 대응)
+   */
+  toAuditTrail(): string {
+    return [
+      `=== AI Agent Execution Journal ===`,
+      `Session: ${this.journal.sessionId}`,
+      `Agent: ${this.journal.agentName}`,
+      `Time: ${this.journal.timestamp}`,
+      ``,
+      `[Input]`,
+      `  Intent: ${this.journal.input.intent} (confidence: ${(this.journal.input.confidence * 100).toFixed(1)}%)`,
+      `  Raw: ${this.journal.input.raw.substring(0, 200)}${this.journal.input.raw.length > 200 ? '...' : ''}`,
+      ``,
+      `[Reasoning Chain]`,
+      ...this.activeReasoning.map(r =>
+        `  Step ${r.step} [${r.type}]: ${r.content.substring(0, 300)}`
+      ),
+      ``,
+      `[Tool Calls]`,
+      ...this.activeToolCalls.map(t =>
+        `  ${t.toolName}: ${t.latency.toFixed(0)}ms ${t.error ? `❌ ${t.error}` : '✅'}`
+      ),
+      ``,
+      `[LLM Interactions]`,
+      ...this.activeLLMCalls.map(l =>
+        `  ${l.model}: ${l.inputTokens}→${l.outputTokens}tokens, ${l.latency.toFixed(0)}ms`
+      ),
+      ``,
+      `[Output]`,
+      `  Latency: ${this.journal.output.latency.toFixed(0)}ms`,
+      `  Quality Score: ${this.journal.metadata.evaluationScore ?? 'N/A'}`,
+      `  Circuit State: ${this.journal.metadata.circuitBreakerState}`,
+      `=== End of Journal ===`,
+    ].join('\n');
+  }
+
+  private sanitizePII(text: string): string {
+    return text
+      .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '[EMAIL_REDACTED]')
+      .replace(/\b\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b/g, '[CC_REDACTED]')
+      .replace(/[가-힣]{2,}님/g, '[NAME_REDACTED]');
+  }
+
+  private sanitizeParams(params: Record&#x3C;string, unknown>): Record&#x3C;string, unknown> {
+    const sensitive = ['apiKey', 'api_key', 'password', 'token', 'secret', 'credential'];
+    const sanitized: Record&#x3C;string, unknown> = {};
+    for (const [key, value] of Object.entries(params)) {
+      sanitized[key] = sensitive.some(k => key.toLowerCase().includes(k))
+        ? '***REDACTED***'
+        : value;
+    }
+    return sanitized;
+  }
+
+  private truncate(text: string, max: number): string {
+    return text.length > max ? text.substring(0, max) + `...[+${text.length - max} chars]` : text;
+  }
+}
+</code></pre>
+<h3>3.3. Execution Journal과 OTel Tracing의 차이점</h3>
+<p>Execution Journal과 OpenTelemetry Tracing은 <strong>보완 관계</strong>이지, 대체 관계가 아니다.</p>
+<table>
+<thead>
+<tr>
+<th>차원</th>
+<th>OpenTelemetry Tracing</th>
+<th>Execution Journal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>주 목적</strong></td>
+<td>성능 분석, 병목 탐지</td>
+<td>결정 증명, 재현, 감사</td>
+</tr>
+<tr>
+<td><strong>데이터 구조</strong></td>
+<td>Span 트리 (짧고 구조적)</td>
+<td>JSON Lines + 텍스트 (길고 상세)</td>
+</tr>
+<tr>
+<td><strong>보존 기간</strong></td>
+<td>일~주 단위 (롤링)</td>
+<td>월~년 단위 (감사 요구사항)</td>
+</tr>
+<tr>
+<td><strong>소비자</strong></td>
+<td>SRE, 백엔드 엔지니어</td>
+<td>법무팀, 규제 담당자, QA</td>
+</tr>
+<tr>
+<td><strong>PII 처리</strong></td>
+<td>마스킹 옵션</td>
+<td>필수 마스킹 + audit trail</td>
+</tr>
+<tr>
+<td><strong>재현성</strong></td>
+<td>부분적 (시간, 레이턴시)</td>
+<td>완전 재현 가능 (입력→출력)</td>
+</tr>
+<tr>
+<td><strong>비용</strong></td>
+<td>span 당 매우 저렴</td>
+<td>레코드 당 상대적 고비용</td>
+</tr>
+</tbody>
+</table>
+<p><strong>운영 전략</strong>: Tracing은 실시간 알림과 성능 분석에, Execution Journal은 사후 검증과 규제 대응에 사용한다. 둘 다 있어야 Production Agent를 운영할 수 있다.</p>
+<hr>
+<h2>4. Layer 3: Quality Evaluation Pipeline — Production Traffic에서의 자동 품질 평가</h2>
+<p>Tracing과 Journal이 "기록"을 담당한다면, Evaluation Pipeline은 <strong>기록을 분석하여 품질 점수를 산출</strong>한다.</p>
+<h3>4.1. Online Evaluation 아키텍처</h3>
+<p>Production traffic에서의 품질 평가는 오프라인 벤치마크와 달리 <strong>실시간성 + 저비용</strong>이라는 제약 조건을 가진다.</p>
+<pre><code>Production Traffic
+     │
+     ▼
+┌─────────────────────┐
+│ Agent Response      │
+└────────┬────────────┘
+         │
+    ┌────┴────┐
+    │         │
+    ▼         ▼
+┌────────┐ ┌────────────┐
+│ Tracing │ │ Execution  │
+│ (OTel)  │ │ Journal    │
+└────┬───┘ └─────┬──────┘
+     │           │
+     ▼           ▼
+┌─────────────────────────┐
+│ Evaluation Orchestrator  │
+├─────────────────────────┤
+│ 1. LLM-as-Judge (샘플링) │ ← 비용 제어: 10%만 평가
+│ 2. Heuristic Rules       │ ← 100% 적용 (무료)
+│ 3. Feedback Loop         │ ← 사용자 피드백 통합
+└──────────┬──────────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Alert / Dashboard   │
+│ → Quality Score     │
+│ → Latency P95       │
+│ → Tool Call Accuracy│
+│ → Circuit State     │
+└─────────────────────┘
+</code></pre>
+<h3>4.2. TypeScript: LLM-as-Judge 평가 구현</h3>
+<pre><code class="language-typescript">// TypeScript: LLM-as-Judge Quality Evaluator
+
+interface QualityScore {
+  overall: number;          // 0-1
+  correctness: number;      // 정확성
+  relevance: number;        // 관련성
+  completeness: number;     // 완전성
+  efficiency: number;       // 효율성 (불필요한 tool call 최소화)
+  reasoning: number;        // 추론 과정의 명확성
+}
+
+class OnlineQualityEvaluator {
+  private samplingRate = 0.1; // 10%만 LLM 평가 (비용 제어)
+  private totalSamples = 0;
+  private recentScores: QualityScore[] = [];
+
+  async evaluate(journal: ExecutionJournal): Promise&#x3C;QualityScore | null> {
+    // 비용 제어: 샘플링 적용
+    this.totalSamples++;
+    if (Math.random() > this.samplingRate) return null;
+
+    // Heuristic 평가 (100% 적용, 무료)
+    const heuristicScore = this.heuristicEvaluation(journal);
+
+    // LLM-as-Judge 평가 (샘플링, 비용 있음)
+    const llmScore = await this.llmJudgeEvaluation(journal);
+
+    const final: QualityScore = {
+      overall: (heuristicScore.overall + llmScore.overall) / 2,
+      correctness: llmScore.correctness,
+      relevance: Math.max(heuristicScore.relevance, llmScore.relevance),
+      completeness: llmScore.completeness,
+      efficiency: heuristicScore.efficiency,
+      reasoning: llmScore.reasoning,
+    };
+
+    this.recentScores.push(final);
+    if (this.recentScores.length > 1000) this.recentScores.shift();
+
+    return final;
+  }
+
+  /**
+   * Heuristic 평가: 비용 0원, 100% 적용 가능
+   */
+  private heuristicEvaluation(journal: ExecutionJournal): Partial&#x3C;QualityScore> {
+    let efficiencyPenalty = 0;
+
+    // Tool Call 효율성 평가
+    const totalToolCalls = journal.toolCalls.length;
+    const failedToolCalls = journal.toolCalls.filter(t => t.error).length;
+    const redundantToolCalls = this.detectRedundantCalls(journal.toolCalls);
+
+    efficiencyPenalty += (failedToolCalls / Math.max(totalToolCalls, 1)) * 0.3;
+    efficiencyPenalty += (redundantToolCalls / Math.max(totalToolCalls, 1)) * 0.2;
+
+    // 레이턴시에 따른 패널티 (30초 초과 시 감점)
+    if (journal.output.latency > 30000) {
+      efficiencyPenalty += 0.2;
+    }
+
+    // 관련성 평가: 입력 의도와 출력의 keyword overlap
+    const relevance = this.computeKeywordRelevance(
+      journal.input.raw,
+      journal.output.final
+    );
+
+    return {
+      overall: Math.max(0, 1 - efficiencyPenalty),
+      relevance,
+      efficiency: Math.max(0, 1 - efficiencyPenalty),
+    };
+  }
+
+  /**
+   * LLM-as-Judge: 실제 LLM이 평가 (샘플링만)
+   */
+  private async llmJudgeEvaluation(
+    journal: ExecutionJournal
+  ): Promise&#x3C;QualityScore> {
+    const judgePrompt = `
+You are an AI Agent quality judge. Score the following agent execution on a scale of 0.0 to 1.0.
+
+## Input (User Query)
+${journal.input.raw}
+
+## Reasoning Chain
+${journal.reasoning.map(r => `Step ${r.step} [${r.type}]: ${r.content}`).join('\n')}
+
+## Tool Calls
+${journal.toolCalls.map(t =>
+  `- ${t.toolName}: ${t.latency.toFixed(0)}ms [${t.error ? 'FAILED: ' + t.error : 'OK'}]`
+).join('\n')}
+
+## Output
+${journal.output.final.substring(0, 1000)}
+
+Return ONLY a JSON object:
+{
+  "correctness": &#x3C;0.0-1.0>,
+  "relevance": &#x3C;0.0-1.0>,
+  "completeness": &#x3C;0.0-1.0>,
+  "reasoning": &#x3C;0.0-1.0>
+}
+`;
+
+    try {
+      const response = await this.judgeLLM.complete(judgePrompt);
+      const scores = JSON.parse(response.content);
+
+      return {
+        overall: (scores.correctness + scores.relevance + scores.completeness + scores.reasoning) / 4,
+        correctness: scores.correctness,
+        relevance: scores.relevance,
+        completeness: scores.completeness,
+        efficiency: 1.0, // Heuristic에서 계산
+        reasoning: scores.reasoning,
+      };
+    } catch {
+      // Judge 실패 시 보수적 기본값
+      return {
+        overall: 0.5,
+        correctness: 0.5,
+        relevance: 0.5,
+        completeness: 0.5,
+        efficiency: 0.5,
+        reasoning: 0.5,
+      };
+    }
+  }
+
+  private detectRedundantCalls(calls: ToolCallRecord[]): number {
+    let redundant = 0;
+    for (let i = 1; i &#x3C; calls.length; i++) {
+      // 동일한 tool을 거의 동일한 파라미터로 연속 호출 → 중복
+      if (
+        calls[i].toolName === calls[i - 1].toolName &#x26;&#x26;
+        JSON.stringify(calls[i].params) === JSON.stringify(calls[i - 1].params)
+      ) {
+        redundant++;
+      }
+    }
+    return redundant;
+  }
+
+  private computeKeywordRelevance(input: string, output: string): number {
+    const inputWords = new Set(
+      input.toLowerCase().split(/\W+/).filter(w => w.length > 2)
+    );
+    const outputWords = new Set(
+      output.toLowerCase().split(/\W+/).filter(w => w.length > 2)
+    );
+
+    if (inputWords.size === 0) return 1.0;
+
+    const overlap = [...inputWords].filter(w => outputWords.has(w)).length;
+    return overlap / inputWords.size;
+  }
+
+  getAverageScore(): QualityScore | null {
+    if (this.recentScores.length === 0) return null;
+    const avg = (key: keyof QualityScore) =>
+      this.recentScores.reduce((a, s) => a + s[key], 0) / this.recentScores.length;
+
+    return {
+      overall: avg('overall'),
+      correctness: avg('correctness'),
+      relevance: avg('relevance'),
+      completeness: avg('completeness'),
+      efficiency: avg('efficiency'),
+      reasoning: avg('reasoning'),
+    };
+  }
+}
+</code></pre>
+<hr>
+<h2>5. MCP Tracing Layer: MCP 서버 호출에 Tracing 심기</h2>
+<p>MCP(Model Context Protocol) 서버는 AI Agent의 주요 데이터 소스이자 Action 실행 지점이다. MCP 호출에 Tracing을 심는 것은 Circuit State와 함께 Agent Observability의 핵심 인프라다.</p>
+<p>OpenTelemetry GenAI v1.41은 MCP-specific span conventions도 정의한다:</p>
+<pre><code class="language-typescript">// TypeScript: MCP Tracing Middleware
+
+interface MCPTraceContext {
+  serverName: string;
+  toolName: string;
+  callId: string;
+  parentSpan?: Span;
+}
+
+class MCPTracingMiddleware {
+  private tracer = trace.getTracer('mcp-layer');
+
+  /**
+   * MCP 서버 호출을 감싸는 Tracing Proxy
+   */
+  wrapMCPServer&#x3C;TReq, TRes>(
+    serverName: string,
+    handler: (request: TReq) => Promise&#x3C;TRes>
+  ): (request: TReq) => Promise&#x3C;TRes &#x26; { _traceId?: string }> {
+    return async (request) => {
+      const span = this.tracer.startSpan(`mcp.${serverName}`, {
+        attributes: {
+          'gen_ai.agent.span.type': 'execute_tool',
+          'mcp.server': serverName,
+          'mcp.protocol.version': '2025-03-26',
+        },
+      });
+
+      const ctx = trace.setSpan(otelContext.active(), span);
+
+      return otelContext.with(ctx, async () => {
+        try {
+          const result = await handler(request);
+
+          span.setStatus({ code: SpanStatusCode.OK });
+          span.setAttribute('mcp.response.size', JSON.stringify(result).length);
+
+          return { ...result, _traceId: span.spanContext().traceId };
+        } catch (error) {
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: String(error),
+          });
+          span.recordException(error as Error);
+          throw error;
+        } finally {
+          span.end();
+        }
+      });
+    };
+  }
+
+  /**
+   * MCP 호출 체인을 위한 Trace Context 전파
+   * (HTTP 헤더를 통한 W3C Trace Context 전파)
+   */
+  injectTraceContext(headers: Record&#x3C;string, string>): Record&#x3C;string, string> {
+    const currentSpan = trace.getSpan(otelContext.active());
+    if (!currentSpan) return headers;
+
+    const traceId = currentSpan.spanContext().traceId;
+    const spanId = currentSpan.spanContext().spanId;
+    const traceFlags = currentSpan.spanContext().traceFlags;
+
+    return {
+      ...headers,
+      'traceparent': `00-${traceId}-${spanId}-${traceFlags.toString(16).padStart(2, '0')}`,
+      'tracestate': '',
+    };
+  }
+}
+</code></pre>
+<hr>
+<h2>6. 운영 교훈: Production에서 배운 5가지</h2>
+<p>이 아키텍처를 실제 Production Agent에 적용하면서 얻은 교훈을 정리한다.</p>
+<h3>6.1. Span 수는 선형이 아니라 지수적으로 증가한다</h3>
+<p>Agent가 한 번에 3개의 Tool을 호출하고, 각 Tool이 다시 LLM을 호출하면, 단일 사용자 요청에 10개 이상의 span이 생성된다. 멀티 Agent 시스템에서는 더 심각하다.</p>
+<pre><code>싱글 Agent (Tool 3개):      ~10 spans/request
+멀티 Agent (3 agents):      ~40 spans/request
+Agent + MCP 체인 (5 hops):  ~25 spans/request  
+→ 1만 req/s 환경에서 초당 25만~100만 span
+
+해결책: 샘플링(Sampling)은 선택이 아니라 필수다.
+- 에러 span: 100% 샘플링
+- 정상 span: 1~10% 샘플링
+- Head-based vs Tail-based sampling 전략 수립
+</code></pre>
+<h3>6.2. Execution Journal의 저장 비용이 Tracing보다 10배 높다</h3>
+<p>실제 운영 데이터: Execution Journal 1건의 평균 크기는 ~5KB JSON. Tracing span 1건의 평균 크기는 ~500 bytes. Journal의 보존 기간을 Tracing보다 길게 가져가야 하지만, <strong>압축과 샘플링을 함께 적용하지 않으면 스토리지 비용이 통제 불능이 된다.</strong></p>
+<pre><code>저장 전략 (일 10만 요청 기준):
+- Tracing (보존 7일):  ~500 bytes × 10 spans × 100K × 7일 ≈ 35GB
+- Journal (보존 90일): ~5KB × 100K × 90일 ≈ 45TB ← 압축 필요!
+
+압축 팁:
+- Journal은 JSON-Lines + Gzip으로 저장 (압축률 ~10:1)
+- Journal의 LLM prompt/response는 2000자로 truncation
+- Tool call result는 참조 URL만 저장하고 본문은 Object Storage에
+</code></pre>
+<h3>6.3. "LLM-as-Judge"는 무료가 아니다</h3>
+<p>Online Evaluation에서 LLM-as-Judge를 100% traffic에 적용하면, **Judge 비용이 Agent 운영 비용의 30~50%**에 달할 수 있다.</p>
+<pre><code>비용 시나리오 (1만 req/s, 각 요청당 2K input + 500 output):
+- Agent LLM 비용:    ~$0.05/req → $500/초 → 막대함
+- Judge LLM 비용:    ~$0.02/req (gpt-4o-mini) → $200/초
+- Heuristic 평가:     $0/req
+
+→ LLM Judge는 10% 샘플링으로 충분.
+   Heuristic 평가(무료)가 이상 징후를 먼저 감지하면 그때만 LLM Judge 호출.
+</code></pre>
+<h3>6.4. Circuit Breaker State는 Observable 해야 한다</h3>
+<p>전편(#045)에서 설계한 Circuit Breaker의 상태를 Observability 시스템에 반영하지 않으면, Agent의 행동 변화를 이해할 수 없다.</p>
+<pre><code class="language-typescript">// Circuit Breaker State → OTel Metric으로 전송
+
+function reportCircuitState(metrics: Record&#x3C;string, unknown>): void {
+  const meter = metrics.getMeter('ai-agent-resilience');
+  const gauge = meter.createObservableGauge('circuit.breaker.state', {
+    description: 'Circuit Breaker state per source',
+  });
+
+  // metric value: 0=CLOSED, 1=HALF_OPEN, 2=OPEN
+  gauge.addCallback((observableResult) => {
+    for (const [source, state] of circuitStates.entries()) {
+      observableResult.observe(
+        state === 'CLOSED' ? 0 : state === 'HALF_OPEN' ? 1 : 2,
+        { source }
+      );
+    }
+  });
+}
+</code></pre>
+<p>이 metric을 Datadog/Grafana에서 모니터링하면, "Agent가 왜 느려졌는가"의 답이 Circuit Breaker OPEN 상태에 있다는 것을 바로 알 수 있다.</p>
+<h3>6.5. Non-determinism이 Debugging을 어렵게 만든다</h3>
+<p>같은 입력에 대해 Agent가 다른 경로로 실행되는 것은 Tracing의 재현성을 심각하게 저하시킨다. 해결책:</p>
+<pre><code class="language-typescript">// Deterministic Replay를 위한 Seed 주입
+
+interface DeterministicConfig {
+  seed: number;  // LLM temperature sampling용 고정 seed
+  traceId: string; // 동일 traceId로 재실행 가능
+}
+
+// 실행 로그에 seed와 traceId를 저장하고,
+// 재현 시 동일 seed + 동일 traceId로 재실행하면
+// (확률적 요소를 제외한) 동일한 경로 재현 가능
+</code></pre>
+<p>물론 LLM의 non-determinism 자체는 완전히 제어할 수 없다. 하지만 Agent의 Tool 선택 로직, Context 검색 순서, Fallback 우선순위 등 <strong>결정적(Deterministic)인 부분은 재현 가능하도록 설계</strong>해야 한다.</p>
+<hr>
+<h2>7. 결론: Agent Observability는 Agent SLO의 전제조건이다</h2>
+<p>2026년 현재, AI Agent Observability는 "있으면 좋은 것"에서 "없으면 운영할 수 없는 것"으로 전환되었다.</p>
+<p>전편(#045)에서 Circuit Breaker를 설계해 Agent가 탄력적으로 실패를 견디도록 만들었다. 이제 Observability를 통해 그 실패의 원인과 영향을 추적하고, 품질을 측정하며, 시간이 지남에 따라 개선할 수 있는 시스템을 갖추었다.</p>
+<p>이 시리즈의 세 편을 종합하면:</p>
+<pre><code>#044: EU AI Act Verification Loop → 규제 준수를 위한 Agent 감독 구조
+#045: Circuit Breaker 패턴          → 장애에도 멈추지 않는 탄력성
+#046: Observability &#x26; Tracing       → 모든 실행의 가시성과 기록 (이 글)
+</code></pre>
+<p>세 가지가 모두 갖춰져야 <strong>진정한 Production-Grade AI Agent</strong>라고 말할 수 있다.</p>
+<p><strong>핵심 메시지:</strong></p>
+<blockquote>
+<p>Agent는 200 OK를 반환해도 틀릴 수 있다.
+그것을 감지하는 유일한 방법은 모든 실행 단계를 추적하고,
+모든 결정의 근거를 기록하고,
+모든 결과의 품질을 평가하는 시스템을 아키텍처 수준에서 갖추는 것이다.</p>
+</blockquote>
+<hr>
+<h2>참고 자료</h2>
+<ul>
+<li>OpenTelemetry GenAI Semantic Conventions v1.41 (2026)</li>
+<li>OpenTelemetry v1.36.0 → v1.41 Migration Guide (2026)</li>
+<li>Datadog, "LLM Observability with OpenTelemetry" (Dec 2025)</li>
+<li>Digital Applied, "AI Agent Observability 2026: Tracing &#x26; Monitoring Stack" (May 2026)</li>
+<li>Maxim AI, "Top 5 Tools for AI Agent Observability in 2026" (Apr 2026)</li>
+<li>Michael Nygard, "Release It!: Design and Degrade to Production-Ready Software" (2nd Ed.)</li>
+<li>arXiv 2606.18422: "Gatekeepers and Hallucinations" (2026)</li>
+<li>전편(#045): "AI Agent 데이터 파이프라인의 Circuit Breaker 패턴" (2026-06-19)</li>
+<li>전전편(#044): "EU AI Act D-60: Verification Loop 패턴" (2026-06-17)</li>
+</ul></div></article></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/e303b0af34205b81.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"RvyB42_vuyVkjxFn3f586\",\"c\":[\"\",\"posts\",\"2026-06-20-proactive-update\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-06-20-proactive-update\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/e303b0af34205b81.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/329e63eb984ada35.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"11:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n10:T9e8c,"])</script><script>self.__next_f.push([1,"\u003ch2\u003e1. 들어가며: '죄책감 있는 200'과 싸우는 방법\u003c/h2\u003e\n\u003cp\u003e2026년 6월, AI Agent Observability는 더 이상 선택이 아니라 Production Agent를 운영하는 모든 팀의 기본 필수 역량이 되었다. OpenTelemetry GenAI Semantic Conventions가 v1.41로 업데이트되면서 vendor-neutral한 Agent Tracing이 현실화되었고, Datadog, Grafana, New Relic 등 주요 백엔드가 이를 네이티브로 수용하기 시작했다.\u003c/p\u003e\n\u003cp\u003e하지만 여전히 대부분의 AI Agent 시스템이 직면한 현실은 이것이다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e// 전형적인 Production Agent 사고 시나리오:\n\nStep 1:  User query → \"이번 분기 매출 TOP 5 고객 분석해줘\"\nStep 2:  Agent → DB 쿼리 실행 (성공, 200ms)\nStep 3:  Agent → 매출 데이터 수신 (성공, 정상 데이터)\nStep 4:  Agent → SQL 결과 분석 (잘못된 집계 함수 사용)\nStep 5:  Agent → LLM에 전달 (성공, 200 OK)\nStep 6:  LLM → 잘 포맷된 틀린 답변 생성\nStep 7:  Agent → 사용자에게 전달 (성공, 200 OK)\n\n// 결과: 사용자는 예쁘게 포맷된 틀린 리포트를 받았다.\n// 로그에는 단 하나의 에러도 없다. 모든 호출이 '성공'했다.\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e전통적인 모니터링은 이 상황을 절대 감지하지 못한다. HTTP 200은 성공이고, 로그에 \u003ccode\u003eerror\u003c/code\u003e 레벨은 없으며, 레이턴시도 정상 범위다. 하지만 결과는 '틀렸다'.\u003c/p\u003e\n\u003cp\u003e이것이 AI Agent Observability가 기존 APM(Application Performance Monitoring)과 다른 이유다. \u003cstrong\u003eAgent는 '잘못된 성공'을 생산하는 시스템\u003c/strong\u003e이기 때문에, 프로세스 자체의 가시성(visibility)이 결과의 정확성보다 더 중요해진 경우가 많다.\u003c/p\u003e\n\u003cp\u003e이 글에서는 다음 세 가지 레이어로 AI Agent Observability를 설계한다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e┌──────────────────────────────────────────────┐\n│      AI Agent Observability Stack 2026        │\n├──────────────────────────────────────────────┤\n│  Layer 1: OpenTelemetry GenAI Tracing        │\n│  → Model call × Tool call × Agent span       │\n│  → Vendor-neutral semantic convention         │\n│  → Multi-turn trace stitching                 │\n├──────────────────────────────────────────────┤\n│  Layer 2: Execution Journal                   │\n│  → 모든 결정의 근거(chain-of-thought) 기록    │\n│  → Replay 가능한 실행 증명                    │\n│  → Audit Trail + EU AI Act 대응              │\n├──────────────────────────────────────────────┤\n│  Layer 3: Quality Evaluation Pipeline         │\n│  → Online evaluation (production traffic)     │\n│  → LLM-as-Judge 자동 스코어링                 │\n│  → Circuit Breaker 상태와의 통합              │\n└──────────────────────────────────────────────┘\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e2. Layer 1: OpenTelemetry GenAI Tracing — Agent Span 설계\u003c/h2\u003e\n\u003cp\u003e2026년 현재, OpenTelemetry GenAI Semantic Conventions는 AI Agent Tracing의 사실상 표준(de facto standard)이다. v1.41 기준으로 네 가지 Agent-specific span operation type이 정의되어 있다:\u003c/p\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003eSpan Type\u003c/th\u003e\n\u003cth\u003eSpan Kind\u003c/th\u003e\n\u003cth\u003e언제 사용하는가\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003ecreate_agent\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003eCLIENT 또는 INTERNAL\u003c/td\u003e\n\u003ctd\u003eAgent 인스턴스 생성 시\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003einvoke_agent\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003eCLIENT (remote) 또는 INTERNAL (local)\u003c/td\u003e\n\u003ctd\u003eAgent 호출 (싱글/멀티)\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003einvoke_workflow\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003eINTERNAL\u003c/td\u003e\n\u003ctd\u003e멀티 Agent 간 workflow 라우팅\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003ccode\u003eexecute_tool\u003c/code\u003e\u003c/td\u003e\n\u003ctd\u003eCLIENT 또는 INTERNAL\u003c/td\u003e\n\u003ctd\u003eTool/MCP 서버 호출\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003ch3\u003e2.1. Span Hierarchy: Agent 호출의 계층 구조\u003c/h3\u003e\n\u003cp\u003eAgent Tracing의 핵심은 span이 단순한 리스트가 아니라 \u003cstrong\u003e트리 구조\u003c/strong\u003e를 형성해야 한다는 점이다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eTrace: \"분기 매출 분석 요청\"\n├── Span: invoke_agent (INTERNAL)\n│   ├── Span: retrieve_context (INTERNAL)\n│   │   ├── Span: vector_search (CLIENT)    → 벡터 DB\n│   │   └── Span: sql_query (CLIENT)        → RDB\n│   ├── Span: invoke_workflow (INTERNAL)    → 분석 워크플로우\n│   │   ├── Span: execute_tool (INTERNAL)   → SQL 분석 도구\n│   │   └── Span: execute_tool (CLIENT)     → LLM 호출\n│   └── Span: execute_tool (CLIENT)         → 리포트 생성 LLM 호출\n└── Span: response_format (INTERNAL)        → 응답 포맷팅\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 구조에서 중요한 것은 \u003cstrong\u003e실패 지점을 바로 찾을 수 있다\u003c/strong\u003e는 점이다. 위 trace에서 만약 \u003ccode\u003esql_query\u003c/code\u003e span이 200ms가 아닌 30초가 걸렸다면, SQL 최적화가 필요한 지점을 정확히 알 수 있다.\u003c/p\u003e\n\u003ch3\u003e2.2. TypeScript: OpenTelemetry 기반 Agent Tracing 구현\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// TypeScript: OpenTelemetry Agent Tracing Wrapper\n\nimport { trace, Span, SpanStatusCode, context as otelContext } from '@opentelemetry/api';\nimport { SemanticAttributes } from '@opentelemetry/semantic-conventions';\n\n// GenAI semantic convention constants (OTel v1.41)\nconst GEN_AI = {\n  SYSTEM: 'gen_ai.system',\n  REQUEST_MODEL: 'gen_ai.request.model',\n  RESPONSE_MODEL: 'gen_ai.response.model',\n  USAGE_INPUT_TOKENS: 'gen_ai.usage.input_tokens',\n  USAGE_OUTPUT_TOKENS: 'gen_ai.usage.output_tokens',\n  OPERATION_NAME: 'gen_ai.operation.name',\n  AGENT_SPAN_TYPE: 'gen_ai.agent.span.type',\n  TOOL_NAME: 'gen_ai.tool.name',\n  TOOL_CALL_ID: 'gen_ai.tool.call.id',\n} as const;\n\nconst TRACER_NAME = 'ai-agent-observability';\n\n// Agent Span type enum\ntype AgentSpanType = 'create_agent' | 'invoke_agent' | 'invoke_workflow' | 'execute_tool';\ntype SpanKind = 'INTERNAL' | 'CLIENT';\n\ninterface SpanConfig {\n  name: string;\n  agentSpanType: AgentSpanType;\n  kind: SpanKind;\n  attributes?: Record\u0026#x3C;string, string | number | boolean\u003e;\n}\n\nclass AgentTracer {\n  private tracer = trace.getTracer(TRACER_NAME);\n\n  /**\n   * Agent 호출 span 생성 (invoke_agent)\n   */\n  async traceInvokeAgent\u0026#x3C;T\u003e(\n    agentName: string,\n    input: string,\n    fn: (span: Span) =\u003e Promise\u0026#x3C;T\u003e\n  ): Promise\u0026#x3C;T\u003e {\n    const span = this.tracer.startSpan(\n      `${agentName}.invoke`,\n      {\n        attributes: {\n          [GEN_AI.OPERATION_NAME]: agentName,\n          [GEN_AI.AGENT_SPAN_TYPE]: 'invoke_agent',\n          'agent.input': this.sanitizeForSpan(input),\n        },\n      }\n    );\n\n    return this.runWithSpan(span, fn);\n  }\n\n  /**\n   * Tool/MCP 호출 span 생성 (execute_tool)\n   */\n  async traceToolCall\u0026#x3C;T\u003e(\n    toolName: string,\n    toolCallId: string,\n    params: Record\u0026#x3C;string, unknown\u003e,\n    fn: (span: Span) =\u003e Promise\u0026#x3C;T\u003e\n  ): Promise\u0026#x3C;T\u003e {\n    const span = this.tracer.startSpan(\n      `tool.${toolName}`,\n      {\n        attributes: {\n          [GEN_AI.TOOL_NAME]: toolName,\n          [GEN_AI.TOOL_CALL_ID]: toolCallId,\n          [GEN_AI.AGENT_SPAN_TYPE]: 'execute_tool',\n          'tool.params': JSON.stringify(this.sanitizeParams(params)),\n        },\n      }\n    );\n\n    return this.runWithSpan(span, fn);\n  }\n\n  /**\n   * LLM 호출 span (model call)\n   */\n  async traceLLMCall\u0026#x3C;T\u003e(\n    model: string,\n    messages: unknown[],\n    fn: (span: Span) =\u003e Promise\u0026#x3C;{ result: T; usage?: { inputTokens: number; outputTokens: number } }\u003e\n  ): Promise\u0026#x3C;T\u003e {\n    const span = this.tracer.startSpan(\n      `llm.${model}`,\n      {\n        attributes: {\n          [GEN_AI.SYSTEM]: this.detectProvider(model),\n          [GEN_AI.REQUEST_MODEL]: model,\n          [GEN_AI.AGENT_SPAN_TYPE]: 'execute_tool',\n        },\n      }\n    );\n\n    try {\n      const { result, usage } = await fn(span);\n\n      if (usage) {\n        span.setAttribute(GEN_AI.USAGE_INPUT_TOKENS, usage.inputTokens);\n        span.setAttribute(GEN_AI.USAGE_OUTPUT_TOKENS, usage.outputTokens);\n      }\n\n      span.setStatus({ code: SpanStatusCode.OK });\n      span.end();\n      return result;\n    } catch (error) {\n      span.setStatus({\n        code: SpanStatusCode.ERROR,\n        message: String(error),\n      });\n      span.recordException(error as Error);\n      span.end();\n      throw error;\n    }\n  }\n\n  private async runWithSpan\u0026#x3C;T\u003e(span: Span, fn: (span: Span) =\u003e Promise\u0026#x3C;T\u003e): Promise\u0026#x3C;T\u003e {\n    const ctx = trace.setSpan(otelContext.active(), span);\n\n    return otelContext.with(ctx, async () =\u003e {\n      try {\n        const result = await fn(span);\n        span.setStatus({ code: SpanStatusCode.OK });\n        return result;\n      } catch (error) {\n        span.setStatus({\n          code: SpanStatusCode.ERROR,\n          message: String(error),\n        });\n        span.recordException(error as Error);\n        throw error;\n      } finally {\n        span.end();\n      }\n    });\n  }\n\n  private sanitizeForSpan(input: string): string {\n    // PII 보호: 너무 긴 입력은 자르고, 민감 정보는 마스킹\n    if (input.length \u003e 1000) return input.substring(0, 1000) + '...[truncated]';\n    return input;\n  }\n\n  private sanitizeParams(params: Record\u0026#x3C;string, unknown\u003e): Record\u0026#x3C;string, unknown\u003e {\n    // 민감 파라미터(apiKey, password 등) 자동 마스킹\n    const sensitiveKeys = ['apiKey', 'api_key', 'password', 'token', 'secret', 'credential'];\n    const sanitized: Record\u0026#x3C;string, unknown\u003e = {};\n\n    for (const [key, value] of Object.entries(params)) {\n      if (sensitiveKeys.some(k =\u003e key.toLowerCase().includes(k))) {\n        sanitized[key] = '***REDACTED***';\n      } else if (typeof value === 'string' \u0026#x26;\u0026#x26; value.length \u003e 500) {\n        sanitized[key] = value.substring(0, 500) + '...[truncated]';\n      } else {\n        sanitized[key] = value;\n      }\n    }\n\n    return sanitized;\n  }\n\n  private detectProvider(model: string): string {\n    if (model.startsWith('gpt')) return 'openai';\n    if (model.startsWith('claude')) return 'anthropic';\n    if (model.startsWith('gemini')) return 'google';\n    if (model.includes('deepseek')) return 'deepseek';\n    return 'unknown';\n  }\n}\n\nexport const agentTracer = new AgentTracer();\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e2.3. 실제 Agent에 Tracing 적용하기\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// 실제 Agent에 Tracing 통합\n\nclass AnalyticsAgent {\n  private tracer = agentTracer;\n\n  async analyzeQuarterlyRevenue(userQuery: string): Promise\u0026#x3C;Report\u003e {\n    return this.tracer.traceInvokeAgent(\n      'QuarterlyRevenueAnalyzer',\n      userQuery,\n      async (span) =\u003e {\n        // Step 1: 맥락 검색\n        const context = await this.tracer.traceToolCall(\n          'vector_search',\n          crypto.randomUUID(),\n          { query: userQuery, limit: 5 },\n          async () =\u003e {\n            return this.vectorDB.search(userQuery, 5);\n          }\n        );\n\n        span.setAttribute('context.documents_found', context.length);\n\n        // Step 2: SQL 쿼리\n        const rawData = await this.tracer.traceToolCall(\n          'sql_query',\n          crypto.randomUUID(),\n          { table: 'quarterly_revenue', period: '2026-Q1' },\n          async () =\u003e {\n            return this.database.query(\n              'SELECT customer, revenue FROM quarterly_revenue WHERE quarter = $1',\n              ['2026-Q1']\n            );\n          }\n        );\n\n        // Step 3: LLM 분석\n        const analysis = await this.tracer.traceLLMCall(\n          'gpt-4o',\n          [{ role: 'user', content: `데이터:\\n${JSON.stringify(rawData)}\\n\\n질문: ${userQuery}` }],\n          async (llmSpan) =\u003e {\n            const response = await this.llm.complete(\n              'gpt-4o',\n              `Analyze this revenue data for key insights: ${JSON.stringify(rawData)}`\n            );\n\n            return {\n              result: response.content,\n              usage: {\n                inputTokens: response.usage.prompt_tokens,\n                outputTokens: response.usage.completion_tokens,\n              },\n            };\n          }\n        );\n\n        return { analysis, sourceData: rawData, contextUsed: context };\n      }\n    );\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e2.4. OTel v1.41 함정: Development 상태의 GenAI conventions\u003c/h3\u003e\n\u003cp\u003eOpenTelemetry GenAI semantic conventions의 가장 큰 현실적 함정은 \u003cstrong\u003e아직 Stable이 아니라는 점\u003c/strong\u003e이다. v1.41 기준으로 모든 \u003ccode\u003egen_ai.*\u003c/code\u003e 속성은 \u003cstrong\u003eDevelopment\u003c/strong\u003e 배지를 달고 있다 (유일한 예외: \u003ccode\u003eerror.type\u003c/code\u003e, \u003ccode\u003eserver.address\u003c/code\u003e, \u003ccode\u003eserver.port\u003c/code\u003e).\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e// v1.41의 현실:\n// gen_ai.usage.input_tokens → Development status\n// gen_ai.agent.span.type   → Development status\n// gen_ai.tool.name         → Development status\n\n// 이런 속성이 다음 마이너 버전에서 이름이 바뀌어도 spec 위반이 아니다.\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e해결책: Stability Opt-In 이스케이프 해치\u003c/strong\u003e\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// Agent 시작 시:\n// OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental\n\n// 이 옵션을 설정하면 OTel SDK가 Dual Emission을 활성화한다:\n// - 기존 (v1.36.0 이전) 속성 이름\n// - 현재 (v1.41) 속성 이름\n// → 대시보드가 갑자기 깨지지 않도록 보호\n\n// 단, 이 옵션은 프로덕션에서 안정화 v1이 나올 때까지만 유지할 것.\n// Stable 릴리스 이후에는 opt-in을 제거하고 정식 속성 이름으로 마이그레이션.\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e3. Layer 2: Execution Journal — 실행 증명 가능한 Agent 기록\u003c/h2\u003e\n\u003cp\u003eTracing은 \"무슨 일이 일어났는가\"를 알려주지만, Execution Journal은 **\"왜 그런 결정을 내렸는가\"**를 증명한다.\u003c/p\u003e\n\u003cp\u003eExecution Journal은 단순한 로그가 아니다. Agent의 모든 reasoning step, tool call 결정 근거, LLM response의 chain-of-thought, 그리고 최종 출력에 이르기까지 \u003cstrong\u003e재현 가능한(replayable) 실행 기록\u003c/strong\u003e을 의미한다.\u003c/p\u003e\n\u003ch3\u003e3.1. Execution Journal의 구조\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// TypeScript: Execution Journal Schema\n\ninterface ExecutionJournal {\n  sessionId: string;                    // Agent Session UUID\n  agentName: string;\n  timestamp: string;                    // ISO 8601\n\n  // → Section 1: 입력\n  input: {\n    raw: string;                        // 사용자 원본 입력\n    sanitized: string;                  // PII 제거된 버전\n    intent: string;                     // Agent가 해석한 의도\n    confidence: number;                 // 의도 추론 신뢰도 (0-1)\n  };\n\n  // → Section 2: Reasoning Chain\n  reasoning: ReasoningStep[];\n\n  // → Section 3: Tool Call 기록\n  toolCalls: ToolCallRecord[];\n\n  // → Section 4: LLM Interaction\n  llmInteractions: LLMInteractionRecord[];\n\n  // → Section 5: 출력\n  output: {\n    final: string;                      // 최종 응답\n    alternatives?: string[];            // 고려되었지만 선택되지 않은 응답\n    latency: number;                    // 총 처리 시간 (ms)\n  };\n\n  // → Section 6: 메타데이터\n  metadata: {\n    circuitBreakerState: string;        // 'health' | 'degraded' | 'fallback'\n    modelVersion: string;\n    toolVersions: Record\u0026#x3C;string, string\u003e;\n    evaluationScore?: number;           // LLM-as-Judge 평가 점수\n  };\n}\n\ninterface ReasoningStep {\n  step: number;\n  type: 'thought' | 'plan' | 'observation' | 'decision';\n  content: string;\n  timestamp: string;\n  parentStep?: number;                  // reasoning 계층 구조\n  tokensUsed?: number;                  // 이 step에 사용된 토큰\n}\n\ninterface ToolCallRecord {\n  toolName: string;\n  callId: string;\n  params: Record\u0026#x3C;string, unknown\u003e;\n  result: unknown;\n  latency: number;                      // ms\n  error?: string;\n  retryCount: number;\n}\n\ninterface LLMInteractionRecord {\n  model: string;\n  provider: string;\n  prompt: string;\n  response: string;\n  inputTokens: number;\n  outputTokens: number;\n  latency: number;\n  temperature: number;\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e3.2. Execution Journal Recorder 구현\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// TypeScript: Execution Journal Recorder\n\nclass ExecutionJournalRecorder {\n  private journal: ExecutionJournal;\n  private activeReasoning: ReasoningStep[] = [];\n  private activeToolCalls: ToolCallRecord[] = [];\n  private activeLLMCalls: LLMInteractionRecord[] = [];\n\n  constructor(sessionId: string, agentName: string) {\n    this.journal = {\n      sessionId,\n      agentName,\n      timestamp: new Date().toISOString(),\n      input: { raw: '', sanitized: '', intent: '', confidence: 0 },\n      reasoning: [],\n      toolCalls: [],\n      llmInteractions: [],\n      output: { final: '', latency: 0 },\n      metadata: {\n        circuitBreakerState: 'health',\n        modelVersion: '',\n        toolVersions: {},\n      },\n    };\n  }\n\n  recordInput(raw: string, intent: string, confidence: number): void {\n    this.journal.input = {\n      raw,\n      sanitized: this.sanitizePII(raw),\n      intent,\n      confidence,\n    };\n  }\n\n  addReasoningStep(type: ReasoningStep['type'], content: string, parentStep?: number): number {\n    const step: ReasoningStep = {\n      step: this.activeReasoning.length + 1,\n      type,\n      content,\n      timestamp: new Date().toISOString(),\n      parentStep,\n    };\n    this.activeReasoning.push(step);\n    return step.step;\n  }\n\n  async recordToolCall\u0026#x3C;T\u003e(\n    toolName: string,\n    params: Record\u0026#x3C;string, unknown\u003e,\n    fn: () =\u003e Promise\u0026#x3C;T\u003e\n  ): Promise\u0026#x3C;{ result: T; callId: string }\u003e {\n    const callId = crypto.randomUUID();\n    const start = performance.now();\n    let retryCount = 0;\n    let lastError: string | undefined;\n\n    const record: ToolCallRecord = {\n      toolName,\n      callId,\n      params: this.sanitizeParams(params),\n      result: null,\n      latency: 0,\n      retryCount: 0,\n    };\n\n    try {\n      const result = await fn();\n      record.result = result;\n      record.latency = performance.now() - start;\n      this.activeToolCalls.push(record);\n      return { result, callId };\n    } catch (error) {\n      record.error = String(error);\n      record.latency = performance.now() - start;\n      this.activeToolCalls.push(record);\n      throw error;\n    } finally {\n      this.journal.toolCalls = [...this.activeToolCalls];\n    }\n  }\n\n  async recordLLMInteraction(\n    model: string,\n    provider: string,\n    prompt: string,\n    fn: () =\u003e Promise\u0026#x3C;{ response: string; inputTokens: number; outputTokens: number }\u003e\n  ): Promise\u0026#x3C;string\u003e {\n    const start = performance.now();\n\n    const { response, inputTokens, outputTokens } = await fn();\n\n    this.activeLLMCalls.push({\n      model,\n      provider,\n      prompt: this.truncate(prompt, 2000),\n      response: this.truncate(response, 2000),\n      inputTokens,\n      outputTokens,\n      latency: performance.now() - start,\n      temperature: 0.7, // 실제로는 config에서 읽어옴\n    });\n\n    this.journal.llmInteractions = [...this.activeLLMCalls];\n    return response;\n  }\n\n  finalize(output: string, latency: number, metadata: Partial\u0026#x3C;ExecutionJournal['metadata']\u003e): ExecutionJournal {\n    this.journal.output = { final: output, latency };\n    this.journal.reasoning = [...this.activeReasoning];\n    this.journal.metadata = { ...this.journal.metadata, ...metadata };\n    return this.journal;\n  }\n\n  /**\n   * Journal을 JSON-Lines 형식으로 직렬화 (로그 저장 및 전송용)\n   */\n  serialize(): string[] {\n    return [\n      JSON.stringify({ event: 'journal:start', sessionId: this.journal.sessionId, agentName: this.journal.agentName, timestamp: this.journal.timestamp }),\n      JSON.stringify({ event: 'journal:input', ...this.journal.input }),\n      ...this.activeReasoning.map(r =\u003e JSON.stringify({ event: 'journal:reasoning', ...r })),\n      ...this.activeToolCalls.map(t =\u003e JSON.stringify({ event: 'journal:tool_call', toolName: t.toolName, callId: t.callId, latency: t.latency, error: t.error })),\n      ...this.activeLLMCalls.map(l =\u003e JSON.stringify({ event: 'journal:llm', model: l.model, inputTokens: l.inputTokens, outputTokens: l.outputTokens, latency: l.latency })),\n      JSON.stringify({ event: 'journal:output', ...this.journal.output, metadata: this.journal.metadata }),\n    ];\n  }\n\n  /**\n   * Journal을 Audit Trail 형식으로 변환 (EU AI Act 대응)\n   */\n  toAuditTrail(): string {\n    return [\n      `=== AI Agent Execution Journal ===`,\n      `Session: ${this.journal.sessionId}`,\n      `Agent: ${this.journal.agentName}`,\n      `Time: ${this.journal.timestamp}`,\n      ``,\n      `[Input]`,\n      `  Intent: ${this.journal.input.intent} (confidence: ${(this.journal.input.confidence * 100).toFixed(1)}%)`,\n      `  Raw: ${this.journal.input.raw.substring(0, 200)}${this.journal.input.raw.length \u003e 200 ? '...' : ''}`,\n      ``,\n      `[Reasoning Chain]`,\n      ...this.activeReasoning.map(r =\u003e\n        `  Step ${r.step} [${r.type}]: ${r.content.substring(0, 300)}`\n      ),\n      ``,\n      `[Tool Calls]`,\n      ...this.activeToolCalls.map(t =\u003e\n        `  ${t.toolName}: ${t.latency.toFixed(0)}ms ${t.error ? `❌ ${t.error}` : '✅'}`\n      ),\n      ``,\n      `[LLM Interactions]`,\n      ...this.activeLLMCalls.map(l =\u003e\n        `  ${l.model}: ${l.inputTokens}→${l.outputTokens}tokens, ${l.latency.toFixed(0)}ms`\n      ),\n      ``,\n      `[Output]`,\n      `  Latency: ${this.journal.output.latency.toFixed(0)}ms`,\n      `  Quality Score: ${this.journal.metadata.evaluationScore ?? 'N/A'}`,\n      `  Circuit State: ${this.journal.metadata.circuitBreakerState}`,\n      `=== End of Journal ===`,\n    ].join('\\n');\n  }\n\n  private sanitizePII(text: string): string {\n    return text\n      .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g, '[EMAIL_REDACTED]')\n      .replace(/\\b\\d{4}[-\\s]?\\d{4}[-\\s]?\\d{4}[-\\s]?\\d{4}\\b/g, '[CC_REDACTED]')\n      .replace(/[가-힣]{2,}님/g, '[NAME_REDACTED]');\n  }\n\n  private sanitizeParams(params: Record\u0026#x3C;string, unknown\u003e): Record\u0026#x3C;string, unknown\u003e {\n    const sensitive = ['apiKey', 'api_key', 'password', 'token', 'secret', 'credential'];\n    const sanitized: Record\u0026#x3C;string, unknown\u003e = {};\n    for (const [key, value] of Object.entries(params)) {\n      sanitized[key] = sensitive.some(k =\u003e key.toLowerCase().includes(k))\n        ? '***REDACTED***'\n        : value;\n    }\n    return sanitized;\n  }\n\n  private truncate(text: string, max: number): string {\n    return text.length \u003e max ? text.substring(0, max) + `...[+${text.length - max} chars]` : text;\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e3.3. Execution Journal과 OTel Tracing의 차이점\u003c/h3\u003e\n\u003cp\u003eExecution Journal과 OpenTelemetry Tracing은 \u003cstrong\u003e보완 관계\u003c/strong\u003e이지, 대체 관계가 아니다.\u003c/p\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e차원\u003c/th\u003e\n\u003cth\u003eOpenTelemetry Tracing\u003c/th\u003e\n\u003cth\u003eExecution Journal\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e주 목적\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e성능 분석, 병목 탐지\u003c/td\u003e\n\u003ctd\u003e결정 증명, 재현, 감사\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e데이터 구조\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003eSpan 트리 (짧고 구조적)\u003c/td\u003e\n\u003ctd\u003eJSON Lines + 텍스트 (길고 상세)\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e보존 기간\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e일~주 단위 (롤링)\u003c/td\u003e\n\u003ctd\u003e월~년 단위 (감사 요구사항)\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e소비자\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003eSRE, 백엔드 엔지니어\u003c/td\u003e\n\u003ctd\u003e법무팀, 규제 담당자, QA\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003ePII 처리\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e마스킹 옵션\u003c/td\u003e\n\u003ctd\u003e필수 마스킹 + audit trail\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e재현성\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e부분적 (시간, 레이턴시)\u003c/td\u003e\n\u003ctd\u003e완전 재현 가능 (입력→출력)\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e비용\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003espan 당 매우 저렴\u003c/td\u003e\n\u003ctd\u003e레코드 당 상대적 고비용\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003cp\u003e\u003cstrong\u003e운영 전략\u003c/strong\u003e: Tracing은 실시간 알림과 성능 분석에, Execution Journal은 사후 검증과 규제 대응에 사용한다. 둘 다 있어야 Production Agent를 운영할 수 있다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e4. Layer 3: Quality Evaluation Pipeline — Production Traffic에서의 자동 품질 평가\u003c/h2\u003e\n\u003cp\u003eTracing과 Journal이 \"기록\"을 담당한다면, Evaluation Pipeline은 \u003cstrong\u003e기록을 분석하여 품질 점수를 산출\u003c/strong\u003e한다.\u003c/p\u003e\n\u003ch3\u003e4.1. Online Evaluation 아키텍처\u003c/h3\u003e\n\u003cp\u003eProduction traffic에서의 품질 평가는 오프라인 벤치마크와 달리 \u003cstrong\u003e실시간성 + 저비용\u003c/strong\u003e이라는 제약 조건을 가진다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eProduction Traffic\n     │\n     ▼\n┌─────────────────────┐\n│ Agent Response      │\n└────────┬────────────┘\n         │\n    ┌────┴────┐\n    │         │\n    ▼         ▼\n┌────────┐ ┌────────────┐\n│ Tracing │ │ Execution  │\n│ (OTel)  │ │ Journal    │\n└────┬───┘ └─────┬──────┘\n     │           │\n     ▼           ▼\n┌─────────────────────────┐\n│ Evaluation Orchestrator  │\n├─────────────────────────┤\n│ 1. LLM-as-Judge (샘플링) │ ← 비용 제어: 10%만 평가\n│ 2. Heuristic Rules       │ ← 100% 적용 (무료)\n│ 3. Feedback Loop         │ ← 사용자 피드백 통합\n└──────────┬──────────────┘\n           │\n           ▼\n┌─────────────────────┐\n│ Alert / Dashboard   │\n│ → Quality Score     │\n│ → Latency P95       │\n│ → Tool Call Accuracy│\n│ → Circuit State     │\n└─────────────────────┘\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e4.2. TypeScript: LLM-as-Judge 평가 구현\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// TypeScript: LLM-as-Judge Quality Evaluator\n\ninterface QualityScore {\n  overall: number;          // 0-1\n  correctness: number;      // 정확성\n  relevance: number;        // 관련성\n  completeness: number;     // 완전성\n  efficiency: number;       // 효율성 (불필요한 tool call 최소화)\n  reasoning: number;        // 추론 과정의 명확성\n}\n\nclass OnlineQualityEvaluator {\n  private samplingRate = 0.1; // 10%만 LLM 평가 (비용 제어)\n  private totalSamples = 0;\n  private recentScores: QualityScore[] = [];\n\n  async evaluate(journal: ExecutionJournal): Promise\u0026#x3C;QualityScore | null\u003e {\n    // 비용 제어: 샘플링 적용\n    this.totalSamples++;\n    if (Math.random() \u003e this.samplingRate) return null;\n\n    // Heuristic 평가 (100% 적용, 무료)\n    const heuristicScore = this.heuristicEvaluation(journal);\n\n    // LLM-as-Judge 평가 (샘플링, 비용 있음)\n    const llmScore = await this.llmJudgeEvaluation(journal);\n\n    const final: QualityScore = {\n      overall: (heuristicScore.overall + llmScore.overall) / 2,\n      correctness: llmScore.correctness,\n      relevance: Math.max(heuristicScore.relevance, llmScore.relevance),\n      completeness: llmScore.completeness,\n      efficiency: heuristicScore.efficiency,\n      reasoning: llmScore.reasoning,\n    };\n\n    this.recentScores.push(final);\n    if (this.recentScores.length \u003e 1000) this.recentScores.shift();\n\n    return final;\n  }\n\n  /**\n   * Heuristic 평가: 비용 0원, 100% 적용 가능\n   */\n  private heuristicEvaluation(journal: ExecutionJournal): Partial\u0026#x3C;QualityScore\u003e {\n    let efficiencyPenalty = 0;\n\n    // Tool Call 효율성 평가\n    const totalToolCalls = journal.toolCalls.length;\n    const failedToolCalls = journal.toolCalls.filter(t =\u003e t.error).length;\n    const redundantToolCalls = this.detectRedundantCalls(journal.toolCalls);\n\n    efficiencyPenalty += (failedToolCalls / Math.max(totalToolCalls, 1)) * 0.3;\n    efficiencyPenalty += (redundantToolCalls / Math.max(totalToolCalls, 1)) * 0.2;\n\n    // 레이턴시에 따른 패널티 (30초 초과 시 감점)\n    if (journal.output.latency \u003e 30000) {\n      efficiencyPenalty += 0.2;\n    }\n\n    // 관련성 평가: 입력 의도와 출력의 keyword overlap\n    const relevance = this.computeKeywordRelevance(\n      journal.input.raw,\n      journal.output.final\n    );\n\n    return {\n      overall: Math.max(0, 1 - efficiencyPenalty),\n      relevance,\n      efficiency: Math.max(0, 1 - efficiencyPenalty),\n    };\n  }\n\n  /**\n   * LLM-as-Judge: 실제 LLM이 평가 (샘플링만)\n   */\n  private async llmJudgeEvaluation(\n    journal: ExecutionJournal\n  ): Promise\u0026#x3C;QualityScore\u003e {\n    const judgePrompt = `\nYou are an AI Agent quality judge. Score the following agent execution on a scale of 0.0 to 1.0.\n\n## Input (User Query)\n${journal.input.raw}\n\n## Reasoning Chain\n${journal.reasoning.map(r =\u003e `Step ${r.step} [${r.type}]: ${r.content}`).join('\\n')}\n\n## Tool Calls\n${journal.toolCalls.map(t =\u003e\n  `- ${t.toolName}: ${t.latency.toFixed(0)}ms [${t.error ? 'FAILED: ' + t.error : 'OK'}]`\n).join('\\n')}\n\n## Output\n${journal.output.final.substring(0, 1000)}\n\nReturn ONLY a JSON object:\n{\n  \"correctness\": \u0026#x3C;0.0-1.0\u003e,\n  \"relevance\": \u0026#x3C;0.0-1.0\u003e,\n  \"completeness\": \u0026#x3C;0.0-1.0\u003e,\n  \"reasoning\": \u0026#x3C;0.0-1.0\u003e\n}\n`;\n\n    try {\n      const response = await this.judgeLLM.complete(judgePrompt);\n      const scores = JSON.parse(response.content);\n\n      return {\n        overall: (scores.correctness + scores.relevance + scores.completeness + scores.reasoning) / 4,\n        correctness: scores.correctness,\n        relevance: scores.relevance,\n        completeness: scores.completeness,\n        efficiency: 1.0, // Heuristic에서 계산\n        reasoning: scores.reasoning,\n      };\n    } catch {\n      // Judge 실패 시 보수적 기본값\n      return {\n        overall: 0.5,\n        correctness: 0.5,\n        relevance: 0.5,\n        completeness: 0.5,\n        efficiency: 0.5,\n        reasoning: 0.5,\n      };\n    }\n  }\n\n  private detectRedundantCalls(calls: ToolCallRecord[]): number {\n    let redundant = 0;\n    for (let i = 1; i \u0026#x3C; calls.length; i++) {\n      // 동일한 tool을 거의 동일한 파라미터로 연속 호출 → 중복\n      if (\n        calls[i].toolName === calls[i - 1].toolName \u0026#x26;\u0026#x26;\n        JSON.stringify(calls[i].params) === JSON.stringify(calls[i - 1].params)\n      ) {\n        redundant++;\n      }\n    }\n    return redundant;\n  }\n\n  private computeKeywordRelevance(input: string, output: string): number {\n    const inputWords = new Set(\n      input.toLowerCase().split(/\\W+/).filter(w =\u003e w.length \u003e 2)\n    );\n    const outputWords = new Set(\n      output.toLowerCase().split(/\\W+/).filter(w =\u003e w.length \u003e 2)\n    );\n\n    if (inputWords.size === 0) return 1.0;\n\n    const overlap = [...inputWords].filter(w =\u003e outputWords.has(w)).length;\n    return overlap / inputWords.size;\n  }\n\n  getAverageScore(): QualityScore | null {\n    if (this.recentScores.length === 0) return null;\n    const avg = (key: keyof QualityScore) =\u003e\n      this.recentScores.reduce((a, s) =\u003e a + s[key], 0) / this.recentScores.length;\n\n    return {\n      overall: avg('overall'),\n      correctness: avg('correctness'),\n      relevance: avg('relevance'),\n      completeness: avg('completeness'),\n      efficiency: avg('efficiency'),\n      reasoning: avg('reasoning'),\n    };\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e5. MCP Tracing Layer: MCP 서버 호출에 Tracing 심기\u003c/h2\u003e\n\u003cp\u003eMCP(Model Context Protocol) 서버는 AI Agent의 주요 데이터 소스이자 Action 실행 지점이다. MCP 호출에 Tracing을 심는 것은 Circuit State와 함께 Agent Observability의 핵심 인프라다.\u003c/p\u003e\n\u003cp\u003eOpenTelemetry GenAI v1.41은 MCP-specific span conventions도 정의한다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// TypeScript: MCP Tracing Middleware\n\ninterface MCPTraceContext {\n  serverName: string;\n  toolName: string;\n  callId: string;\n  parentSpan?: Span;\n}\n\nclass MCPTracingMiddleware {\n  private tracer = trace.getTracer('mcp-layer');\n\n  /**\n   * MCP 서버 호출을 감싸는 Tracing Proxy\n   */\n  wrapMCPServer\u0026#x3C;TReq, TRes\u003e(\n    serverName: string,\n    handler: (request: TReq) =\u003e Promise\u0026#x3C;TRes\u003e\n  ): (request: TReq) =\u003e Promise\u0026#x3C;TRes \u0026#x26; { _traceId?: string }\u003e {\n    return async (request) =\u003e {\n      const span = this.tracer.startSpan(`mcp.${serverName}`, {\n        attributes: {\n          'gen_ai.agent.span.type': 'execute_tool',\n          'mcp.server': serverName,\n          'mcp.protocol.version': '2025-03-26',\n        },\n      });\n\n      const ctx = trace.setSpan(otelContext.active(), span);\n\n      return otelContext.with(ctx, async () =\u003e {\n        try {\n          const result = await handler(request);\n\n          span.setStatus({ code: SpanStatusCode.OK });\n          span.setAttribute('mcp.response.size', JSON.stringify(result).length);\n\n          return { ...result, _traceId: span.spanContext().traceId };\n        } catch (error) {\n          span.setStatus({\n            code: SpanStatusCode.ERROR,\n            message: String(error),\n          });\n          span.recordException(error as Error);\n          throw error;\n        } finally {\n          span.end();\n        }\n      });\n    };\n  }\n\n  /**\n   * MCP 호출 체인을 위한 Trace Context 전파\n   * (HTTP 헤더를 통한 W3C Trace Context 전파)\n   */\n  injectTraceContext(headers: Record\u0026#x3C;string, string\u003e): Record\u0026#x3C;string, string\u003e {\n    const currentSpan = trace.getSpan(otelContext.active());\n    if (!currentSpan) return headers;\n\n    const traceId = currentSpan.spanContext().traceId;\n    const spanId = currentSpan.spanContext().spanId;\n    const traceFlags = currentSpan.spanContext().traceFlags;\n\n    return {\n      ...headers,\n      'traceparent': `00-${traceId}-${spanId}-${traceFlags.toString(16).padStart(2, '0')}`,\n      'tracestate': '',\n    };\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e6. 운영 교훈: Production에서 배운 5가지\u003c/h2\u003e\n\u003cp\u003e이 아키텍처를 실제 Production Agent에 적용하면서 얻은 교훈을 정리한다.\u003c/p\u003e\n\u003ch3\u003e6.1. Span 수는 선형이 아니라 지수적으로 증가한다\u003c/h3\u003e\n\u003cp\u003eAgent가 한 번에 3개의 Tool을 호출하고, 각 Tool이 다시 LLM을 호출하면, 단일 사용자 요청에 10개 이상의 span이 생성된다. 멀티 Agent 시스템에서는 더 심각하다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e싱글 Agent (Tool 3개):      ~10 spans/request\n멀티 Agent (3 agents):      ~40 spans/request\nAgent + MCP 체인 (5 hops):  ~25 spans/request  \n→ 1만 req/s 환경에서 초당 25만~100만 span\n\n해결책: 샘플링(Sampling)은 선택이 아니라 필수다.\n- 에러 span: 100% 샘플링\n- 정상 span: 1~10% 샘플링\n- Head-based vs Tail-based sampling 전략 수립\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e6.2. Execution Journal의 저장 비용이 Tracing보다 10배 높다\u003c/h3\u003e\n\u003cp\u003e실제 운영 데이터: Execution Journal 1건의 평균 크기는 ~5KB JSON. Tracing span 1건의 평균 크기는 ~500 bytes. Journal의 보존 기간을 Tracing보다 길게 가져가야 하지만, \u003cstrong\u003e압축과 샘플링을 함께 적용하지 않으면 스토리지 비용이 통제 불능이 된다.\u003c/strong\u003e\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e저장 전략 (일 10만 요청 기준):\n- Tracing (보존 7일):  ~500 bytes × 10 spans × 100K × 7일 ≈ 35GB\n- Journal (보존 90일): ~5KB × 100K × 90일 ≈ 45TB ← 압축 필요!\n\n압축 팁:\n- Journal은 JSON-Lines + Gzip으로 저장 (압축률 ~10:1)\n- Journal의 LLM prompt/response는 2000자로 truncation\n- Tool call result는 참조 URL만 저장하고 본문은 Object Storage에\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e6.3. \"LLM-as-Judge\"는 무료가 아니다\u003c/h3\u003e\n\u003cp\u003eOnline Evaluation에서 LLM-as-Judge를 100% traffic에 적용하면, **Judge 비용이 Agent 운영 비용의 30~50%**에 달할 수 있다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e비용 시나리오 (1만 req/s, 각 요청당 2K input + 500 output):\n- Agent LLM 비용:    ~$0.05/req → $500/초 → 막대함\n- Judge LLM 비용:    ~$0.02/req (gpt-4o-mini) → $200/초\n- Heuristic 평가:     $0/req\n\n→ LLM Judge는 10% 샘플링으로 충분.\n   Heuristic 평가(무료)가 이상 징후를 먼저 감지하면 그때만 LLM Judge 호출.\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e6.4. Circuit Breaker State는 Observable 해야 한다\u003c/h3\u003e\n\u003cp\u003e전편(#045)에서 설계한 Circuit Breaker의 상태를 Observability 시스템에 반영하지 않으면, Agent의 행동 변화를 이해할 수 없다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// Circuit Breaker State → OTel Metric으로 전송\n\nfunction reportCircuitState(metrics: Record\u0026#x3C;string, unknown\u003e): void {\n  const meter = metrics.getMeter('ai-agent-resilience');\n  const gauge = meter.createObservableGauge('circuit.breaker.state', {\n    description: 'Circuit Breaker state per source',\n  });\n\n  // metric value: 0=CLOSED, 1=HALF_OPEN, 2=OPEN\n  gauge.addCallback((observableResult) =\u003e {\n    for (const [source, state] of circuitStates.entries()) {\n      observableResult.observe(\n        state === 'CLOSED' ? 0 : state === 'HALF_OPEN' ? 1 : 2,\n        { source }\n      );\n    }\n  });\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 metric을 Datadog/Grafana에서 모니터링하면, \"Agent가 왜 느려졌는가\"의 답이 Circuit Breaker OPEN 상태에 있다는 것을 바로 알 수 있다.\u003c/p\u003e\n\u003ch3\u003e6.5. Non-determinism이 Debugging을 어렵게 만든다\u003c/h3\u003e\n\u003cp\u003e같은 입력에 대해 Agent가 다른 경로로 실행되는 것은 Tracing의 재현성을 심각하게 저하시킨다. 해결책:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// Deterministic Replay를 위한 Seed 주입\n\ninterface DeterministicConfig {\n  seed: number;  // LLM temperature sampling용 고정 seed\n  traceId: string; // 동일 traceId로 재실행 가능\n}\n\n// 실행 로그에 seed와 traceId를 저장하고,\n// 재현 시 동일 seed + 동일 traceId로 재실행하면\n// (확률적 요소를 제외한) 동일한 경로 재현 가능\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e물론 LLM의 non-determinism 자체는 완전히 제어할 수 없다. 하지만 Agent의 Tool 선택 로직, Context 검색 순서, Fallback 우선순위 등 \u003cstrong\u003e결정적(Deterministic)인 부분은 재현 가능하도록 설계\u003c/strong\u003e해야 한다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e7. 결론: Agent Observability는 Agent SLO의 전제조건이다\u003c/h2\u003e\n\u003cp\u003e2026년 현재, AI Agent Observability는 \"있으면 좋은 것\"에서 \"없으면 운영할 수 없는 것\"으로 전환되었다.\u003c/p\u003e\n\u003cp\u003e전편(#045)에서 Circuit Breaker를 설계해 Agent가 탄력적으로 실패를 견디도록 만들었다. 이제 Observability를 통해 그 실패의 원인과 영향을 추적하고, 품질을 측정하며, 시간이 지남에 따라 개선할 수 있는 시스템을 갖추었다.\u003c/p\u003e\n\u003cp\u003e이 시리즈의 세 편을 종합하면:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e#044: EU AI Act Verification Loop → 규제 준수를 위한 Agent 감독 구조\n#045: Circuit Breaker 패턴          → 장애에도 멈추지 않는 탄력성\n#046: Observability \u0026#x26; Tracing       → 모든 실행의 가시성과 기록 (이 글)\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e세 가지가 모두 갖춰져야 \u003cstrong\u003e진정한 Production-Grade AI Agent\u003c/strong\u003e라고 말할 수 있다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e핵심 메시지:\u003c/strong\u003e\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003eAgent는 200 OK를 반환해도 틀릴 수 있다.\n그것을 감지하는 유일한 방법은 모든 실행 단계를 추적하고,\n모든 결정의 근거를 기록하고,\n모든 결과의 품질을 평가하는 시스템을 아키텍처 수준에서 갖추는 것이다.\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003chr\u003e\n\u003ch2\u003e참고 자료\u003c/h2\u003e\n\u003cul\u003e\n\u003cli\u003eOpenTelemetry GenAI Semantic Conventions v1.41 (2026)\u003c/li\u003e\n\u003cli\u003eOpenTelemetry v1.36.0 → v1.41 Migration Guide (2026)\u003c/li\u003e\n\u003cli\u003eDatadog, \"LLM Observability with OpenTelemetry\" (Dec 2025)\u003c/li\u003e\n\u003cli\u003eDigital Applied, \"AI Agent Observability 2026: Tracing \u0026#x26; Monitoring Stack\" (May 2026)\u003c/li\u003e\n\u003cli\u003eMaxim AI, \"Top 5 Tools for AI Agent Observability in 2026\" (Apr 2026)\u003c/li\u003e\n\u003cli\u003eMichael Nygard, \"Release It!: Design and Degrade to Production-Ready Software\" (2nd Ed.)\u003c/li\u003e\n\u003cli\u003earXiv 2606.18422: \"Gatekeepers and Hallucinations\" (2026)\u003c/li\u003e\n\u003cli\u003e전편(#045): \"AI Agent 데이터 파이프라인의 Circuit Breaker 패턴\" (2026-06-19)\u003c/li\u003e\n\u003cli\u003e전전편(#044): \"EU AI Act D-60: Verification Loop 패턴\" (2026-06-17)\u003c/li\u003e\n\u003c/ul\u003e"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"text-sm text-white/60\",\"children\":\"2026-06-20\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"AI Agent Observability: OpenTelemetry GenAI Tracing, Execution Journal, 그리고 Production Agent의 가시성 확보 전략 (#046)\"}],[\"$\",\"p\",null,{\"className\":\"mt-4 text-base text-white/80 md:text-lg\",\"children\":\"Production AI Agent는 '200 OK'만으로는 디버깅할 수 없다. Agent는 잘 포맷된 틀린 답변을 반환하고, 불필요한 Tool Call을 수행하며, 3단계에서 발생한 실패가 10단계에서야 표면화된다. 이 글에서는 OpenTelemetry GenAI v1.41 Semantic Conventions 기반의 Agent Tracing 아키텍처, Spans Propagation 전략, 그리고 Execution Journal이라 명명한 실행 검증 가능 기록 시스템을 TypeScript와 Go 코드 예제와 함께 설계한다.\"}],[\"$\",\"div\",null,{\"className\":\"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300\",\"dangerouslySetInnerHTML\":{\"__html\":\"$10\"}}]]}]}]\n8:null\n"])</script><script>self.__next_f.push([1,"c:[[\"$\",\"title\",\"0\",{\"children\":\"AI Agent Observability: OpenTelemetry GenAI Tracing, Execution Journal, 그리고 Production Agent의 가시성 확보 전략 (#046) | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"Production AI Agent는 '200 OK'만으로는 디버깅할 수 없다. Agent는 잘 포맷된 틀린 답변을 반환하고, 불필요한 Tool Call을 수행하며, 3단계에서 발생한 실패가 10단계에서야 표면화된다. 이 글에서는 OpenTelemetry GenAI v1.41 Semantic Conventions 기반의 Agent Tracing 아키텍처, Spans Propagation 전략, 그리고 Execution Journal이라 명명한 실행 검증 가능 기록 시스템을 TypeScript와 Go 코드 예제와 함께 설계한다.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-06-20-proactive-update/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"AI Agent Observability: OpenTelemetry GenAI Tracing, Execution Journal, 그리고 Production Agent의 가시성 확보 전략 (#046)\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"Production AI Agent는 '200 OK'만으로는 디버깅할 수 없다. Agent는 잘 포맷된 틀린 답변을 반환하고, 불필요한 Tool Call을 수행하며, 3단계에서 발생한 실패가 10단계에서야 표면화된다. 이 글에서는 OpenTelemetry GenAI v1.41 Semantic Conventions 기반의 Agent Tracing 아키텍처, Spans Propagation 전략, 그리고 Execution Journal이라 명명한 실행 검증 가능 기록 시스템을 TypeScript와 Go 코드 예제와 함께 설계한다.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-06-20-proactive-update/\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"AI Agent Observability: OpenTelemetry GenAI Tracing, Execution Journal, 그리고 Production Agent의 가시성 확보 전략 (#046)\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"Production AI Agent는 '200 OK'만으로는 디버깅할 수 없다. Agent는 잘 포맷된 틀린 답변을 반환하고, 불필요한 Tool Call을 수행하며, 3단계에서 발생한 실패가 10단계에서야 표면화된다. 이 글에서는 OpenTelemetry GenAI v1.41 Semantic Conventions 기반의 Agent Tracing 아키텍처, Spans Propagation 전략, 그리고 Execution Journal이라 명명한 실행 검증 가능 기록 시스템을 TypeScript와 Go 코드 예제와 함께 설계한다.\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}],[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}],[\"$\",\"$L11\",\"13\",{}]]\n"])</script></body></html>

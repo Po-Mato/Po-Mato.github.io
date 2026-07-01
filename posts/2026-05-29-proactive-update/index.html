@@ -1,0 +1,553 @@
+<!DOCTYPE html><!--RvyB42_vuyVkjxFn3f586--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/e303b0af34205b81.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/329e63eb984ada35.js" async=""></script><meta name="next-size-adjust" content=""/><title>A2A Protocol 완전 해부: MCP가 Tools라면, A2A는 Agents를 연결한다 | Mato Po Tech Blog</title><meta name="description" content="Google Cloud Next 2026에서 v1.0이 발표된 A2A(Agent-to-Agent) Protocol은 150개 이상의 조직이 프로덕션에 도입한 차세대 에이전트 통신 표준입니다. MCP와의 근본적인 차이점, AgentCard 기반의 동적 디스커버리, Task 지향 프로토콜 설계, 그리고 3계층 아키텍처(MCP → A2A → ADK)를 코드 예제와 함께 완전 해부합니다."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-05-29-proactive-update/"/><meta property="og:title" content="A2A Protocol 완전 해부: MCP가 Tools라면, A2A는 Agents를 연결한다"/><meta property="og:description" content="Google Cloud Next 2026에서 v1.0이 발표된 A2A(Agent-to-Agent) Protocol은 150개 이상의 조직이 프로덕션에 도입한 차세대 에이전트 통신 표준입니다. MCP와의 근본적인 차이점, AgentCard 기반의 동적 디스커버리, Task 지향 프로토콜 설계, 그리고 3계층 아키텍처(MCP → A2A → ADK)를 코드 예제와 함께 완전 해부합니다."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-05-29-proactive-update/"/><meta property="og:image" content="https://po-mato.github.io/milkyway.jpg"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="A2A Protocol 완전 해부: MCP가 Tools라면, A2A는 Agents를 연결한다"/><meta name="twitter:description" content="Google Cloud Next 2026에서 v1.0이 발표된 A2A(Agent-to-Agent) Protocol은 150개 이상의 조직이 프로덕션에 도입한 차세대 에이전트 통신 표준입니다. MCP와의 근본적인 차이점, AgentCard 기반의 동적 디스커버리, Task 지향 프로토콜 설계, 그리고 3계층 아키텍처(MCP → A2A → ADK)를 코드 예제와 함께 완전 해부합니다."/><meta name="twitter:image" content="https://po-mato.github.io/milkyway.jpg"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><div class="text-sm text-white/60">2026-05-29</div><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">A2A Protocol 완전 해부: MCP가 Tools라면, A2A는 Agents를 연결한다</h1><p class="mt-4 text-base text-white/80 md:text-lg">Google Cloud Next 2026에서 v1.0이 발표된 A2A(Agent-to-Agent) Protocol은 150개 이상의 조직이 프로덕션에 도입한 차세대 에이전트 통신 표준입니다. MCP와의 근본적인 차이점, AgentCard 기반의 동적 디스커버리, Task 지향 프로토콜 설계, 그리고 3계층 아키텍처(MCP → A2A → ADK)를 코드 예제와 함께 완전 해부합니다.</p><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><h2>1. 들어가며: MCP 다음은 무엇인가?</h2>
+<p>2025년 하반기부터 2026년 현재까지, AI 에이전트 생태계는 한 가지 명확한 방향으로 수렴하고 있습니다: <strong>표준화</strong>. Anthropic의 MCP(Model Context Protocol)가 Tool 호출의 사실상 표준(de facto standard)으로 자리잡으면서, "에이전트가 LLM을 통해 도구를 사용하는 방법"에 대한 합의가 이루어졌습니다.</p>
+<p>그러나 MCP가 해결하지 못한 영역이 있습니다: <strong>에이전트가 다른 에이전트와 통신하는 방법</strong>.</p>
+<p>단일 에이전트가 하나의 LLM + 여러 도구로 처리할 수 있는 작업의 범위에는 한계가 있습니다. 복잡한 엔터프라이즈 워크플로우는 여러 도메인 전문 에이전트의 협업을 필요로 합니다. 바로 이 지점에서 Google이 제시한 <strong>A2A (Agent-to-Agent) Protocol</strong>이 등장합니다.</p>
+<blockquote>
+<p><strong>"MCP는 에이전트와 도구를 연결한다. A2A는 에이전트와 에이전트를 연결한다."</strong></p>
+</blockquote>
+<p>이 글에서는 A2A v1.0의 코어 아키텍처를 MCP와의 비교 관점에서 분석하고, 실제 구현 코드와 함께 엔터프라이즈 도입 전략을 살펴봅니다.</p>
+<hr>
+<h2>2. MCP vs A2A: 근본적인 설계 철학의 차이</h2>
+<p>두 프로토콜을 이해하는 가장 빠른 길은 <strong>누가 누구와 통신하는가</strong>를 이해하는 것입니다.</p>
+<table>
+<thead>
+<tr>
+<th>차원</th>
+<th>MCP</th>
+<th>A2A</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>통신 대상</strong></td>
+<td>Agent ↔ Tool</td>
+<td>Agent ↔ Agent</td>
+</tr>
+<tr>
+<td><strong>프로토콜 성격</strong></td>
+<td>Tool 호출 (RPC)</td>
+<td>Task 위임 (Stateful)</td>
+</tr>
+<tr>
+<td><strong>메시지 모델</strong></td>
+<td>요청-응답 (Stateless)</td>
+<td>상태 관리 (Task ID)</td>
+</tr>
+<tr>
+<td><strong>서버 역할</strong></td>
+<td>Tool 제공</td>
+<td>Agent 노출</td>
+</tr>
+<tr>
+<td><strong>디스커버리</strong></td>
+<td>수동 등록</td>
+<td>AgentCard 기반 자동 발견</td>
+</tr>
+<tr>
+<td><strong>스트리밍</strong></td>
+<td>SSE (이벤트 큐)</td>
+<td>SSE + Push Notification</td>
+</tr>
+<tr>
+<td><strong>보안 모델</strong></td>
+<td>Transport Auth</td>
+<td>AgentCard 내 OAuth/Scheme 명시</td>
+</tr>
+<tr>
+<td><strong>유스케이스</strong></td>
+<td>검색, DB 쿼리, 파일 I/O</td>
+<td>업무 위임, 티켓 처리, 복합 추론</td>
+</tr>
+</tbody>
+</table>
+<p>MCP가 <strong>Tool 호출의 표준화</strong>를 목표로 한다면, A2A는 <strong>Agent 협업의 표준화</strong>를 목표로 합니다. 이 두 프로토콜은 경쟁 관계가 아니라 상호 보완 관계입니다.</p>
+<pre><code>┌─────────────────────────────────────────────────────┐
+│                    Orchestrator (ADK)                │
+│                                                      │
+│  ┌──────────────────────────────────────────────┐   │
+│  │  User Intent / Planning / Global Memory       │   │
+│  └──────────────┬───────────────────────────────┘   │
+│                 │ A2A                               │
+│                 ▼                                   │
+│  ┌─────────────────────┐  ┌─────────────────────┐   │
+│  │ Billing Agent       │  │ Support Agent        │   │
+│  │ ┌─────────────────┐ │  │ ┌─────────────────┐  │   │
+│  │ │ MCP Tools       │ │  │ │ MCP Tools       │  │   │
+│  │ │ - Payment API   │ │  │ │ - Search        │  │   │
+│  │ │ - Invoice DB    │ │  │ │ - KB Query      │  │   │
+│  │ └─────────────────┘ │  │ └─────────────────┘  │   │
+│  └─────────────────────┘  └─────────────────────┘   │
+└─────────────────────────────────────────────────────┘
+</code></pre>
+<p>이 3계층 구조가 2026년 엔터프라이즈 AI의 표준 아키텍처입니다.</p>
+<hr>
+<h2>3. AgentCard: "OpenAPI for Agents"</h2>
+<p>A2A의 핵심 혁신 중 하나는 <strong>AgentCard</strong>입니다. MCP가 <code>.well-known/mcp.json</code>을 통해 서버 메타데이터를 노출하는 것처럼, A2A 에이전트는 <code>/.well-known/agent.json</code>에 AgentCard를 게시합니다.</p>
+<h3>AgentCard 구조</h3>
+<pre><code class="language-json">{
+  "name": "billing-specialist-v2",
+  "description": "Handles refund requests, subscription changes, and invoice disputes",
+  "version": "2.1.0",
+  "capabilities": {
+    "streaming": true,
+    "push_notifications": true,
+    "stateful_tasks": true
+  },
+  "authentication": {
+    "schemes": ["oauth2"],
+    "oauth2": {
+      "token_url": "https://auth.example.com/v2/token",
+      "scopes": ["billing:read", "billing:write"]
+    }
+  },
+  "skills": [
+    {
+      "id": "refund.process",
+      "name": "Process Refund",
+      "description": "Process a payment refund given a transaction ID and reason",
+      "input_modes": ["application/json"],
+      "output_modes": ["application/json"],
+      "examples": [
+        {
+          "name": "Simple refund",
+          "input": {
+            "transaction_id": "txn_abc123",
+            "amount": 29900,
+            "reason": "customer_request"
+          }
+        }
+      ]
+    },
+    {
+      "id": "subscription.upgrade",
+      "name": "Upgrade Subscription",
+      "description": "Upgrade a user's subscription plan",
+      "input_modes": ["application/json"],
+      "output_modes": ["application/json"]
+    }
+  ],
+  "rate_limits": {
+    "requests_per_minute": 100,
+    "tokens_per_minute": 10000
+  }
+}
+</code></pre>
+<p>AgentCard의 강력함은 <strong>런타임에 에이전트의 기능을 동적으로 발견</strong>할 수 있다는 점입니다. 마이크로서비스 아키텍처의 Service Discovery와 유사하지만, AgentCard는 단순한 위치 정보뿐 아니라 <strong>에이전트가 무엇을 할 수 있는지</strong>(skills), <strong>어떻게 인증할지</strong>(authentication), <strong>어떤 형식을 주고받는지</strong>(input/output modes)까지 명시합니다.</p>
+<h3>AgentCard Discovery 구현</h3>
+<p>실제 Node.js A2A 클라이언트에서 AgentCard를 발견하는 코드는 다음과 같습니다:</p>
+<pre><code class="language-typescript">// a2a-discovery.ts
+interface AgentCard {
+  name: string;
+  description: string;
+  version: string;
+  capabilities: {
+    streaming: boolean;
+    push_notifications: boolean;
+    stateful_tasks: boolean;
+  };
+  authentication: {
+    schemes: string[];
+    oauth2?: {
+      token_url: string;
+      scopes: string[];
+    };
+  };
+  skills: Array&#x3C;{
+    id: string;
+    name: string;
+    description: string;
+    input_modes: string[];
+    output_modes: string[];
+  }>;
+}
+
+async function discoverAgent(agentBaseUrl: string): Promise&#x3C;AgentCard> {
+  const cardUrl = new URL('/.well-known/agent.json', agentBaseUrl);
+  const response = await fetch(cardUrl.toString(), {
+    headers: { 'Accept': 'application/json' }
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `AgentCard discovery failed: ${response.status} — ` +
+      `expected A2A-compliant agent at ${agentBaseUrl}`
+    );
+  }
+
+  const card: AgentCard = await response.json();
+
+  // AgentCard schema 검증
+  if (!card.name || !card.skills?.length) {
+    throw new Error('Invalid AgentCard: missing required fields');
+  }
+
+  return card;
+}
+</code></pre>
+<p>이처럼 A2A 클라이언트는 AgentCard를 읽어서 원격 에이전트와 통신하는 데 필요한 모든 정보를 획득합니다. 이는 MCP의 <code>initialize -> tools/list -> tools/call</code> 핸드셰이크 시퀀스와 유사하지만, <strong>AgentCard는 정적 메타데이터로 캐싱 가능</strong>하고 <strong>검색 가능한 레지스트리</strong>에 등록할 수 있다는 차이가 있습니다.</p>
+<hr>
+<h2>4. Task 지향 프로토콜: 단순 RPC를 넘어서</h2>
+<p>MCP가 Tool 호출이라는 단일 연산(operation)에 집중한다면, A2A는 <strong>Task</strong>라는 일급 추상화(first-class abstraction)를 도입합니다.</p>
+<h3>Task 수명 주기</h3>
+<pre><code>클라이언트                              A2A 서버
+    │                                      │
+    │   POST /tasks/send                    │
+    │  ─────────────────────────────────>   │
+    │   { id: "task_001",                   │
+    │     sessionId: "sess_abc",            │
+    │     message: { role: "user",          │
+    │       parts: [{ type: "text",         │
+    │         text: "환불 처리해줘" }] } }    │
+    │                                      │
+    │   202 Accepted                        │
+    │   { id: "task_001",                   │
+    │     status: "submitted" }             │
+    │  &#x3C;─────────────────────────────────   │
+    │                                      │
+    │   ---- SSE Streaming 시작 ----       │
+    │                                      │
+    │   event: task_status                 │
+    │   data: { status: "working",         │
+    │          message: { role: "agent",   │
+    │            parts: [{ type: "text",   │
+    │              text: "환불을 처리..." }] } } │
+    │  &#x3C;────────────────────────────────── │
+    │                                      │
+    │   event: task_artifact               │
+    │   data: { artifact: {                │
+    │          parts: [{ type: "file",     │
+    │            mimeType: "application/   │
+    │              json",                  │
+    │            data: "{ \"refund_id\":   │
+    │              \"rf_789\" }" }] } }     │
+    │  &#x3C;────────────────────────────────── │
+    │                                      │
+    │   event: task_status                 │
+    │   data: { status: "completed" }      │
+    │  &#x3C;────────────────────────────────── │
+</code></pre>
+<p>핵심은 **Task가 Network 연결보다 오래 살 수 있다(stateful)**는 점입니다. LLM 추론 시간이 수 초에서 수 분까지 걸릴 수 있다는 점을 고려하면, HTTP 요청-응답 모델로는 신뢰성 있는 통신이 어렵습니다. A2A는 Task ID를 통해 <strong>연결이 끊겨도 작업이 계속되고, 재연결 시 상태를 복구</strong>할 수 있습니다.</p>
+<h3>A2A Client 구현 예제</h3>
+<pre><code class="language-typescript">// a2a-client.ts
+class A2AClient {
+  private readonly agentUrl: URL;
+  private readonly card: AgentCard;
+  private readonly authToken: string;
+
+  constructor(agentUrl: string) {
+    this.agentUrl = new URL(agentUrl);
+    this.card = null!;
+    this.authToken = '';
+  }
+
+  async initialize(): Promise&#x3C;void> {
+    // 1. AgentCard 발견
+    this.card = await discoverAgent(this.agentUrl.toString());
+
+    // 2. 인증 토큰 획득
+    if (this.card.authentication.schemes.includes('oauth2')) {
+      this.authToken = await this.authenticateOAuth(
+        this.card.authentication.oauth2!
+      );
+    }
+  }
+
+  // A2A Task 전송
+  async sendTask(
+    sessionId: string,
+    text: string,
+    onProgress?: (message: string) => void
+  ): Promise&#x3C;TaskResult> {
+    const response = await fetch(
+      new URL('/tasks/send', this.agentUrl).toString(),
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.authToken}`,
+          'Accept': 'text/event-stream'  // SSE 요청
+        },
+        body: JSON.stringify({
+          id: crypto.randomUUID(),
+          sessionId,
+          message: {
+            role: 'user',
+            parts: [{ type: 'text', text }]
+          }
+        })
+      }
+    );
+
+    if (this.card.capabilities.streaming &#x26;&#x26; response.ok) {
+      // SSE 스트리밍 처리
+      return this.handleStreamingResponse(response, onProgress);
+    }
+
+    // Non-streaming fallback
+    return response.json();
+  }
+
+  private async handleStreamingResponse(
+    response: Response,
+    onProgress?: (message: string) => void
+  ): Promise&#x3C;TaskResult> {
+    const reader = response.body!.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const event = JSON.parse(line.slice(6));
+          if (event.status === 'completed') {
+            return event.result;
+          }
+          if (event.status === 'working' &#x26;&#x26; onProgress) {
+            onProgress(event.message?.parts?.[0]?.text || '');
+          }
+        }
+      }
+    }
+
+    throw new Error('Task stream ended unexpectedly');
+  }
+
+  private async authenticateOAuth(
+    config: { token_url: string; scopes: string[] }
+  ): Promise&#x3C;string> {
+    // OAuth2 클라이언트 자격 증명 흐름
+    const tokenResponse = await fetch(config.token_url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'client_credentials',
+        scope: config.scopes.join(' ')
+      })
+    });
+
+    const { access_token } = await tokenResponse.json();
+    return access_token;
+  }
+}
+</code></pre>
+<hr>
+<h2>5. MCP + A2A: 실제 듀얼 프로토콜 구현</h2>
+<p>실제 엔터프라이즈 환경에서는 단일 에이전트가 MCP 서버와 A2A 에이전트에 <strong>동시에</strong> 연결해야 합니다. 다음은 TypeScript로 구현한 듀얼 프로토콜 에이전트 예제입니다:</p>
+<pre><code class="language-typescript">// hybrid-agent.ts
+import { Client as MCPClient } from '@modelcontextprotocol/sdk';
+import { A2AClient } from './a2a-client';
+
+interface AgentConfig {
+  name: string;
+  mcpServers: Array&#x3C;{ name: string; url: string }>;
+  a2aPeers: Array&#x3C;{ name: string; url: string; description: string }>;
+  delegationRules: Array&#x3C;{
+    intentPattern: RegExp;
+    delegateTo: string;
+    fallbackAction: 'self' | 'error';
+  }>;
+}
+
+class HybridAgent {
+  private mcpClients: Map&#x3C;string, MCPClient> = new Map();
+  private a2aClients: Map&#x3C;string, A2AClient> = new Map();
+  private config: AgentConfig;
+
+  constructor(config: AgentConfig) {
+    this.config = config;
+  }
+
+  async initialize(): Promise&#x3C;void> {
+    // MCP Client 초기화 (Tool 연결)
+    for (const server of this.config.mcpServers) {
+      const client = new MCPClient();
+      await client.connect(server.url);
+      this.mcpClients.set(server.name, client);
+      console.log(`[MCP] Connected to tool server: ${server.name}`);
+    }
+
+    // A2A Client 초기화 (Agent 연결)
+    for (const peer of this.config.a2aPeers) {
+      const client = new A2AClient(peer.url);
+      await client.initialize();
+      this.a2aClients.set(peer.name, client);
+      console.log(`[A2A] Discovered agent: ${peer.name} — ${peer.description}`);
+    }
+  }
+
+  async process(input: string): Promise&#x3C;string> {
+    // 1. 위임 규칙 확인
+    const matchingRule = this.config.delegationRules.find(
+      r => r.intentPattern.test(input)
+    );
+
+    if (matchingRule) {
+      const peerClient = this.a2aClients.get(matchingRule.delegateTo);
+      if (peerClient) {
+        console.log(`[A2A] Delegating to ${matchingRule.delegateTo}: "${input}"`);
+        const result = await peerClient.sendTask(
+          crypto.randomUUID(),
+          input
+        );
+        return `[${matchingRule.delegateTo}]: ${result}`;
+      }
+    }
+
+    // 2. MCP Tool 호출로 직접 처리
+    const results: string[] = [];
+    for (const [name, client] of this.mcpClients) {
+      try {
+        const tools = await client.listTools();
+        const tool = tools.find(t => input.includes(t.name));
+        if (tool) {
+          const result = await client.callTool(tool.name, { input });
+          results.push(`[Tool:${name}] ${result}`);
+        }
+      } catch (e) {
+        console.error(`[MCP] Tool error on ${name}:`, e);
+      }
+    }
+
+    return results.join('\n') || 'No matching tool or agent found.';
+  }
+}
+
+// 사용 예시
+const agent = new HybridAgent({
+  name: 'support-orchestrator',
+  mcpServers: [
+    { name: 'payment-gateway', url: 'http://mcp-payment:3100' },
+    { name: 'knowledge-base', url: 'http://mcp-kb:3100' }
+  ],
+  a2aPeers: [
+    {
+      name: 'billing-agent',
+      url: 'http://billing-service:8080',
+      description: 'Handles refunds, subscriptions, invoices'
+    },
+    {
+      name: 'escalation-agent',
+      url: 'http://escalation-service:8080',
+      description: 'Handles complex complaints requiring human review'
+    }
+  ],
+  delegationRules: [
+    { intentPattern: /환불|refund|billing/i, delegateTo: 'billing-agent', fallbackAction: 'self' },
+    { intentPattern: /항의|complaint|escalat/i, delegateTo: 'escalation-agent', fallbackAction: 'error' }
+  ]
+});
+
+await agent.initialize();
+const result = await agent.process("지난주 결제 환불 요청합니다");
+console.log(result); // [billing-agent]: Refund processed...
+</code></pre>
+<p>이 패턴의 핵심은 **의도 기반 위임(Intent-based Delegation)**입니다. Orchestrator는 사용자의 요청을 분석하여 MCP Tool로 직접 처리할지, A2A Agent로 위임할지 결정합니다.</p>
+<hr>
+<h2>6. Event Compaction: 에이전트 메모리의 실용적 해법</h2>
+<p>A2A가 stateful Task를 지원하면서 <strong>Context 폭발(Context Explosion)</strong> 문제가 대두됩니다. 여러 에이전트 간의 대화가 길어질수록 토큰 비용이 급증하고, LLM의 컨텍스트 윈도우 한계에 도달하게 됩니다.</p>
+<p>ADK 1.0이 도입한 <strong>Event Compaction</strong>은 이 문제에 대한 실용적인 해결책입니다:</p>
+<pre><code class="language-typescript">// event-compaction.ts
+interface CompactionConfig {
+  windowSize: number;      // 최근 이벤트 유지 개수
+  summarizerModel: string; // 요약 전용 경량 모델
+  pinKeys: string[];       // 유지해야 할 핵심 데이터 키
+}
+
+class EventCompactor {
+  private events: Array&#x3C;{ timestamp: number; role: string; content: string }> = [];
+  private summary: string = '';
+  private pinned: Map&#x3C;string, any> = new Map();
+
+  constructor(private config: CompactionConfig) {}
+
+  addEvent(role: string, content: string): void {
+    this.events.push({ timestamp: Date.now(), role, content });
+
+    // 윈도우 초과 시 Compaction 실행
+    if (this.events.length > this.config.windowSize) {
+      this.compact();
+    }
+  }
+
+  private compact(): void {
+    const recent = this.events.slice(-this.config.windowSize);
+    const old = this.events.slice(0, -this.config.windowSize);
+
+    // 오래된 이벤트 요약
+    this.summary = this.summarize(old);
+
+    // 이벤트 버퍼 정리
+    this.events = recent;
+  }
+
+  private summarize(events: Array&#x3C;{ role: string; content: string }>): string {
+    // 경량 LLM을 사용한 요약 (추상화)
+    return events
+      .map(e => `[${e.role}]: ${e.content.slice(0, 200)}`)
+      .join('\n');
+  }
+
+  getContext(): string {
+    // 반환: [Pin 데이터] + [요약] + [최근 이벤트]
+    const pinnedStr = [...this.pinned.entries()]
+      .map(([k, v]) => `[${k}]: ${JSON.stringify(v)}`)
+      .join('\n');
+
+    const recentStr = this.events
+      .map(e => `[${e.role}]: ${e.content}`)
+      .join('\n');
+
+    return [
+      pinnedStr &#x26;&#x26; `=== Pinned Data ===\n${pinnedStr}`,
+      this.summary &#x26;&#x26; `=== Summary ===\n${this.summary}`,
+      `=== Recent ===\n${recentStr}`
+    ].filter(Boolean).join('\n\n');
+  }
+
+  pin(key: string, value: any): void {
+    this.pinned.set(key, value);
+  }
+}
+</code></pre>
+<p>프로덕션 벤치마크에서 Event Compaction은 <strong>토큰 사용량 38% 감소, 지연 시간 18% 개선</strong>을 보여줍니다. 핵심은 <code>pinKeys</code>로 트랜잭션 ID나 사용자 정보 같은 필수 데이터를 요약 과정에서 보호하는 것입니다.</p>
+<hr>
+<h2>7. 엔터프라이즈 도입: 90일 로드맵</h2>
+<p>A2A의 엔터프라이즈 도입은 기존 MCP 인프라 위에 단계적으로 구축하는 것이 가장 효과적입니다.</p>
+<h3>Phase 1 (1-30일): MCP 표준화 + AgentCard 등록</h3>
+<ul>
+<li>모든 내부 도구를 MCP 서버로 전환</li>
+<li>각 팀의 에이전트에 AgentCard 작성 및 내부 레지스트리 등록</li>
+<li>인증 체계 (OAuth2 / API Key) 통일</li>
+</ul>
+<h3>Phase 2 (31-60일): Orchestrator 구축 + A2A 파일럿</h3>
+<ul>
+<li>ADK 1.0 기반 Root Orchestrator 구현</li>
+<li>하나의 도메인 에이전트 (예: Billing)를 A2A 프로토콜로 전환</li>
+<li>듀얼 프로토콜 (MCP + A2A) 통신 검증</li>
+</ul>
+<h3>Phase 3 (61-90일): HITL + Observability</h3>
+<ul>
+<li>고위험 작업 (환불, 계정 삭제)에 Human-in-the-Loop 적용</li>
+<li>OpenTelemetry 기반 분산 추적 구성</li>
+<li>Event Compaction 설정으로 비용 최적화</li>
+</ul>
+<hr>
+<h2>8. 결론: 경쟁이 아닌 공존</h2>
+<p>MCP는 Tool 호출의 표준으로, A2A는 Agent 협업의 표준으로 자리잡고 있습니다. 이 두 프로토콜은 <strong>경쟁 관계가 아닌 상호 보완 관계</strong>입니다.</p>
+<p>2026년 엔터프라이즈 AI 아키텍처의 핵심 원칙은 <strong>"프로토콜 준수, 프레임워크 독립"</strong> 입니다. MCP로 도구를 표준화하고, A2A로 에이전트 간 협업을 정의하며, ADK로 오케스트레이션을 처리하는 3계층 구조가 앞으로 수년간 지속될 표준 패턴입니다.</p>
+<p>가장 중요한 통찰: <strong>에이전트가 Tools를 사용하는 방법(MCP)과 에이전트가 에이전트와 협업하는 방법(A2A)은 별개의 문제입니다.</strong> 하나를 해결했다고 다른 하나가 해결되지 않습니다. 2026년의 경쟁력 있는 AI 시스템은 이 두 프로토콜을 모두 유창하게 다루는 능력에서 결정될 것입니다.</p>
+<hr>
+<h3>참고 자료</h3>
+<ul>
+<li>A2A Protocol Specification: <a href="https://a2a-protocol.org">https://a2a-protocol.org</a></li>
+<li>GitHub: <a href="https://github.com/a2aproject/A2A">github.com/a2aproject/A2A</a></li>
+<li>Google ADK 1.0 GA Announcement (Cloud Next 2026)</li>
+<li>MCP Specification: <a href="https://modelcontextprotocol.io">https://modelcontextprotocol.io</a></li>
+</ul></div></article></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/e303b0af34205b81.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"RvyB42_vuyVkjxFn3f586\",\"c\":[\"\",\"posts\",\"2026-05-29-proactive-update\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-05-29-proactive-update\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/e303b0af34205b81.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/329e63eb984ada35.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"11:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n10:T5c27,"])</script><script>self.__next_f.push([1,"\u003ch2\u003e1. 들어가며: MCP 다음은 무엇인가?\u003c/h2\u003e\n\u003cp\u003e2025년 하반기부터 2026년 현재까지, AI 에이전트 생태계는 한 가지 명확한 방향으로 수렴하고 있습니다: \u003cstrong\u003e표준화\u003c/strong\u003e. Anthropic의 MCP(Model Context Protocol)가 Tool 호출의 사실상 표준(de facto standard)으로 자리잡으면서, \"에이전트가 LLM을 통해 도구를 사용하는 방법\"에 대한 합의가 이루어졌습니다.\u003c/p\u003e\n\u003cp\u003e그러나 MCP가 해결하지 못한 영역이 있습니다: \u003cstrong\u003e에이전트가 다른 에이전트와 통신하는 방법\u003c/strong\u003e.\u003c/p\u003e\n\u003cp\u003e단일 에이전트가 하나의 LLM + 여러 도구로 처리할 수 있는 작업의 범위에는 한계가 있습니다. 복잡한 엔터프라이즈 워크플로우는 여러 도메인 전문 에이전트의 협업을 필요로 합니다. 바로 이 지점에서 Google이 제시한 \u003cstrong\u003eA2A (Agent-to-Agent) Protocol\u003c/strong\u003e이 등장합니다.\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\u003cstrong\u003e\"MCP는 에이전트와 도구를 연결한다. A2A는 에이전트와 에이전트를 연결한다.\"\u003c/strong\u003e\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003e이 글에서는 A2A v1.0의 코어 아키텍처를 MCP와의 비교 관점에서 분석하고, 실제 구현 코드와 함께 엔터프라이즈 도입 전략을 살펴봅니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e2. MCP vs A2A: 근본적인 설계 철학의 차이\u003c/h2\u003e\n\u003cp\u003e두 프로토콜을 이해하는 가장 빠른 길은 \u003cstrong\u003e누가 누구와 통신하는가\u003c/strong\u003e를 이해하는 것입니다.\u003c/p\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e차원\u003c/th\u003e\n\u003cth\u003eMCP\u003c/th\u003e\n\u003cth\u003eA2A\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e통신 대상\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003eAgent ↔ Tool\u003c/td\u003e\n\u003ctd\u003eAgent ↔ Agent\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e프로토콜 성격\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003eTool 호출 (RPC)\u003c/td\u003e\n\u003ctd\u003eTask 위임 (Stateful)\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e메시지 모델\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e요청-응답 (Stateless)\u003c/td\u003e\n\u003ctd\u003e상태 관리 (Task ID)\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e서버 역할\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003eTool 제공\u003c/td\u003e\n\u003ctd\u003eAgent 노출\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e디스커버리\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e수동 등록\u003c/td\u003e\n\u003ctd\u003eAgentCard 기반 자동 발견\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e스트리밍\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003eSSE (이벤트 큐)\u003c/td\u003e\n\u003ctd\u003eSSE + Push Notification\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e보안 모델\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003eTransport Auth\u003c/td\u003e\n\u003ctd\u003eAgentCard 내 OAuth/Scheme 명시\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e유스케이스\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e검색, DB 쿼리, 파일 I/O\u003c/td\u003e\n\u003ctd\u003e업무 위임, 티켓 처리, 복합 추론\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003cp\u003eMCP가 \u003cstrong\u003eTool 호출의 표준화\u003c/strong\u003e를 목표로 한다면, A2A는 \u003cstrong\u003eAgent 협업의 표준화\u003c/strong\u003e를 목표로 합니다. 이 두 프로토콜은 경쟁 관계가 아니라 상호 보완 관계입니다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e┌─────────────────────────────────────────────────────┐\n│                    Orchestrator (ADK)                │\n│                                                      │\n│  ┌──────────────────────────────────────────────┐   │\n│  │  User Intent / Planning / Global Memory       │   │\n│  └──────────────┬───────────────────────────────┘   │\n│                 │ A2A                               │\n│                 ▼                                   │\n│  ┌─────────────────────┐  ┌─────────────────────┐   │\n│  │ Billing Agent       │  │ Support Agent        │   │\n│  │ ┌─────────────────┐ │  │ ┌─────────────────┐  │   │\n│  │ │ MCP Tools       │ │  │ │ MCP Tools       │  │   │\n│  │ │ - Payment API   │ │  │ │ - Search        │  │   │\n│  │ │ - Invoice DB    │ │  │ │ - KB Query      │  │   │\n│  │ └─────────────────┘ │  │ └─────────────────┘  │   │\n│  └─────────────────────┘  └─────────────────────┘   │\n└─────────────────────────────────────────────────────┘\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 3계층 구조가 2026년 엔터프라이즈 AI의 표준 아키텍처입니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e3. AgentCard: \"OpenAPI for Agents\"\u003c/h2\u003e\n\u003cp\u003eA2A의 핵심 혁신 중 하나는 \u003cstrong\u003eAgentCard\u003c/strong\u003e입니다. MCP가 \u003ccode\u003e.well-known/mcp.json\u003c/code\u003e을 통해 서버 메타데이터를 노출하는 것처럼, A2A 에이전트는 \u003ccode\u003e/.well-known/agent.json\u003c/code\u003e에 AgentCard를 게시합니다.\u003c/p\u003e\n\u003ch3\u003eAgentCard 구조\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-json\"\u003e{\n  \"name\": \"billing-specialist-v2\",\n  \"description\": \"Handles refund requests, subscription changes, and invoice disputes\",\n  \"version\": \"2.1.0\",\n  \"capabilities\": {\n    \"streaming\": true,\n    \"push_notifications\": true,\n    \"stateful_tasks\": true\n  },\n  \"authentication\": {\n    \"schemes\": [\"oauth2\"],\n    \"oauth2\": {\n      \"token_url\": \"https://auth.example.com/v2/token\",\n      \"scopes\": [\"billing:read\", \"billing:write\"]\n    }\n  },\n  \"skills\": [\n    {\n      \"id\": \"refund.process\",\n      \"name\": \"Process Refund\",\n      \"description\": \"Process a payment refund given a transaction ID and reason\",\n      \"input_modes\": [\"application/json\"],\n      \"output_modes\": [\"application/json\"],\n      \"examples\": [\n        {\n          \"name\": \"Simple refund\",\n          \"input\": {\n            \"transaction_id\": \"txn_abc123\",\n            \"amount\": 29900,\n            \"reason\": \"customer_request\"\n          }\n        }\n      ]\n    },\n    {\n      \"id\": \"subscription.upgrade\",\n      \"name\": \"Upgrade Subscription\",\n      \"description\": \"Upgrade a user's subscription plan\",\n      \"input_modes\": [\"application/json\"],\n      \"output_modes\": [\"application/json\"]\n    }\n  ],\n  \"rate_limits\": {\n    \"requests_per_minute\": 100,\n    \"tokens_per_minute\": 10000\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eAgentCard의 강력함은 \u003cstrong\u003e런타임에 에이전트의 기능을 동적으로 발견\u003c/strong\u003e할 수 있다는 점입니다. 마이크로서비스 아키텍처의 Service Discovery와 유사하지만, AgentCard는 단순한 위치 정보뿐 아니라 \u003cstrong\u003e에이전트가 무엇을 할 수 있는지\u003c/strong\u003e(skills), \u003cstrong\u003e어떻게 인증할지\u003c/strong\u003e(authentication), \u003cstrong\u003e어떤 형식을 주고받는지\u003c/strong\u003e(input/output modes)까지 명시합니다.\u003c/p\u003e\n\u003ch3\u003eAgentCard Discovery 구현\u003c/h3\u003e\n\u003cp\u003e실제 Node.js A2A 클라이언트에서 AgentCard를 발견하는 코드는 다음과 같습니다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// a2a-discovery.ts\ninterface AgentCard {\n  name: string;\n  description: string;\n  version: string;\n  capabilities: {\n    streaming: boolean;\n    push_notifications: boolean;\n    stateful_tasks: boolean;\n  };\n  authentication: {\n    schemes: string[];\n    oauth2?: {\n      token_url: string;\n      scopes: string[];\n    };\n  };\n  skills: Array\u0026#x3C;{\n    id: string;\n    name: string;\n    description: string;\n    input_modes: string[];\n    output_modes: string[];\n  }\u003e;\n}\n\nasync function discoverAgent(agentBaseUrl: string): Promise\u0026#x3C;AgentCard\u003e {\n  const cardUrl = new URL('/.well-known/agent.json', agentBaseUrl);\n  const response = await fetch(cardUrl.toString(), {\n    headers: { 'Accept': 'application/json' }\n  });\n\n  if (!response.ok) {\n    throw new Error(\n      `AgentCard discovery failed: ${response.status} — ` +\n      `expected A2A-compliant agent at ${agentBaseUrl}`\n    );\n  }\n\n  const card: AgentCard = await response.json();\n\n  // AgentCard schema 검증\n  if (!card.name || !card.skills?.length) {\n    throw new Error('Invalid AgentCard: missing required fields');\n  }\n\n  return card;\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이처럼 A2A 클라이언트는 AgentCard를 읽어서 원격 에이전트와 통신하는 데 필요한 모든 정보를 획득합니다. 이는 MCP의 \u003ccode\u003einitialize -\u003e tools/list -\u003e tools/call\u003c/code\u003e 핸드셰이크 시퀀스와 유사하지만, \u003cstrong\u003eAgentCard는 정적 메타데이터로 캐싱 가능\u003c/strong\u003e하고 \u003cstrong\u003e검색 가능한 레지스트리\u003c/strong\u003e에 등록할 수 있다는 차이가 있습니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e4. Task 지향 프로토콜: 단순 RPC를 넘어서\u003c/h2\u003e\n\u003cp\u003eMCP가 Tool 호출이라는 단일 연산(operation)에 집중한다면, A2A는 \u003cstrong\u003eTask\u003c/strong\u003e라는 일급 추상화(first-class abstraction)를 도입합니다.\u003c/p\u003e\n\u003ch3\u003eTask 수명 주기\u003c/h3\u003e\n\u003cpre\u003e\u003ccode\u003e클라이언트                              A2A 서버\n    │                                      │\n    │   POST /tasks/send                    │\n    │  ─────────────────────────────────\u003e   │\n    │   { id: \"task_001\",                   │\n    │     sessionId: \"sess_abc\",            │\n    │     message: { role: \"user\",          │\n    │       parts: [{ type: \"text\",         │\n    │         text: \"환불 처리해줘\" }] } }    │\n    │                                      │\n    │   202 Accepted                        │\n    │   { id: \"task_001\",                   │\n    │     status: \"submitted\" }             │\n    │  \u0026#x3C;─────────────────────────────────   │\n    │                                      │\n    │   ---- SSE Streaming 시작 ----       │\n    │                                      │\n    │   event: task_status                 │\n    │   data: { status: \"working\",         │\n    │          message: { role: \"agent\",   │\n    │            parts: [{ type: \"text\",   │\n    │              text: \"환불을 처리...\" }] } } │\n    │  \u0026#x3C;────────────────────────────────── │\n    │                                      │\n    │   event: task_artifact               │\n    │   data: { artifact: {                │\n    │          parts: [{ type: \"file\",     │\n    │            mimeType: \"application/   │\n    │              json\",                  │\n    │            data: \"{ \\\"refund_id\\\":   │\n    │              \\\"rf_789\\\" }\" }] } }     │\n    │  \u0026#x3C;────────────────────────────────── │\n    │                                      │\n    │   event: task_status                 │\n    │   data: { status: \"completed\" }      │\n    │  \u0026#x3C;────────────────────────────────── │\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e핵심은 **Task가 Network 연결보다 오래 살 수 있다(stateful)**는 점입니다. LLM 추론 시간이 수 초에서 수 분까지 걸릴 수 있다는 점을 고려하면, HTTP 요청-응답 모델로는 신뢰성 있는 통신이 어렵습니다. A2A는 Task ID를 통해 \u003cstrong\u003e연결이 끊겨도 작업이 계속되고, 재연결 시 상태를 복구\u003c/strong\u003e할 수 있습니다.\u003c/p\u003e\n\u003ch3\u003eA2A Client 구현 예제\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// a2a-client.ts\nclass A2AClient {\n  private readonly agentUrl: URL;\n  private readonly card: AgentCard;\n  private readonly authToken: string;\n\n  constructor(agentUrl: string) {\n    this.agentUrl = new URL(agentUrl);\n    this.card = null!;\n    this.authToken = '';\n  }\n\n  async initialize(): Promise\u0026#x3C;void\u003e {\n    // 1. AgentCard 발견\n    this.card = await discoverAgent(this.agentUrl.toString());\n\n    // 2. 인증 토큰 획득\n    if (this.card.authentication.schemes.includes('oauth2')) {\n      this.authToken = await this.authenticateOAuth(\n        this.card.authentication.oauth2!\n      );\n    }\n  }\n\n  // A2A Task 전송\n  async sendTask(\n    sessionId: string,\n    text: string,\n    onProgress?: (message: string) =\u003e void\n  ): Promise\u0026#x3C;TaskResult\u003e {\n    const response = await fetch(\n      new URL('/tasks/send', this.agentUrl).toString(),\n      {\n        method: 'POST',\n        headers: {\n          'Content-Type': 'application/json',\n          'Authorization': `Bearer ${this.authToken}`,\n          'Accept': 'text/event-stream'  // SSE 요청\n        },\n        body: JSON.stringify({\n          id: crypto.randomUUID(),\n          sessionId,\n          message: {\n            role: 'user',\n            parts: [{ type: 'text', text }]\n          }\n        })\n      }\n    );\n\n    if (this.card.capabilities.streaming \u0026#x26;\u0026#x26; response.ok) {\n      // SSE 스트리밍 처리\n      return this.handleStreamingResponse(response, onProgress);\n    }\n\n    // Non-streaming fallback\n    return response.json();\n  }\n\n  private async handleStreamingResponse(\n    response: Response,\n    onProgress?: (message: string) =\u003e void\n  ): Promise\u0026#x3C;TaskResult\u003e {\n    const reader = response.body!.getReader();\n    const decoder = new TextDecoder();\n    let buffer = '';\n\n    while (true) {\n      const { done, value } = await reader.read();\n      if (done) break;\n\n      buffer += decoder.decode(value, { stream: true });\n      const lines = buffer.split('\\n');\n      buffer = lines.pop() || '';\n\n      for (const line of lines) {\n        if (line.startsWith('data: ')) {\n          const event = JSON.parse(line.slice(6));\n          if (event.status === 'completed') {\n            return event.result;\n          }\n          if (event.status === 'working' \u0026#x26;\u0026#x26; onProgress) {\n            onProgress(event.message?.parts?.[0]?.text || '');\n          }\n        }\n      }\n    }\n\n    throw new Error('Task stream ended unexpectedly');\n  }\n\n  private async authenticateOAuth(\n    config: { token_url: string; scopes: string[] }\n  ): Promise\u0026#x3C;string\u003e {\n    // OAuth2 클라이언트 자격 증명 흐름\n    const tokenResponse = await fetch(config.token_url, {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },\n      body: new URLSearchParams({\n        grant_type: 'client_credentials',\n        scope: config.scopes.join(' ')\n      })\n    });\n\n    const { access_token } = await tokenResponse.json();\n    return access_token;\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e5. MCP + A2A: 실제 듀얼 프로토콜 구현\u003c/h2\u003e\n\u003cp\u003e실제 엔터프라이즈 환경에서는 단일 에이전트가 MCP 서버와 A2A 에이전트에 \u003cstrong\u003e동시에\u003c/strong\u003e 연결해야 합니다. 다음은 TypeScript로 구현한 듀얼 프로토콜 에이전트 예제입니다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// hybrid-agent.ts\nimport { Client as MCPClient } from '@modelcontextprotocol/sdk';\nimport { A2AClient } from './a2a-client';\n\ninterface AgentConfig {\n  name: string;\n  mcpServers: Array\u0026#x3C;{ name: string; url: string }\u003e;\n  a2aPeers: Array\u0026#x3C;{ name: string; url: string; description: string }\u003e;\n  delegationRules: Array\u0026#x3C;{\n    intentPattern: RegExp;\n    delegateTo: string;\n    fallbackAction: 'self' | 'error';\n  }\u003e;\n}\n\nclass HybridAgent {\n  private mcpClients: Map\u0026#x3C;string, MCPClient\u003e = new Map();\n  private a2aClients: Map\u0026#x3C;string, A2AClient\u003e = new Map();\n  private config: AgentConfig;\n\n  constructor(config: AgentConfig) {\n    this.config = config;\n  }\n\n  async initialize(): Promise\u0026#x3C;void\u003e {\n    // MCP Client 초기화 (Tool 연결)\n    for (const server of this.config.mcpServers) {\n      const client = new MCPClient();\n      await client.connect(server.url);\n      this.mcpClients.set(server.name, client);\n      console.log(`[MCP] Connected to tool server: ${server.name}`);\n    }\n\n    // A2A Client 초기화 (Agent 연결)\n    for (const peer of this.config.a2aPeers) {\n      const client = new A2AClient(peer.url);\n      await client.initialize();\n      this.a2aClients.set(peer.name, client);\n      console.log(`[A2A] Discovered agent: ${peer.name} — ${peer.description}`);\n    }\n  }\n\n  async process(input: string): Promise\u0026#x3C;string\u003e {\n    // 1. 위임 규칙 확인\n    const matchingRule = this.config.delegationRules.find(\n      r =\u003e r.intentPattern.test(input)\n    );\n\n    if (matchingRule) {\n      const peerClient = this.a2aClients.get(matchingRule.delegateTo);\n      if (peerClient) {\n        console.log(`[A2A] Delegating to ${matchingRule.delegateTo}: \"${input}\"`);\n        const result = await peerClient.sendTask(\n          crypto.randomUUID(),\n          input\n        );\n        return `[${matchingRule.delegateTo}]: ${result}`;\n      }\n    }\n\n    // 2. MCP Tool 호출로 직접 처리\n    const results: string[] = [];\n    for (const [name, client] of this.mcpClients) {\n      try {\n        const tools = await client.listTools();\n        const tool = tools.find(t =\u003e input.includes(t.name));\n        if (tool) {\n          const result = await client.callTool(tool.name, { input });\n          results.push(`[Tool:${name}] ${result}`);\n        }\n      } catch (e) {\n        console.error(`[MCP] Tool error on ${name}:`, e);\n      }\n    }\n\n    return results.join('\\n') || 'No matching tool or agent found.';\n  }\n}\n\n// 사용 예시\nconst agent = new HybridAgent({\n  name: 'support-orchestrator',\n  mcpServers: [\n    { name: 'payment-gateway', url: 'http://mcp-payment:3100' },\n    { name: 'knowledge-base', url: 'http://mcp-kb:3100' }\n  ],\n  a2aPeers: [\n    {\n      name: 'billing-agent',\n      url: 'http://billing-service:8080',\n      description: 'Handles refunds, subscriptions, invoices'\n    },\n    {\n      name: 'escalation-agent',\n      url: 'http://escalation-service:8080',\n      description: 'Handles complex complaints requiring human review'\n    }\n  ],\n  delegationRules: [\n    { intentPattern: /환불|refund|billing/i, delegateTo: 'billing-agent', fallbackAction: 'self' },\n    { intentPattern: /항의|complaint|escalat/i, delegateTo: 'escalation-agent', fallbackAction: 'error' }\n  ]\n});\n\nawait agent.initialize();\nconst result = await agent.process(\"지난주 결제 환불 요청합니다\");\nconsole.log(result); // [billing-agent]: Refund processed...\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 패턴의 핵심은 **의도 기반 위임(Intent-based Delegation)**입니다. Orchestrator는 사용자의 요청을 분석하여 MCP Tool로 직접 처리할지, A2A Agent로 위임할지 결정합니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e6. Event Compaction: 에이전트 메모리의 실용적 해법\u003c/h2\u003e\n\u003cp\u003eA2A가 stateful Task를 지원하면서 \u003cstrong\u003eContext 폭발(Context Explosion)\u003c/strong\u003e 문제가 대두됩니다. 여러 에이전트 간의 대화가 길어질수록 토큰 비용이 급증하고, LLM의 컨텍스트 윈도우 한계에 도달하게 됩니다.\u003c/p\u003e\n\u003cp\u003eADK 1.0이 도입한 \u003cstrong\u003eEvent Compaction\u003c/strong\u003e은 이 문제에 대한 실용적인 해결책입니다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// event-compaction.ts\ninterface CompactionConfig {\n  windowSize: number;      // 최근 이벤트 유지 개수\n  summarizerModel: string; // 요약 전용 경량 모델\n  pinKeys: string[];       // 유지해야 할 핵심 데이터 키\n}\n\nclass EventCompactor {\n  private events: Array\u0026#x3C;{ timestamp: number; role: string; content: string }\u003e = [];\n  private summary: string = '';\n  private pinned: Map\u0026#x3C;string, any\u003e = new Map();\n\n  constructor(private config: CompactionConfig) {}\n\n  addEvent(role: string, content: string): void {\n    this.events.push({ timestamp: Date.now(), role, content });\n\n    // 윈도우 초과 시 Compaction 실행\n    if (this.events.length \u003e this.config.windowSize) {\n      this.compact();\n    }\n  }\n\n  private compact(): void {\n    const recent = this.events.slice(-this.config.windowSize);\n    const old = this.events.slice(0, -this.config.windowSize);\n\n    // 오래된 이벤트 요약\n    this.summary = this.summarize(old);\n\n    // 이벤트 버퍼 정리\n    this.events = recent;\n  }\n\n  private summarize(events: Array\u0026#x3C;{ role: string; content: string }\u003e): string {\n    // 경량 LLM을 사용한 요약 (추상화)\n    return events\n      .map(e =\u003e `[${e.role}]: ${e.content.slice(0, 200)}`)\n      .join('\\n');\n  }\n\n  getContext(): string {\n    // 반환: [Pin 데이터] + [요약] + [최근 이벤트]\n    const pinnedStr = [...this.pinned.entries()]\n      .map(([k, v]) =\u003e `[${k}]: ${JSON.stringify(v)}`)\n      .join('\\n');\n\n    const recentStr = this.events\n      .map(e =\u003e `[${e.role}]: ${e.content}`)\n      .join('\\n');\n\n    return [\n      pinnedStr \u0026#x26;\u0026#x26; `=== Pinned Data ===\\n${pinnedStr}`,\n      this.summary \u0026#x26;\u0026#x26; `=== Summary ===\\n${this.summary}`,\n      `=== Recent ===\\n${recentStr}`\n    ].filter(Boolean).join('\\n\\n');\n  }\n\n  pin(key: string, value: any): void {\n    this.pinned.set(key, value);\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e프로덕션 벤치마크에서 Event Compaction은 \u003cstrong\u003e토큰 사용량 38% 감소, 지연 시간 18% 개선\u003c/strong\u003e을 보여줍니다. 핵심은 \u003ccode\u003epinKeys\u003c/code\u003e로 트랜잭션 ID나 사용자 정보 같은 필수 데이터를 요약 과정에서 보호하는 것입니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e7. 엔터프라이즈 도입: 90일 로드맵\u003c/h2\u003e\n\u003cp\u003eA2A의 엔터프라이즈 도입은 기존 MCP 인프라 위에 단계적으로 구축하는 것이 가장 효과적입니다.\u003c/p\u003e\n\u003ch3\u003ePhase 1 (1-30일): MCP 표준화 + AgentCard 등록\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003e모든 내부 도구를 MCP 서버로 전환\u003c/li\u003e\n\u003cli\u003e각 팀의 에이전트에 AgentCard 작성 및 내부 레지스트리 등록\u003c/li\u003e\n\u003cli\u003e인증 체계 (OAuth2 / API Key) 통일\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003ePhase 2 (31-60일): Orchestrator 구축 + A2A 파일럿\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003eADK 1.0 기반 Root Orchestrator 구현\u003c/li\u003e\n\u003cli\u003e하나의 도메인 에이전트 (예: Billing)를 A2A 프로토콜로 전환\u003c/li\u003e\n\u003cli\u003e듀얼 프로토콜 (MCP + A2A) 통신 검증\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003ePhase 3 (61-90일): HITL + Observability\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003e고위험 작업 (환불, 계정 삭제)에 Human-in-the-Loop 적용\u003c/li\u003e\n\u003cli\u003eOpenTelemetry 기반 분산 추적 구성\u003c/li\u003e\n\u003cli\u003eEvent Compaction 설정으로 비용 최적화\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003ch2\u003e8. 결론: 경쟁이 아닌 공존\u003c/h2\u003e\n\u003cp\u003eMCP는 Tool 호출의 표준으로, A2A는 Agent 협업의 표준으로 자리잡고 있습니다. 이 두 프로토콜은 \u003cstrong\u003e경쟁 관계가 아닌 상호 보완 관계\u003c/strong\u003e입니다.\u003c/p\u003e\n\u003cp\u003e2026년 엔터프라이즈 AI 아키텍처의 핵심 원칙은 \u003cstrong\u003e\"프로토콜 준수, 프레임워크 독립\"\u003c/strong\u003e 입니다. MCP로 도구를 표준화하고, A2A로 에이전트 간 협업을 정의하며, ADK로 오케스트레이션을 처리하는 3계층 구조가 앞으로 수년간 지속될 표준 패턴입니다.\u003c/p\u003e\n\u003cp\u003e가장 중요한 통찰: \u003cstrong\u003e에이전트가 Tools를 사용하는 방법(MCP)과 에이전트가 에이전트와 협업하는 방법(A2A)은 별개의 문제입니다.\u003c/strong\u003e 하나를 해결했다고 다른 하나가 해결되지 않습니다. 2026년의 경쟁력 있는 AI 시스템은 이 두 프로토콜을 모두 유창하게 다루는 능력에서 결정될 것입니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch3\u003e참고 자료\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003eA2A Protocol Specification: \u003ca href=\"https://a2a-protocol.org\"\u003ehttps://a2a-protocol.org\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003eGitHub: \u003ca href=\"https://github.com/a2aproject/A2A\"\u003egithub.com/a2aproject/A2A\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003eGoogle ADK 1.0 GA Announcement (Cloud Next 2026)\u003c/li\u003e\n\u003cli\u003eMCP Specification: \u003ca href=\"https://modelcontextprotocol.io\"\u003ehttps://modelcontextprotocol.io\u003c/a\u003e\u003c/li\u003e\n\u003c/ul\u003e"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"text-sm text-white/60\",\"children\":\"2026-05-29\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"A2A Protocol 완전 해부: MCP가 Tools라면, A2A는 Agents를 연결한다\"}],[\"$\",\"p\",null,{\"className\":\"mt-4 text-base text-white/80 md:text-lg\",\"children\":\"Google Cloud Next 2026에서 v1.0이 발표된 A2A(Agent-to-Agent) Protocol은 150개 이상의 조직이 프로덕션에 도입한 차세대 에이전트 통신 표준입니다. MCP와의 근본적인 차이점, AgentCard 기반의 동적 디스커버리, Task 지향 프로토콜 설계, 그리고 3계층 아키텍처(MCP → A2A → ADK)를 코드 예제와 함께 완전 해부합니다.\"}],[\"$\",\"div\",null,{\"className\":\"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300\",\"dangerouslySetInnerHTML\":{\"__html\":\"$10\"}}]]}]}]\n8:null\n"])</script><script>self.__next_f.push([1,"c:[[\"$\",\"title\",\"0\",{\"children\":\"A2A Protocol 완전 해부: MCP가 Tools라면, A2A는 Agents를 연결한다 | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"Google Cloud Next 2026에서 v1.0이 발표된 A2A(Agent-to-Agent) Protocol은 150개 이상의 조직이 프로덕션에 도입한 차세대 에이전트 통신 표준입니다. MCP와의 근본적인 차이점, AgentCard 기반의 동적 디스커버리, Task 지향 프로토콜 설계, 그리고 3계층 아키텍처(MCP → A2A → ADK)를 코드 예제와 함께 완전 해부합니다.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-05-29-proactive-update/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"A2A Protocol 완전 해부: MCP가 Tools라면, A2A는 Agents를 연결한다\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"Google Cloud Next 2026에서 v1.0이 발표된 A2A(Agent-to-Agent) Protocol은 150개 이상의 조직이 프로덕션에 도입한 차세대 에이전트 통신 표준입니다. MCP와의 근본적인 차이점, AgentCard 기반의 동적 디스커버리, Task 지향 프로토콜 설계, 그리고 3계층 아키텍처(MCP → A2A → ADK)를 코드 예제와 함께 완전 해부합니다.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-05-29-proactive-update/\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"A2A Protocol 완전 해부: MCP가 Tools라면, A2A는 Agents를 연결한다\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"Google Cloud Next 2026에서 v1.0이 발표된 A2A(Agent-to-Agent) Protocol은 150개 이상의 조직이 프로덕션에 도입한 차세대 에이전트 통신 표준입니다. MCP와의 근본적인 차이점, AgentCard 기반의 동적 디스커버리, Task 지향 프로토콜 설계, 그리고 3계층 아키텍처(MCP → A2A → ADK)를 코드 예제와 함께 완전 해부합니다.\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}],[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}],[\"$\",\"$L11\",\"13\",{}]]\n"])</script></body></html>
