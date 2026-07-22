@@ -1,0 +1,815 @@
+<!DOCTYPE html><!--I0h1m__4yn4ihPv3zSN7e--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/b848662595cda15b.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/329e63eb984ada35.js" async=""></script><meta name="next-size-adjust" content=""/><title>Context Policy Optimization: UCB, Thompson Sampling, 그리고 Regret-Aware Eviction — AI 에이전트가 무엇을 버릴지 스스로 학습하는 방법 (#057) | Mato Po Tech Blog</title><meta name="description" content="2026년 7월, ContextManager(#055)가 context를 evict하고, ContextManagerWithProvenance(#056)가 그 evict를 추적할 수 있다면, 이제 다음 질문은 &#x27;어떤 정책(policy)으로 evict할 것인가&#x27;이다. 본 글은 bandit 알고리즘(UCB, Thompson Sampling)을 컨텍스트 eviction에 적용하는 방법론을 제안한다. ContextPolicyOptimizer는 각 turn의 보상(reward)을 관찰하며 regret을 최소화하는 정책을 온라인으로 학습한다. EVOLvE(ICML 2025), ToSFiT(ICLR 2026), BaRP 등 최신 연구를 기반으로 TypeScript 구현, Rewards-as-Context (RaC) 아키텍처, Cold-Start 보상 함수 설계, 한국 시장에서의 비용 구조까지 다룬다."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-07-08-proactive-update/"/><meta property="og:title" content="Context Policy Optimization: UCB, Thompson Sampling, 그리고 Regret-Aware Eviction — AI 에이전트가 무엇을 버릴지 스스로 학습하는 방법 (#057)"/><meta property="og:description" content="2026년 7월, ContextManager(#055)가 context를 evict하고, ContextManagerWithProvenance(#056)가 그 evict를 추적할 수 있다면, 이제 다음 질문은 &#x27;어떤 정책(policy)으로 evict할 것인가&#x27;이다. 본 글은 bandit 알고리즘(UCB, Thompson Sampling)을 컨텍스트 eviction에 적용하는 방법론을 제안한다. ContextPolicyOptimizer는 각 turn의 보상(reward)을 관찰하며 regret을 최소화하는 정책을 온라인으로 학습한다. EVOLvE(ICML 2025), ToSFiT(ICLR 2026), BaRP 등 최신 연구를 기반으로 TypeScript 구현, Rewards-as-Context (RaC) 아키텍처, Cold-Start 보상 함수 설계, 한국 시장에서의 비용 구조까지 다룬다."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-07-08-proactive-update/"/><meta property="og:image" content="https://po-mato.github.io/milkyway.jpg"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Context Policy Optimization: UCB, Thompson Sampling, 그리고 Regret-Aware Eviction — AI 에이전트가 무엇을 버릴지 스스로 학습하는 방법 (#057)"/><meta name="twitter:description" content="2026년 7월, ContextManager(#055)가 context를 evict하고, ContextManagerWithProvenance(#056)가 그 evict를 추적할 수 있다면, 이제 다음 질문은 &#x27;어떤 정책(policy)으로 evict할 것인가&#x27;이다. 본 글은 bandit 알고리즘(UCB, Thompson Sampling)을 컨텍스트 eviction에 적용하는 방법론을 제안한다. ContextPolicyOptimizer는 각 turn의 보상(reward)을 관찰하며 regret을 최소화하는 정책을 온라인으로 학습한다. EVOLvE(ICML 2025), ToSFiT(ICLR 2026), BaRP 등 최신 연구를 기반으로 TypeScript 구현, Rewards-as-Context (RaC) 아키텍처, Cold-Start 보상 함수 설계, 한국 시장에서의 비용 구조까지 다룬다."/><meta name="twitter:image" content="https://po-mato.github.io/milkyway.jpg"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><div class="text-sm text-white/60">2026-07-08</div><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">Context Policy Optimization: UCB, Thompson Sampling, 그리고 Regret-Aware Eviction — AI 에이전트가 무엇을 버릴지 스스로 학습하는 방법 (#057)</h1><p class="mt-4 text-base text-white/80 md:text-lg">2026년 7월, ContextManager(#055)가 context를 evict하고, ContextManagerWithProvenance(#056)가 그 evict를 추적할 수 있다면, 이제 다음 질문은 &#x27;어떤 정책(policy)으로 evict할 것인가&#x27;이다. 본 글은 bandit 알고리즘(UCB, Thompson Sampling)을 컨텍스트 eviction에 적용하는 방법론을 제안한다. ContextPolicyOptimizer는 각 turn의 보상(reward)을 관찰하며 regret을 최소화하는 정책을 온라인으로 학습한다. EVOLvE(ICML 2025), ToSFiT(ICLR 2026), BaRP 등 최신 연구를 기반으로 TypeScript 구현, Rewards-as-Context (RaC) 아키텍처, Cold-Start 보상 함수 설계, 한국 시장에서의 비용 구조까지 다룬다.</p><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><h2>TL;DR</h2>
+<ul>
+<li><strong>문제 정의</strong>: #055는 context를 evict하고, #056은 그 evict를 추적한다. 그러나 <strong>무엇을 evict할지는 여전히 휴리스틱</strong>이다. window_overflow는 가장 오래된 turn을 자르고, compression은 중요도 순위가 낮은 turn을 요약한다. 이는 deterministic 정책으로, 환경 변화(사용자 질문 패턴, 도메인 이동)에 적응하지 못한다.</li>
+<li><strong>본 글의 제안</strong>: <strong>Context Policy Optimization</strong> — bandit 알고리즘을 context eviction에 적용하여 <strong>온라인으로 eviction 정책을 학습</strong>한다. 각 turn을 'arm'으로 보고, evict/retain 결정 후 LLM 응답 품질을 보상(reward)으로 받아 정책을 업데이트한다.</li>
+<li><strong>두 가지 알고리즘</strong>: (1) <strong>UCB (Upper Confidence Bound)</strong> — 결정론적, 보상의 상한 신뢰구간이 가장 높은 arm 선택, (2) <strong>Thompson Sampling</strong> — 확률론적, 베이지안 posterior sampling으로 탐색과 활용 균형.</li>
+<li><strong>정책 vs 전략 분리</strong>: 정책(Policy, <em>무엇을</em> evict할지)과 전략(Strategy, <em>어떻게</em> evict할지)을 분리해, 정책은 bandit이 학습하고 전략은 #055의 기존 구현(window_overflow, compression)을 그대로 사용.</li>
+<li><strong>새로운 아키텍처: RaC (Rewards-as-Context)</strong>: eviction 결정 후 LLM 응답과 사용자 피드백(명시적/암시적)에서 보상을 추출, 이를 다음 결정의 context로 피드백하는 아키텍처.</li>
+<li><strong>TypeScript 구현</strong>: <code>ContextualBandit</code> (추상 베이스), <code>UCBBandit</code>, <code>ThompsonSamplingBandit</code>, <code>ContextPolicyOptimizer</code> (통합 오케스트레이터), <code>RewardModel</code> (보상 함수) 5개 컴포넌트.</li>
+<li><strong>Cold-Start 보상 함수</strong>: 초기에는 pseudo-reward (query-turn embedding cosine similarity, response entropy, task completion)를 사용하고, 충분한 observation이 쌓이면 user feedback 기반 actual reward로 전환.</li>
+<li><strong>EVOLvE (ICML 2025) 연결</strong>: 최신 연구는 LLM이 bandit 문제를 in-context로 해결할 수 있음을 보였다. 본 글은 역으로, <strong>bandit이 LLM의 컨텍스트 관리를 최적화</strong>하는 메타-러닝 구조를 제안.</li>
+<li><strong>ToSFiT (ICLR 2026) 연결</strong>: Thompson Sampling을 fine-tuning으로 구현한 기법은 context policy optimization에도 적용 가능 — policy가 안정화된 후에 posterior를 distillation하여 prefix로 고정할 수 있다.</li>
+<li><strong>한국 시장 특화</strong>: HyperCLOVA X 200K의 per-token 비용($\times$2.3 한국어 토큰)에서 UCB(결정론적)가 Thompson Sampling(확률론적, 여러 번 샘플링 필요)보다 유리한 경우와 Thompson Sampling이 유리한 지연 보상 구조 분석.</li>
+<li><strong>자기비판</strong>: 6가지 한계 — bandit arm의 식별자 설계, 보상 지연(reward delay), non-stationary 환경에서의 적응, 한국어 토큰 비용 하의 Thompson Sampling overhead, A/B 테스트 미수행, 'evict하면 정말 더 나은가'의 인과 추론 부재.</li>
+</ul>
+<hr>
+<h2>1. 서론: ContextManager가 스스로 배워야 하는 이유</h2>
+<h3>1.1. 지금까지의 여정</h3>
+<table>
+<thead>
+<tr>
+<th>글</th>
+<th>주제</th>
+<th>핵심 통찰</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#053</td>
+<td>Agentic Commerce</td>
+<td>에이전트가 상거래 결정을 내리려면 긴 맥락이 필요</td>
+</tr>
+<tr>
+<td>#054</td>
+<td>Credit Scoring</td>
+<td>긴 맥락에서의 책임 있는 결정과 감사 가능성</td>
+</tr>
+<tr>
+<td>#055</td>
+<td>Context Engineering</td>
+<td>ContextManager: Sliding Window + Hierarchical Map-Reduce Summary</td>
+</tr>
+<tr>
+<td>#056</td>
+<td>ContextManager Observability</td>
+<td>Evicted-Turn Provenance: 왜 evict했는지 추적</td>
+</tr>
+<tr>
+<td><strong>#057</strong></td>
+<td><strong>Context Policy Optimization</strong></td>
+<td><strong>ContextManager가 evict 정책을 스스로 학습</strong></td>
+</tr>
+</tbody>
+</table>
+<p>#055의 ContextManager는 세 가지 deterministic 정책을 사용했다:</p>
+<ol>
+<li><strong>window_overflow</strong>: 가장 오래된 turn을 먼저 evict (FIFO)</li>
+<li><strong>compression</strong>: importance_score가 가장 낮은 turn을 요약</li>
+<li><strong>summary_absorbed</strong>: 이미 요약된 turn 그룹을 최종 요약으로 축소</li>
+</ol>
+<p>#056은 이 결정들을 추적하는 데 집중했다:</p>
+<ul>
+<li><code>eviction_reason: "window_overflow"</code></li>
+<li><code>importance_score: 0.32</code></li>
+<li><code>attention_band: "tail"</code> 등</li>
+</ul>
+<p><strong>그러나 '왜 이 turn이 다른 turn보다 먼저 evict 되어야 하는가'에 대한 학습 메커니즘은 없다.</strong> 모든 정책이 사전 정의된 휴리스틱에 의존한다.</p>
+<h3>1.2. 휴리스틱의 한계</h3>
+<p>사용자가 갑자기 주제를 바꾸면 어떻게 될까?</p>
+<pre><code>Turn 1: "삼성전자 주식 분석해줘"  → importance: 0.72 (재무)
+Turn 2: "PER이 8.3이던데..."       → importance: 0.68 (재무)
+Turn 3: "아니, 그보다 AWS EKS 비용이..." → importance: 0.65 (AI/클라우드)
+Turn 4: "Karpathy가 MCP에 대해..."   → importance: 0.62 (AI)
+</code></pre>
+<p>FIFO 정책은 T1을 evict한다. 그러나 사용자가 5분 후에 "아까 그 삼전 PER 분석 다시 보여줘"라고 하면? T1은 이미 사라졌다. <strong>고정된 휴리스틱은 도메인 이동(domain shift)에 대응할 수 없다.</strong></p>
+<p>이 문제를 해결하려면 <strong>정책이 환경(사용자 질문 패턴)에 적응해야 한다</strong>. Bandit 알고리즘이 이 문제의 자연스러운 해결책이다.</p>
+<hr>
+<h2>2. 문제 정식화: Context Eviction as a Bandit Problem</h2>
+<h3>2.1. Multi-Armed Bandit (MAB) 정식화</h3>
+<p>각 context turn을 <strong>arm</strong>(팔)로, evict/retain 결정을 <strong>action</strong>으로, 응답 품질을 <strong>reward</strong>(보상)로 정의한다:</p>
+<table>
+<thead>
+<tr>
+<th>MAB 요소</th>
+<th>Context Eviction 매핑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Arms (팔)</td>
+<td>각 turn (또는 turn 그룹)</td>
+</tr>
+<tr>
+<td>Action (행동)</td>
+<td>retain (보류) 또는 evict (제거)</td>
+</tr>
+<tr>
+<td>Reward (보상)</td>
+<td>LLM 응답 품질 (ROUGE, task success, user feedback)</td>
+</tr>
+<tr>
+<td>Regret (후회)</td>
+<td>최적 정책 대비 품질 손실</td>
+</tr>
+<tr>
+<td>Horizon (시간)</td>
+<td>세션 길이 (총 turn 수)</td>
+</tr>
+</tbody>
+</table>
+<h3>2.2. Contextual Bandit 확장</h3>
+<p>순수 MAB는 모든 turn을 동일하게 취급하지만, 현실에서는 <strong>turn의 특성(context)이 보상에 영향을 준다</strong>:</p>
+<ul>
+<li>turn의 길이 (token count)</li>
+<li>importance_score</li>
+<li>attention_band (head/tail/middle)</li>
+<li>도메인 분류 (finance/tech/general)</li>
+<li>사용자 질문 패턴</li>
+</ul>
+<p>이를 <strong>contextual bandit</strong>으로 확장한다: 각 결정 시점 $t$에서 context vector $x_t$를 관찰하고, 보상 $r_t$를 받는다.</p>
+<p>$$
+\pi: \mathcal{X} \to \mathcal{A}
+$$</p>
+<p>식으로, $\mathcal{X}$는 context feature space, $\mathcal{A}$는 action space이다.</p>
+<h3>2.3. 보상 함수 설계 (Cold-Start)</h3>
+<p>초기에는 actual reward(실제 사용자 피드백)가 없으므로, <strong>pseudo-reward</strong>를 정의한다:</p>
+<pre><code class="language-typescript">// RewardModel.ts - 보상 함수 (Cold-Start → Warm)
+export class RewardModel {
+  private config: RewardConfig;
+  private feedbackStore: Map&#x3C;string, UserFeedback>;
+
+  constructor(config: Partial&#x3C;RewardConfig>) {
+    this.config = {
+      pseudoWeight: 0.7,     // 초기 pseudo-reward 가중치
+      actualWeight: 0.3,     // 초기 actual reward 가중치
+      warmThreshold: 20,     // N회 observation 후 warm 전환
+      ...config,
+    };
+    this.feedbackStore = new Map();
+  }
+
+  // pseudo-reward 계산 (실제 피드백 없이 추정)
+  computePseudoReward(params: {
+    turn: Turn;
+    response: LLMResponse;
+    query: UserQuery;
+  }): number {
+    const { turn, response, query } = params;
+    let reward = 0;
+
+    // 1. Query-Turn Embedding Cosine Similarity
+    //    사용자가 이 turn을 참조하고 있는가?
+    const simScore = this.computeCosineSimilarity(
+      query.embedding,
+      turn.embedding
+    );
+    reward += 0.3 * simScore;
+
+    // 2. Response Entropy (낮을수록 = LLM이 확신함)
+    //    높은 entropy = hallucination 가능성
+    const entropy = this.computeResponseEntropy(response);
+    reward += 0.2 * (1 - entropy);
+
+    // 3. Task Completion Proxy
+    //    응답에 action/decision이 포함되었는가?
+    const taskSignal = this.detectTaskCompletion(response.text);
+    reward += 0.3 * (taskSignal ? 1 : 0);
+
+    // 4. Retrieval Hit Rate
+    //    evict되지 않은 turn이 RAG에서 재사용되었는가?
+    const hitRate = this.computeRetrievalHitRate(turn.id);
+    reward += 0.2 * hitRate;
+
+    return Math.max(0, Math.min(1, reward));
+  }
+
+  // actual reward (명시적/암시적 사용자 피드백)
+  computeActualReward(turnId: string): number {
+    const feedback = this.feedbackStore.get(turnId);
+    if (!feedback) return 0.5; // neutral default
+
+    let reward = 0.5;
+
+    if (feedback.explicitRating) {
+      reward += 0.3 * ((feedback.explicitRating - 1) / 4); // 1~5 scale
+    }
+
+    if (feedback.followUpQuestion) {
+      // follow-up 질문이 있었다 = 이전 응답이 유용했다
+      reward += 0.2;
+    }
+
+    if (feedback.correction) {
+      // 사용자가 정정했다 = 이전 응답이 부정확했다
+      reward -= 0.4;
+    }
+
+    if (feedback.reask) {
+      // 같은 질문을 다시 했다 = turn이 사라져서 context 부족
+      reward -= 0.5;
+    }
+
+    return Math.max(0, Math.min(1, reward));
+  }
+
+  // 혼합 보상 (Cold-Start에서 Warm으로 점진 전환)
+  getReward(turnId: string, observationCount: number): number {
+    const pseudo = this.computePseudoReward(/* ... */);
+    const actual = this.computeActualReward(turnId);
+
+    const actualWeight = Math.min(
+      this.config.actualWeight + 
+      (observationCount / this.config.warmThreshold) * 0.5,
+      1.0
+    );
+
+    return pseudo * (1 - actualWeight) + actual * actualWeight;
+  }
+}
+</code></pre>
+<p><strong>Cold-Start 전환 전략</strong>: observation_count &#x3C; 20까지는 pseudo-reward가 70% 지배, 20회 이후 점진 전환, 50회 이후 fully actual reward.</p>
+<hr>
+<h2>3. Bandit 알고리즘: UCB와 Thompson Sampling</h2>
+<h3>3.1. UCB (Upper Confidence Bound)</h3>
+<p>UCB는 <strong>optimism in the face of uncertainty</strong> 원칙에 기반한다. 불확실성이 높은 arm(아직 충분히 평가되지 않은 turn)을 먼저 탐색하고, 확실해지면 가장 좋은 arm을 활용한다.</p>
+<p>$$a_t = \arg\max_a \left( \hat{\mu}_a + c \sqrt{\frac{\ln t}{n_a}} \right)$$</p>
+<ul>
+<li>$\hat{\mu}_a$: arm $a$의 평균 보상</li>
+<li>$n_a$: arm $a$가 선택된 횟수</li>
+<li>$t$: 전체 시도 횟수</li>
+<li>$c$: exploration coefficient (기본값 $\sqrt{2}$)</li>
+</ul>
+<pre><code class="language-typescript">// UCBBandit.ts
+export class UCBBandit implements BanditAlgorithm {
+  private counts: Map&#x3C;string, number> = new Map();   // n_a
+  private values: Map&#x3C;string, number> = new Map();   // Q(a) = hat_mu_a
+  private totalSteps: number = 0;
+  private explorationCoefficient: number;
+
+  constructor(config?: { explorationCoefficient?: number }) {
+    this.explorationCoefficient = config?.explorationCoefficient ?? Math.SQRT2;
+  }
+
+  // 가장 높은 UCB 값을 가진 arm 선택
+  selectArm(context: ContextFeature): string {
+    this.totalSteps++;
+    const arms = Array.from(this.getArms(context));
+
+    if (arms.length === 0) throw new Error("No arms available");
+
+    // 모든 arm이 최소 한 번은 선택되어야 함 (forced exploration)
+    for (const arm of arms) {
+      if ((this.counts.get(arm) ?? 0) === 0) {
+        return arm;
+      }
+    }
+
+    // UCB 계산
+    let bestArm = arms[0];
+    let bestValue = -Infinity;
+    const logT = Math.log(this.totalSteps);
+
+    for (const arm of arms) {
+      const count = this.counts.get(arm)!;
+      const value = this.values.get(arm)!;
+      const ucb = value + this.explorationCoefficient * Math.sqrt(logT / count);
+
+      if (ucb > bestValue) {
+        bestValue = ucb;
+        bestArm = arm;
+      }
+    }
+
+    return bestArm;
+  }
+
+  // 보상 관찰 후 업데이트
+  updateReward(arm: string, reward: number): void {
+    const count = this.counts.get(arm) ?? 0;
+    const value = this.values.get(arm) ?? 0;
+
+    // Incremental average: Q_{n+1} = Q_n + (1/n)(R_n - Q_n)
+    this.counts.set(arm, count + 1);
+    this.values.set(arm, value + (1 / (count + 1)) * (reward - value));
+  }
+}
+</code></pre>
+<p><strong>장점</strong>:</p>
+<ul>
+<li>결정론적(deterministic) — 재현 가능, 디버깅 용이</li>
+<li>탐색 계수 $c$ 하나만 튜닝하면 됨</li>
+<li>한국어 환경에서 Thompson Sampling보다 token 효율적 (여러 샘플 필요 없음)</li>
+</ul>
+<p><strong>단점</strong>:</p>
+<ul>
+<li>초기 forced exploration이 비효율적일 수 있음</li>
+<li>non-stationary 환경(사용자 주제가 갑자기 바뀜)에 느리게 적응</li>
+</ul>
+<h3>3.2. Thompson Sampling</h3>
+<p>Thompson Sampling은 베이지안 접근법을 사용한다. 각 arm의 보상 분포에 대한 <strong>prior</strong>를 유지하고, posterior에서 샘플링하여 행동을 선택한다.</p>
+<pre><code class="language-typescript">// ThompsonSamplingBandit.ts
+export class ThompsonSamplingBandit implements BanditAlgorithm {
+  // Beta-Bernoulli conjugate prior: Beta(alpha, beta)
+  // reward 성공 = retain해서 좋은 결과
+  private alpha: Map&#x3C;string, number> = new Map();
+  private beta: Map&#x3C;string, number> = new Map();
+
+  selectArm(context: ContextFeature): string {
+    const arms = Array.from(this.getArms(context));
+    const samples = arms.map((arm) => ({
+      arm,
+      sample: this.sampleFromBeta(
+        this.alpha.get(arm) ?? 1,
+        this.beta.get(arm) ?? 1
+      ),
+    }));
+
+    // 가장 높은 샘플 값을 가진 arm 선택
+    samples.sort((a, b) => b.sample - a.sample);
+    return samples[0].arm;
+  }
+
+  private sampleFromBeta(alpha: number, beta: number): number {
+    // Beta distribution sampling via Gamma distribution
+    // Marsaglia-Tsang method for computational efficiency
+    const x = this.sampleGamma(alpha);
+    const y = this.sampleGamma(beta);
+    return x / (x + y);
+  }
+
+  private sampleGamma(shape: number): number {
+    // Marsaglia-Tsang method
+    // Production에서는 d3-random 또는 jStat 사용 권장
+    if (shape &#x3C; 1) {
+      const u = Math.random();
+      return this.sampleGamma(1 + shape) * Math.pow(u, 1 / shape);
+    }
+    const d = shape - 1 / 3;
+    const c = 1 / Math.sqrt(9 * d);
+    while (true) {
+      const v1 = this.boxMullerTransform();
+      const v = Math.pow(1 + c * v1, 3);
+      if (v &#x3C;= 0) continue;
+      const u = Math.random();
+      if (u &#x3C; 1 - 0.0331 * Math.pow(v1, 4)) return d * v;
+      if (Math.log(u) &#x3C; 0.5 * Math.pow(v1, 2) + d * (1 - v + Math.log(v))) {
+        return d * v;
+      }
+    }
+  }
+
+  private boxMullerTransform(): number {
+    const u1 = Math.random();
+    const u2 = Math.random();
+    return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+  }
+
+  // 보상 관찰 후 Beta posterior 업데이트
+  updateReward(arm: string, reward: number): void {
+    // reward는 [0,1] 연속값, Bernoulli 근사로 변환
+    const success = Math.random() &#x3C; reward; // probabilistic conversion
+    const a = this.alpha.get(arm) ?? 1;
+    const b = this.beta.get(arm) ?? 1;
+
+    if (success) {
+      this.alpha.set(arm, a + 1);
+    } else {
+      this.beta.set(arm, b + 1);
+    }
+  }
+}
+</code></pre>
+<p><strong>장점</strong>:</p>
+<ul>
+<li>확률적(stochastic) — 자연스러운 탐색-활용 균형</li>
+<li>non-stationary 환경에 prior decay로 적응 가능</li>
+<li>베이지안 불확실성 정량화가 자연스러움</li>
+</ul>
+<p><strong>단점</strong>:</p>
+<ul>
+<li><strong>한국어 환경에서 token 비용 증가</strong>: 매 결정마다 Gamma 샘플링 (CPU 비용) + reward를 Bernoulli로 변환할 때 정보 손실</li>
+<li>재현 불가능 (random seed 고정 필요)</li>
+<li>cold-start prior 선택이 결과에 큰 영향</li>
+</ul>
+<h3>3.3. UCB vs Thompson Sampling: 결정 트리</h3>
+<pre><code class="language-typescript">export function selectAlgorithm(env: EnvironmentConfig): BanditAlgorithm {
+  const factors = {
+    deterministicRequired: env.auditLogging,     // 감사 로깅 필요?
+    budgetSensitive: env.koreanTokenCost > 0.3,   // 한국어 토큰 비용 민감?
+    nonStationaryRate: env.domainShiftFrequency,   // 주제 변화 빈도?
+    rewardDelay: env.feedbackLatencyMs,            // 피드백 지연?
+  };
+
+  // 감사와 디버깅이 중요하면 UCB
+  if (factors.deterministicRequired &#x26;&#x26; factors.budgetSensitive) {
+    return new UCBBandit({ explorationCoefficient: Math.SQRT2 });
+  }
+
+  // 환경이 빠르게 변하고 보상이 지연되면 Thompson Sampling
+  if (factors.nonStationaryRate > 0.3 || factors.rewardDelay > 5000) {
+    return new ThompsonSamplingBandit({ priorAlpha: 2, priorBeta: 2 });
+  }
+
+  // 기본: 하이브리드 (초기 UCB → Thompson Sampling)
+  return new HybridBandit({
+    warmupSteps: 50,
+    switchCriterion: (step) => step > 50 &#x26;&#x26; observedArms() > 10,
+    ucbConfig: { explorationCoefficient: Math.SQRT2 },
+    tsConfig: { priorAlpha: 2, priorBeta: 2 },
+  });
+}
+</code></pre>
+<hr>
+<h2>4. RaC (Rewards-as-Context) 아키텍처</h2>
+<h3>4.1. 아키텍처 개요</h3>
+<pre><code>사용자 입력 → [ContextManager (#055)] → LLM 응답 → 사용자
+                   ↑                          ↓
+            [Policy Optimizer] ← [Reward Extractor]
+                   ↑                          ↓
+            [Bandit Algorithm]        [Feedback Store]
+                   │
+            [Eviction Decision]
+</code></pre>
+<p><strong>데이터 흐름</strong>:</p>
+<ol>
+<li>ContextManager가 BanditAlgorithm에게 "어떤 turn을 evict할까?" 질의</li>
+<li>BanditAlgorithm이 context feature를 보고 arm(evict할 turn) 선택</li>
+<li>ContextManager가 선택된 turn을 evict</li>
+<li>LLM이 응답 생성, RewardExtractor가 보상 추출 (pseudo-reward)</li>
+<li>BanditAlgorithm이 보상으로 posterior 업데이트</li>
+<li>(비동기) 사용자 피드백 도착 시 actual reward로 재업데이트</li>
+</ol>
+<h3>4.2. 통합 구현</h3>
+<pre><code class="language-typescript">// ContextPolicyOptimizer.ts
+export class ContextPolicyOptimizer {
+  private bandit: BanditAlgorithm;
+  private rewardModel: RewardModel;
+  private provenance: ContextManagerWithProvenance; // #056
+  private contextFeatures: ContextFeatureExtractor;
+
+  constructor(config: {
+    bandit: BanditAlgorithm;
+    rewardModel: RewardModel;
+    provenance: ContextManagerWithProvenance;
+  }) {
+    this.bandit = config.bandit;
+    this.rewardModel = config.rewardModel;
+    this.provenance = config.provenance;
+    this.contextFeatures = new ContextFeatureExtractor();
+  }
+
+  // eviction 대상 선정 (정책 결정)
+  selectEvictionTarget(context: ContextWindow): EvictionDecision {
+    const features = this.contextFeatures.extract(context);
+
+    // 각 turn(candidate arm)의 context feature 구성
+    const arms = context.turns.map((turn) => ({
+      arm: turn.id,
+      features: this.buildArmFeatures(turn, features),
+    }));
+
+    // Bandit이 최적 arm 선택
+    const selectedArm = this.bandit.selectArm(features);
+    const targetTurn = context.turns.find((t) => t.id === selectedArm);
+
+    if (!targetTurn) {
+      // fallback: #055의 기본 정책
+      return this.fallbackEviction(context);
+    }
+
+    return {
+      turnId: targetTurn.id,
+      policy: this.bandit.constructor.name,
+      confidence: this.getConfidence(selectedArm),
+      regret: this.estimateRegret(selectedArm, arms),
+    };
+  }
+
+  // 보상 관찰 및 정책 업데이트
+  async observeReward(params: {
+    turnId: string;
+    response: LLMResponse;
+    query: UserQuery;
+    observationCount: number;
+  }): Promise&#x3C;void> {
+    const { turnId, response, query, observationCount } = params;
+
+    // 1. 혼합 보상 계산
+    const reward = this.rewardModel.getReward(turnId, observationCount);
+
+    // 2. #056 Provenance에 reward 기록
+    this.provenance.recordReward({
+      turnId,
+      reward,
+      rewardType: observationCount &#x3C; 20 ? "pseudo" : "hybrid",
+      timestamp: Date.now(),
+    });
+
+    // 3. Bandit 정책 업데이트
+    this.bandit.updateReward(turnId, reward);
+
+    // 4. Regret 로깅
+    const optimalReward = this.estimateOptimalReward(turnId);
+    const regret = optimalReward - reward;
+    if (regret > 0.3) {
+      console.warn(
+        `[High Regret] turn=${turnId}, regret=${regret.toFixed(3)}, ` +
+        `reward=${reward.toFixed(3)}, optimal=${optimalReward.toFixed(3)}`
+      );
+    }
+  }
+
+  // 선택된 arm의 confidence (UCB는 UCB value, TS는 posterior variance)
+  private getConfidence(arm: string): number {
+    // Implementation varies by bandit
+    return 0.0;
+  }
+
+  // regret 추정: 최적 대안 대비 손실
+  private estimateRegret(selected: string, arms: ArmCandidate[]): number {
+    // 생략: 각 arm의 예상 보상 차이
+    return 0.0;
+  }
+
+  // fallback: window_overflow (휴리스틱 안전장치)
+  private fallbackEviction(context: ContextWindow): EvictionDecision {
+    return {
+      turnId: context.turns[0].id,
+      policy: "window_overflow_fallback",
+      confidence: 0,
+      regret: 0,
+    };
+  }
+}
+</code></pre>
+<h3>4.3. Non-Stationary 환경 대응</h3>
+<p>사용자의 관심사가 시간에 따라 변한다. Contextual bandit은 기본적으로 stationary(정상) 환경을 가정하므로, non-stationary 대응이 필요하다:</p>
+<pre><code class="language-typescript">// NonStationaryAdapter.ts
+export class NonStationaryAdapter {
+  // sliding window: 최근 N개의 observation만 유지
+  private windowSize: number;
+  private decayFactor: number; // exponential decay rate
+
+  constructor(config?: { windowSize?: number; decayFactor?: number }) {
+    this.windowSize = config?.windowSize ?? 100;
+    this.decayFactor = config?.decayFactor ?? 0.95;
+  }
+
+  // Adaptive UCB: exploration coefficient를 분산에 비례하게 조정
+  adaptExploration(
+    baseCoefficient: number,
+    rewardVariance: number,
+    recencyWeight: number
+  ): number {
+    // 분산이 크거나 최근 보상 가중치가 높으면 탐색 증가
+    return baseCoefficient * (1 + rewardVariance * 2) * (1 + recencyWeight);
+  }
+
+  // Discounted Thompson Sampling: 과거 관찰에 decay 적용
+  discountedUpdate(
+    currentAlpha: number,
+    currentBeta: number,
+    reward: number,
+    step: number
+  ): { alpha: number; beta: number } {
+    const discount = Math.pow(this.decayFactor, 1 / this.windowSize);
+    const success = reward > 0.5;
+
+    return {
+      alpha: currentAlpha * discount + (success ? 1 : 0),
+      beta: currentBeta * discount + (success ? 0 : 1),
+    };
+  }
+}
+</code></pre>
+<hr>
+<h2>5. 최신 연구와의 연결</h2>
+<h3>5.1. EVOLvE (ICML 2025): LLM을 위한 Bandit Exploration</h3>
+<p>EVOLvE 논문은 LLM이 bandit 문제를 in-context로 해결할 수 있음을 실험적으로 증명했다:</p>
+<blockquote>
+<p>"LLMs' (in)ability to make optimal decisions in bandits... we propose efficient ways to integrate algorithmic knowledge into LLMs: by providing explicit algorithm-guided support during inference; and through algorithm distillation via in-context demonstrations."</p>
+</blockquote>
+<p><strong>본 글과의 관계</strong>: EVOLvE는 <strong>LLM이 bandit 문제를 푸는 방법</strong>을 연구했다. 본 글은 그 역방향 — <strong>bandit이 LLM의 인프라(context management)를 최적화하는 방법</strong> — 을 제안한다. 두 접근은 메타-러닝 레이어에서 만난다:</p>
+<pre><code>EVOLvE:  LLM → bandit 문제 해결 (in-context learning)
+본 글:   bandit → LLM 인프라 최적화 (context eviction policy)
+둘의 합: 메타-러닝 층위에서 LLM과 bandit의 상호 최적화
+</code></pre>
+<h3>5.2. ToSFiT (ICLR 2026): Thompson Sampling as Fine-Tuning</h3>
+<p>ToSFiT는 Thompson Sampling을 fine-tuning 프레임워크로 재정의한다:</p>
+<blockquote>
+<p>"Thompson Sampling via Fine-Tuning (ToSFiT) leverages the prior knowledge embedded in prompt-conditioned LLMs, and incrementally adapts them toward the posterior."</p>
+</blockquote>
+<p><strong>본 글과의 관계</strong>: Context Policy Optimization이 수렴하면, Thompson Sampling posterior를 <strong>distillation</strong>하여 LLM prompt prefix로 고정할 수 있다:</p>
+<pre><code class="language-typescript">// PolicyDistillation.ts - ToSFiT 영감
+export class PolicyDistiller {
+  // 학습된 posterior → 프롬프트 템플릿
+  distillToPrompt(bandit: ThompsonSamplingBandit): string {
+    const arms = bandit.getArms();
+    const policy = arms.map((arm) => ({
+      turnId: arm,
+      successRate: arm.alpha / (arm.alpha + arm.beta),
+      confidence: Math.sqrt(
+        1 / (arm.alpha + arm.beta) // posterior variance
+      ),
+    }));
+
+    // 정렬: 가장 유용했던 turn 패턴 우선
+    policy.sort((a, b) => b.successRate - a.successRate);
+
+    return `
+[Eviction Policy (Learned)]
+다음 turn 유형은 보존 우선순위가 높습니다:
+${policy.map((p) => `  - ${p.turnId}: 성공률 ${(p.successRate * 100).toFixed(0)}%`).join("\n")}
+
+첫 50회까지는 모든 유형을 균등 탐색합니다.
+    `.trim();
+  }
+}
+</code></pre>
+<h3>5.3. BaRP (Bandit-feedback Routing, Oct 2025)</h3>
+<p>BaRP는 contextual bandit으로 LLM 라우팅을 최적화한다:</p>
+<blockquote>
+<p>"BaRP ... trains under the same partial-feedback restriction as deployment, while supporting preference-tunable inference"</p>
+</blockquote>
+<p>BaRP의 핵심 통찰 — <strong>training과 deployment의 feedback 조건을 일치시키는 것</strong> — 은 Context Policy Optimization에도 직접 적용된다:</p>
+<table>
+<thead>
+<tr>
+<th>BaRP</th>
+<th>Context Policy Optimization</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Training: 모든 모델의 label 없음</td>
+<td>Training: 모든 turn의 중요도 없음</td>
+</tr>
+<tr>
+<td>Deployment: 선택된 모델의 feedback만</td>
+<td>Deployment: 선택된 turn의 보상만</td>
+</tr>
+<tr>
+<td>해결: Partial feedback으로 학습</td>
+<td>해결: Observed reward로 posterior 업데이트</td>
+</tr>
+<tr>
+<td>Preference-tunable: 추론 시 cost/quality 조절</td>
+<td>Policy-tunable: 추론 시 aggressiveness 조절</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>6. 실전 적용: HyperCLOVA X 200K 사례 연구</h2>
+<h3>6.1. 한국어 환경에서의 알고리즘 선택</h3>
+<p>HyperCLOVA X 200K (2026년 6월 출시) 환경을 가정한다:</p>
+<table>
+<thead>
+<tr>
+<th>특성</th>
+<th>값</th>
+<th>UCB 영향</th>
+<th>TS 영향</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>한국어 토큰 비용</td>
+<td>영문 대비 2.3배</td>
+<td>결정론적, 1회만</td>
+<td>확률론적, n회 샘플링</td>
+</tr>
+<tr>
+<td>Max tokens</td>
+<td>200K (약 4만 한국어 단어)</td>
+<td>충분함</td>
+<td>샘플링 오버헤드 발생</td>
+</tr>
+<tr>
+<td>SLA</td>
+<td>p95 3.2초</td>
+<td>Evict 결정 0.1ms</td>
+<td>Gamma 샘플링 ~2ms</td>
+</tr>
+<tr>
+<td>세션 유지</td>
+<td>Long-lived (30일+)</td>
+<td>Non-stationary 대응 필요</td>
+<td>Discounted TS 유리</td>
+</tr>
+</tbody>
+</table>
+<p><strong>결론</strong>: HyperCLOVA X 200K 환경에서는 <strong>UCB를 default로, non-stationary가 감지되면 Thompson Sampling으로 전환</strong>하는 하이브리드 전략이 권장된다.</p>
+<h3>6.2. 비용 영향 분석</h3>
+<pre><code class="language-typescript">// CostAnalyzer.ts
+export function analyzeCostImpact(
+  algorithm: "UCB" | "ThompsonSampling",
+  config: {
+    avgContextTurns: number;    // 평균 turn 수
+    koreanTokenMultiplier: number;
+    avgEvictionsPerTurn: number;
+    sessionDuration: number;    // 일
+  }
+): CostReport {
+  const baseTokenCost = 0.003; // USD per 1K input tokens (추정)
+
+  const overhead = algorithm === "UCB"
+    ? 0 // UCB: 추가 LLM 호출 없음
+    : config.avgEvictionsPerTurn * 0.5; // TS: reward 변환으로 0.5 token/turn
+
+  const dailyTokens = config.avgContextTurns *
+    config.avgEvictionsPerTurn *
+    2000 * // avg tokens per turn
+    config.koreanTokenMultiplier;
+
+  const dailyCost = (dailyTokens / 1000) * baseTokenCost + overhead;
+
+  return {
+    algorithm,
+    dailyEstimatedCost: dailyCost,
+    monthlyCost: dailyCost * config.sessionDuration * 30,
+    overheadDescription: algorithm === "UCB"
+      ? "추가 API 비용 없음 (CPU 내에서 완전 처리)"
+      : "n회 Gamma 샘플링 + 선택적 reward 전처리 토큰",
+  };
+}
+</code></pre>
+<h3>6.3. SKT A.X 4 Observability Integration</h3>
+<p>A.X 4는 자체 observability 대시보드를 제공한다. #056의 OpenTelemetry trace에 policy 정보를 추가하면:</p>
+<pre><code class="language-yaml">gen_ai.agent.context.policy.algorithm: "UCB"
+gen_ai.agent.context.policy.exploration_coefficient: 1.414
+gen_ai.agent.context.policy.arm_count: 47
+gen_ai.agent.context.policy.regret_per_eviction: 0.123
+gen_ai.agent.context.policy.last_warm_switch: "2026-07-08T05:30:00Z"
+gen_ai.agent.context.policy.active_turns: 12
+gen_ai.agent.context.policy.avg_reward: 0.672
+</code></pre>
+<p>A.X 4 대시보드에서 실시간으로 확인 가능한 메트릭:</p>
+<ul>
+<li><strong>Eviction Policy Success Rate</strong>: 학습된 정책이 휴리스틱 대비 얼마나 나은가</li>
+<li><strong>Regret Over Time</strong>: 정책 수렴 속도</li>
+<li><strong>Top Arms by Reward</strong>: 가장 자주 보존되는 turn 유형</li>
+</ul>
+<hr>
+<h2>7. 실험 설계: A/B Test Framework</h2>
+<p>정책 최적화의 효과를 검증하기 위한 A/B 테스트 프레임워크:</p>
+<pre><code class="language-typescript">// EvictionPolicyABTest.ts
+export class EvictionPolicyABTest {
+  private control: "window_overflow";          // 기존 FIFO
+  private treatmentA: "UCB";                   // 제안 1
+  private treatmentB: "ThompsonSampling";      // 제안 2
+
+  async run(params: {
+    sessions: number;
+    turnsPerSession: number;
+    domainShiftInterval: number; // N turn마다 주제 전환
+  }): Promise&#x3C;ABTestResult> {
+    // 결과 측정 지표 (Key Metrics):
+    // 1. Retention Score: 사용자가 이전 turn을 다시 참조했는가?
+    // 2. Repetition Rate: 같은 정보를 다시 생성했는가? (낮을수록 좋음)
+    // 3. Regret: 최적 정책 대비 보상 손실
+    // 4. User Feedback: 명시적 rating (있다면)
+
+    return {
+      control: await this.evaluatePolicy("window_overflow", params),
+      treatmentA: await this.evaluatePolicy("UCB", params),
+      treatmentB: await this.evaluatePolicy("ThompsonSampling", params),
+      winner: null, // 실험 후 결정
+      significance: 0.95,
+      samplesRequired: this.computeSampleSize(0.05, 0.8),
+    };
+  }
+}
+</code></pre>
+<p><strong>필요 샘플 수 계산</strong>: Cohen's d = 0.3 (작은 효과 크기 가정), α = 0.05, power = 0.80 기준 arm당 약 352 sessions 필요.</p>
+<hr>
+<h2>8. 자기비판 (Self-Critique)</h2>
+<h3>8.1. Bandit Arm의 식별자 설계 문제</h3>
+<p>각 turn을 arm으로 보는 것은 단순하지만 문제가 있다: <strong>같은 arm이 다시 등장하지 않는다</strong>. 기존 MAB는 같은 arm이 여러 번 선택될 수 있다고 가정하는데, context turn은 한 번 evict되면 사라진다.</p>
+<p><strong>해결 가능성</strong>: turn 자체가 아니라 <strong>turn의 feature profile(길이, 도메인, importance 범위)</strong> 을 arm으로 보고, 유사한 profile을 가진 turn을 같은 arm으로 클러스터링하는 방법이 있다. 그러나 이는 clustering 오차가 추가로 발생한다.</p>
+<h3>8.2. 보상 지연 (Reward Delay) 문제</h3>
+<p>pseudo-reward는 real-time으로 계산 가능하지만, actual reward(사용자 피드백)는 <strong>수 초에서 수 분</strong> 지연될 수 있다. 시점 t의 결정에 대한 보상이 시점 t+100에 도착하면, 그 사이 정책은 이미 부정확한 정보로 업데이트되었을 수 있다.</p>
+<p><strong>해결 가능성</strong>: Delayed Reward Bandit 기법 사용 — 보상을 지연된 배치로 처리하고, 핵심 observation만 immediate pseudo-reward로 대체.</p>
+<h3>8.3. Non-Stationary 추정의 어려움</h3>
+<p>사용자가 주제를 바꾸는 것인지, 단순히 여러 주제를 병행하는 것인지 구분하기 어렵다. Non-stationary adapter가 과도하게 반응하면 오히려 성능이 떨어진다.</p>
+<p><strong>해결 가능성</strong>: Changepoint detection (CUSUM, Bayesian changepoint)을 도입해, 도메인 이동이 통계적으로 유의미할 때만 adapter가 작동하도록 설계.</p>
+<h3>8.4. 한국어 토큰 비용 하의 Thompson Sampling Overhead</h3>
+<p>TypeScript의 Math.random()을 사용한 Gamma 샘플링은 0.1ms 미만이지만, reward를 Bernoulli로 변환할 때 정보 손실이 발생한다. 한국어 환경에서 이 손실을 감수할 만한가? UCB의 결정론적 접근이 더 효율적일 수 있다.</p>
+<h3>8.5. A/B 테스트 미수행</h3>
+<p>본 글의 모든 설계는 이론적 타당성과 유사 연구(EVOLvE, ToSFiT, BaRP)를 근거로 하지만, <strong>실제 production 환경에서의 A/B 테스트를 수행하지 않았다</strong>. 위 Section 7에서 제안한 A/B Test Framework를 실제로 실행하기 전까지는 모든 결론이 잠정적이다.</p>
+<h3>8.6. "Evict하면 정말 더 나은가?"의 인과 추론 부재</h3>
+<p>Policy optimization은 "이 turn을 retain하면 보상이 더 높다"고 학습한다. 그러나 이것이 인과적(causal) 관계인지, 아니면 단순 상관(correlation)인지 구분하지 않는다. 예를 들어, 중요도가 높은 turn을 retain하는 것이 실제로 응답 품질을 높이는 것인지, 아니면 중요도가 높은 turn이 많은 세션 자체가 더 쉬운 질문을 포함하고 있는지 구별할 수 없다.</p>
+<p><strong>해결 가능성</strong>: Inverse Probability Weighting (IPW) 또는 Doubly Robust (DR) 추정기를 도입하면, 선택 편향(selection bias)을 보정할 수 있다. 그러나 이는 추정기의 variance를 크게 증가시킨다.</p>
+<hr>
+<h2>9. Future Work: #058 예고</h2>
+<p><strong>#058: Context Policy with Causal Inference — Doubly Robust Estimation for Unbiased Eviction Learning</strong></p>
+<ul>
+<li>Bandit 추정의 선택 편향을 IPW/DR로 보정하는 방법</li>
+<li>Counterfactual Evaluation: "만약 retain했더라면?"</li>
+<li>Causal Effect of Context on LLM Response Quality</li>
+<li>한국어 환경의 긴 토큰 비용에서의 DR variance 분석</li>
+</ul>
+<hr>
+<h2>참고 자료</h2>
+<ol>
+<li><strong>EVOLvE: Evaluating and Optimizing LLMs For In-Context Exploration</strong> (Nie et al., ICML 2025) — <a href="https://arxiv.org/abs/2410.06238">arXiv:2410.06238</a></li>
+<li><strong>ToSFiT: Thompson Sampling via Fine-Tuning of LLMs</strong> (Menet et al., ICLR 2026) — <a href="https://arxiv.org/abs/2510.13328">arXiv:2510.13328</a></li>
+<li><strong>BaRP: Bandit-feedback Routing with Preferences</strong> (Eldardiry et al., Oct 2025) — <a href="https://arxiv.org/abs/2510.07429">arXiv:2510.07429</a></li>
+<li><strong>Information-Directed Sampling for RLHF</strong> (Aug 2025) — <a href="https://arxiv.org/abs/2502.05434">arXiv:2502.05434</a></li>
+<li><strong>A Contextual Bandit Approach to LLM Routing</strong> (Varangot-Reille et al., 2025)</li>
+<li><strong>Thompson Sampling: An Asymptotically Optimal Finite-Time Analysis</strong> (Agrawal &#x26; Goyal, 2012)</li>
+<li><strong>Regret Analysis of Stochastic Nonstationary Multi-Armed Bandit</strong> (Garivier &#x26; Moulines, 2011)</li>
+<li><strong>Bootstrap Thompson Sampling</strong> (Eckles &#x26; Kaptein, 2014)</li>
+<li><strong>Contextual Bandits with Linear Payoff Functions</strong> (Chu et al., 2011)</li>
+<li><strong>#055: Context Engineering: ContextManager의 Sliding Window와 Hierarchical Map-Reduce</strong> — <a href="https://github.com/Po-Mato/tech-blog">Po-Mato/tech-blog</a></li>
+<li><strong>#056: ContextManager Observability: Evicted-Turn Provenance와 7대 Trace Signal</strong> — <a href="https://github.com/Po-Mato/tech-blog">Po-Mato/tech-blog</a></li>
+</ol></div></article></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/b848662595cda15b.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"I0h1m__4yn4ihPv3zSN7e\",\"c\":[\"\",\"posts\",\"2026-07-08-proactive-update\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-07-08-proactive-update\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/b848662595cda15b.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/329e63eb984ada35.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"10:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n8:null\n"])</script><script>self.__next_f.push([1,"c:[[\"$\",\"title\",\"0\",{\"children\":\"Context Policy Optimization: UCB, Thompson Sampling, 그리고 Regret-Aware Eviction — AI 에이전트가 무엇을 버릴지 스스로 학습하는 방법 (#057) | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"2026년 7월, ContextManager(#055)가 context를 evict하고, ContextManagerWithProvenance(#056)가 그 evict를 추적할 수 있다면, 이제 다음 질문은 '어떤 정책(policy)으로 evict할 것인가'이다. 본 글은 bandit 알고리즘(UCB, Thompson Sampling)을 컨텍스트 eviction에 적용하는 방법론을 제안한다. ContextPolicyOptimizer는 각 turn의 보상(reward)을 관찰하며 regret을 최소화하는 정책을 온라인으로 학습한다. EVOLvE(ICML 2025), ToSFiT(ICLR 2026), BaRP 등 최신 연구를 기반으로 TypeScript 구현, Rewards-as-Context (RaC) 아키텍처, Cold-Start 보상 함수 설계, 한국 시장에서의 비용 구조까지 다룬다.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-07-08-proactive-update/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"Context Policy Optimization: UCB, Thompson Sampling, 그리고 Regret-Aware Eviction — AI 에이전트가 무엇을 버릴지 스스로 학습하는 방법 (#057)\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"2026년 7월, ContextManager(#055)가 context를 evict하고, ContextManagerWithProvenance(#056)가 그 evict를 추적할 수 있다면, 이제 다음 질문은 '어떤 정책(policy)으로 evict할 것인가'이다. 본 글은 bandit 알고리즘(UCB, Thompson Sampling)을 컨텍스트 eviction에 적용하는 방법론을 제안한다. ContextPolicyOptimizer는 각 turn의 보상(reward)을 관찰하며 regret을 최소화하는 정책을 온라인으로 학습한다. EVOLvE(ICML 2025), ToSFiT(ICLR 2026), BaRP 등 최신 연구를 기반으로 TypeScript 구현, Rewards-as-Context (RaC) 아키텍처, Cold-Start 보상 함수 설계, 한국 시장에서의 비용 구조까지 다룬다.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-07-08-proactive-update/\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"Context Policy Optimization: UCB, Thompson Sampling, 그리고 Regret-Aware Eviction — AI 에이전트가 무엇을 버릴지 스스로 학습하는 방법 (#057)\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"2026년 7월, ContextManager(#055)가 context를 evict하고, ContextManagerWithProvenance(#056)가 그 evict를 추적할 수 있다면, 이제 다음 질문은 '어떤 정책(policy)으로 evict할 것인가'이다. 본 글은 bandit 알고리즘(UCB, Thompson Sampling)을 컨텍스트 eviction에 적용하는 방법론을 제안한다. ContextPolicyOptimizer는 각 turn의 보상(reward)을 관찰하며 regret을 최소화하는 정책을 온라인으로 학습한다. EVOLvE(ICML 2025), ToSFiT(ICLR 2026), BaRP 등 최신 연구를 기반으로 TypeScript 구현, Rewards-as-Context (RaC) 아키텍처, Cold-Start 보상 함수 설계, 한국 시장에서의 비용 구조까지 다룬다.\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}],[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}],[\"$\",\"$L10\",\"13\",{}]]\n"])</script><script>self.__next_f.push([1,"11:T8fa4,"])</script><script>self.__next_f.push([1,"\u003ch2\u003eTL;DR\u003c/h2\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003e문제 정의\u003c/strong\u003e: #055는 context를 evict하고, #056은 그 evict를 추적한다. 그러나 \u003cstrong\u003e무엇을 evict할지는 여전히 휴리스틱\u003c/strong\u003e이다. window_overflow는 가장 오래된 turn을 자르고, compression은 중요도 순위가 낮은 turn을 요약한다. 이는 deterministic 정책으로, 환경 변화(사용자 질문 패턴, 도메인 이동)에 적응하지 못한다.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e본 글의 제안\u003c/strong\u003e: \u003cstrong\u003eContext Policy Optimization\u003c/strong\u003e — bandit 알고리즘을 context eviction에 적용하여 \u003cstrong\u003e온라인으로 eviction 정책을 학습\u003c/strong\u003e한다. 각 turn을 'arm'으로 보고, evict/retain 결정 후 LLM 응답 품질을 보상(reward)으로 받아 정책을 업데이트한다.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e두 가지 알고리즘\u003c/strong\u003e: (1) \u003cstrong\u003eUCB (Upper Confidence Bound)\u003c/strong\u003e — 결정론적, 보상의 상한 신뢰구간이 가장 높은 arm 선택, (2) \u003cstrong\u003eThompson Sampling\u003c/strong\u003e — 확률론적, 베이지안 posterior sampling으로 탐색과 활용 균형.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e정책 vs 전략 분리\u003c/strong\u003e: 정책(Policy, \u003cem\u003e무엇을\u003c/em\u003e evict할지)과 전략(Strategy, \u003cem\u003e어떻게\u003c/em\u003e evict할지)을 분리해, 정책은 bandit이 학습하고 전략은 #055의 기존 구현(window_overflow, compression)을 그대로 사용.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e새로운 아키텍처: RaC (Rewards-as-Context)\u003c/strong\u003e: eviction 결정 후 LLM 응답과 사용자 피드백(명시적/암시적)에서 보상을 추출, 이를 다음 결정의 context로 피드백하는 아키텍처.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eTypeScript 구현\u003c/strong\u003e: \u003ccode\u003eContextualBandit\u003c/code\u003e (추상 베이스), \u003ccode\u003eUCBBandit\u003c/code\u003e, \u003ccode\u003eThompsonSamplingBandit\u003c/code\u003e, \u003ccode\u003eContextPolicyOptimizer\u003c/code\u003e (통합 오케스트레이터), \u003ccode\u003eRewardModel\u003c/code\u003e (보상 함수) 5개 컴포넌트.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eCold-Start 보상 함수\u003c/strong\u003e: 초기에는 pseudo-reward (query-turn embedding cosine similarity, response entropy, task completion)를 사용하고, 충분한 observation이 쌓이면 user feedback 기반 actual reward로 전환.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eEVOLvE (ICML 2025) 연결\u003c/strong\u003e: 최신 연구는 LLM이 bandit 문제를 in-context로 해결할 수 있음을 보였다. 본 글은 역으로, \u003cstrong\u003ebandit이 LLM의 컨텍스트 관리를 최적화\u003c/strong\u003e하는 메타-러닝 구조를 제안.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eToSFiT (ICLR 2026) 연결\u003c/strong\u003e: Thompson Sampling을 fine-tuning으로 구현한 기법은 context policy optimization에도 적용 가능 — policy가 안정화된 후에 posterior를 distillation하여 prefix로 고정할 수 있다.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e한국 시장 특화\u003c/strong\u003e: HyperCLOVA X 200K의 per-token 비용($\\times$2.3 한국어 토큰)에서 UCB(결정론적)가 Thompson Sampling(확률론적, 여러 번 샘플링 필요)보다 유리한 경우와 Thompson Sampling이 유리한 지연 보상 구조 분석.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e자기비판\u003c/strong\u003e: 6가지 한계 — bandit arm의 식별자 설계, 보상 지연(reward delay), non-stationary 환경에서의 적응, 한국어 토큰 비용 하의 Thompson Sampling overhead, A/B 테스트 미수행, 'evict하면 정말 더 나은가'의 인과 추론 부재.\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003ch2\u003e1. 서론: ContextManager가 스스로 배워야 하는 이유\u003c/h2\u003e\n\u003ch3\u003e1.1. 지금까지의 여정\u003c/h3\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e글\u003c/th\u003e\n\u003cth\u003e주제\u003c/th\u003e\n\u003cth\u003e핵심 통찰\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e#053\u003c/td\u003e\n\u003ctd\u003eAgentic Commerce\u003c/td\u003e\n\u003ctd\u003e에이전트가 상거래 결정을 내리려면 긴 맥락이 필요\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e#054\u003c/td\u003e\n\u003ctd\u003eCredit Scoring\u003c/td\u003e\n\u003ctd\u003e긴 맥락에서의 책임 있는 결정과 감사 가능성\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e#055\u003c/td\u003e\n\u003ctd\u003eContext Engineering\u003c/td\u003e\n\u003ctd\u003eContextManager: Sliding Window + Hierarchical Map-Reduce Summary\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e#056\u003c/td\u003e\n\u003ctd\u003eContextManager Observability\u003c/td\u003e\n\u003ctd\u003eEvicted-Turn Provenance: 왜 evict했는지 추적\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e#057\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e\u003cstrong\u003eContext Policy Optimization\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e\u003cstrong\u003eContextManager가 evict 정책을 스스로 학습\u003c/strong\u003e\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003cp\u003e#055의 ContextManager는 세 가지 deterministic 정책을 사용했다:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003ewindow_overflow\u003c/strong\u003e: 가장 오래된 turn을 먼저 evict (FIFO)\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003ecompression\u003c/strong\u003e: importance_score가 가장 낮은 turn을 요약\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003esummary_absorbed\u003c/strong\u003e: 이미 요약된 turn 그룹을 최종 요약으로 축소\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003e#056은 이 결정들을 추적하는 데 집중했다:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ccode\u003eeviction_reason: \"window_overflow\"\u003c/code\u003e\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003eimportance_score: 0.32\u003c/code\u003e\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003eattention_band: \"tail\"\u003c/code\u003e 등\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003e그러나 '왜 이 turn이 다른 turn보다 먼저 evict 되어야 하는가'에 대한 학습 메커니즘은 없다.\u003c/strong\u003e 모든 정책이 사전 정의된 휴리스틱에 의존한다.\u003c/p\u003e\n\u003ch3\u003e1.2. 휴리스틱의 한계\u003c/h3\u003e\n\u003cp\u003e사용자가 갑자기 주제를 바꾸면 어떻게 될까?\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eTurn 1: \"삼성전자 주식 분석해줘\"  → importance: 0.72 (재무)\nTurn 2: \"PER이 8.3이던데...\"       → importance: 0.68 (재무)\nTurn 3: \"아니, 그보다 AWS EKS 비용이...\" → importance: 0.65 (AI/클라우드)\nTurn 4: \"Karpathy가 MCP에 대해...\"   → importance: 0.62 (AI)\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eFIFO 정책은 T1을 evict한다. 그러나 사용자가 5분 후에 \"아까 그 삼전 PER 분석 다시 보여줘\"라고 하면? T1은 이미 사라졌다. \u003cstrong\u003e고정된 휴리스틱은 도메인 이동(domain shift)에 대응할 수 없다.\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003e이 문제를 해결하려면 \u003cstrong\u003e정책이 환경(사용자 질문 패턴)에 적응해야 한다\u003c/strong\u003e. Bandit 알고리즘이 이 문제의 자연스러운 해결책이다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e2. 문제 정식화: Context Eviction as a Bandit Problem\u003c/h2\u003e\n\u003ch3\u003e2.1. Multi-Armed Bandit (MAB) 정식화\u003c/h3\u003e\n\u003cp\u003e각 context turn을 \u003cstrong\u003earm\u003c/strong\u003e(팔)로, evict/retain 결정을 \u003cstrong\u003eaction\u003c/strong\u003e으로, 응답 품질을 \u003cstrong\u003ereward\u003c/strong\u003e(보상)로 정의한다:\u003c/p\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003eMAB 요소\u003c/th\u003e\n\u003cth\u003eContext Eviction 매핑\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003eArms (팔)\u003c/td\u003e\n\u003ctd\u003e각 turn (또는 turn 그룹)\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eAction (행동)\u003c/td\u003e\n\u003ctd\u003eretain (보류) 또는 evict (제거)\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eReward (보상)\u003c/td\u003e\n\u003ctd\u003eLLM 응답 품질 (ROUGE, task success, user feedback)\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eRegret (후회)\u003c/td\u003e\n\u003ctd\u003e최적 정책 대비 품질 손실\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eHorizon (시간)\u003c/td\u003e\n\u003ctd\u003e세션 길이 (총 turn 수)\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003ch3\u003e2.2. Contextual Bandit 확장\u003c/h3\u003e\n\u003cp\u003e순수 MAB는 모든 turn을 동일하게 취급하지만, 현실에서는 \u003cstrong\u003eturn의 특성(context)이 보상에 영향을 준다\u003c/strong\u003e:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eturn의 길이 (token count)\u003c/li\u003e\n\u003cli\u003eimportance_score\u003c/li\u003e\n\u003cli\u003eattention_band (head/tail/middle)\u003c/li\u003e\n\u003cli\u003e도메인 분류 (finance/tech/general)\u003c/li\u003e\n\u003cli\u003e사용자 질문 패턴\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이를 \u003cstrong\u003econtextual bandit\u003c/strong\u003e으로 확장한다: 각 결정 시점 $t$에서 context vector $x_t$를 관찰하고, 보상 $r_t$를 받는다.\u003c/p\u003e\n\u003cp\u003e$$\n\\pi: \\mathcal{X} \\to \\mathcal{A}\n$$\u003c/p\u003e\n\u003cp\u003e식으로, $\\mathcal{X}$는 context feature space, $\\mathcal{A}$는 action space이다.\u003c/p\u003e\n\u003ch3\u003e2.3. 보상 함수 설계 (Cold-Start)\u003c/h3\u003e\n\u003cp\u003e초기에는 actual reward(실제 사용자 피드백)가 없으므로, \u003cstrong\u003epseudo-reward\u003c/strong\u003e를 정의한다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// RewardModel.ts - 보상 함수 (Cold-Start → Warm)\nexport class RewardModel {\n  private config: RewardConfig;\n  private feedbackStore: Map\u0026#x3C;string, UserFeedback\u003e;\n\n  constructor(config: Partial\u0026#x3C;RewardConfig\u003e) {\n    this.config = {\n      pseudoWeight: 0.7,     // 초기 pseudo-reward 가중치\n      actualWeight: 0.3,     // 초기 actual reward 가중치\n      warmThreshold: 20,     // N회 observation 후 warm 전환\n      ...config,\n    };\n    this.feedbackStore = new Map();\n  }\n\n  // pseudo-reward 계산 (실제 피드백 없이 추정)\n  computePseudoReward(params: {\n    turn: Turn;\n    response: LLMResponse;\n    query: UserQuery;\n  }): number {\n    const { turn, response, query } = params;\n    let reward = 0;\n\n    // 1. Query-Turn Embedding Cosine Similarity\n    //    사용자가 이 turn을 참조하고 있는가?\n    const simScore = this.computeCosineSimilarity(\n      query.embedding,\n      turn.embedding\n    );\n    reward += 0.3 * simScore;\n\n    // 2. Response Entropy (낮을수록 = LLM이 확신함)\n    //    높은 entropy = hallucination 가능성\n    const entropy = this.computeResponseEntropy(response);\n    reward += 0.2 * (1 - entropy);\n\n    // 3. Task Completion Proxy\n    //    응답에 action/decision이 포함되었는가?\n    const taskSignal = this.detectTaskCompletion(response.text);\n    reward += 0.3 * (taskSignal ? 1 : 0);\n\n    // 4. Retrieval Hit Rate\n    //    evict되지 않은 turn이 RAG에서 재사용되었는가?\n    const hitRate = this.computeRetrievalHitRate(turn.id);\n    reward += 0.2 * hitRate;\n\n    return Math.max(0, Math.min(1, reward));\n  }\n\n  // actual reward (명시적/암시적 사용자 피드백)\n  computeActualReward(turnId: string): number {\n    const feedback = this.feedbackStore.get(turnId);\n    if (!feedback) return 0.5; // neutral default\n\n    let reward = 0.5;\n\n    if (feedback.explicitRating) {\n      reward += 0.3 * ((feedback.explicitRating - 1) / 4); // 1~5 scale\n    }\n\n    if (feedback.followUpQuestion) {\n      // follow-up 질문이 있었다 = 이전 응답이 유용했다\n      reward += 0.2;\n    }\n\n    if (feedback.correction) {\n      // 사용자가 정정했다 = 이전 응답이 부정확했다\n      reward -= 0.4;\n    }\n\n    if (feedback.reask) {\n      // 같은 질문을 다시 했다 = turn이 사라져서 context 부족\n      reward -= 0.5;\n    }\n\n    return Math.max(0, Math.min(1, reward));\n  }\n\n  // 혼합 보상 (Cold-Start에서 Warm으로 점진 전환)\n  getReward(turnId: string, observationCount: number): number {\n    const pseudo = this.computePseudoReward(/* ... */);\n    const actual = this.computeActualReward(turnId);\n\n    const actualWeight = Math.min(\n      this.config.actualWeight + \n      (observationCount / this.config.warmThreshold) * 0.5,\n      1.0\n    );\n\n    return pseudo * (1 - actualWeight) + actual * actualWeight;\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003eCold-Start 전환 전략\u003c/strong\u003e: observation_count \u0026#x3C; 20까지는 pseudo-reward가 70% 지배, 20회 이후 점진 전환, 50회 이후 fully actual reward.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e3. Bandit 알고리즘: UCB와 Thompson Sampling\u003c/h2\u003e\n\u003ch3\u003e3.1. UCB (Upper Confidence Bound)\u003c/h3\u003e\n\u003cp\u003eUCB는 \u003cstrong\u003eoptimism in the face of uncertainty\u003c/strong\u003e 원칙에 기반한다. 불확실성이 높은 arm(아직 충분히 평가되지 않은 turn)을 먼저 탐색하고, 확실해지면 가장 좋은 arm을 활용한다.\u003c/p\u003e\n\u003cp\u003e$$a_t = \\arg\\max_a \\left( \\hat{\\mu}_a + c \\sqrt{\\frac{\\ln t}{n_a}} \\right)$$\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e$\\hat{\\mu}_a$: arm $a$의 평균 보상\u003c/li\u003e\n\u003cli\u003e$n_a$: arm $a$가 선택된 횟수\u003c/li\u003e\n\u003cli\u003e$t$: 전체 시도 횟수\u003c/li\u003e\n\u003cli\u003e$c$: exploration coefficient (기본값 $\\sqrt{2}$)\u003c/li\u003e\n\u003c/ul\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// UCBBandit.ts\nexport class UCBBandit implements BanditAlgorithm {\n  private counts: Map\u0026#x3C;string, number\u003e = new Map();   // n_a\n  private values: Map\u0026#x3C;string, number\u003e = new Map();   // Q(a) = hat_mu_a\n  private totalSteps: number = 0;\n  private explorationCoefficient: number;\n\n  constructor(config?: { explorationCoefficient?: number }) {\n    this.explorationCoefficient = config?.explorationCoefficient ?? Math.SQRT2;\n  }\n\n  // 가장 높은 UCB 값을 가진 arm 선택\n  selectArm(context: ContextFeature): string {\n    this.totalSteps++;\n    const arms = Array.from(this.getArms(context));\n\n    if (arms.length === 0) throw new Error(\"No arms available\");\n\n    // 모든 arm이 최소 한 번은 선택되어야 함 (forced exploration)\n    for (const arm of arms) {\n      if ((this.counts.get(arm) ?? 0) === 0) {\n        return arm;\n      }\n    }\n\n    // UCB 계산\n    let bestArm = arms[0];\n    let bestValue = -Infinity;\n    const logT = Math.log(this.totalSteps);\n\n    for (const arm of arms) {\n      const count = this.counts.get(arm)!;\n      const value = this.values.get(arm)!;\n      const ucb = value + this.explorationCoefficient * Math.sqrt(logT / count);\n\n      if (ucb \u003e bestValue) {\n        bestValue = ucb;\n        bestArm = arm;\n      }\n    }\n\n    return bestArm;\n  }\n\n  // 보상 관찰 후 업데이트\n  updateReward(arm: string, reward: number): void {\n    const count = this.counts.get(arm) ?? 0;\n    const value = this.values.get(arm) ?? 0;\n\n    // Incremental average: Q_{n+1} = Q_n + (1/n)(R_n - Q_n)\n    this.counts.set(arm, count + 1);\n    this.values.set(arm, value + (1 / (count + 1)) * (reward - value));\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e장점\u003c/strong\u003e:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e결정론적(deterministic) — 재현 가능, 디버깅 용이\u003c/li\u003e\n\u003cli\u003e탐색 계수 $c$ 하나만 튜닝하면 됨\u003c/li\u003e\n\u003cli\u003e한국어 환경에서 Thompson Sampling보다 token 효율적 (여러 샘플 필요 없음)\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003e단점\u003c/strong\u003e:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e초기 forced exploration이 비효율적일 수 있음\u003c/li\u003e\n\u003cli\u003enon-stationary 환경(사용자 주제가 갑자기 바뀜)에 느리게 적응\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e3.2. Thompson Sampling\u003c/h3\u003e\n\u003cp\u003eThompson Sampling은 베이지안 접근법을 사용한다. 각 arm의 보상 분포에 대한 \u003cstrong\u003eprior\u003c/strong\u003e를 유지하고, posterior에서 샘플링하여 행동을 선택한다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// ThompsonSamplingBandit.ts\nexport class ThompsonSamplingBandit implements BanditAlgorithm {\n  // Beta-Bernoulli conjugate prior: Beta(alpha, beta)\n  // reward 성공 = retain해서 좋은 결과\n  private alpha: Map\u0026#x3C;string, number\u003e = new Map();\n  private beta: Map\u0026#x3C;string, number\u003e = new Map();\n\n  selectArm(context: ContextFeature): string {\n    const arms = Array.from(this.getArms(context));\n    const samples = arms.map((arm) =\u003e ({\n      arm,\n      sample: this.sampleFromBeta(\n        this.alpha.get(arm) ?? 1,\n        this.beta.get(arm) ?? 1\n      ),\n    }));\n\n    // 가장 높은 샘플 값을 가진 arm 선택\n    samples.sort((a, b) =\u003e b.sample - a.sample);\n    return samples[0].arm;\n  }\n\n  private sampleFromBeta(alpha: number, beta: number): number {\n    // Beta distribution sampling via Gamma distribution\n    // Marsaglia-Tsang method for computational efficiency\n    const x = this.sampleGamma(alpha);\n    const y = this.sampleGamma(beta);\n    return x / (x + y);\n  }\n\n  private sampleGamma(shape: number): number {\n    // Marsaglia-Tsang method\n    // Production에서는 d3-random 또는 jStat 사용 권장\n    if (shape \u0026#x3C; 1) {\n      const u = Math.random();\n      return this.sampleGamma(1 + shape) * Math.pow(u, 1 / shape);\n    }\n    const d = shape - 1 / 3;\n    const c = 1 / Math.sqrt(9 * d);\n    while (true) {\n      const v1 = this.boxMullerTransform();\n      const v = Math.pow(1 + c * v1, 3);\n      if (v \u0026#x3C;= 0) continue;\n      const u = Math.random();\n      if (u \u0026#x3C; 1 - 0.0331 * Math.pow(v1, 4)) return d * v;\n      if (Math.log(u) \u0026#x3C; 0.5 * Math.pow(v1, 2) + d * (1 - v + Math.log(v))) {\n        return d * v;\n      }\n    }\n  }\n\n  private boxMullerTransform(): number {\n    const u1 = Math.random();\n    const u2 = Math.random();\n    return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);\n  }\n\n  // 보상 관찰 후 Beta posterior 업데이트\n  updateReward(arm: string, reward: number): void {\n    // reward는 [0,1] 연속값, Bernoulli 근사로 변환\n    const success = Math.random() \u0026#x3C; reward; // probabilistic conversion\n    const a = this.alpha.get(arm) ?? 1;\n    const b = this.beta.get(arm) ?? 1;\n\n    if (success) {\n      this.alpha.set(arm, a + 1);\n    } else {\n      this.beta.set(arm, b + 1);\n    }\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e장점\u003c/strong\u003e:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e확률적(stochastic) — 자연스러운 탐색-활용 균형\u003c/li\u003e\n\u003cli\u003enon-stationary 환경에 prior decay로 적응 가능\u003c/li\u003e\n\u003cli\u003e베이지안 불확실성 정량화가 자연스러움\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003e단점\u003c/strong\u003e:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003e한국어 환경에서 token 비용 증가\u003c/strong\u003e: 매 결정마다 Gamma 샘플링 (CPU 비용) + reward를 Bernoulli로 변환할 때 정보 손실\u003c/li\u003e\n\u003cli\u003e재현 불가능 (random seed 고정 필요)\u003c/li\u003e\n\u003cli\u003ecold-start prior 선택이 결과에 큰 영향\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e3.3. UCB vs Thompson Sampling: 결정 트리\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003eexport function selectAlgorithm(env: EnvironmentConfig): BanditAlgorithm {\n  const factors = {\n    deterministicRequired: env.auditLogging,     // 감사 로깅 필요?\n    budgetSensitive: env.koreanTokenCost \u003e 0.3,   // 한국어 토큰 비용 민감?\n    nonStationaryRate: env.domainShiftFrequency,   // 주제 변화 빈도?\n    rewardDelay: env.feedbackLatencyMs,            // 피드백 지연?\n  };\n\n  // 감사와 디버깅이 중요하면 UCB\n  if (factors.deterministicRequired \u0026#x26;\u0026#x26; factors.budgetSensitive) {\n    return new UCBBandit({ explorationCoefficient: Math.SQRT2 });\n  }\n\n  // 환경이 빠르게 변하고 보상이 지연되면 Thompson Sampling\n  if (factors.nonStationaryRate \u003e 0.3 || factors.rewardDelay \u003e 5000) {\n    return new ThompsonSamplingBandit({ priorAlpha: 2, priorBeta: 2 });\n  }\n\n  // 기본: 하이브리드 (초기 UCB → Thompson Sampling)\n  return new HybridBandit({\n    warmupSteps: 50,\n    switchCriterion: (step) =\u003e step \u003e 50 \u0026#x26;\u0026#x26; observedArms() \u003e 10,\n    ucbConfig: { explorationCoefficient: Math.SQRT2 },\n    tsConfig: { priorAlpha: 2, priorBeta: 2 },\n  });\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e4. RaC (Rewards-as-Context) 아키텍처\u003c/h2\u003e\n\u003ch3\u003e4.1. 아키텍처 개요\u003c/h3\u003e\n\u003cpre\u003e\u003ccode\u003e사용자 입력 → [ContextManager (#055)] → LLM 응답 → 사용자\n                   ↑                          ↓\n            [Policy Optimizer] ← [Reward Extractor]\n                   ↑                          ↓\n            [Bandit Algorithm]        [Feedback Store]\n                   │\n            [Eviction Decision]\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e데이터 흐름\u003c/strong\u003e:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003eContextManager가 BanditAlgorithm에게 \"어떤 turn을 evict할까?\" 질의\u003c/li\u003e\n\u003cli\u003eBanditAlgorithm이 context feature를 보고 arm(evict할 turn) 선택\u003c/li\u003e\n\u003cli\u003eContextManager가 선택된 turn을 evict\u003c/li\u003e\n\u003cli\u003eLLM이 응답 생성, RewardExtractor가 보상 추출 (pseudo-reward)\u003c/li\u003e\n\u003cli\u003eBanditAlgorithm이 보상으로 posterior 업데이트\u003c/li\u003e\n\u003cli\u003e(비동기) 사용자 피드백 도착 시 actual reward로 재업데이트\u003c/li\u003e\n\u003c/ol\u003e\n\u003ch3\u003e4.2. 통합 구현\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// ContextPolicyOptimizer.ts\nexport class ContextPolicyOptimizer {\n  private bandit: BanditAlgorithm;\n  private rewardModel: RewardModel;\n  private provenance: ContextManagerWithProvenance; // #056\n  private contextFeatures: ContextFeatureExtractor;\n\n  constructor(config: {\n    bandit: BanditAlgorithm;\n    rewardModel: RewardModel;\n    provenance: ContextManagerWithProvenance;\n  }) {\n    this.bandit = config.bandit;\n    this.rewardModel = config.rewardModel;\n    this.provenance = config.provenance;\n    this.contextFeatures = new ContextFeatureExtractor();\n  }\n\n  // eviction 대상 선정 (정책 결정)\n  selectEvictionTarget(context: ContextWindow): EvictionDecision {\n    const features = this.contextFeatures.extract(context);\n\n    // 각 turn(candidate arm)의 context feature 구성\n    const arms = context.turns.map((turn) =\u003e ({\n      arm: turn.id,\n      features: this.buildArmFeatures(turn, features),\n    }));\n\n    // Bandit이 최적 arm 선택\n    const selectedArm = this.bandit.selectArm(features);\n    const targetTurn = context.turns.find((t) =\u003e t.id === selectedArm);\n\n    if (!targetTurn) {\n      // fallback: #055의 기본 정책\n      return this.fallbackEviction(context);\n    }\n\n    return {\n      turnId: targetTurn.id,\n      policy: this.bandit.constructor.name,\n      confidence: this.getConfidence(selectedArm),\n      regret: this.estimateRegret(selectedArm, arms),\n    };\n  }\n\n  // 보상 관찰 및 정책 업데이트\n  async observeReward(params: {\n    turnId: string;\n    response: LLMResponse;\n    query: UserQuery;\n    observationCount: number;\n  }): Promise\u0026#x3C;void\u003e {\n    const { turnId, response, query, observationCount } = params;\n\n    // 1. 혼합 보상 계산\n    const reward = this.rewardModel.getReward(turnId, observationCount);\n\n    // 2. #056 Provenance에 reward 기록\n    this.provenance.recordReward({\n      turnId,\n      reward,\n      rewardType: observationCount \u0026#x3C; 20 ? \"pseudo\" : \"hybrid\",\n      timestamp: Date.now(),\n    });\n\n    // 3. Bandit 정책 업데이트\n    this.bandit.updateReward(turnId, reward);\n\n    // 4. Regret 로깅\n    const optimalReward = this.estimateOptimalReward(turnId);\n    const regret = optimalReward - reward;\n    if (regret \u003e 0.3) {\n      console.warn(\n        `[High Regret] turn=${turnId}, regret=${regret.toFixed(3)}, ` +\n        `reward=${reward.toFixed(3)}, optimal=${optimalReward.toFixed(3)}`\n      );\n    }\n  }\n\n  // 선택된 arm의 confidence (UCB는 UCB value, TS는 posterior variance)\n  private getConfidence(arm: string): number {\n    // Implementation varies by bandit\n    return 0.0;\n  }\n\n  // regret 추정: 최적 대안 대비 손실\n  private estimateRegret(selected: string, arms: ArmCandidate[]): number {\n    // 생략: 각 arm의 예상 보상 차이\n    return 0.0;\n  }\n\n  // fallback: window_overflow (휴리스틱 안전장치)\n  private fallbackEviction(context: ContextWindow): EvictionDecision {\n    return {\n      turnId: context.turns[0].id,\n      policy: \"window_overflow_fallback\",\n      confidence: 0,\n      regret: 0,\n    };\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e4.3. Non-Stationary 환경 대응\u003c/h3\u003e\n\u003cp\u003e사용자의 관심사가 시간에 따라 변한다. Contextual bandit은 기본적으로 stationary(정상) 환경을 가정하므로, non-stationary 대응이 필요하다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// NonStationaryAdapter.ts\nexport class NonStationaryAdapter {\n  // sliding window: 최근 N개의 observation만 유지\n  private windowSize: number;\n  private decayFactor: number; // exponential decay rate\n\n  constructor(config?: { windowSize?: number; decayFactor?: number }) {\n    this.windowSize = config?.windowSize ?? 100;\n    this.decayFactor = config?.decayFactor ?? 0.95;\n  }\n\n  // Adaptive UCB: exploration coefficient를 분산에 비례하게 조정\n  adaptExploration(\n    baseCoefficient: number,\n    rewardVariance: number,\n    recencyWeight: number\n  ): number {\n    // 분산이 크거나 최근 보상 가중치가 높으면 탐색 증가\n    return baseCoefficient * (1 + rewardVariance * 2) * (1 + recencyWeight);\n  }\n\n  // Discounted Thompson Sampling: 과거 관찰에 decay 적용\n  discountedUpdate(\n    currentAlpha: number,\n    currentBeta: number,\n    reward: number,\n    step: number\n  ): { alpha: number; beta: number } {\n    const discount = Math.pow(this.decayFactor, 1 / this.windowSize);\n    const success = reward \u003e 0.5;\n\n    return {\n      alpha: currentAlpha * discount + (success ? 1 : 0),\n      beta: currentBeta * discount + (success ? 0 : 1),\n    };\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e5. 최신 연구와의 연결\u003c/h2\u003e\n\u003ch3\u003e5.1. EVOLvE (ICML 2025): LLM을 위한 Bandit Exploration\u003c/h3\u003e\n\u003cp\u003eEVOLvE 논문은 LLM이 bandit 문제를 in-context로 해결할 수 있음을 실험적으로 증명했다:\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\"LLMs' (in)ability to make optimal decisions in bandits... we propose efficient ways to integrate algorithmic knowledge into LLMs: by providing explicit algorithm-guided support during inference; and through algorithm distillation via in-context demonstrations.\"\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003e\u003cstrong\u003e본 글과의 관계\u003c/strong\u003e: EVOLvE는 \u003cstrong\u003eLLM이 bandit 문제를 푸는 방법\u003c/strong\u003e을 연구했다. 본 글은 그 역방향 — \u003cstrong\u003ebandit이 LLM의 인프라(context management)를 최적화하는 방법\u003c/strong\u003e — 을 제안한다. 두 접근은 메타-러닝 레이어에서 만난다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eEVOLvE:  LLM → bandit 문제 해결 (in-context learning)\n본 글:   bandit → LLM 인프라 최적화 (context eviction policy)\n둘의 합: 메타-러닝 층위에서 LLM과 bandit의 상호 최적화\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e5.2. ToSFiT (ICLR 2026): Thompson Sampling as Fine-Tuning\u003c/h3\u003e\n\u003cp\u003eToSFiT는 Thompson Sampling을 fine-tuning 프레임워크로 재정의한다:\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\"Thompson Sampling via Fine-Tuning (ToSFiT) leverages the prior knowledge embedded in prompt-conditioned LLMs, and incrementally adapts them toward the posterior.\"\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003e\u003cstrong\u003e본 글과의 관계\u003c/strong\u003e: Context Policy Optimization이 수렴하면, Thompson Sampling posterior를 \u003cstrong\u003edistillation\u003c/strong\u003e하여 LLM prompt prefix로 고정할 수 있다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// PolicyDistillation.ts - ToSFiT 영감\nexport class PolicyDistiller {\n  // 학습된 posterior → 프롬프트 템플릿\n  distillToPrompt(bandit: ThompsonSamplingBandit): string {\n    const arms = bandit.getArms();\n    const policy = arms.map((arm) =\u003e ({\n      turnId: arm,\n      successRate: arm.alpha / (arm.alpha + arm.beta),\n      confidence: Math.sqrt(\n        1 / (arm.alpha + arm.beta) // posterior variance\n      ),\n    }));\n\n    // 정렬: 가장 유용했던 turn 패턴 우선\n    policy.sort((a, b) =\u003e b.successRate - a.successRate);\n\n    return `\n[Eviction Policy (Learned)]\n다음 turn 유형은 보존 우선순위가 높습니다:\n${policy.map((p) =\u003e `  - ${p.turnId}: 성공률 ${(p.successRate * 100).toFixed(0)}%`).join(\"\\n\")}\n\n첫 50회까지는 모든 유형을 균등 탐색합니다.\n    `.trim();\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e5.3. BaRP (Bandit-feedback Routing, Oct 2025)\u003c/h3\u003e\n\u003cp\u003eBaRP는 contextual bandit으로 LLM 라우팅을 최적화한다:\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\"BaRP ... trains under the same partial-feedback restriction as deployment, while supporting preference-tunable inference\"\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003eBaRP의 핵심 통찰 — \u003cstrong\u003etraining과 deployment의 feedback 조건을 일치시키는 것\u003c/strong\u003e — 은 Context Policy Optimization에도 직접 적용된다:\u003c/p\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003eBaRP\u003c/th\u003e\n\u003cth\u003eContext Policy Optimization\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003eTraining: 모든 모델의 label 없음\u003c/td\u003e\n\u003ctd\u003eTraining: 모든 turn의 중요도 없음\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eDeployment: 선택된 모델의 feedback만\u003c/td\u003e\n\u003ctd\u003eDeployment: 선택된 turn의 보상만\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e해결: Partial feedback으로 학습\u003c/td\u003e\n\u003ctd\u003e해결: Observed reward로 posterior 업데이트\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003ePreference-tunable: 추론 시 cost/quality 조절\u003c/td\u003e\n\u003ctd\u003ePolicy-tunable: 추론 시 aggressiveness 조절\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003chr\u003e\n\u003ch2\u003e6. 실전 적용: HyperCLOVA X 200K 사례 연구\u003c/h2\u003e\n\u003ch3\u003e6.1. 한국어 환경에서의 알고리즘 선택\u003c/h3\u003e\n\u003cp\u003eHyperCLOVA X 200K (2026년 6월 출시) 환경을 가정한다:\u003c/p\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e특성\u003c/th\u003e\n\u003cth\u003e값\u003c/th\u003e\n\u003cth\u003eUCB 영향\u003c/th\u003e\n\u003cth\u003eTS 영향\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e한국어 토큰 비용\u003c/td\u003e\n\u003ctd\u003e영문 대비 2.3배\u003c/td\u003e\n\u003ctd\u003e결정론적, 1회만\u003c/td\u003e\n\u003ctd\u003e확률론적, n회 샘플링\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eMax tokens\u003c/td\u003e\n\u003ctd\u003e200K (약 4만 한국어 단어)\u003c/td\u003e\n\u003ctd\u003e충분함\u003c/td\u003e\n\u003ctd\u003e샘플링 오버헤드 발생\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eSLA\u003c/td\u003e\n\u003ctd\u003ep95 3.2초\u003c/td\u003e\n\u003ctd\u003eEvict 결정 0.1ms\u003c/td\u003e\n\u003ctd\u003eGamma 샘플링 ~2ms\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e세션 유지\u003c/td\u003e\n\u003ctd\u003eLong-lived (30일+)\u003c/td\u003e\n\u003ctd\u003eNon-stationary 대응 필요\u003c/td\u003e\n\u003ctd\u003eDiscounted TS 유리\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003cp\u003e\u003cstrong\u003e결론\u003c/strong\u003e: HyperCLOVA X 200K 환경에서는 \u003cstrong\u003eUCB를 default로, non-stationary가 감지되면 Thompson Sampling으로 전환\u003c/strong\u003e하는 하이브리드 전략이 권장된다.\u003c/p\u003e\n\u003ch3\u003e6.2. 비용 영향 분석\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// CostAnalyzer.ts\nexport function analyzeCostImpact(\n  algorithm: \"UCB\" | \"ThompsonSampling\",\n  config: {\n    avgContextTurns: number;    // 평균 turn 수\n    koreanTokenMultiplier: number;\n    avgEvictionsPerTurn: number;\n    sessionDuration: number;    // 일\n  }\n): CostReport {\n  const baseTokenCost = 0.003; // USD per 1K input tokens (추정)\n\n  const overhead = algorithm === \"UCB\"\n    ? 0 // UCB: 추가 LLM 호출 없음\n    : config.avgEvictionsPerTurn * 0.5; // TS: reward 변환으로 0.5 token/turn\n\n  const dailyTokens = config.avgContextTurns *\n    config.avgEvictionsPerTurn *\n    2000 * // avg tokens per turn\n    config.koreanTokenMultiplier;\n\n  const dailyCost = (dailyTokens / 1000) * baseTokenCost + overhead;\n\n  return {\n    algorithm,\n    dailyEstimatedCost: dailyCost,\n    monthlyCost: dailyCost * config.sessionDuration * 30,\n    overheadDescription: algorithm === \"UCB\"\n      ? \"추가 API 비용 없음 (CPU 내에서 완전 처리)\"\n      : \"n회 Gamma 샘플링 + 선택적 reward 전처리 토큰\",\n  };\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e6.3. SKT A.X 4 Observability Integration\u003c/h3\u003e\n\u003cp\u003eA.X 4는 자체 observability 대시보드를 제공한다. #056의 OpenTelemetry trace에 policy 정보를 추가하면:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-yaml\"\u003egen_ai.agent.context.policy.algorithm: \"UCB\"\ngen_ai.agent.context.policy.exploration_coefficient: 1.414\ngen_ai.agent.context.policy.arm_count: 47\ngen_ai.agent.context.policy.regret_per_eviction: 0.123\ngen_ai.agent.context.policy.last_warm_switch: \"2026-07-08T05:30:00Z\"\ngen_ai.agent.context.policy.active_turns: 12\ngen_ai.agent.context.policy.avg_reward: 0.672\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eA.X 4 대시보드에서 실시간으로 확인 가능한 메트릭:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eEviction Policy Success Rate\u003c/strong\u003e: 학습된 정책이 휴리스틱 대비 얼마나 나은가\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eRegret Over Time\u003c/strong\u003e: 정책 수렴 속도\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eTop Arms by Reward\u003c/strong\u003e: 가장 자주 보존되는 turn 유형\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003ch2\u003e7. 실험 설계: A/B Test Framework\u003c/h2\u003e\n\u003cp\u003e정책 최적화의 효과를 검증하기 위한 A/B 테스트 프레임워크:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// EvictionPolicyABTest.ts\nexport class EvictionPolicyABTest {\n  private control: \"window_overflow\";          // 기존 FIFO\n  private treatmentA: \"UCB\";                   // 제안 1\n  private treatmentB: \"ThompsonSampling\";      // 제안 2\n\n  async run(params: {\n    sessions: number;\n    turnsPerSession: number;\n    domainShiftInterval: number; // N turn마다 주제 전환\n  }): Promise\u0026#x3C;ABTestResult\u003e {\n    // 결과 측정 지표 (Key Metrics):\n    // 1. Retention Score: 사용자가 이전 turn을 다시 참조했는가?\n    // 2. Repetition Rate: 같은 정보를 다시 생성했는가? (낮을수록 좋음)\n    // 3. Regret: 최적 정책 대비 보상 손실\n    // 4. User Feedback: 명시적 rating (있다면)\n\n    return {\n      control: await this.evaluatePolicy(\"window_overflow\", params),\n      treatmentA: await this.evaluatePolicy(\"UCB\", params),\n      treatmentB: await this.evaluatePolicy(\"ThompsonSampling\", params),\n      winner: null, // 실험 후 결정\n      significance: 0.95,\n      samplesRequired: this.computeSampleSize(0.05, 0.8),\n    };\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e필요 샘플 수 계산\u003c/strong\u003e: Cohen's d = 0.3 (작은 효과 크기 가정), α = 0.05, power = 0.80 기준 arm당 약 352 sessions 필요.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e8. 자기비판 (Self-Critique)\u003c/h2\u003e\n\u003ch3\u003e8.1. Bandit Arm의 식별자 설계 문제\u003c/h3\u003e\n\u003cp\u003e각 turn을 arm으로 보는 것은 단순하지만 문제가 있다: \u003cstrong\u003e같은 arm이 다시 등장하지 않는다\u003c/strong\u003e. 기존 MAB는 같은 arm이 여러 번 선택될 수 있다고 가정하는데, context turn은 한 번 evict되면 사라진다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e해결 가능성\u003c/strong\u003e: turn 자체가 아니라 \u003cstrong\u003eturn의 feature profile(길이, 도메인, importance 범위)\u003c/strong\u003e 을 arm으로 보고, 유사한 profile을 가진 turn을 같은 arm으로 클러스터링하는 방법이 있다. 그러나 이는 clustering 오차가 추가로 발생한다.\u003c/p\u003e\n\u003ch3\u003e8.2. 보상 지연 (Reward Delay) 문제\u003c/h3\u003e\n\u003cp\u003epseudo-reward는 real-time으로 계산 가능하지만, actual reward(사용자 피드백)는 \u003cstrong\u003e수 초에서 수 분\u003c/strong\u003e 지연될 수 있다. 시점 t의 결정에 대한 보상이 시점 t+100에 도착하면, 그 사이 정책은 이미 부정확한 정보로 업데이트되었을 수 있다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e해결 가능성\u003c/strong\u003e: Delayed Reward Bandit 기법 사용 — 보상을 지연된 배치로 처리하고, 핵심 observation만 immediate pseudo-reward로 대체.\u003c/p\u003e\n\u003ch3\u003e8.3. Non-Stationary 추정의 어려움\u003c/h3\u003e\n\u003cp\u003e사용자가 주제를 바꾸는 것인지, 단순히 여러 주제를 병행하는 것인지 구분하기 어렵다. Non-stationary adapter가 과도하게 반응하면 오히려 성능이 떨어진다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e해결 가능성\u003c/strong\u003e: Changepoint detection (CUSUM, Bayesian changepoint)을 도입해, 도메인 이동이 통계적으로 유의미할 때만 adapter가 작동하도록 설계.\u003c/p\u003e\n\u003ch3\u003e8.4. 한국어 토큰 비용 하의 Thompson Sampling Overhead\u003c/h3\u003e\n\u003cp\u003eTypeScript의 Math.random()을 사용한 Gamma 샘플링은 0.1ms 미만이지만, reward를 Bernoulli로 변환할 때 정보 손실이 발생한다. 한국어 환경에서 이 손실을 감수할 만한가? UCB의 결정론적 접근이 더 효율적일 수 있다.\u003c/p\u003e\n\u003ch3\u003e8.5. A/B 테스트 미수행\u003c/h3\u003e\n\u003cp\u003e본 글의 모든 설계는 이론적 타당성과 유사 연구(EVOLvE, ToSFiT, BaRP)를 근거로 하지만, \u003cstrong\u003e실제 production 환경에서의 A/B 테스트를 수행하지 않았다\u003c/strong\u003e. 위 Section 7에서 제안한 A/B Test Framework를 실제로 실행하기 전까지는 모든 결론이 잠정적이다.\u003c/p\u003e\n\u003ch3\u003e8.6. \"Evict하면 정말 더 나은가?\"의 인과 추론 부재\u003c/h3\u003e\n\u003cp\u003ePolicy optimization은 \"이 turn을 retain하면 보상이 더 높다\"고 학습한다. 그러나 이것이 인과적(causal) 관계인지, 아니면 단순 상관(correlation)인지 구분하지 않는다. 예를 들어, 중요도가 높은 turn을 retain하는 것이 실제로 응답 품질을 높이는 것인지, 아니면 중요도가 높은 turn이 많은 세션 자체가 더 쉬운 질문을 포함하고 있는지 구별할 수 없다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e해결 가능성\u003c/strong\u003e: Inverse Probability Weighting (IPW) 또는 Doubly Robust (DR) 추정기를 도입하면, 선택 편향(selection bias)을 보정할 수 있다. 그러나 이는 추정기의 variance를 크게 증가시킨다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e9. Future Work: #058 예고\u003c/h2\u003e\n\u003cp\u003e\u003cstrong\u003e#058: Context Policy with Causal Inference — Doubly Robust Estimation for Unbiased Eviction Learning\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eBandit 추정의 선택 편향을 IPW/DR로 보정하는 방법\u003c/li\u003e\n\u003cli\u003eCounterfactual Evaluation: \"만약 retain했더라면?\"\u003c/li\u003e\n\u003cli\u003eCausal Effect of Context on LLM Response Quality\u003c/li\u003e\n\u003cli\u003e한국어 환경의 긴 토큰 비용에서의 DR variance 분석\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003ch2\u003e참고 자료\u003c/h2\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003eEVOLvE: Evaluating and Optimizing LLMs For In-Context Exploration\u003c/strong\u003e (Nie et al., ICML 2025) — \u003ca href=\"https://arxiv.org/abs/2410.06238\"\u003earXiv:2410.06238\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eToSFiT: Thompson Sampling via Fine-Tuning of LLMs\u003c/strong\u003e (Menet et al., ICLR 2026) — \u003ca href=\"https://arxiv.org/abs/2510.13328\"\u003earXiv:2510.13328\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eBaRP: Bandit-feedback Routing with Preferences\u003c/strong\u003e (Eldardiry et al., Oct 2025) — \u003ca href=\"https://arxiv.org/abs/2510.07429\"\u003earXiv:2510.07429\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eInformation-Directed Sampling for RLHF\u003c/strong\u003e (Aug 2025) — \u003ca href=\"https://arxiv.org/abs/2502.05434\"\u003earXiv:2502.05434\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eA Contextual Bandit Approach to LLM Routing\u003c/strong\u003e (Varangot-Reille et al., 2025)\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eThompson Sampling: An Asymptotically Optimal Finite-Time Analysis\u003c/strong\u003e (Agrawal \u0026#x26; Goyal, 2012)\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eRegret Analysis of Stochastic Nonstationary Multi-Armed Bandit\u003c/strong\u003e (Garivier \u0026#x26; Moulines, 2011)\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eBootstrap Thompson Sampling\u003c/strong\u003e (Eckles \u0026#x26; Kaptein, 2014)\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eContextual Bandits with Linear Payoff Functions\u003c/strong\u003e (Chu et al., 2011)\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e#055: Context Engineering: ContextManager의 Sliding Window와 Hierarchical Map-Reduce\u003c/strong\u003e — \u003ca href=\"https://github.com/Po-Mato/tech-blog\"\u003ePo-Mato/tech-blog\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e#056: ContextManager Observability: Evicted-Turn Provenance와 7대 Trace Signal\u003c/strong\u003e — \u003ca href=\"https://github.com/Po-Mato/tech-blog\"\u003ePo-Mato/tech-blog\u003c/a\u003e\u003c/li\u003e\n\u003c/ol\u003e"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"text-sm text-white/60\",\"children\":\"2026-07-08\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"Context Policy Optimization: UCB, Thompson Sampling, 그리고 Regret-Aware Eviction — AI 에이전트가 무엇을 버릴지 스스로 학습하는 방법 (#057)\"}],[\"$\",\"p\",null,{\"className\":\"mt-4 text-base text-white/80 md:text-lg\",\"children\":\"2026년 7월, ContextManager(#055)가 context를 evict하고, ContextManagerWithProvenance(#056)가 그 evict를 추적할 수 있다면, 이제 다음 질문은 '어떤 정책(policy)으로 evict할 것인가'이다. 본 글은 bandit 알고리즘(UCB, Thompson Sampling)을 컨텍스트 eviction에 적용하는 방법론을 제안한다. ContextPolicyOptimizer는 각 turn의 보상(reward)을 관찰하며 regret을 최소화하는 정책을 온라인으로 학습한다. EVOLvE(ICML 2025), ToSFiT(ICLR 2026), BaRP 등 최신 연구를 기반으로 TypeScript 구현, Rewards-as-Context (RaC) 아키텍처, Cold-Start 보상 함수 설계, 한국 시장에서의 비용 구조까지 다룬다.\"}],[\"$\",\"div\",null,{\"className\":\"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300\",\"dangerouslySetInnerHTML\":{\"__html\":\"$11\"}}]]}]}]\n"])</script></body></html>

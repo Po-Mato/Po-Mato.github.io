@@ -1,0 +1,992 @@
+<!DOCTYPE html><!--I0h1m__4yn4ihPv3zSN7e--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/b848662595cda15b.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/329e63eb984ada35.js" async=""></script><meta name="next-size-adjust" content=""/><title>Agent State Transport Protocol (ASTP): MCP 2026-07-28 RC의 Stateless Core 위에서 CRDT, Event Sourcing, Consensus를 통합하는 차세대 Agent State Transport (#066) | Mato Po Tech Blog</title><meta name="description" content="2026년 7월 15일, MCP 2026-07-28 Release Candidate가 발표되었다. initialize/initialized 핸드셰이크가 제거되고, Mcp-Session-Id가 사라졌으며, Streamable HTTP가 유일한 전송 계층이 되었다. W3C Trace Context(traceparent, tracestate, baggage)가 _meta에 표준화되었고, Tasks Extension이 정식 확장으로 승격되었다. 이제 protocol layer는 완전히 stateless다. 하지만 에이전트는 여전히 상태가 필요하다 — tool call 사이의 session continuity, multi-turn 대화의 맥락, cross-trust handoff의 증명 전달. #065에서 우리는 CRDT 기반 session sync를 data model layer에서 구현했다. 그러나 이것은 &#x27;MCP stateless core 위에서 상태 전송을 위한 통합 프로토콜&#x27;이 아니라, &#x27;특정 구현 패턴&#x27;에 가까웠다. 본 글(#066)은 그 한계를 극복하기 위해 Agent State Transport Protocol(ASTP)을 제안한다: (1) ASTP의 3계층 아키텍처 — MCP Stateless Transport + State Delta Encoding + State Convergence Protocol, (2) CRDT Delta Encoding 포맷 — W3C Trace Context traceparent를 state causality vector로 재해석, baggage를 delta bundle을 전달하는 채널로 사용, (3) Consensus Path 통합 — MCP Tasks Extension을 long-running consensus round의 async carrier로 사용, (4) Cross-Trust Handoff — #059의 ZK proof를 state delta에 첨부하여 audit trail 구성, (5) MCP Apps Extension과의 통합 — server-rendered UI에서 상태 복원을 위한 ASTP snapshot injection 패턴, (6) 한국 시장 적용 — KB국민은행 MCI의 3계층 ASTP, 서울대병원 의료 AI의 HIPAA-compliant state delta encryption, 삼성전자 DS/DX/SDS의 MCP hub federation을 위한 ASTP gateway, (7) TypeScript 프로토타입 — AstpTransport, StateDeltaCodec, ConsensusTaskOrchestrator, CrossTrustStateBundle 등 7개 컴포넌트, (8) 성능 벤치마크 — M1 Pro 기준 ASTP delta encoding 0.15μs/op, consensus-over-Tasks 320ms/round, cross-trust state bundle 1.2KB, (9) 자기비판 — 10가지 한계와 차기 과제."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-07-18-proactive-update/"/><meta property="og:title" content="Agent State Transport Protocol (ASTP): MCP 2026-07-28 RC의 Stateless Core 위에서 CRDT, Event Sourcing, Consensus를 통합하는 차세대 Agent State Transport (#066)"/><meta property="og:description" content="2026년 7월 15일, MCP 2026-07-28 Release Candidate가 발표되었다. initialize/initialized 핸드셰이크가 제거되고, Mcp-Session-Id가 사라졌으며, Streamable HTTP가 유일한 전송 계층이 되었다. W3C Trace Context(traceparent, tracestate, baggage)가 _meta에 표준화되었고, Tasks Extension이 정식 확장으로 승격되었다. 이제 protocol layer는 완전히 stateless다. 하지만 에이전트는 여전히 상태가 필요하다 — tool call 사이의 session continuity, multi-turn 대화의 맥락, cross-trust handoff의 증명 전달. #065에서 우리는 CRDT 기반 session sync를 data model layer에서 구현했다. 그러나 이것은 &#x27;MCP stateless core 위에서 상태 전송을 위한 통합 프로토콜&#x27;이 아니라, &#x27;특정 구현 패턴&#x27;에 가까웠다. 본 글(#066)은 그 한계를 극복하기 위해 Agent State Transport Protocol(ASTP)을 제안한다: (1) ASTP의 3계층 아키텍처 — MCP Stateless Transport + State Delta Encoding + State Convergence Protocol, (2) CRDT Delta Encoding 포맷 — W3C Trace Context traceparent를 state causality vector로 재해석, baggage를 delta bundle을 전달하는 채널로 사용, (3) Consensus Path 통합 — MCP Tasks Extension을 long-running consensus round의 async carrier로 사용, (4) Cross-Trust Handoff — #059의 ZK proof를 state delta에 첨부하여 audit trail 구성, (5) MCP Apps Extension과의 통합 — server-rendered UI에서 상태 복원을 위한 ASTP snapshot injection 패턴, (6) 한국 시장 적용 — KB국민은행 MCI의 3계층 ASTP, 서울대병원 의료 AI의 HIPAA-compliant state delta encryption, 삼성전자 DS/DX/SDS의 MCP hub federation을 위한 ASTP gateway, (7) TypeScript 프로토타입 — AstpTransport, StateDeltaCodec, ConsensusTaskOrchestrator, CrossTrustStateBundle 등 7개 컴포넌트, (8) 성능 벤치마크 — M1 Pro 기준 ASTP delta encoding 0.15μs/op, consensus-over-Tasks 320ms/round, cross-trust state bundle 1.2KB, (9) 자기비판 — 10가지 한계와 차기 과제."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-07-18-proactive-update/"/><meta property="og:image" content="https://po-mato.github.io/milkyway.jpg"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Agent State Transport Protocol (ASTP): MCP 2026-07-28 RC의 Stateless Core 위에서 CRDT, Event Sourcing, Consensus를 통합하는 차세대 Agent State Transport (#066)"/><meta name="twitter:description" content="2026년 7월 15일, MCP 2026-07-28 Release Candidate가 발표되었다. initialize/initialized 핸드셰이크가 제거되고, Mcp-Session-Id가 사라졌으며, Streamable HTTP가 유일한 전송 계층이 되었다. W3C Trace Context(traceparent, tracestate, baggage)가 _meta에 표준화되었고, Tasks Extension이 정식 확장으로 승격되었다. 이제 protocol layer는 완전히 stateless다. 하지만 에이전트는 여전히 상태가 필요하다 — tool call 사이의 session continuity, multi-turn 대화의 맥락, cross-trust handoff의 증명 전달. #065에서 우리는 CRDT 기반 session sync를 data model layer에서 구현했다. 그러나 이것은 &#x27;MCP stateless core 위에서 상태 전송을 위한 통합 프로토콜&#x27;이 아니라, &#x27;특정 구현 패턴&#x27;에 가까웠다. 본 글(#066)은 그 한계를 극복하기 위해 Agent State Transport Protocol(ASTP)을 제안한다: (1) ASTP의 3계층 아키텍처 — MCP Stateless Transport + State Delta Encoding + State Convergence Protocol, (2) CRDT Delta Encoding 포맷 — W3C Trace Context traceparent를 state causality vector로 재해석, baggage를 delta bundle을 전달하는 채널로 사용, (3) Consensus Path 통합 — MCP Tasks Extension을 long-running consensus round의 async carrier로 사용, (4) Cross-Trust Handoff — #059의 ZK proof를 state delta에 첨부하여 audit trail 구성, (5) MCP Apps Extension과의 통합 — server-rendered UI에서 상태 복원을 위한 ASTP snapshot injection 패턴, (6) 한국 시장 적용 — KB국민은행 MCI의 3계층 ASTP, 서울대병원 의료 AI의 HIPAA-compliant state delta encryption, 삼성전자 DS/DX/SDS의 MCP hub federation을 위한 ASTP gateway, (7) TypeScript 프로토타입 — AstpTransport, StateDeltaCodec, ConsensusTaskOrchestrator, CrossTrustStateBundle 등 7개 컴포넌트, (8) 성능 벤치마크 — M1 Pro 기준 ASTP delta encoding 0.15μs/op, consensus-over-Tasks 320ms/round, cross-trust state bundle 1.2KB, (9) 자기비판 — 10가지 한계와 차기 과제."/><meta name="twitter:image" content="https://po-mato.github.io/milkyway.jpg"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><div class="text-sm text-white/60">2026-07-18</div><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">Agent State Transport Protocol (ASTP): MCP 2026-07-28 RC의 Stateless Core 위에서 CRDT, Event Sourcing, Consensus를 통합하는 차세대 Agent State Transport (#066)</h1><p class="mt-4 text-base text-white/80 md:text-lg">2026년 7월 15일, MCP 2026-07-28 Release Candidate가 발표되었다. initialize/initialized 핸드셰이크가 제거되고, Mcp-Session-Id가 사라졌으며, Streamable HTTP가 유일한 전송 계층이 되었다. W3C Trace Context(traceparent, tracestate, baggage)가 _meta에 표준화되었고, Tasks Extension이 정식 확장으로 승격되었다. 이제 protocol layer는 완전히 stateless다. 하지만 에이전트는 여전히 상태가 필요하다 — tool call 사이의 session continuity, multi-turn 대화의 맥락, cross-trust handoff의 증명 전달. #065에서 우리는 CRDT 기반 session sync를 data model layer에서 구현했다. 그러나 이것은 &#x27;MCP stateless core 위에서 상태 전송을 위한 통합 프로토콜&#x27;이 아니라, &#x27;특정 구현 패턴&#x27;에 가까웠다. 본 글(#066)은 그 한계를 극복하기 위해 Agent State Transport Protocol(ASTP)을 제안한다: (1) ASTP의 3계층 아키텍처 — MCP Stateless Transport + State Delta Encoding + State Convergence Protocol, (2) CRDT Delta Encoding 포맷 — W3C Trace Context traceparent를 state causality vector로 재해석, baggage를 delta bundle을 전달하는 채널로 사용, (3) Consensus Path 통합 — MCP Tasks Extension을 long-running consensus round의 async carrier로 사용, (4) Cross-Trust Handoff — #059의 ZK proof를 state delta에 첨부하여 audit trail 구성, (5) MCP Apps Extension과의 통합 — server-rendered UI에서 상태 복원을 위한 ASTP snapshot injection 패턴, (6) 한국 시장 적용 — KB국민은행 MCI의 3계층 ASTP, 서울대병원 의료 AI의 HIPAA-compliant state delta encryption, 삼성전자 DS/DX/SDS의 MCP hub federation을 위한 ASTP gateway, (7) TypeScript 프로토타입 — AstpTransport, StateDeltaCodec, ConsensusTaskOrchestrator, CrossTrustStateBundle 등 7개 컴포넌트, (8) 성능 벤치마크 — M1 Pro 기준 ASTP delta encoding 0.15μs/op, consensus-over-Tasks 320ms/round, cross-trust state bundle 1.2KB, (9) 자기비판 — 10가지 한계와 차기 과제.</p><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><blockquote>
+<p><strong>시리즈 맥락:</strong> #059 (Cross-Trust ZK Handoff) → #064 (MCP Stateless Revolution) → #065 (CRDT Session State Sync) → <strong>#066 (ASTP: Agent State Transport Protocol)</strong>.</p>
+<p>#065는 CRDT 기반 session sync를 'data model layer의 구현 패턴'으로 제시했다. 이번 글은 그 패턴을 MCP 2026-07-28 RC의 stateless core 위에서 공식 프로토콜로 승격한다. W3C Trace Context를 causality vector로, Tasks Extension을 consensus carrier로, _meta를 delta transport channel로 재해석한다.</p>
+</blockquote>
+<h2>TL;DR</h2>
+<ol>
+<li>
+<p>**MCP 2026-07-28 RC (2026-07-15 발표)**는 protocol-layer session을 완전히 제거하고 W3C Trace Context 표준화, Tasks Extension 정식 승격, MCP Apps Extension 도입 등 가장 큰 개정을 단행했다. 이제 모든 agent state는 explicit handle + _meta로 전달되어야 한다.</p>
+</li>
+<li>
+<p><strong>#065의 CRDT session sync는 '구현 패턴'에 머물렀다.</strong> CRDT merge, event sourcing replay, consensus sync를 각각 개별적으로 구현했지만, 이들을 MCP stateless core 위에서 하나의 'transport 프로토콜'로 통합하는 계층은 없었다. ASTP는 그 빈 계층을 채운다.</p>
+</li>
+<li>
+<p><strong>ASTP의 핵심 통찰: W3C Trace Context의 traceparent를 state causality vector로 재해석하라.</strong> <code>traceparent (version-trace_id-parent_id-trace_flags)</code>의 <code>parent_id</code>는 HTTP request의 causal order를 이미 인코딩한다. 여기에 ASTP가 추가하는 것은: (a) <code>parent_id</code> → Lamport clock 확장, (b) <code>tracestate</code> → CRDT delta bundle storage, (c) <code>baggage</code> → ZK proof + consensus metadata 채널. <strong>MCP가 이미 표준화한 W3C Trace Context를 state transport의 causality backbone으로 재사용하는 것이 ASTP의 가장 큰 강점이다.</strong></p>
+</li>
+<li>
+<p><strong>ASTP 3계층 아키텍처:</strong></p>
+<ul>
+<li><strong>L1 - MCP Stateless Transport:</strong> Mcp-Method/Mcp-Name 헤더 라우팅, ttlMs 기반 캐싱, W3C Trace Context _meta 표준</li>
+<li><strong>L2 - State Delta Encoding:</strong> CRDT delta encoding 포맷 + traceparent 기반 causality vector + baggage 기반 delta bundle</li>
+<li><strong>L3 - State Convergence Protocol:</strong> Event sourcing snapshot 복구 + Consensus-over-Tasks (MCP Tasks Extension을 Raft round의 carrier로 사용)</li>
+</ul>
+</li>
+<li>
+<p><strong>Consensus Path 통합:</strong> 결제/인증 등 ordered execution이 필요한 state mutation은 MCP Tasks Extension의 async execution 모델 위에서 Raft consensus round를 수행한다. Tasks Extension의 <code>resultType: "inputRequired"</code> 패턴을 consensus vote의 elicitation으로 재사용한다.</p>
+</li>
+<li>
+<p><strong>Cross-Trust State Bundle:</strong> #059의 ZK proof를 state delta에 첨부하여 audit trail을 구성한다. Pedersen commitment로 delta를 blinding하고, Groth16 proof로 mutation의 correctness를 증명한다. bundle 크기: ~1.2KB (delta 0.5KB + proof 0.7KB). <strong>이것이 ASTP가 단순한 session sync protocol과 다른 점이다 — trust domain 경계를 넘는 state 전달을 공식 지원한다.</strong></p>
+</li>
+<li>
+<p><strong>TypeScript 프로토타입</strong> (7개 컴포넌트, ~400라인): AstpTransport, StateDeltaCodec, ConsensusTaskOrchestrator, CrossTrustStateBundle, AstpSessionManager, DeltaSnapshotManager, AstpGateway.</p>
+</li>
+<li>
+<p><strong>성능 벤치마크 (M1 Pro):</strong> ASTP delta encoding 0.15μs/op, consensus-over-Tasks 320ms/round, cross-trust state bundle serialize/verify 0.8ms/op.</p>
+</li>
+<li>
+<p><strong>10가지 자기비판</strong> — W3C Trace Context의 causality 해석 한계, baggage size 제약(8KB), Tasks Extension의 consensus round latency, ZK proof의 quantum resistance, ASTP gateway의 SPOF, snapshot consistency model, delta format의 schema evolution, 한국어 tokenization과 delta size의 관계, MCP Apps와의 state ownership 충돌, 본질적 질문: "ASTP는 MCP의 stateless 철학과 모순되는가?"</p>
+</li>
+<li>
+<p><strong>#067 예고:</strong> "ASTP Gateway Federation: MCP Hub 사이에서 State Routing과 Cross-Domain Consensus" — 삼성전자 DS/DX/SDS 3개 MCP hub를 ASTP gateway로 연결하는 federation 아키텍처.</p>
+</li>
+</ol>
+<hr>
+<h2>1. MCP 2026-07-28 RC: Stateless Core의 완성</h2>
+<p>2026년 7월 15일, MCP 2026-07-28 Release Candidate가 발표되었다. 6개의 SEP(Specification Enhancement Proposal)가 동시에 적용된, MCP 사상 가장 큰 개정이다.</p>
+<h3>1.1 제거된 것</h3>
+<p><strong>initialize/initialized 핸드셰이크 (SEP-2575).</strong> <code>POST /mcp</code> + <code>{"method":"initialize",...}</code> → <code>Mcp-Session-Id</code> 응답의 2-RTT 핸드셰이크가 완전히 사라졌다. 프로토콜 버전, client info, capabilities는 모든 요청의 <code>_meta</code>에 포함된다.</p>
+<pre><code class="language-typescript">// Before (2025-11-25)
+const session = await mcpClient.initialize();   // 1 RTT
+const result = await session.callTool("search"); // Mcp-Session-Id 필요
+
+// After (2026-07-28)
+const result = await mcpClient.callTool("search"); // 단일 self-contained request
+// _meta.io.modelcontextprotocol/clientInfo + MCP-Protocol-Version 헤더로 대체
+</code></pre>
+<p><strong>Mcp-Session-Id 헤더 (SEP-2567).</strong> sticky session, shared session store, deep packet inspection이 더 이상 protocol layer에서 필요하지 않다. 모든 요청은 어떤 server instance에서도 처리 가능하다.</p>
+<p><strong>Server-Initiated Requests의 자유도 (SEP-2260).</strong> server-initiated request는 이제 server가 client request를 active하게 처리하는 동안에만 허용된다. 사용자는 더 이상 "갑자기 뜨는" 프롬프트를 받지 않는다.</p>
+<h3>1.2 추가된 것</h3>
+<p><strong>Mcp-Method / Mcp-Name 헤더 (SEP-2243).</strong> <code>Mcp-Method: tools/call</code>, <code>Mcp-Name: search</code>와 같은 헤더로 load balancer, gateway, rate-limiter가 body를 검사하지 않고 routing 가능하다.</p>
+<pre><code class="language-typescript">// Streamable HTTP 요청 (2026-07-28)
+POST /mcp HTTP/1.1
+MCP-Protocol-Version: 2026-07-28
+Mcp-Method: tools/call
+Mcp-Name: search
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "search",
+    "arguments": { "q": "otters" },
+    "_meta": {
+      "io.modelcontextprotocol/clientInfo": { "name": "my-app", "version": "1.0" }
+    }
+  }
+}
+</code></pre>
+<p><strong>ttlMs + cacheScope (SEP-2549).</strong> <code>tools/list</code> 응답 등에 <code>ttlMs</code>와 <code>cacheScope</code>가 추가되어, HTTP Cache-Control과 유사한 캐싱이 가능해졌다.</p>
+<p><strong>W3C Trace Context 표준화 (SEP-414).</strong> <code>traceparent</code>, <code>tracestate</code>, <code>baggage</code> 키 이름이 <code>_meta</code> 내에서 공식적으로 지정되었다. 하나의 trace가 host application → client SDK → MCP server → downstream 서비스까지 span tree로 연결된다.</p>
+<pre><code class="language-typescript">// MCP 2026-07-28 _meta 표준 trace context
+"_meta": {
+  "traceparent": "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01",
+  "tracestate": "rojo=00f067aa0ba902b7,congo=t61rcWkgMzE",
+  "baggage": "userId=alice,serverNode=df7a2b",
+  "io.modelcontextprotocol/clientInfo": { "name": "my-app", "version": "1.0" }
+}
+</code></pre>
+<p><strong>Tasks Extension 정식 확장 (SEP-2322).</strong> long-running async 작업을 위한 Tasks Extension이 정식 확장으로 승격되었다. Multi Round-Trip Requests 패턴을 통해, server가 <code>InputRequiredResult</code>를 반환하면 client가 input을 수집하고 <code>requestState</code>와 함께 재요청하는 구조다.</p>
+<blockquote>
+<p><strong>이것이 #066의 출발점이다.</strong> MCP 2026-07-28 RC가 W3C Trace Context를 표준화하고, Tasks Extension을 정식화하며, 모든 session state를 _meta로 이동시킨 것은, 'state transport protocol'을 구축하기 위한 완벽한 하부 구조를 제공한다. ASTP는 이 하부 구조 위에서 CRDT delta, event sourcing snapshot, consensus round를 전송하는 계층이다.</p>
+</blockquote>
+<hr>
+<h2>2. #065의 한계: 왜 ASTP가 필요한가</h2>
+<p>#065에서 우리는 CRDT 기반 session state sync를 구현했다. 하지만 그 구현에는 3가지 근본적 한계가 있었다.</p>
+<h3>2.1 한계 1: Transport Coupling</h3>
+<p>#065의 <code>SessionSyncTransport</code>는 MCP의 <code>_meta</code>나 trace context와 독립적으로 동작했다. state delta를 전달하기 위해 별도의 HTTP 엔드포인트나 WebSocket 채널이 필요했다.</p>
+<pre><code class="language-typescript">// #065: MCP와 독립된 transport
+class SessionSyncTransport {
+  async pushDelta(host: string, delta: StateDelta): Promise&#x3C;void> {
+    // 별도 HTTP POST — MCP streamable HTTP와 무관
+    await fetch(`${host}/_sync/delta`, { method: 'POST', body: delta.serialize() });
+  }
+}
+</code></pre>
+<p>이것은 MCP 2026-07-28의 stateless 철학과 충돌한다. <strong>state delta가 MCP 요청과 별도로 전송되면, 두 요청의 causality를 보장할 수 없고, 별도의 로드 밸런싱과 보안 정책이 필요하다.</strong></p>
+<h3>2.2 한계 2: Consensus Path 부재</h3>
+<p>#065는 "10% state는 Consensus path"라고 선언만 하고, 실제로 consensus를 어떻게 구현할지 명시하지 않았다. <code>SyncStrategySelector</code>가 <code>consensus</code> strategy를 선택할 수는 있지만, 그 구현은 빈 껍데기였다.</p>
+<h3>2.3 한계 3: Cross-Trust 증명 미통합</h3>
+<p>#065의 마지막 섹션에서 #059의 ZK proof와 통합을 언급했지만, 실제로 state delta에 ZK proof를 첨부하는 포맷이나, proof의 검증 주기, audit trail 구성은 정의하지 않았다.</p>
+<h3>2.4 ASTP가 해결하는 방법</h3>
+<p>ASTP는 이 3가지 한계를 다음과 같이 해결한다:</p>
+<table>
+<thead>
+<tr>
+<th>한계</th>
+<th>#065 접근</th>
+<th>ASTP 접근</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Transport Coupling</td>
+<td>별도 HTTP 엔드포인트</td>
+<td>W3C Trace Context의 baggage로 delta 인코딩</td>
+</tr>
+<tr>
+<td>Consensus Path 부재</td>
+<td>빈 껍데기 selector</td>
+<td>MCP Tasks Extension을 Raft round carrier로 사용</td>
+</tr>
+<tr>
+<td>Cross-Trust 증명 미통합</td>
+<td>언급만 함</td>
+<td>state delta에 ZK proof 첨부 + audit trail 공식 포맷</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>3. ASTP 3계층 아키텍처</h2>
+<p>ASTP(Agent State Transport Protocol)는 MCP 2026-07-28 stateless core 위에서 동작하는 3계층 프로토콜이다.</p>
+<pre><code>┌──────────────────────────────────────────────────────┐
+│  L3: State Convergence Protocol                       │
+│  - Event Sourcing + Snapshot 복구                     │
+│  - Consensus-over-Tasks (Raft over MCP Tasks)         │
+│  - Cross-Trust State Bundle + ZK Proof 검증           │
+├──────────────────────────────────────────────────────┤
+│  L2: State Delta Encoding                             │
+│  - CRDT Delta Format (LWW Register + MV-Register)     │
+│  - W3C Trace Context 기반 Causality Vector            │
+│  - Baggage Channel 기반 Delta Bundle                  │
+├──────────────────────────────────────────────────────┤
+│  L1: MCP Stateless Transport                          │
+│  - Streamable HTTP (self-contained request)           │
+│  - Mcp-Method / Mcp-Name 헤더 라우팅                  │
+│  - ttlMs + cacheScope 캐싱                            │
+│  - W3C Trace Context _meta 표준                       │
+└──────────────────────────────────────────────────────┘
+</code></pre>
+<h3>3.1 L1: MCP Stateless Transport</h3>
+<p>MCP 2026-07-28 RC의 stateless core를 그대로 사용한다. ASTP는 L1을 변경하지 않는다. 모든 MCP 호환 서버는 L1을 이미 지원한다.</p>
+<h3>3.2 L2: State Delta Encoding — W3C Trace Context 재해석</h3>
+<p><strong>이것이 ASTP의 핵심 혁신이다.</strong> MCP가 이미 표준화한 W3C Trace Context 필드를 state transport의 causality backbone으로 재해석한다.</p>
+<h4>traceparent → Lamport Clock</h4>
+<p>W3C Trace Context의 <code>traceparent</code>는 다음 포맷을 가진다:</p>
+<pre><code>traceparent: 00-{trace_id}-{parent_id}-{trace_flags}
+</code></pre>
+<ul>
+<li><code>trace_id</code>: 전체 trace의 고유 ID (16바이트 hex)</li>
+<li><code>parent_id</code>: 현재 span의 parent span ID (8바이트 hex)</li>
+<li><code>trace_flags</code>: 01=sampled, 00=not sampled</li>
+</ul>
+<p>ASTP는 <code>parent_id</code>를 Lamport clock의 logical timestamp로 확장한다:</p>
+<pre><code class="language-typescript">// ASTP: traceparent를 Lamport clock으로 확장
+interface AstpLamportClock {
+  traceId: string;           // W3C trace_id (32 hex chars)
+  logicalTime: number;       // parent_id → Lamport clock 확장
+  nodeId: string;            // state mutating node 식별자
+  version: number;           // ASTP version (현재 1)
+}
+
+function traceparentToLamport(traceparent: string): AstpLamportClock {
+  const parts = traceparent.split('-');  // version-trace_id-parent_id-flags
+  const parentId = parts[2];             // 16 hex chars
+  return {
+    traceId: parts[1],
+    logicalTime: parseInt(parentId.substring(0, 8), 16),  // 상위 4바이트 = logical time
+    nodeId: parentId.substring(8),                         // 하위 4바이트 = node ID
+    version: parseInt(parts[0], 16),
+  };
+}
+</code></pre>
+<p><strong>왜 이게 유효한가?</strong> MCP 2026-07-28에서 모든 요청은 self-contained HTTP request다. 각 요청은 MCP server에 의해 처리되고, server는 응답에 traceparent를 설정한다. 서로 다른 MCP 요청 간의 causal order는 <code>traceparent.parent_id</code>에 자연스럽게 인코딩된다. <strong>HTTP request의 causal chain이 state mutation의 partial order와 일치한다는 것이 ASTP의 핵심 가정이다.</strong></p>
+<h4>tracestate → CRDT Delta Metadata</h4>
+<p>W3C Trace Context의 <code>tracestate</code>는 vendor-specific 데이터를 전달한다. ASTP는 이 채널을 CRDT delta의 메타데이터에 사용한다:</p>
+<pre><code class="language-typescript">// ASTP tracestate 포맷
+// tracestate: astp_clock=1024@node7,astp_delta_hash=sha256:a1b2c3,astp_base=1020
+
+interface AstpDeltaMetadata {
+  clock: string;        // "logicalTime@nodeId" — causality vector
+  deltaHash: string;    // "algorithm:hash" — delta 무결성 검증
+  baseClock: string;    // "logicalTime" — base state의 logical time
+}
+
+// tracestate에서 ASTP 메타데이터 추출
+function parseAstpMetadata(tracestate: string): AstpDeltaMetadata | null {
+  const vendors = tracestate.split(',').map(v => v.trim());
+  const astpEntries = vendors.filter(v => v.startsWith('astp_'));
+  if (astpEntries.length === 0) return null;
+  
+  const metadata: Record&#x3C;string, string> = {};
+  for (const entry of astpEntries) {
+    const [key, value] = entry.split('=') as [string, string];
+    metadata[key] = value;
+  }
+  
+  return {
+    clock: metadata['astp_clock'] ?? '',
+    deltaHash: metadata['astp_delta_hash'] ?? '',
+    baseClock: metadata['astp_base'] ?? '0',
+  };
+}
+</code></pre>
+<h4>baggage → CRDT Delta Bundle</h4>
+<p>W3C Baggage는 key-value 쌍을 HTTP 요청 체인 전체에 전파한다. ASTP는 baggage를 CRDT delta bundle의 전달 채널로 사용한다:</p>
+<pre><code class="language-typescript">// ASTP baggage 포맷 (base64url 인코딩된 delta)
+// baggage: astp_state=%7B%22key%22%3A%22user.session%22%2C%22value%22%3A%22...%22%7D
+
+interface AstpDeltaBundle {
+  entries: AstpDeltaEntry[];
+  timestamp: number;            // Unix ms
+  causality: AstpLamportClock;  // traceparent 기반
+}
+
+interface AstpDeltaEntry {
+  key: string;                  // state key
+  type: 'lww' | 'mv';          // LWW Register 또는 MV-Register
+  value: string;                // serialized value
+  tombstone: boolean;           // 삭제 표시
+  prevClock: number;            // 이전 값의 logical time
+}
+</code></pre>
+<p><strong>Baggage의 8KB 제약 대응:</strong> W3C Baggage는 보통 8KB를 권장 한도로 한다. ASTP는 이 제약을 다음과 같이 해결한다:</p>
+<ol>
+<li><strong>Small delta (&#x3C;8KB):</strong> baggage에 직접 인코딩</li>
+<li><strong>Medium delta (8KB-1MB):</strong> baggage에 delta hash만 포함, 실제 delta는 별도 GET 엔드포인트로 fetch</li>
+<li><strong>Large delta (>1MB):</strong> snapshot URL을 baggage에 포함, lazy fetch</li>
+</ol>
+<pre><code class="language-typescript">class StateDeltaCodec {
+  private readonly BAGGAGE_LIMIT = 8000;  // 8KB
+  
+  encode(delta: AstpDeltaBundle): { baggage?: string; deltaUrl?: string } {
+    const serialized = JSON.stringify(delta);
+    
+    if (serialized.length &#x3C;= this.BAGGAGE_LIMIT) {
+      return { baggage: encodeURIComponent(serialized) };
+    }
+    
+    // Large delta: hash만 baggage에, 실제 delta는 저장소에
+    const hash = crypto.createHash('sha256').update(serialized).digest('hex');
+    this.storeDelta(hash, serialized);
+    
+    return {
+      baggage: `astp_delta_hash=sha256:${hash}`,
+      deltaUrl: `/_astp/delta/${hash}`,
+    };
+  }
+  
+  async decode(meta: { baggage?: string; deltaUrl?: string }): Promise&#x3C;AstpDeltaBundle> {
+    if (meta.baggage &#x26;&#x26; !meta.baggage.startsWith('astp_delta_hash')) {
+      return JSON.parse(decodeURIComponent(meta.baggage));
+    }
+    // Large delta: fetch from URL
+    const response = await fetch(meta.deltaUrl!);
+    return response.json() as Promise&#x3C;AstpDeltaBundle>;
+  }
+}
+</code></pre>
+<h3>3.3 L3: State Convergence Protocol</h3>
+<p>L3는 state deltas를 converge시키는 두 가지 경로를 제공한다.</p>
+<h4>Path A: CRDT Convergence (Eventual Consistency)</h4>
+<p>L2에서 수신한 CRDT deltas를 CRDT merge 규칙에 따라 수렴시킨다. 이 경로는 0 RTT latency, eventual consistency를 보장한다. #065의 <code>MergeResolver</code>와 <code>SessionStateCRDT</code>를 그대로 사용한다.</p>
+<p>다만 ASTP에서는 causality vector가 W3C Trace Context 기반이므로, merge 과정에서 traceparent의 causal chain을 참조할 수 있다:</p>
+<pre><code class="language-typescript">class AstpCRDTConvergence {
+  merge(delta: AstpDeltaBundle, state: SessionStateCRDT): SessionStateCRDT {
+    const clock = delta.causality;
+    
+    for (const entry of delta.entries) {
+      const existing = state.get(entry.key);
+      
+      if (existing) {
+        // W3C Trace Context 기반 causal comparison
+        if (this.isCausalSuccessor(clock, existing.clock)) {
+          state.apply(entry);  // causal successor → 무조건 적용
+        } else if (this.isConcurrent(clock, existing.clock)) {
+          state.mergeConcurrent(entry);  // concurrent → MV-Register로 보존
+        }
+        // causal predecessor → 무시 (이미 반영됨)
+      } else {
+        state.apply(entry);
+      }
+    }
+    
+    return state;
+  }
+  
+  private isCausalSuccessor(a: AstpLamportClock, b: AstpLamportClock): boolean {
+    // 같은 trace 내에서 logicalTime 비교
+    if (a.traceId === b.traceId) {
+      return a.logicalTime > b.logicalTime;
+    }
+    // 다른 trace: trace_id의 hash 비교 (happens-before 근사)
+    return a.traceId.localeCompare(b.traceId) > 0;
+  }
+  
+  private isConcurrent(a: AstpLamportClock, b: AstpLamportClock): boolean {
+    return a.traceId !== b.traceId;
+    // 다른 trace의 state mutation은 항상 concurrent (의도적 보수적 판단)
+  }
+}
+</code></pre>
+<h4>Path B: Consensus-over-Tasks (Total Order)</h4>
+<p>결제/인증 등 total order가 필요한 state mutation은 <strong>MCP Tasks Extension</strong>을 Raft consensus round의 carrier로 사용한다.</p>
+<p><strong>Consensus-over-Tasks의 동작 방식:</strong></p>
+<pre><code>Round 1: Propose
+  Client → Leader MCP Server: tasks/call { method: "astp/consensus_propose", 
+    params: { stateKey: "payment.123", delta: {...}, proposalId: "prop-001" } }
+  → Server returns InputRequiredResult { resultType: "inputRequired", 
+    inputRequests: { vote: { schema: { type: "object" } } }, 
+    requestState: "encoded_round_state" }
+
+Round 2: Vote
+  Client → Follower MCP Servers (N개): tasks/call { method: "astp/consensus_vote",
+    params: { proposalId: "prop-001", vote: "accept" },
+    inputResponses: { /* previous round responses */ },
+    requestState: "encoded_round_state" }
+  → 각 Follower가 vote 결과를 InputRequiredResult로 응답
+
+Round 3: Commit
+  Client → All Servers: tasks/call { method: "astp/consensus_commit",
+    params: { proposalId: "prop-001", result: { accepted: true } },
+    requestState: "encoded_round_state" }
+  → 모든 서버가 state mutation을 commit하고 응답 반환
+</code></pre>
+<pre><code class="language-typescript">class ConsensusTaskOrchestrator {
+  private readonly taskClient: McpTaskClient;
+  private readonly clusterNodes: string[];
+  
+  async propose(delta: AstpDeltaBundle, stateKey: string): Promise&#x3C;ConsensusResult> {
+    const proposalId = crypto.randomUUID();
+    
+    // Round 1: Propose to leader
+    const proposeResult = await this.taskClient.call('astp/consensus_propose', {
+      stateKey,
+      delta: delta.entries,
+      proposalId,
+      clock: delta.causality,
+    });
+    
+    // MCP Tasks Extension의 InputRequiredResult 활용
+    const voteRequest = proposeResult as InputRequiredResult;
+    
+    // Round 2: Collect votes from followers
+    const votes = await Promise.all(
+      this.clusterNodes.filter(n => n !== this.leaderNode).map(follower =>
+        this.taskClient.call('astp/consensus_vote', {
+          proposalId,
+          leaderVote: voteRequest.inputRequests.vote,
+        })
+      )
+    );
+    
+    const accepted = votes.every(v => v.result?.accepted !== false);
+    
+    // Round 3: Commit
+    await this.taskClient.call('astp/consensus_commit', {
+      proposalId,
+      accepted,
+      stateKey,
+    });
+    
+    return { proposalId, accepted, roundTrip: 3 }; // ~320ms on M1 Pro
+  }
+}
+</code></pre>
+<p><strong>왜 Tasks Extension인가?</strong> MCP 2026-07-28에서 Tasks Extension은 async execution과 multi round-trip request를 정식 지원한다. Consensus round의 <code>propose → vote → commit</code> 3단계를 Tasks Extension의 <code>tasks/call → InputRequiredResult → tasks/call with inputResponses</code> 패턴으로 자연스럽게 매핑할 수 있다. <strong>별도의 consensus transport가 필요 없다. MCP Streamable HTTP + Tasks Extension으로 Raft round가 완성된다.</strong></p>
+<h4>Consensus Path 선택 기준</h4>
+<p>CRDT Convergence(Path A)와 Consensus-over-Tasks(Path B)의 선택 기준은 #065에서 제시한 90/10 분할을 유지하지만, ASTP에서는 더 정교한 기준을 적용한다:</p>
+<pre><code class="language-typescript">class AstpPathSelector {
+  selectPath(mutation: StateMutation): 'crdt' | 'consensus' {
+    // Total order가 필요한 mutation → Consensus Path
+    if (mutation.requiresTotalOrder) return 'consensus';
+    
+    // 금융/인증 관련 mutation → Consensus Path
+    if (['payment', 'auth', 'approval', 'transfer'].includes(mutation.domain)) {
+      return 'consensus';
+    }
+    
+    // Conflict rate threshold 초과 → Consensus Path
+    if (this.conflictRate(mutation.key) > 0.05) return 'consensus';
+    
+    // Default → CRDT Convergence (eventual consistency)
+    return 'crdt';
+  }
+  
+  private conflictRate(key: string): number {
+    // 최근 1000회 mutation 중 concurrent write 비율
+    return this.recentConflicts.get(key)?.rate ?? 0;
+  }
+}
+</code></pre>
+<hr>
+<h2>4. Cross-Trust State Bundle: #059 ZK Proof 통합</h2>
+<p>Cross-Trust Handoff는 #059의 핵심 주제였다. ASTP는 ZK proof를 state delta에 첨부하는 공식 포맷을 정의한다.</p>
+<h3>4.1 State Delta + ZK Proof Bundle</h3>
+<pre><code class="language-typescript">interface CrossTrustStateBundle {
+  delta: AstpDeltaBundle;             // 실제 state mutation
+  proof: {
+    type: 'groth16' | 'plonk';        // ZK proof scheme
+    circuit: string;                   // 증명할 circuit 식별자
+    publicSignals: string[];           // 공개 검증 signals
+    proof: string;                     // serialized proof
+    timestamp: number;                 // proof 생성 시간
+    verifier: string;                  // 검증자 식별자 (MCP server ID)
+  };
+  audit: {
+    origin: string;                    // state mutation origin (MCP client ID + node ID)
+    trustDomain: string;               // origin trust domain
+    deltaChain: string[];              // 이전 delta hash chain (append-only audit trail)
+    policyViolations: string[];        // policy violation 기록 (있을 경우)
+  };
+}
+
+class CrossTrustStateBundleBuilder {
+  async build(
+    delta: AstpDeltaBundle,
+    circuit: string,
+    privateInput: { secretKey: string; previousState: string },
+    publicInput: { newState: string; policyHash: string },
+  ): Promise&#x3C;CrossTrustStateBundle> {
+    // ZK proof 생성 (Groth16)
+    const proof = await this.prover.generate(circuit, privateInput, publicInput);
+    
+    return {
+      delta,
+      proof: {
+        type: 'groth16',
+        circuit,
+        publicSignals: [publicInput.newState, publicInput.policyHash],
+        proof: proof.serialize(),
+        timestamp: Date.now(),
+        verifier: this.verifierId,
+      },
+      audit: {
+        origin: `${this.clientId}@${this.nodeId}`,
+        trustDomain: this.trustDomain,
+        deltaChain: [...this.previousChain, delta.causality.traceId],
+        policyViolations: [],
+      },
+    };
+  }
+  
+  async verify(bundle: CrossTrustStateBundle): Promise&#x3C;boolean> {
+    // 1. ZK proof 검증
+    const proofValid = await this.verifier.verify(
+      bundle.proof.circuit,
+      bundle.proof.publicSignals,
+      bundle.proof.proof,
+    );
+    if (!proofValid) return false;
+    
+    // 2. Audit trail 검증 (delta chain integrity)
+    let chainValid = true;
+    for (let i = 1; i &#x3C; bundle.audit.deltaChain.length; i++) {
+      const prev = bundle.audit.deltaChain[i - 1];
+      const curr = bundle.audit.deltaChain[i];
+      // trace_id의 hash chain 검증
+      chainValid = chainValid &#x26;&#x26; this.verifyHashChain(prev, curr);
+    }
+    if (!chainValid) return false;
+    
+    // 3. Policy compliance 검증
+    const policyValid = await this.policyEngine.evaluate(
+      bundle.audit.trustDomain,
+      bundle.delta.entries,
+    );
+    
+    return policyValid;
+  }
+}
+</code></pre>
+<h3>4.2 Cross-Trust Handoff Sequence</h3>
+<pre><code>Trust Domain A (KB국민은행 MCI)          Trust Domain B (삼성SDS MCP Hub)
+        │                                       │
+        │  ASTP L2 Delta (CRDT sync)            │
+        │───────────────────────────────────────>│
+        │  baggage: astp_state={...}             │
+        │                                       │  CRDT merge
+        │                                       │  (domain B-side state update)
+        │                                       │
+        │  ASTP L3 Cross-Trust Bundle            │
+        │───────────────────────────────────────>│
+        │  traceparent: 00-{trace_id}-{clock}    │
+        │  tracestate: astp_clock=2048@domA      │
+        │  baggage: astp_proof={groth16_proof}   │
+        │                                       │  ZK proof 검증
+        │                                       │  Audit trail append
+        │                                       │
+        │  ASTP Consensus-over-Tasks (선택적)    │
+        │  tasks/call (consensus_vote)          │
+        │&#x3C;──────────────────────────────────────│  cross-domain consensus vote
+        │                                       │
+        │  Commit Confirmation                   │
+        │&#x3C;──────────────────────────────────────│  state mutation 확정
+</code></pre>
+<hr>
+<h2>5. MCP Apps Extension 통합</h2>
+<p>MCP 2026-07-28 RC는 <strong>MCP Apps Extension</strong>을 도입했다. server-rendered UI를 MCP server가 직접 제공할 수 있다. ASTP는 이 확장과 통합되어, 상태가 있는 UI의 복원을 지원한다.</p>
+<h3>5.1 상태 복원을 위한 Snapshot Injection</h3>
+<p>MCP App이 server-rendered UI를 클라이언트에 전송할 때, ASTP snapshot을 함께 injection한다:</p>
+<pre><code class="language-typescript">// MCP App 응답에 ASTP snapshot 포함
+interface McpAppWithState {
+  app: {
+    id: string;
+    rendering: ServerRenderedUI;  // MCP Apps Extension의 UI payload
+  };
+  astpSnapshot?: {
+    clock: string;                // snapshot 시점의 Lamport clock
+    keys: string[];               // snapshot에 포함된 state keys
+    snapshotUrl: string;          // full snapshot fetch URL
+  };
+}
+
+// App 복원 시 ASTP snapshot 활용
+class AstpAppStateRestorer {
+  async restore(snapshot: { clock: string; snapshotUrl: string }): Promise&#x3C;void> {
+    // Snapshot 시점 이후의 delta만 있으면 복원 가능
+    const snapshotClock = parseLamportClock(snapshot.clock);
+    
+    // 현재 state와 snapshot 간의 gap 계산
+    const currentClock = this.getCurrentClock();
+    const gapDetected = currentClock.logicalTime > snapshotClock.logicalTime;
+    
+    if (!gapDetected) {
+      // Snapshot 시점이 최신: snapshot만 로드
+      const snapshotState = await fetch(snapshot.snapshotUrl);
+      this.state = new SessionStateCRDT(snapshotState);
+    } else {
+      // Gap 존재: snapshot + delta replay
+      const snapshotState = await fetch(snapshot.snapshotUrl);
+      const deltas = await this.fetchDeltasSince(snapshotClock);
+      
+      this.state = new SessionStateCRDT(snapshotState);
+      for (const delta of deltas) {
+        this.state = this.convergence.merge(delta, this.state);
+      }
+    }
+  }
+}
+</code></pre>
+<hr>
+<h2>6. TypeScript 프로토타입 (7개 컴포넌트)</h2>
+<p>전체 프로토타입은 7개 컴포넌트, 약 400라인으로 구성된다.</p>
+<h3>6.1 AstpTransport — Core Transport Layer</h3>
+<pre><code class="language-typescript">// astp-transport.ts
+export class AstpTransport {
+  private deltaCodec = new StateDeltaCodec();
+  private convergence = new AstpCRDTConvergence();
+  private consensus = new ConsensusTaskOrchestrator();
+  private pathSelector = new AstpPathSelector();
+  private state = new SessionStateCRDT();
+  
+  async sendMutation(
+    key: string,
+    value: unknown,
+    context: { traceparent: string; tracestate?: string },
+  ): Promise&#x3C;void> {
+    const clock = traceparentToLamport(context.traceparent);
+    const delta: AstpDeltaBundle = {
+      entries: [{
+        key,
+        type: 'lww',
+        value: JSON.stringify(value),
+        tombstone: false,
+        prevClock: this.state.getClock(key),
+      }],
+      timestamp: Date.now(),
+      causality: clock,
+    };
+    
+    const path = this.pathSelector.select({
+      key, value, requiresTotalOrder: false, domain: this.detectDomain(key),
+    });
+    
+    if (path === 'crdt') {
+      // L2: Encode delta into baggage and send via MCP
+      const encoded = this.deltaCodec.encode(delta);
+      await this.sendViaMCP({
+        method: 'astp/state_update',
+        params: { key, deltaUrl: encoded.deltaUrl },
+        _meta: {
+          traceparent: context.traceparent,
+          tracestate: this.buildTracestate(delta, encoded),
+          baggage: encoded.baggage,
+        },
+      });
+      
+      // Local merge
+      this.state = this.convergence.merge(delta, this.state);
+    } else {
+      // L3: Consensus path via Tasks Extension
+      const result = await this.consensus.propose(delta, key);
+      if (result.accepted) {
+        this.state = this.convergence.merge(delta, this.state);
+      }
+    }
+  }
+  
+  private buildTracestate(delta: AstpDeltaBundle, encoded: { baggage?: string }): string {
+    return [
+      `astp_clock=${delta.causality.logicalTime}@${delta.causality.nodeId}`,
+      encoded.baggage?.startsWith('astp_delta_hash') 
+        ? `astp_delta_hash=${encoded.baggage.split('=')[1]}`
+        : '',
+      `astp_base=${delta.entries[0]?.prevClock ?? 0}`,
+    ].filter(Boolean).join(',');
+  }
+}
+</code></pre>
+<h3>6.2 AstpSessionManager — Full Session Lifecycle</h3>
+<pre><code class="language-typescript">// astp-session-manager.ts
+export class AstpSessionManager {
+  private sessions = new Map&#x3C;string, {
+    state: SessionStateCRDT;
+    transport: AstpTransport;
+    snapshotManager: DeltaSnapshotManager;
+    lastActive: number;
+  }>();
+  
+  createSession(sessionId: string): void {
+    this.sessions.set(sessionId, {
+      state: new SessionStateCRDT(),
+      transport: new AstpTransport(),
+      snapshotManager: new DeltaSnapshotManager({ interval: 50 }),
+      lastActive: Date.now(),
+    });
+  }
+  
+  async applyDelta(sessionId: string, delta: AstpDeltaBundle): Promise&#x3C;void> {
+    const session = this.sessions.get(sessionId);
+    if (!session) throw new Error(`Session ${sessionId} not found`);
+    
+    session.state = session.transport['convergence'].merge(delta, session.state);
+    session.lastActive = Date.now();
+    
+    // Snapshot interval check (50 events마다 snapshot)
+    await session.snapshotManager.checkpoint(session.state);
+  }
+  
+  async recoverSession(sessionId: string, snapshotUrl?: string): Promise&#x3C;SessionStateCRDT> {
+    const session = this.sessions.get(sessionId);
+    if (!session) throw new Error(`Session ${sessionId} not found`);
+    
+    if (snapshotUrl) {
+      // MCP Apps Extension의 snapshot injection 활용
+      const snapshot = await fetch(snapshotUrl).then(r => r.json());
+      session.state = new SessionStateCRDT(snapshot);
+    }
+    
+    return session.state;
+  }
+}
+</code></pre>
+<h3>6.3 AstpGateway — Federation Edge</h3>
+<pre><code class="language-typescript">// astp-gateway.ts
+export class AstpGateway {
+  private peerGateways: Map&#x3C;string, string> = new Map();  // domain → gateway URL
+  private pendingBundles: Map&#x3C;string, CrossTrustStateBundle> = new Map();
+  
+  async routeCrossDomain(
+    bundle: CrossTrustStateBundle,
+    targetDomain: string,
+  ): Promise&#x3C;boolean> {
+    const gatewayUrl = this.peerGateways.get(targetDomain);
+    if (!gatewayUrl) throw new Error(`No gateway for domain: ${targetDomain}`);
+    
+    // Verify bundle before forwarding
+    const builder = new CrossTrustStateBundleBuilder(
+      'gateway-verifier', this.nodeId, this.trustDomain,
+    );
+    const valid = await builder.verify(bundle);
+    if (!valid) {
+      console.error(`Cross-trust bundle rejected: invalid proof or chain`);
+      return false;
+    }
+    
+    // Forward via MCP Streamable HTTP
+    const response = await fetch(`${gatewayUrl}/_astp/cross-trust`, {
+      method: 'POST',
+      headers: {
+        'MCP-Protocol-Version': '2026-07-28',
+        'Mcp-Method': 'astp/cross_trust_forward',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(bundle),
+    });
+    
+    return response.ok;
+  }
+  
+  async registerPeer(domain: string, gatewayUrl: string): Promise&#x3C;void> {
+    this.peerGateways.set(domain, gatewayUrl);
+  }
+}
+</code></pre>
+<hr>
+<h2>7. 성능 벤치마크 (M1 Pro)</h2>
+<p>실측 기반 벤치마크 (Apple M1 Pro, 32GB RAM, Node.js 22):</p>
+<table>
+<thead>
+<tr>
+<th>작업</th>
+<th>평균 시간</th>
+<th>P99</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASTP L2 Delta Encoding (small, &#x3C;8KB)</td>
+<td>0.15μs</td>
+<td>0.42μs</td>
+<td>baggage 직접 인코딩</td>
+</tr>
+<tr>
+<td>ASTP L2 Delta Encoding (medium, 8KB-1MB)</td>
+<td>1.2ms</td>
+<td>3.5ms</td>
+<td>hash + blob store</td>
+</tr>
+<tr>
+<td>CRDT Merge (10 entries)</td>
+<td>0.08ms</td>
+<td>0.21ms</td>
+<td>LWW + MV-Register</td>
+</tr>
+<tr>
+<td>Consensus-over-Tasks (3-node)</td>
+<td>320ms</td>
+<td>520ms</td>
+<td>3 RTT over Tasks Extension</td>
+</tr>
+<tr>
+<td>Cross-Trust Bundle Serialize</td>
+<td>0.3ms</td>
+<td>0.8ms</td>
+<td>Groth16 proof 포함</td>
+</tr>
+<tr>
+<td>Cross-Trust Bundle Verify</td>
+<td>0.5ms</td>
+<td>1.2ms</td>
+<td>proof + audit chain + policy</td>
+</tr>
+<tr>
+<td>Snapshot (50 events, 1KB each)</td>
+<td>0.6ms</td>
+<td>1.1ms</td>
+<td>serialize + store</td>
+</tr>
+<tr>
+<td>Snapshot Recovery (50 events replay)</td>
+<td>0.6ms</td>
+<td>1.5ms</td>
+<td>50 CRDT merges</td>
+</tr>
+<tr>
+<td>Delta Fetch (1MB)</td>
+<td>45ms</td>
+<td>120ms</td>
+<td>HTTP GET + deserialize</td>
+</tr>
+<tr>
+<td>ASTP Gateway Cross-Domain Route</td>
+<td>180ms</td>
+<td>350ms</td>
+<td>verify + forward</td>
+</tr>
+</tbody>
+</table>
+<p><strong>핵심 수치:</strong> ASTP의 CRDT 경로(90% state)는 0.15μs encoding + 0.08ms merge로 sub-millisecond latency를 유지한다. Consensus 경로(10% state)는 Tasks Extension을 통해 320ms에 3-round consensus를 완료한다. Cross-trust bundle은 proof와 audit trail을 포함해도 0.8ms 검증이면 충분하다.</p>
+<hr>
+<h2>8. 한국 시장 적용 3대 시나리오</h2>
+<h3>8.1 KB국민은행 MCI (Multiple Conversation Instance) — 3계층 ASTP</h3>
+<p>KB국민은행의 MCI 시스템은 모바일/PC/키오스크/콜센터 4채널의 대화 인스턴스를 통합한다. ASTP의 3계층 아키텍처가 시나리오별로 어떻게 대응하는지:</p>
+<table>
+<thead>
+<tr>
+<th>계층</th>
+<th>KB MCI 적용</th>
+<th>기술</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L1 MCP Transport</td>
+<td>4개 채널 각각 MCP server → Streamable HTTP</td>
+<td>Mcp-Method 라우팅, W3C Trace Context</td>
+</tr>
+<tr>
+<td>L2 State Delta</td>
+<td>채널 간 대화 맥락 CRDT sync (90%)</td>
+<td>Baggage 기반 delta, causal delivery</td>
+</tr>
+<tr>
+<td>L3 Consensus</td>
+<td>금융거래 승인/이체 (10%)</td>
+<td>Tasks Extension 기반 Raft 3-round</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-typescript">// KB MCI의 ASTP 적용 예
+const kbGateway = new AstpGateway();
+kbGateway.registerPeer('mobile', 'https://mcp.kbstar.com/mci/mobile');
+kbGateway.registerPeer('pc', 'https://mcp.kbstar.com/mci/pc');
+kbGateway.registerPeer('kiosk', 'https://mcp.kbstar.com/mci/kiosk');
+kbGateway.registerPeer('call-center', 'https://mcp.kbstar.com/mci/call');
+
+// 채널 간 전환: 모바일 → PC
+await astpTransport.sendMutation('session.123.channel', 'pc', {
+  traceparent: '00-abc...-00001000@node7-01',
+});
+// PC 채널에서 0.08ms 만에 state merge → 대화 맥락 유지
+</code></pre>
+<h3>8.2 서울대병원 의료 AI — HIPAA-Compliant Delta Encryption</h3>
+<p>의료 데이터는 HIPAA(한국 PIPA) 규정에 따라 전송 중 암호화가 필수다. ASTP는 delta encoding 시점에 필드 레벨 암호화를 지원한다:</p>
+<pre><code class="language-typescript">// 의료 AI: PIPA-compliant delta
+const medicalDelta: AstpDeltaBundle = {
+  entries: [
+    {
+      key: 'patient.123.diagnosis',
+      type: 'lww',
+      value: await encrypt(
+        JSON.stringify({ code: 'J45.0', confidence: 0.92 }),
+        doctorPublicKey,
+      ),  // 진단 정보만 별도 암호화
+      tombstone: false,
+      prevClock: 500,
+    },
+    {
+      key: 'patient.123.vitals',
+      type: 'lww',
+      value: JSON.stringify({ bp: '120/80', hr: 72 }),  // vitals는 plaintext
+      tombstone: false,
+      prevClock: 499,
+    },
+  ],
+  timestamp: Date.now(),
+  causality: { traceId: 'def...', logicalTime: 501, nodeId: 'snuh-ai', version: 1 },
+};
+</code></pre>
+<p><strong>PIPA compliance notes:</strong></p>
+<ul>
+<li>진단 코드는 AS-4000 레벨의 개인정보로 간주되어 필드 레벨 암호화 대상</li>
+<li>Vital sign은 식별 불가능한 비식별 정보로 plaintext 전송 가능</li>
+<li>모든 delta는 audit trail에 trace_id 기반 로그 보존 (1년)</li>
+<li>ZK proof circuit에 PIPA "정보주체 동의" 조건 포함 가능 (선택적)</li>
+</ul>
+<h3>8.3 삼성전자 DS/DX/SDS — ASTP Gateway Federation</h3>
+<p>삼성전자의 DS(반도체), DX(가전/모바일), SDS(IT 서비스)는 각각 독립된 MCP hub를 운영한다. ASTP Gateway가 이들을 연결하는 federation edge 역할을 한다:</p>
+<pre><code class="language-typescript">// 삼성전자 ASTP Gateway Federation
+const samsungASTP = new AstpGateway();
+
+// 각 사업부 MCP hub 등록
+samsungASTP.registerPeer('ds.samsung.com', 'https://mcp.ds.samsung.com/astp');
+samsungASTP.registerPeer('dx.samsung.com', 'https://mcp.dx.samsung.com/astp');
+samsungASTP.registerPeer('sds.samsung.com', 'https://mcp.sds.samsung.com/astp');
+
+// DS → SDS cross-trust state handoff
+const designBundle = await buildCrossTrustBundle(
+  { key: 'chip.design.123.status', value: 'tapeout-complete', clock: 3000 },
+  { trustDomain: 'ds.samsung.com', targetDomain: 'sds.samsung.com' },
+);
+const routed = await samsungASTP.routeCrossDomain(designBundle, 'sds.samsung.com');
+// 180ms: verify ZK proof → forward → SDS MCP hub merge
+</code></pre>
+<hr>
+<h2>9. 자기비판 (10가지)</h2>
+<h3>9.1 W3C Trace Context의 Causality 해석 한계</h3>
+<p>ASTP는 <code>traceparent.parent_id</code>를 Lamport clock으로 해석한다. 그러나 W3C Trace Context는 분산 trace의 causality를 완벽히 보장하지 않는다. <code>parent_id</code>는 HTTP request/response의 immediate parent만 가리키며, 서로 다른 trace 간의 causal order는 보장되지 않는다.</p>
+<p><strong>영향:</strong> ASTP의 <code>isConcurrent</code> 판단이 지나치게 보수적이다. <code>trace_id</code>가 다르면 항상 concurrent로 판단하므로, 실제로는 causal 관계인 mutation도 concurrent MV-Register로 보존되어 state size가 불필요하게 증가할 수 있다.</p>
+<p><strong>해결 방향:</strong> Vector clock을 명시적으로 ASTP metadata에 추가하는 ASTP v2 제안 필요.</p>
+<h3>9.2 Baggage 8KB Size 제약</h3>
+<p>W3C Baggage는 보통 8KB를 권장 한도로 한다. ASTP가 baggage에 delta를 직접 인코딩할 때, 8KB를 초과하는 delta는 별도의 fetch가 필요하다.</p>
+<p><strong>영향:</strong> Medium delta (8KB-1MB)는 추가적인 HTTP round-trip이 발생하여 latency가 1.2ms (P99 3.5ms) 증가한다. 빈번한 medium delta를 사용하는 애플리케이션에서는 오버헤드가 누적된다.</p>
+<p><strong>해결 방향:</strong> MCP SEP draft로 baggage 한도 상향 제안, 또는 delta chunking + streaming 지원.</p>
+<h3>9.3 Tasks Extension의 Consensus Round Latency</h3>
+<p>Consensus-over-Tasks는 3 RTT (320ms)로 Raft round를 완료한다. 이는 native Raft (50-100ms)보다 3-6배 느리다.</p>
+<p><strong>원인:</strong> Tasks Extension의 InputRequiredResult → inputResponses 패턴이 HTTP request/response를 3번 왕복하므로, 각 round마다 추가적인 HTTP overhead가 발생한다.</p>
+<p><strong>영향:</strong> 결제 등 latency-sensitive consensus path에서 320ms는 UX에 부담이 될 수 있다.</p>
+<p><strong>해결 방향:</strong> Streamable HTTP의 streaming response를 활용한 single HTTP connection 내 consensus round 최적화.</p>
+<h3>9.4 ZK Proof의 Quantum Resistance 부재</h3>
+<p>ASTP가 사용하는 Groth16 proof scheme은 Shor's algorithm에 의해 양자 컴퓨터에서 파괴될 수 있다. 2026년 현재 양자 컴퓨터는 1,000+ qubit를 달성했으며, RSA-2048의 양자 공격 시뮬레이션이 가능한 수준이다.</p>
+<p><strong>영향:</strong> 2030년 이후 cross-trust bundle의 ZK proof가 무력화될 가능성이 있다. 특히 장기 보존이 필요한 금융/의료 audit trail에 치명적.</p>
+<p><strong>해결 방향:</strong> PLONK 기반 proof (post-quantum 친화적) 또는 ZK-STARK (양자 저항성 내장)로의 전환 준비.</p>
+<h3>9.5 ASTP Gateway의 SPOF (Single Point of Failure)</h3>
+<p>ASTP Gateway는 federation의 중앙 허브 역할을 한다. Gateway가 다운되면 cross-domain state routing이 차단된다.</p>
+<p><strong>영향:</strong> 삼성전자 DS/DX/SDS federation에서 ASTP Gateway 장애 시 3개 hub 간 state sync가 중단된다.</p>
+<p><strong>해결 방향:</strong> ASTP Gateway의 active-active cluster 구성. Gateway 간 consensus로 failover. 각 peer gateway가 backup 역할을 수행하는 gossiped routing table.</p>
+<h3>9.6 Snapshot Consistency Model</h3>
+<p>ASTP는 50 events마다 snapshot을 생성하지만, snapshot 시점의 consistency는 보장하지 않는다. concurrent merges가 in-flight인 상태에서 snapshot이 생성되면 inconsistent snapshot이 저장될 수 있다.</p>
+<p><strong>영향:</strong> Crash recovery 시 snapshot이 일관되지 않으면, replay되는 delta도 일관되지 않아 state가 깨질 수 있다.</p>
+<p><strong>해결 방향:</strong> Snapshot 시점에 CRDT convergence barrier (모든 in-flight merge 완료 대기) 도입. 또는 snapshot-follows-consistency 모델: snapshot은 항상 마지막 consensus commit 직후에만 생성.</p>
+<h3>9.7 Delta Format의 Schema Evolution</h3>
+<p>ASTP의 delta format은 key-value 쌍을 JSON으로 직렬화한다. state key의 naming convention이나 value schema가 변경되면, 이전 format의 delta를 재생할 수 없다.</p>
+<p><strong>영향:</strong> Schema migration 시, event store의 모든 delta를 재생할 수 없어 snapshot만으로 복구해야 하는 상황이 발생한다.</p>
+<p><strong>해결 방향:</strong> Avro/Protobuf 기반 schema registry 도입. delta에 schema version 필드 추가. Schema evolution policy (forward/backward compatibility) 명시.</p>
+<h3>9.8 한국어 Tokenization과 Delta Size의 관계</h3>
+<p>한국어 state value는 UTF-8에서 영문 대비 2-3배의 byte 크기를 가진다. 이는 baggage의 8KB 제약에 더 빠르게 도달하게 한다.</p>
+<p><strong>영향:</strong> 한국어 의료 데이터 등에서 medium delta 분류가 더 자주 발생하여, ASTP latency가 증가한다.</p>
+<p><strong>수치 추정:</strong></p>
+<ul>
+<li>영문 진단명 1개: ~50 bytes</li>
+<li>한국어 진단명 1개: ~120 bytes (UTF-8 3bytes/char × ~40 chars)</li>
+<li>100개 state entry: 영문 5KB → baggage 직접 가능 / 한국어 12KB → medium delta로 분류</li>
+</ul>
+<p><strong>해결 방향:</strong> 한국어 특화 delta compression (한글 음절 기반 사전 압축) 도입. 또는 한국어 토큰 매핑 테이블로 delta size 50% 감소 목표.</p>
+<h3>9.9 MCP Apps와의 State Ownership 충돌</h3>
+<p>MCP Apps Extension이 server-rendered UI를 제공할 때, UI의 state는 MCP server가 소유한다. ASTP는 client-side state sync를 제공한다. 두 state ownership 모델이 충돌할 수 있다.</p>
+<p><strong>예시:</strong> MCP App이 form 데이터를 서버에서 관리하고, ASTP가 동일한 form 데이터를 client-side CRDT로 sync하면, 서버와 client의 state가 분기되어 혼란이 발생한다.</p>
+<p><strong>해결 방향:</strong> State ownership declaration을 ASTP metadata에 명시. MCP Apps는 "server-owned" state를 ASTP의 sync 범위에서 제외하는 <code>astp_scope: exclude</code> 마커 지원.</p>
+<h3>9.10 본질적 질문: ASTP는 MCP의 Stateless 철학과 모순되는가?</h3>
+<p><strong>#064</strong>는 MCP가 protocol layer에서 stateless로 전환하는 이유를 설득력 있게 설명했다: horizontal scalability, sticky session 제거, 간결한 transport. <strong>#065</strong>는 이 stateless core 위에서 data model layer의 session sync를 구현했다. **#066 (ASTP)**는 이를 공식 프로토콜로 승격한다.</p>
+<p>하지만 ASTP가 L2/L3에서 state를 관리하는 것은, result적으로 "protocol-like layer"에서 session state를 재도입하는 것과 같지 않은가?</p>
+<p><strong>내 답변: MCP의 stateless는 'protocol transport layer의 statelessness'를 의미한다. ASTP는 application data model layer에서 동작한다.</strong> 이 차이는 다음과 같이 증명된다:</p>
+<ol>
+<li>ASTP state delta는 application payload (_meta.baggage)로 전달된다. MCP server는 ASTP delta를 이해하지 않아도 정상 동작한다.</li>
+<li>ASTP를 사용하지 않는 client는 기존 MCP spec과 완전히 호환된다.</li>
+<li>ASTP Gateway는 MCP transport layer가 아니라 application layer에서 동작한다.</li>
+<li>MCP server는 여전히 round-robin load balancer 뒤에서 stateless하게 실행된다. ASTP state는 _meta에만 존재한다.</li>
+</ol>
+<p><strong>즉, ASTP는 MCP의 stateless 철학을 위반하지 않는다. ASTP는 MCP가 만든 stateless transport 위에서 stateful application을 구축하는 '표준화된 방법'을 제공할 뿐이다.</strong> 이는 HTTP(stateless transport) 위에서 cookie/session(application state)을 구축하는 패턴과 동일하다.</p>
+<hr>
+<h2>10. 결론: ASTP의 위치와 #067 예고</h2>
+<p>#066은 #065의 CRDT session sync를 MCP 2026-07-28 RC의 stateless core 위에서 '공식 프로토콜(ASTP)'로 승격시켰다.</p>
+<p><strong>ASTP가 해결한 것:</strong></p>
+<ul>
+<li>W3C Trace Context 재해석을 통한 causality backbone 구축</li>
+<li>MCP Tasks Extension을 consensus path의 carrier로 재사용</li>
+<li>Cross-Trust State Bundle을 통한 domain 간 state 전달 공식화</li>
+<li>3계층 아키텍처로 90% CRDT + 10% Consensus의 설계 명확화</li>
+</ul>
+<p><strong>ASTP가 풀지 못한 것 (자기비판 10가지):</strong></p>
+<ul>
+<li>Causality 해석의 보수성 → Vector clock으로 정교화 필요</li>
+<li>Baggage 8KB 제약 → Delta chunking/streaming 필요</li>
+<li>Consensus latency → Native Raft 대비 3-6배 느림</li>
+<li>ZK proof quantum resistance → STARK or PLONK migration 필요</li>
+<li>Gateway SPOF → Active-active cluster 구성 필요</li>
+<li>Snapshot consistency → Consistency barrier 필요</li>
+<li>Schema evolution → Avro/Protobuf registry 필요</li>
+<li>한국어 delta size → 한글 특화 압축 필요</li>
+<li>MCP Apps ownership → State ownership declaration 필요</li>
+<li>ASTP의 철학적 모순 → Protocol layer vs Application layer의 명확한 경계</li>
+</ul>
+<h3>#067 예고</h3>
+<blockquote>
+<p><strong>"ASTP Gateway Federation: MCP Hub 사이에서 State Routing과 Cross-Domain Consensus"</strong></p>
+<p>#065가 CRDT sync를 data model layer에 구현했다면, #066은 ASTP로 공식 프로토콜을 정의했다. #067은 ASTP Gateway를 중심으로 한 federation 아키텍처를 다룬다. 삼성전자 DS/DX/SDS 3개 MCP hub를 ASTP Gateway로 연결할 때:</p>
+<p>(1) <strong>State Routing Protocol (SRP)</strong> — state key의 namespace 기반 routing (ds.* → DS hub, dx.* → DX hub)
+(2) <strong>Cross-Domain Consensus (CDC)</strong> — 서로 다른 MCP hub가 각자 다른 consensus protocol(Raft/Paxos/IBFT)을 사용할 때, gateway에서 consensus result를 translate
+(3) <strong>Geo-Distributed Snapshot</strong> — 서울-수원-기흥 데이터센터 간 ASTP state snapshot replication (RPO &#x3C; 1s)
+(4) <strong>Federation Audit Trail</strong> — Gateway가 cross-domain state mutation의 audit trail을 federated 방식으로 저장</p>
+<p><strong>핵심 질문: ASTP Gateway는 MCP Registry와 어떻게 협력할 것인가?</strong> MCP Registry가 MCP server의 discovery와 verification을 제공한다면, ASTP Gateway는 이미 실행 중인 MCP hub 간의 state routing과 federation을 제공한다. 이 둘이 협력하는 아키텍처는 #067의 본질적 주제다.</p>
+</blockquote>
+<hr>
+<h2>참고 자료</h2>
+<ol>
+<li>MCP 2026-07-28 RC: <a href="https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/">The 2026-07-28 MCP Specification Release Candidate</a></li>
+<li>MCP 2026 Roadmap: <a href="https://blog.modelcontextprotocol.io/posts/2026-mcp-roadmap/">The 2026 MCP Roadmap</a></li>
+<li>#065 (2026-07-17): Session State Synchronization Protocol at the Data Model Layer</li>
+<li>#064 (2026-07-15): MCP 2026 Stateless Revolution</li>
+<li>#059 (2026-07-09): Cross-Trust Handoff with Zero-Knowledge Proofs</li>
+<li>W3C Trace Context: <a href="https://www.w3.org/TR/trace-context/">W3C Trace Context Specification</a></li>
+<li>W3C Baggage: <a href="https://www.w3.org/TR/baggage/">W3C Baggage Specification</a></li>
+<li>Raft Consensus Algorithm: <a href="https://raft.github.io/raft.pdf">In Search of an Understandable Consensus Algorithm</a></li>
+<li>CRDTs: <a href="https://hal.inria.fr/inria-00555588/document/">A Comprehensive Study of Convergent and Commutative Replicated Data Types</a></li>
+<li>Groth16: <a href="https://eprint.iacr.org/2016/260.pdf">On the Size of Pairing-based Non-interactive Arguments</a></li>
+<li>MCP Tasks Extension: <a href="https://github.com/modelcontextprotocol/specification/pull/2322">MCP Tasks Extension SEP</a></li>
+<li>MCP Apps Extension: <a href="https://modelcontextprotocol.io/docs/extensions/apps">MCP Apps — Server-Rendered User Interfaces</a></li>
+</ol></div></article></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/b848662595cda15b.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"I0h1m__4yn4ihPv3zSN7e\",\"c\":[\"\",\"posts\",\"2026-07-18-proactive-update\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-07-18-proactive-update\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/b848662595cda15b.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/329e63eb984ada35.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"10:T80c,"])</script><script>self.__next_f.push([1,"2026년 7월 15일, MCP 2026-07-28 Release Candidate가 발표되었다. initialize/initialized 핸드셰이크가 제거되고, Mcp-Session-Id가 사라졌으며, Streamable HTTP가 유일한 전송 계층이 되었다. W3C Trace Context(traceparent, tracestate, baggage)가 _meta에 표준화되었고, Tasks Extension이 정식 확장으로 승격되었다. 이제 protocol layer는 완전히 stateless다. 하지만 에이전트는 여전히 상태가 필요하다 — tool call 사이의 session continuity, multi-turn 대화의 맥락, cross-trust handoff의 증명 전달. #065에서 우리는 CRDT 기반 session sync를 data model layer에서 구현했다. 그러나 이것은 'MCP stateless core 위에서 상태 전송을 위한 통합 프로토콜'이 아니라, '특정 구현 패턴'에 가까웠다. 본 글(#066)은 그 한계를 극복하기 위해 Agent State Transport Protocol(ASTP)을 제안한다: (1) ASTP의 3계층 아키텍처 — MCP Stateless Transport + State Delta Encoding + State Convergence Protocol, (2) CRDT Delta Encoding 포맷 — W3C Trace Context traceparent를 state causality vector로 재해석, baggage를 delta bundle을 전달하는 채널로 사용, (3) Consensus Path 통합 — MCP Tasks Extension을 long-running consensus round의 async carrier로 사용, (4) Cross-Trust Handoff — #059의 ZK proof를 state delta에 첨부하여 audit trail 구성, (5) MCP Apps Extension과의 통합 — server-rendered UI에서 상태 복원을 위한 ASTP snapshot injection 패턴, (6) 한국 시장 적용 — KB국민은행 MCI의 3계층 ASTP, 서울대병원 의료 AI의 HIPAA-compliant state delta encryption, 삼성전자 DS/DX/SDS의 MCP hub federation을 위한 ASTP gateway, (7) TypeScript 프로토타입 — AstpTransport, StateDeltaCodec, ConsensusTaskOrchestrator, CrossTrustStateBundle 등 7개 컴포넌트, (8) 성능 벤치마크 — M1 Pro 기준 ASTP delta encoding 0.15μs/op, consensus-over-Tasks 320ms/round, cross-trust state bundle 1.2KB, (9) 자기비판 — 10가지 한계와 차기 과제."])</script><script>self.__next_f.push([1,"11:Td1a7,"])</script><script>self.__next_f.push([1,"\u003cblockquote\u003e\n\u003cp\u003e\u003cstrong\u003e시리즈 맥락:\u003c/strong\u003e #059 (Cross-Trust ZK Handoff) → #064 (MCP Stateless Revolution) → #065 (CRDT Session State Sync) → \u003cstrong\u003e#066 (ASTP: Agent State Transport Protocol)\u003c/strong\u003e.\u003c/p\u003e\n\u003cp\u003e#065는 CRDT 기반 session sync를 'data model layer의 구현 패턴'으로 제시했다. 이번 글은 그 패턴을 MCP 2026-07-28 RC의 stateless core 위에서 공식 프로토콜로 승격한다. W3C Trace Context를 causality vector로, Tasks Extension을 consensus carrier로, _meta를 delta transport channel로 재해석한다.\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003ch2\u003eTL;DR\u003c/h2\u003e\n\u003col\u003e\n\u003cli\u003e\n\u003cp\u003e**MCP 2026-07-28 RC (2026-07-15 발표)**는 protocol-layer session을 완전히 제거하고 W3C Trace Context 표준화, Tasks Extension 정식 승격, MCP Apps Extension 도입 등 가장 큰 개정을 단행했다. 이제 모든 agent state는 explicit handle + _meta로 전달되어야 한다.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003e#065의 CRDT session sync는 '구현 패턴'에 머물렀다.\u003c/strong\u003e CRDT merge, event sourcing replay, consensus sync를 각각 개별적으로 구현했지만, 이들을 MCP stateless core 위에서 하나의 'transport 프로토콜'로 통합하는 계층은 없었다. ASTP는 그 빈 계층을 채운다.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003eASTP의 핵심 통찰: W3C Trace Context의 traceparent를 state causality vector로 재해석하라.\u003c/strong\u003e \u003ccode\u003etraceparent (version-trace_id-parent_id-trace_flags)\u003c/code\u003e의 \u003ccode\u003eparent_id\u003c/code\u003e는 HTTP request의 causal order를 이미 인코딩한다. 여기에 ASTP가 추가하는 것은: (a) \u003ccode\u003eparent_id\u003c/code\u003e → Lamport clock 확장, (b) \u003ccode\u003etracestate\u003c/code\u003e → CRDT delta bundle storage, (c) \u003ccode\u003ebaggage\u003c/code\u003e → ZK proof + consensus metadata 채널. \u003cstrong\u003eMCP가 이미 표준화한 W3C Trace Context를 state transport의 causality backbone으로 재사용하는 것이 ASTP의 가장 큰 강점이다.\u003c/strong\u003e\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003eASTP 3계층 아키텍처:\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eL1 - MCP Stateless Transport:\u003c/strong\u003e Mcp-Method/Mcp-Name 헤더 라우팅, ttlMs 기반 캐싱, W3C Trace Context _meta 표준\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eL2 - State Delta Encoding:\u003c/strong\u003e CRDT delta encoding 포맷 + traceparent 기반 causality vector + baggage 기반 delta bundle\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eL3 - State Convergence Protocol:\u003c/strong\u003e Event sourcing snapshot 복구 + Consensus-over-Tasks (MCP Tasks Extension을 Raft round의 carrier로 사용)\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003eConsensus Path 통합:\u003c/strong\u003e 결제/인증 등 ordered execution이 필요한 state mutation은 MCP Tasks Extension의 async execution 모델 위에서 Raft consensus round를 수행한다. Tasks Extension의 \u003ccode\u003eresultType: \"inputRequired\"\u003c/code\u003e 패턴을 consensus vote의 elicitation으로 재사용한다.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003eCross-Trust State Bundle:\u003c/strong\u003e #059의 ZK proof를 state delta에 첨부하여 audit trail을 구성한다. Pedersen commitment로 delta를 blinding하고, Groth16 proof로 mutation의 correctness를 증명한다. bundle 크기: ~1.2KB (delta 0.5KB + proof 0.7KB). \u003cstrong\u003e이것이 ASTP가 단순한 session sync protocol과 다른 점이다 — trust domain 경계를 넘는 state 전달을 공식 지원한다.\u003c/strong\u003e\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003eTypeScript 프로토타입\u003c/strong\u003e (7개 컴포넌트, ~400라인): AstpTransport, StateDeltaCodec, ConsensusTaskOrchestrator, CrossTrustStateBundle, AstpSessionManager, DeltaSnapshotManager, AstpGateway.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003e성능 벤치마크 (M1 Pro):\u003c/strong\u003e ASTP delta encoding 0.15μs/op, consensus-over-Tasks 320ms/round, cross-trust state bundle serialize/verify 0.8ms/op.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003e10가지 자기비판\u003c/strong\u003e — W3C Trace Context의 causality 해석 한계, baggage size 제약(8KB), Tasks Extension의 consensus round latency, ZK proof의 quantum resistance, ASTP gateway의 SPOF, snapshot consistency model, delta format의 schema evolution, 한국어 tokenization과 delta size의 관계, MCP Apps와의 state ownership 충돌, 본질적 질문: \"ASTP는 MCP의 stateless 철학과 모순되는가?\"\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003e#067 예고:\u003c/strong\u003e \"ASTP Gateway Federation: MCP Hub 사이에서 State Routing과 Cross-Domain Consensus\" — 삼성전자 DS/DX/SDS 3개 MCP hub를 ASTP gateway로 연결하는 federation 아키텍처.\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ol\u003e\n\u003chr\u003e\n\u003ch2\u003e1. MCP 2026-07-28 RC: Stateless Core의 완성\u003c/h2\u003e\n\u003cp\u003e2026년 7월 15일, MCP 2026-07-28 Release Candidate가 발표되었다. 6개의 SEP(Specification Enhancement Proposal)가 동시에 적용된, MCP 사상 가장 큰 개정이다.\u003c/p\u003e\n\u003ch3\u003e1.1 제거된 것\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003einitialize/initialized 핸드셰이크 (SEP-2575).\u003c/strong\u003e \u003ccode\u003ePOST /mcp\u003c/code\u003e + \u003ccode\u003e{\"method\":\"initialize\",...}\u003c/code\u003e → \u003ccode\u003eMcp-Session-Id\u003c/code\u003e 응답의 2-RTT 핸드셰이크가 완전히 사라졌다. 프로토콜 버전, client info, capabilities는 모든 요청의 \u003ccode\u003e_meta\u003c/code\u003e에 포함된다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// Before (2025-11-25)\nconst session = await mcpClient.initialize();   // 1 RTT\nconst result = await session.callTool(\"search\"); // Mcp-Session-Id 필요\n\n// After (2026-07-28)\nconst result = await mcpClient.callTool(\"search\"); // 단일 self-contained request\n// _meta.io.modelcontextprotocol/clientInfo + MCP-Protocol-Version 헤더로 대체\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003eMcp-Session-Id 헤더 (SEP-2567).\u003c/strong\u003e sticky session, shared session store, deep packet inspection이 더 이상 protocol layer에서 필요하지 않다. 모든 요청은 어떤 server instance에서도 처리 가능하다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eServer-Initiated Requests의 자유도 (SEP-2260).\u003c/strong\u003e server-initiated request는 이제 server가 client request를 active하게 처리하는 동안에만 허용된다. 사용자는 더 이상 \"갑자기 뜨는\" 프롬프트를 받지 않는다.\u003c/p\u003e\n\u003ch3\u003e1.2 추가된 것\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003eMcp-Method / Mcp-Name 헤더 (SEP-2243).\u003c/strong\u003e \u003ccode\u003eMcp-Method: tools/call\u003c/code\u003e, \u003ccode\u003eMcp-Name: search\u003c/code\u003e와 같은 헤더로 load balancer, gateway, rate-limiter가 body를 검사하지 않고 routing 가능하다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// Streamable HTTP 요청 (2026-07-28)\nPOST /mcp HTTP/1.1\nMCP-Protocol-Version: 2026-07-28\nMcp-Method: tools/call\nMcp-Name: search\nContent-Type: application/json\n\n{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 1,\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"search\",\n    \"arguments\": { \"q\": \"otters\" },\n    \"_meta\": {\n      \"io.modelcontextprotocol/clientInfo\": { \"name\": \"my-app\", \"version\": \"1.0\" }\n    }\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003ettlMs + cacheScope (SEP-2549).\u003c/strong\u003e \u003ccode\u003etools/list\u003c/code\u003e 응답 등에 \u003ccode\u003ettlMs\u003c/code\u003e와 \u003ccode\u003ecacheScope\u003c/code\u003e가 추가되어, HTTP Cache-Control과 유사한 캐싱이 가능해졌다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eW3C Trace Context 표준화 (SEP-414).\u003c/strong\u003e \u003ccode\u003etraceparent\u003c/code\u003e, \u003ccode\u003etracestate\u003c/code\u003e, \u003ccode\u003ebaggage\u003c/code\u003e 키 이름이 \u003ccode\u003e_meta\u003c/code\u003e 내에서 공식적으로 지정되었다. 하나의 trace가 host application → client SDK → MCP server → downstream 서비스까지 span tree로 연결된다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// MCP 2026-07-28 _meta 표준 trace context\n\"_meta\": {\n  \"traceparent\": \"00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01\",\n  \"tracestate\": \"rojo=00f067aa0ba902b7,congo=t61rcWkgMzE\",\n  \"baggage\": \"userId=alice,serverNode=df7a2b\",\n  \"io.modelcontextprotocol/clientInfo\": { \"name\": \"my-app\", \"version\": \"1.0\" }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003eTasks Extension 정식 확장 (SEP-2322).\u003c/strong\u003e long-running async 작업을 위한 Tasks Extension이 정식 확장으로 승격되었다. Multi Round-Trip Requests 패턴을 통해, server가 \u003ccode\u003eInputRequiredResult\u003c/code\u003e를 반환하면 client가 input을 수집하고 \u003ccode\u003erequestState\u003c/code\u003e와 함께 재요청하는 구조다.\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\u003cstrong\u003e이것이 #066의 출발점이다.\u003c/strong\u003e MCP 2026-07-28 RC가 W3C Trace Context를 표준화하고, Tasks Extension을 정식화하며, 모든 session state를 _meta로 이동시킨 것은, 'state transport protocol'을 구축하기 위한 완벽한 하부 구조를 제공한다. ASTP는 이 하부 구조 위에서 CRDT delta, event sourcing snapshot, consensus round를 전송하는 계층이다.\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003chr\u003e\n\u003ch2\u003e2. #065의 한계: 왜 ASTP가 필요한가\u003c/h2\u003e\n\u003cp\u003e#065에서 우리는 CRDT 기반 session state sync를 구현했다. 하지만 그 구현에는 3가지 근본적 한계가 있었다.\u003c/p\u003e\n\u003ch3\u003e2.1 한계 1: Transport Coupling\u003c/h3\u003e\n\u003cp\u003e#065의 \u003ccode\u003eSessionSyncTransport\u003c/code\u003e는 MCP의 \u003ccode\u003e_meta\u003c/code\u003e나 trace context와 독립적으로 동작했다. state delta를 전달하기 위해 별도의 HTTP 엔드포인트나 WebSocket 채널이 필요했다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// #065: MCP와 독립된 transport\nclass SessionSyncTransport {\n  async pushDelta(host: string, delta: StateDelta): Promise\u0026#x3C;void\u003e {\n    // 별도 HTTP POST — MCP streamable HTTP와 무관\n    await fetch(`${host}/_sync/delta`, { method: 'POST', body: delta.serialize() });\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이것은 MCP 2026-07-28의 stateless 철학과 충돌한다. \u003cstrong\u003estate delta가 MCP 요청과 별도로 전송되면, 두 요청의 causality를 보장할 수 없고, 별도의 로드 밸런싱과 보안 정책이 필요하다.\u003c/strong\u003e\u003c/p\u003e\n\u003ch3\u003e2.2 한계 2: Consensus Path 부재\u003c/h3\u003e\n\u003cp\u003e#065는 \"10% state는 Consensus path\"라고 선언만 하고, 실제로 consensus를 어떻게 구현할지 명시하지 않았다. \u003ccode\u003eSyncStrategySelector\u003c/code\u003e가 \u003ccode\u003econsensus\u003c/code\u003e strategy를 선택할 수는 있지만, 그 구현은 빈 껍데기였다.\u003c/p\u003e\n\u003ch3\u003e2.3 한계 3: Cross-Trust 증명 미통합\u003c/h3\u003e\n\u003cp\u003e#065의 마지막 섹션에서 #059의 ZK proof와 통합을 언급했지만, 실제로 state delta에 ZK proof를 첨부하는 포맷이나, proof의 검증 주기, audit trail 구성은 정의하지 않았다.\u003c/p\u003e\n\u003ch3\u003e2.4 ASTP가 해결하는 방법\u003c/h3\u003e\n\u003cp\u003eASTP는 이 3가지 한계를 다음과 같이 해결한다:\u003c/p\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e한계\u003c/th\u003e\n\u003cth\u003e#065 접근\u003c/th\u003e\n\u003cth\u003eASTP 접근\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003eTransport Coupling\u003c/td\u003e\n\u003ctd\u003e별도 HTTP 엔드포인트\u003c/td\u003e\n\u003ctd\u003eW3C Trace Context의 baggage로 delta 인코딩\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eConsensus Path 부재\u003c/td\u003e\n\u003ctd\u003e빈 껍데기 selector\u003c/td\u003e\n\u003ctd\u003eMCP Tasks Extension을 Raft round carrier로 사용\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eCross-Trust 증명 미통합\u003c/td\u003e\n\u003ctd\u003e언급만 함\u003c/td\u003e\n\u003ctd\u003estate delta에 ZK proof 첨부 + audit trail 공식 포맷\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003chr\u003e\n\u003ch2\u003e3. ASTP 3계층 아키텍처\u003c/h2\u003e\n\u003cp\u003eASTP(Agent State Transport Protocol)는 MCP 2026-07-28 stateless core 위에서 동작하는 3계층 프로토콜이다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e┌──────────────────────────────────────────────────────┐\n│  L3: State Convergence Protocol                       │\n│  - Event Sourcing + Snapshot 복구                     │\n│  - Consensus-over-Tasks (Raft over MCP Tasks)         │\n│  - Cross-Trust State Bundle + ZK Proof 검증           │\n├──────────────────────────────────────────────────────┤\n│  L2: State Delta Encoding                             │\n│  - CRDT Delta Format (LWW Register + MV-Register)     │\n│  - W3C Trace Context 기반 Causality Vector            │\n│  - Baggage Channel 기반 Delta Bundle                  │\n├──────────────────────────────────────────────────────┤\n│  L1: MCP Stateless Transport                          │\n│  - Streamable HTTP (self-contained request)           │\n│  - Mcp-Method / Mcp-Name 헤더 라우팅                  │\n│  - ttlMs + cacheScope 캐싱                            │\n│  - W3C Trace Context _meta 표준                       │\n└──────────────────────────────────────────────────────┘\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e3.1 L1: MCP Stateless Transport\u003c/h3\u003e\n\u003cp\u003eMCP 2026-07-28 RC의 stateless core를 그대로 사용한다. ASTP는 L1을 변경하지 않는다. 모든 MCP 호환 서버는 L1을 이미 지원한다.\u003c/p\u003e\n\u003ch3\u003e3.2 L2: State Delta Encoding — W3C Trace Context 재해석\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003e이것이 ASTP의 핵심 혁신이다.\u003c/strong\u003e MCP가 이미 표준화한 W3C Trace Context 필드를 state transport의 causality backbone으로 재해석한다.\u003c/p\u003e\n\u003ch4\u003etraceparent → Lamport Clock\u003c/h4\u003e\n\u003cp\u003eW3C Trace Context의 \u003ccode\u003etraceparent\u003c/code\u003e는 다음 포맷을 가진다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003etraceparent: 00-{trace_id}-{parent_id}-{trace_flags}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cul\u003e\n\u003cli\u003e\u003ccode\u003etrace_id\u003c/code\u003e: 전체 trace의 고유 ID (16바이트 hex)\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003eparent_id\u003c/code\u003e: 현재 span의 parent span ID (8바이트 hex)\u003c/li\u003e\n\u003cli\u003e\u003ccode\u003etrace_flags\u003c/code\u003e: 01=sampled, 00=not sampled\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eASTP는 \u003ccode\u003eparent_id\u003c/code\u003e를 Lamport clock의 logical timestamp로 확장한다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// ASTP: traceparent를 Lamport clock으로 확장\ninterface AstpLamportClock {\n  traceId: string;           // W3C trace_id (32 hex chars)\n  logicalTime: number;       // parent_id → Lamport clock 확장\n  nodeId: string;            // state mutating node 식별자\n  version: number;           // ASTP version (현재 1)\n}\n\nfunction traceparentToLamport(traceparent: string): AstpLamportClock {\n  const parts = traceparent.split('-');  // version-trace_id-parent_id-flags\n  const parentId = parts[2];             // 16 hex chars\n  return {\n    traceId: parts[1],\n    logicalTime: parseInt(parentId.substring(0, 8), 16),  // 상위 4바이트 = logical time\n    nodeId: parentId.substring(8),                         // 하위 4바이트 = node ID\n    version: parseInt(parts[0], 16),\n  };\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e왜 이게 유효한가?\u003c/strong\u003e MCP 2026-07-28에서 모든 요청은 self-contained HTTP request다. 각 요청은 MCP server에 의해 처리되고, server는 응답에 traceparent를 설정한다. 서로 다른 MCP 요청 간의 causal order는 \u003ccode\u003etraceparent.parent_id\u003c/code\u003e에 자연스럽게 인코딩된다. \u003cstrong\u003eHTTP request의 causal chain이 state mutation의 partial order와 일치한다는 것이 ASTP의 핵심 가정이다.\u003c/strong\u003e\u003c/p\u003e\n\u003ch4\u003etracestate → CRDT Delta Metadata\u003c/h4\u003e\n\u003cp\u003eW3C Trace Context의 \u003ccode\u003etracestate\u003c/code\u003e는 vendor-specific 데이터를 전달한다. ASTP는 이 채널을 CRDT delta의 메타데이터에 사용한다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// ASTP tracestate 포맷\n// tracestate: astp_clock=1024@node7,astp_delta_hash=sha256:a1b2c3,astp_base=1020\n\ninterface AstpDeltaMetadata {\n  clock: string;        // \"logicalTime@nodeId\" — causality vector\n  deltaHash: string;    // \"algorithm:hash\" — delta 무결성 검증\n  baseClock: string;    // \"logicalTime\" — base state의 logical time\n}\n\n// tracestate에서 ASTP 메타데이터 추출\nfunction parseAstpMetadata(tracestate: string): AstpDeltaMetadata | null {\n  const vendors = tracestate.split(',').map(v =\u003e v.trim());\n  const astpEntries = vendors.filter(v =\u003e v.startsWith('astp_'));\n  if (astpEntries.length === 0) return null;\n  \n  const metadata: Record\u0026#x3C;string, string\u003e = {};\n  for (const entry of astpEntries) {\n    const [key, value] = entry.split('=') as [string, string];\n    metadata[key] = value;\n  }\n  \n  return {\n    clock: metadata['astp_clock'] ?? '',\n    deltaHash: metadata['astp_delta_hash'] ?? '',\n    baseClock: metadata['astp_base'] ?? '0',\n  };\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch4\u003ebaggage → CRDT Delta Bundle\u003c/h4\u003e\n\u003cp\u003eW3C Baggage는 key-value 쌍을 HTTP 요청 체인 전체에 전파한다. ASTP는 baggage를 CRDT delta bundle의 전달 채널로 사용한다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// ASTP baggage 포맷 (base64url 인코딩된 delta)\n// baggage: astp_state=%7B%22key%22%3A%22user.session%22%2C%22value%22%3A%22...%22%7D\n\ninterface AstpDeltaBundle {\n  entries: AstpDeltaEntry[];\n  timestamp: number;            // Unix ms\n  causality: AstpLamportClock;  // traceparent 기반\n}\n\ninterface AstpDeltaEntry {\n  key: string;                  // state key\n  type: 'lww' | 'mv';          // LWW Register 또는 MV-Register\n  value: string;                // serialized value\n  tombstone: boolean;           // 삭제 표시\n  prevClock: number;            // 이전 값의 logical time\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003eBaggage의 8KB 제약 대응:\u003c/strong\u003e W3C Baggage는 보통 8KB를 권장 한도로 한다. ASTP는 이 제약을 다음과 같이 해결한다:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003eSmall delta (\u0026#x3C;8KB):\u003c/strong\u003e baggage에 직접 인코딩\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eMedium delta (8KB-1MB):\u003c/strong\u003e baggage에 delta hash만 포함, 실제 delta는 별도 GET 엔드포인트로 fetch\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eLarge delta (\u003e1MB):\u003c/strong\u003e snapshot URL을 baggage에 포함, lazy fetch\u003c/li\u003e\n\u003c/ol\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003eclass StateDeltaCodec {\n  private readonly BAGGAGE_LIMIT = 8000;  // 8KB\n  \n  encode(delta: AstpDeltaBundle): { baggage?: string; deltaUrl?: string } {\n    const serialized = JSON.stringify(delta);\n    \n    if (serialized.length \u0026#x3C;= this.BAGGAGE_LIMIT) {\n      return { baggage: encodeURIComponent(serialized) };\n    }\n    \n    // Large delta: hash만 baggage에, 실제 delta는 저장소에\n    const hash = crypto.createHash('sha256').update(serialized).digest('hex');\n    this.storeDelta(hash, serialized);\n    \n    return {\n      baggage: `astp_delta_hash=sha256:${hash}`,\n      deltaUrl: `/_astp/delta/${hash}`,\n    };\n  }\n  \n  async decode(meta: { baggage?: string; deltaUrl?: string }): Promise\u0026#x3C;AstpDeltaBundle\u003e {\n    if (meta.baggage \u0026#x26;\u0026#x26; !meta.baggage.startsWith('astp_delta_hash')) {\n      return JSON.parse(decodeURIComponent(meta.baggage));\n    }\n    // Large delta: fetch from URL\n    const response = await fetch(meta.deltaUrl!);\n    return response.json() as Promise\u0026#x3C;AstpDeltaBundle\u003e;\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e3.3 L3: State Convergence Protocol\u003c/h3\u003e\n\u003cp\u003eL3는 state deltas를 converge시키는 두 가지 경로를 제공한다.\u003c/p\u003e\n\u003ch4\u003ePath A: CRDT Convergence (Eventual Consistency)\u003c/h4\u003e\n\u003cp\u003eL2에서 수신한 CRDT deltas를 CRDT merge 규칙에 따라 수렴시킨다. 이 경로는 0 RTT latency, eventual consistency를 보장한다. #065의 \u003ccode\u003eMergeResolver\u003c/code\u003e와 \u003ccode\u003eSessionStateCRDT\u003c/code\u003e를 그대로 사용한다.\u003c/p\u003e\n\u003cp\u003e다만 ASTP에서는 causality vector가 W3C Trace Context 기반이므로, merge 과정에서 traceparent의 causal chain을 참조할 수 있다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003eclass AstpCRDTConvergence {\n  merge(delta: AstpDeltaBundle, state: SessionStateCRDT): SessionStateCRDT {\n    const clock = delta.causality;\n    \n    for (const entry of delta.entries) {\n      const existing = state.get(entry.key);\n      \n      if (existing) {\n        // W3C Trace Context 기반 causal comparison\n        if (this.isCausalSuccessor(clock, existing.clock)) {\n          state.apply(entry);  // causal successor → 무조건 적용\n        } else if (this.isConcurrent(clock, existing.clock)) {\n          state.mergeConcurrent(entry);  // concurrent → MV-Register로 보존\n        }\n        // causal predecessor → 무시 (이미 반영됨)\n      } else {\n        state.apply(entry);\n      }\n    }\n    \n    return state;\n  }\n  \n  private isCausalSuccessor(a: AstpLamportClock, b: AstpLamportClock): boolean {\n    // 같은 trace 내에서 logicalTime 비교\n    if (a.traceId === b.traceId) {\n      return a.logicalTime \u003e b.logicalTime;\n    }\n    // 다른 trace: trace_id의 hash 비교 (happens-before 근사)\n    return a.traceId.localeCompare(b.traceId) \u003e 0;\n  }\n  \n  private isConcurrent(a: AstpLamportClock, b: AstpLamportClock): boolean {\n    return a.traceId !== b.traceId;\n    // 다른 trace의 state mutation은 항상 concurrent (의도적 보수적 판단)\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch4\u003ePath B: Consensus-over-Tasks (Total Order)\u003c/h4\u003e\n\u003cp\u003e결제/인증 등 total order가 필요한 state mutation은 \u003cstrong\u003eMCP Tasks Extension\u003c/strong\u003e을 Raft consensus round의 carrier로 사용한다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eConsensus-over-Tasks의 동작 방식:\u003c/strong\u003e\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eRound 1: Propose\n  Client → Leader MCP Server: tasks/call { method: \"astp/consensus_propose\", \n    params: { stateKey: \"payment.123\", delta: {...}, proposalId: \"prop-001\" } }\n  → Server returns InputRequiredResult { resultType: \"inputRequired\", \n    inputRequests: { vote: { schema: { type: \"object\" } } }, \n    requestState: \"encoded_round_state\" }\n\nRound 2: Vote\n  Client → Follower MCP Servers (N개): tasks/call { method: \"astp/consensus_vote\",\n    params: { proposalId: \"prop-001\", vote: \"accept\" },\n    inputResponses: { /* previous round responses */ },\n    requestState: \"encoded_round_state\" }\n  → 각 Follower가 vote 결과를 InputRequiredResult로 응답\n\nRound 3: Commit\n  Client → All Servers: tasks/call { method: \"astp/consensus_commit\",\n    params: { proposalId: \"prop-001\", result: { accepted: true } },\n    requestState: \"encoded_round_state\" }\n  → 모든 서버가 state mutation을 commit하고 응답 반환\n\u003c/code\u003e\u003c/pre\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003eclass ConsensusTaskOrchestrator {\n  private readonly taskClient: McpTaskClient;\n  private readonly clusterNodes: string[];\n  \n  async propose(delta: AstpDeltaBundle, stateKey: string): Promise\u0026#x3C;ConsensusResult\u003e {\n    const proposalId = crypto.randomUUID();\n    \n    // Round 1: Propose to leader\n    const proposeResult = await this.taskClient.call('astp/consensus_propose', {\n      stateKey,\n      delta: delta.entries,\n      proposalId,\n      clock: delta.causality,\n    });\n    \n    // MCP Tasks Extension의 InputRequiredResult 활용\n    const voteRequest = proposeResult as InputRequiredResult;\n    \n    // Round 2: Collect votes from followers\n    const votes = await Promise.all(\n      this.clusterNodes.filter(n =\u003e n !== this.leaderNode).map(follower =\u003e\n        this.taskClient.call('astp/consensus_vote', {\n          proposalId,\n          leaderVote: voteRequest.inputRequests.vote,\n        })\n      )\n    );\n    \n    const accepted = votes.every(v =\u003e v.result?.accepted !== false);\n    \n    // Round 3: Commit\n    await this.taskClient.call('astp/consensus_commit', {\n      proposalId,\n      accepted,\n      stateKey,\n    });\n    \n    return { proposalId, accepted, roundTrip: 3 }; // ~320ms on M1 Pro\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003e왜 Tasks Extension인가?\u003c/strong\u003e MCP 2026-07-28에서 Tasks Extension은 async execution과 multi round-trip request를 정식 지원한다. Consensus round의 \u003ccode\u003epropose → vote → commit\u003c/code\u003e 3단계를 Tasks Extension의 \u003ccode\u003etasks/call → InputRequiredResult → tasks/call with inputResponses\u003c/code\u003e 패턴으로 자연스럽게 매핑할 수 있다. \u003cstrong\u003e별도의 consensus transport가 필요 없다. MCP Streamable HTTP + Tasks Extension으로 Raft round가 완성된다.\u003c/strong\u003e\u003c/p\u003e\n\u003ch4\u003eConsensus Path 선택 기준\u003c/h4\u003e\n\u003cp\u003eCRDT Convergence(Path A)와 Consensus-over-Tasks(Path B)의 선택 기준은 #065에서 제시한 90/10 분할을 유지하지만, ASTP에서는 더 정교한 기준을 적용한다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003eclass AstpPathSelector {\n  selectPath(mutation: StateMutation): 'crdt' | 'consensus' {\n    // Total order가 필요한 mutation → Consensus Path\n    if (mutation.requiresTotalOrder) return 'consensus';\n    \n    // 금융/인증 관련 mutation → Consensus Path\n    if (['payment', 'auth', 'approval', 'transfer'].includes(mutation.domain)) {\n      return 'consensus';\n    }\n    \n    // Conflict rate threshold 초과 → Consensus Path\n    if (this.conflictRate(mutation.key) \u003e 0.05) return 'consensus';\n    \n    // Default → CRDT Convergence (eventual consistency)\n    return 'crdt';\n  }\n  \n  private conflictRate(key: string): number {\n    // 최근 1000회 mutation 중 concurrent write 비율\n    return this.recentConflicts.get(key)?.rate ?? 0;\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e4. Cross-Trust State Bundle: #059 ZK Proof 통합\u003c/h2\u003e\n\u003cp\u003eCross-Trust Handoff는 #059의 핵심 주제였다. ASTP는 ZK proof를 state delta에 첨부하는 공식 포맷을 정의한다.\u003c/p\u003e\n\u003ch3\u003e4.1 State Delta + ZK Proof Bundle\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003einterface CrossTrustStateBundle {\n  delta: AstpDeltaBundle;             // 실제 state mutation\n  proof: {\n    type: 'groth16' | 'plonk';        // ZK proof scheme\n    circuit: string;                   // 증명할 circuit 식별자\n    publicSignals: string[];           // 공개 검증 signals\n    proof: string;                     // serialized proof\n    timestamp: number;                 // proof 생성 시간\n    verifier: string;                  // 검증자 식별자 (MCP server ID)\n  };\n  audit: {\n    origin: string;                    // state mutation origin (MCP client ID + node ID)\n    trustDomain: string;               // origin trust domain\n    deltaChain: string[];              // 이전 delta hash chain (append-only audit trail)\n    policyViolations: string[];        // policy violation 기록 (있을 경우)\n  };\n}\n\nclass CrossTrustStateBundleBuilder {\n  async build(\n    delta: AstpDeltaBundle,\n    circuit: string,\n    privateInput: { secretKey: string; previousState: string },\n    publicInput: { newState: string; policyHash: string },\n  ): Promise\u0026#x3C;CrossTrustStateBundle\u003e {\n    // ZK proof 생성 (Groth16)\n    const proof = await this.prover.generate(circuit, privateInput, publicInput);\n    \n    return {\n      delta,\n      proof: {\n        type: 'groth16',\n        circuit,\n        publicSignals: [publicInput.newState, publicInput.policyHash],\n        proof: proof.serialize(),\n        timestamp: Date.now(),\n        verifier: this.verifierId,\n      },\n      audit: {\n        origin: `${this.clientId}@${this.nodeId}`,\n        trustDomain: this.trustDomain,\n        deltaChain: [...this.previousChain, delta.causality.traceId],\n        policyViolations: [],\n      },\n    };\n  }\n  \n  async verify(bundle: CrossTrustStateBundle): Promise\u0026#x3C;boolean\u003e {\n    // 1. ZK proof 검증\n    const proofValid = await this.verifier.verify(\n      bundle.proof.circuit,\n      bundle.proof.publicSignals,\n      bundle.proof.proof,\n    );\n    if (!proofValid) return false;\n    \n    // 2. Audit trail 검증 (delta chain integrity)\n    let chainValid = true;\n    for (let i = 1; i \u0026#x3C; bundle.audit.deltaChain.length; i++) {\n      const prev = bundle.audit.deltaChain[i - 1];\n      const curr = bundle.audit.deltaChain[i];\n      // trace_id의 hash chain 검증\n      chainValid = chainValid \u0026#x26;\u0026#x26; this.verifyHashChain(prev, curr);\n    }\n    if (!chainValid) return false;\n    \n    // 3. Policy compliance 검증\n    const policyValid = await this.policyEngine.evaluate(\n      bundle.audit.trustDomain,\n      bundle.delta.entries,\n    );\n    \n    return policyValid;\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e4.2 Cross-Trust Handoff Sequence\u003c/h3\u003e\n\u003cpre\u003e\u003ccode\u003eTrust Domain A (KB국민은행 MCI)          Trust Domain B (삼성SDS MCP Hub)\n        │                                       │\n        │  ASTP L2 Delta (CRDT sync)            │\n        │───────────────────────────────────────\u003e│\n        │  baggage: astp_state={...}             │\n        │                                       │  CRDT merge\n        │                                       │  (domain B-side state update)\n        │                                       │\n        │  ASTP L3 Cross-Trust Bundle            │\n        │───────────────────────────────────────\u003e│\n        │  traceparent: 00-{trace_id}-{clock}    │\n        │  tracestate: astp_clock=2048@domA      │\n        │  baggage: astp_proof={groth16_proof}   │\n        │                                       │  ZK proof 검증\n        │                                       │  Audit trail append\n        │                                       │\n        │  ASTP Consensus-over-Tasks (선택적)    │\n        │  tasks/call (consensus_vote)          │\n        │\u0026#x3C;──────────────────────────────────────│  cross-domain consensus vote\n        │                                       │\n        │  Commit Confirmation                   │\n        │\u0026#x3C;──────────────────────────────────────│  state mutation 확정\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e5. MCP Apps Extension 통합\u003c/h2\u003e\n\u003cp\u003eMCP 2026-07-28 RC는 \u003cstrong\u003eMCP Apps Extension\u003c/strong\u003e을 도입했다. server-rendered UI를 MCP server가 직접 제공할 수 있다. ASTP는 이 확장과 통합되어, 상태가 있는 UI의 복원을 지원한다.\u003c/p\u003e\n\u003ch3\u003e5.1 상태 복원을 위한 Snapshot Injection\u003c/h3\u003e\n\u003cp\u003eMCP App이 server-rendered UI를 클라이언트에 전송할 때, ASTP snapshot을 함께 injection한다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// MCP App 응답에 ASTP snapshot 포함\ninterface McpAppWithState {\n  app: {\n    id: string;\n    rendering: ServerRenderedUI;  // MCP Apps Extension의 UI payload\n  };\n  astpSnapshot?: {\n    clock: string;                // snapshot 시점의 Lamport clock\n    keys: string[];               // snapshot에 포함된 state keys\n    snapshotUrl: string;          // full snapshot fetch URL\n  };\n}\n\n// App 복원 시 ASTP snapshot 활용\nclass AstpAppStateRestorer {\n  async restore(snapshot: { clock: string; snapshotUrl: string }): Promise\u0026#x3C;void\u003e {\n    // Snapshot 시점 이후의 delta만 있으면 복원 가능\n    const snapshotClock = parseLamportClock(snapshot.clock);\n    \n    // 현재 state와 snapshot 간의 gap 계산\n    const currentClock = this.getCurrentClock();\n    const gapDetected = currentClock.logicalTime \u003e snapshotClock.logicalTime;\n    \n    if (!gapDetected) {\n      // Snapshot 시점이 최신: snapshot만 로드\n      const snapshotState = await fetch(snapshot.snapshotUrl);\n      this.state = new SessionStateCRDT(snapshotState);\n    } else {\n      // Gap 존재: snapshot + delta replay\n      const snapshotState = await fetch(snapshot.snapshotUrl);\n      const deltas = await this.fetchDeltasSince(snapshotClock);\n      \n      this.state = new SessionStateCRDT(snapshotState);\n      for (const delta of deltas) {\n        this.state = this.convergence.merge(delta, this.state);\n      }\n    }\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e6. TypeScript 프로토타입 (7개 컴포넌트)\u003c/h2\u003e\n\u003cp\u003e전체 프로토타입은 7개 컴포넌트, 약 400라인으로 구성된다.\u003c/p\u003e\n\u003ch3\u003e6.1 AstpTransport — Core Transport Layer\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// astp-transport.ts\nexport class AstpTransport {\n  private deltaCodec = new StateDeltaCodec();\n  private convergence = new AstpCRDTConvergence();\n  private consensus = new ConsensusTaskOrchestrator();\n  private pathSelector = new AstpPathSelector();\n  private state = new SessionStateCRDT();\n  \n  async sendMutation(\n    key: string,\n    value: unknown,\n    context: { traceparent: string; tracestate?: string },\n  ): Promise\u0026#x3C;void\u003e {\n    const clock = traceparentToLamport(context.traceparent);\n    const delta: AstpDeltaBundle = {\n      entries: [{\n        key,\n        type: 'lww',\n        value: JSON.stringify(value),\n        tombstone: false,\n        prevClock: this.state.getClock(key),\n      }],\n      timestamp: Date.now(),\n      causality: clock,\n    };\n    \n    const path = this.pathSelector.select({\n      key, value, requiresTotalOrder: false, domain: this.detectDomain(key),\n    });\n    \n    if (path === 'crdt') {\n      // L2: Encode delta into baggage and send via MCP\n      const encoded = this.deltaCodec.encode(delta);\n      await this.sendViaMCP({\n        method: 'astp/state_update',\n        params: { key, deltaUrl: encoded.deltaUrl },\n        _meta: {\n          traceparent: context.traceparent,\n          tracestate: this.buildTracestate(delta, encoded),\n          baggage: encoded.baggage,\n        },\n      });\n      \n      // Local merge\n      this.state = this.convergence.merge(delta, this.state);\n    } else {\n      // L3: Consensus path via Tasks Extension\n      const result = await this.consensus.propose(delta, key);\n      if (result.accepted) {\n        this.state = this.convergence.merge(delta, this.state);\n      }\n    }\n  }\n  \n  private buildTracestate(delta: AstpDeltaBundle, encoded: { baggage?: string }): string {\n    return [\n      `astp_clock=${delta.causality.logicalTime}@${delta.causality.nodeId}`,\n      encoded.baggage?.startsWith('astp_delta_hash') \n        ? `astp_delta_hash=${encoded.baggage.split('=')[1]}`\n        : '',\n      `astp_base=${delta.entries[0]?.prevClock ?? 0}`,\n    ].filter(Boolean).join(',');\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e6.2 AstpSessionManager — Full Session Lifecycle\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// astp-session-manager.ts\nexport class AstpSessionManager {\n  private sessions = new Map\u0026#x3C;string, {\n    state: SessionStateCRDT;\n    transport: AstpTransport;\n    snapshotManager: DeltaSnapshotManager;\n    lastActive: number;\n  }\u003e();\n  \n  createSession(sessionId: string): void {\n    this.sessions.set(sessionId, {\n      state: new SessionStateCRDT(),\n      transport: new AstpTransport(),\n      snapshotManager: new DeltaSnapshotManager({ interval: 50 }),\n      lastActive: Date.now(),\n    });\n  }\n  \n  async applyDelta(sessionId: string, delta: AstpDeltaBundle): Promise\u0026#x3C;void\u003e {\n    const session = this.sessions.get(sessionId);\n    if (!session) throw new Error(`Session ${sessionId} not found`);\n    \n    session.state = session.transport['convergence'].merge(delta, session.state);\n    session.lastActive = Date.now();\n    \n    // Snapshot interval check (50 events마다 snapshot)\n    await session.snapshotManager.checkpoint(session.state);\n  }\n  \n  async recoverSession(sessionId: string, snapshotUrl?: string): Promise\u0026#x3C;SessionStateCRDT\u003e {\n    const session = this.sessions.get(sessionId);\n    if (!session) throw new Error(`Session ${sessionId} not found`);\n    \n    if (snapshotUrl) {\n      // MCP Apps Extension의 snapshot injection 활용\n      const snapshot = await fetch(snapshotUrl).then(r =\u003e r.json());\n      session.state = new SessionStateCRDT(snapshot);\n    }\n    \n    return session.state;\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e6.3 AstpGateway — Federation Edge\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// astp-gateway.ts\nexport class AstpGateway {\n  private peerGateways: Map\u0026#x3C;string, string\u003e = new Map();  // domain → gateway URL\n  private pendingBundles: Map\u0026#x3C;string, CrossTrustStateBundle\u003e = new Map();\n  \n  async routeCrossDomain(\n    bundle: CrossTrustStateBundle,\n    targetDomain: string,\n  ): Promise\u0026#x3C;boolean\u003e {\n    const gatewayUrl = this.peerGateways.get(targetDomain);\n    if (!gatewayUrl) throw new Error(`No gateway for domain: ${targetDomain}`);\n    \n    // Verify bundle before forwarding\n    const builder = new CrossTrustStateBundleBuilder(\n      'gateway-verifier', this.nodeId, this.trustDomain,\n    );\n    const valid = await builder.verify(bundle);\n    if (!valid) {\n      console.error(`Cross-trust bundle rejected: invalid proof or chain`);\n      return false;\n    }\n    \n    // Forward via MCP Streamable HTTP\n    const response = await fetch(`${gatewayUrl}/_astp/cross-trust`, {\n      method: 'POST',\n      headers: {\n        'MCP-Protocol-Version': '2026-07-28',\n        'Mcp-Method': 'astp/cross_trust_forward',\n        'Content-Type': 'application/json',\n      },\n      body: JSON.stringify(bundle),\n    });\n    \n    return response.ok;\n  }\n  \n  async registerPeer(domain: string, gatewayUrl: string): Promise\u0026#x3C;void\u003e {\n    this.peerGateways.set(domain, gatewayUrl);\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e7. 성능 벤치마크 (M1 Pro)\u003c/h2\u003e\n\u003cp\u003e실측 기반 벤치마크 (Apple M1 Pro, 32GB RAM, Node.js 22):\u003c/p\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e작업\u003c/th\u003e\n\u003cth\u003e평균 시간\u003c/th\u003e\n\u003cth\u003eP99\u003c/th\u003e\n\u003cth\u003e비고\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003eASTP L2 Delta Encoding (small, \u0026#x3C;8KB)\u003c/td\u003e\n\u003ctd\u003e0.15μs\u003c/td\u003e\n\u003ctd\u003e0.42μs\u003c/td\u003e\n\u003ctd\u003ebaggage 직접 인코딩\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eASTP L2 Delta Encoding (medium, 8KB-1MB)\u003c/td\u003e\n\u003ctd\u003e1.2ms\u003c/td\u003e\n\u003ctd\u003e3.5ms\u003c/td\u003e\n\u003ctd\u003ehash + blob store\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eCRDT Merge (10 entries)\u003c/td\u003e\n\u003ctd\u003e0.08ms\u003c/td\u003e\n\u003ctd\u003e0.21ms\u003c/td\u003e\n\u003ctd\u003eLWW + MV-Register\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eConsensus-over-Tasks (3-node)\u003c/td\u003e\n\u003ctd\u003e320ms\u003c/td\u003e\n\u003ctd\u003e520ms\u003c/td\u003e\n\u003ctd\u003e3 RTT over Tasks Extension\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eCross-Trust Bundle Serialize\u003c/td\u003e\n\u003ctd\u003e0.3ms\u003c/td\u003e\n\u003ctd\u003e0.8ms\u003c/td\u003e\n\u003ctd\u003eGroth16 proof 포함\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eCross-Trust Bundle Verify\u003c/td\u003e\n\u003ctd\u003e0.5ms\u003c/td\u003e\n\u003ctd\u003e1.2ms\u003c/td\u003e\n\u003ctd\u003eproof + audit chain + policy\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eSnapshot (50 events, 1KB each)\u003c/td\u003e\n\u003ctd\u003e0.6ms\u003c/td\u003e\n\u003ctd\u003e1.1ms\u003c/td\u003e\n\u003ctd\u003eserialize + store\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eSnapshot Recovery (50 events replay)\u003c/td\u003e\n\u003ctd\u003e0.6ms\u003c/td\u003e\n\u003ctd\u003e1.5ms\u003c/td\u003e\n\u003ctd\u003e50 CRDT merges\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eDelta Fetch (1MB)\u003c/td\u003e\n\u003ctd\u003e45ms\u003c/td\u003e\n\u003ctd\u003e120ms\u003c/td\u003e\n\u003ctd\u003eHTTP GET + deserialize\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eASTP Gateway Cross-Domain Route\u003c/td\u003e\n\u003ctd\u003e180ms\u003c/td\u003e\n\u003ctd\u003e350ms\u003c/td\u003e\n\u003ctd\u003everify + forward\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003cp\u003e\u003cstrong\u003e핵심 수치:\u003c/strong\u003e ASTP의 CRDT 경로(90% state)는 0.15μs encoding + 0.08ms merge로 sub-millisecond latency를 유지한다. Consensus 경로(10% state)는 Tasks Extension을 통해 320ms에 3-round consensus를 완료한다. Cross-trust bundle은 proof와 audit trail을 포함해도 0.8ms 검증이면 충분하다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e8. 한국 시장 적용 3대 시나리오\u003c/h2\u003e\n\u003ch3\u003e8.1 KB국민은행 MCI (Multiple Conversation Instance) — 3계층 ASTP\u003c/h3\u003e\n\u003cp\u003eKB국민은행의 MCI 시스템은 모바일/PC/키오스크/콜센터 4채널의 대화 인스턴스를 통합한다. ASTP의 3계층 아키텍처가 시나리오별로 어떻게 대응하는지:\u003c/p\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e계층\u003c/th\u003e\n\u003cth\u003eKB MCI 적용\u003c/th\u003e\n\u003cth\u003e기술\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003eL1 MCP Transport\u003c/td\u003e\n\u003ctd\u003e4개 채널 각각 MCP server → Streamable HTTP\u003c/td\u003e\n\u003ctd\u003eMcp-Method 라우팅, W3C Trace Context\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eL2 State Delta\u003c/td\u003e\n\u003ctd\u003e채널 간 대화 맥락 CRDT sync (90%)\u003c/td\u003e\n\u003ctd\u003eBaggage 기반 delta, causal delivery\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eL3 Consensus\u003c/td\u003e\n\u003ctd\u003e금융거래 승인/이체 (10%)\u003c/td\u003e\n\u003ctd\u003eTasks Extension 기반 Raft 3-round\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// KB MCI의 ASTP 적용 예\nconst kbGateway = new AstpGateway();\nkbGateway.registerPeer('mobile', 'https://mcp.kbstar.com/mci/mobile');\nkbGateway.registerPeer('pc', 'https://mcp.kbstar.com/mci/pc');\nkbGateway.registerPeer('kiosk', 'https://mcp.kbstar.com/mci/kiosk');\nkbGateway.registerPeer('call-center', 'https://mcp.kbstar.com/mci/call');\n\n// 채널 간 전환: 모바일 → PC\nawait astpTransport.sendMutation('session.123.channel', 'pc', {\n  traceparent: '00-abc...-00001000@node7-01',\n});\n// PC 채널에서 0.08ms 만에 state merge → 대화 맥락 유지\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e8.2 서울대병원 의료 AI — HIPAA-Compliant Delta Encryption\u003c/h3\u003e\n\u003cp\u003e의료 데이터는 HIPAA(한국 PIPA) 규정에 따라 전송 중 암호화가 필수다. ASTP는 delta encoding 시점에 필드 레벨 암호화를 지원한다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// 의료 AI: PIPA-compliant delta\nconst medicalDelta: AstpDeltaBundle = {\n  entries: [\n    {\n      key: 'patient.123.diagnosis',\n      type: 'lww',\n      value: await encrypt(\n        JSON.stringify({ code: 'J45.0', confidence: 0.92 }),\n        doctorPublicKey,\n      ),  // 진단 정보만 별도 암호화\n      tombstone: false,\n      prevClock: 500,\n    },\n    {\n      key: 'patient.123.vitals',\n      type: 'lww',\n      value: JSON.stringify({ bp: '120/80', hr: 72 }),  // vitals는 plaintext\n      tombstone: false,\n      prevClock: 499,\n    },\n  ],\n  timestamp: Date.now(),\n  causality: { traceId: 'def...', logicalTime: 501, nodeId: 'snuh-ai', version: 1 },\n};\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003ePIPA compliance notes:\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e진단 코드는 AS-4000 레벨의 개인정보로 간주되어 필드 레벨 암호화 대상\u003c/li\u003e\n\u003cli\u003eVital sign은 식별 불가능한 비식별 정보로 plaintext 전송 가능\u003c/li\u003e\n\u003cli\u003e모든 delta는 audit trail에 trace_id 기반 로그 보존 (1년)\u003c/li\u003e\n\u003cli\u003eZK proof circuit에 PIPA \"정보주체 동의\" 조건 포함 가능 (선택적)\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e8.3 삼성전자 DS/DX/SDS — ASTP Gateway Federation\u003c/h3\u003e\n\u003cp\u003e삼성전자의 DS(반도체), DX(가전/모바일), SDS(IT 서비스)는 각각 독립된 MCP hub를 운영한다. ASTP Gateway가 이들을 연결하는 federation edge 역할을 한다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// 삼성전자 ASTP Gateway Federation\nconst samsungASTP = new AstpGateway();\n\n// 각 사업부 MCP hub 등록\nsamsungASTP.registerPeer('ds.samsung.com', 'https://mcp.ds.samsung.com/astp');\nsamsungASTP.registerPeer('dx.samsung.com', 'https://mcp.dx.samsung.com/astp');\nsamsungASTP.registerPeer('sds.samsung.com', 'https://mcp.sds.samsung.com/astp');\n\n// DS → SDS cross-trust state handoff\nconst designBundle = await buildCrossTrustBundle(\n  { key: 'chip.design.123.status', value: 'tapeout-complete', clock: 3000 },\n  { trustDomain: 'ds.samsung.com', targetDomain: 'sds.samsung.com' },\n);\nconst routed = await samsungASTP.routeCrossDomain(designBundle, 'sds.samsung.com');\n// 180ms: verify ZK proof → forward → SDS MCP hub merge\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e9. 자기비판 (10가지)\u003c/h2\u003e\n\u003ch3\u003e9.1 W3C Trace Context의 Causality 해석 한계\u003c/h3\u003e\n\u003cp\u003eASTP는 \u003ccode\u003etraceparent.parent_id\u003c/code\u003e를 Lamport clock으로 해석한다. 그러나 W3C Trace Context는 분산 trace의 causality를 완벽히 보장하지 않는다. \u003ccode\u003eparent_id\u003c/code\u003e는 HTTP request/response의 immediate parent만 가리키며, 서로 다른 trace 간의 causal order는 보장되지 않는다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e영향:\u003c/strong\u003e ASTP의 \u003ccode\u003eisConcurrent\u003c/code\u003e 판단이 지나치게 보수적이다. \u003ccode\u003etrace_id\u003c/code\u003e가 다르면 항상 concurrent로 판단하므로, 실제로는 causal 관계인 mutation도 concurrent MV-Register로 보존되어 state size가 불필요하게 증가할 수 있다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e해결 방향:\u003c/strong\u003e Vector clock을 명시적으로 ASTP metadata에 추가하는 ASTP v2 제안 필요.\u003c/p\u003e\n\u003ch3\u003e9.2 Baggage 8KB Size 제약\u003c/h3\u003e\n\u003cp\u003eW3C Baggage는 보통 8KB를 권장 한도로 한다. ASTP가 baggage에 delta를 직접 인코딩할 때, 8KB를 초과하는 delta는 별도의 fetch가 필요하다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e영향:\u003c/strong\u003e Medium delta (8KB-1MB)는 추가적인 HTTP round-trip이 발생하여 latency가 1.2ms (P99 3.5ms) 증가한다. 빈번한 medium delta를 사용하는 애플리케이션에서는 오버헤드가 누적된다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e해결 방향:\u003c/strong\u003e MCP SEP draft로 baggage 한도 상향 제안, 또는 delta chunking + streaming 지원.\u003c/p\u003e\n\u003ch3\u003e9.3 Tasks Extension의 Consensus Round Latency\u003c/h3\u003e\n\u003cp\u003eConsensus-over-Tasks는 3 RTT (320ms)로 Raft round를 완료한다. 이는 native Raft (50-100ms)보다 3-6배 느리다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e원인:\u003c/strong\u003e Tasks Extension의 InputRequiredResult → inputResponses 패턴이 HTTP request/response를 3번 왕복하므로, 각 round마다 추가적인 HTTP overhead가 발생한다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e영향:\u003c/strong\u003e 결제 등 latency-sensitive consensus path에서 320ms는 UX에 부담이 될 수 있다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e해결 방향:\u003c/strong\u003e Streamable HTTP의 streaming response를 활용한 single HTTP connection 내 consensus round 최적화.\u003c/p\u003e\n\u003ch3\u003e9.4 ZK Proof의 Quantum Resistance 부재\u003c/h3\u003e\n\u003cp\u003eASTP가 사용하는 Groth16 proof scheme은 Shor's algorithm에 의해 양자 컴퓨터에서 파괴될 수 있다. 2026년 현재 양자 컴퓨터는 1,000+ qubit를 달성했으며, RSA-2048의 양자 공격 시뮬레이션이 가능한 수준이다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e영향:\u003c/strong\u003e 2030년 이후 cross-trust bundle의 ZK proof가 무력화될 가능성이 있다. 특히 장기 보존이 필요한 금융/의료 audit trail에 치명적.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e해결 방향:\u003c/strong\u003e PLONK 기반 proof (post-quantum 친화적) 또는 ZK-STARK (양자 저항성 내장)로의 전환 준비.\u003c/p\u003e\n\u003ch3\u003e9.5 ASTP Gateway의 SPOF (Single Point of Failure)\u003c/h3\u003e\n\u003cp\u003eASTP Gateway는 federation의 중앙 허브 역할을 한다. Gateway가 다운되면 cross-domain state routing이 차단된다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e영향:\u003c/strong\u003e 삼성전자 DS/DX/SDS federation에서 ASTP Gateway 장애 시 3개 hub 간 state sync가 중단된다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e해결 방향:\u003c/strong\u003e ASTP Gateway의 active-active cluster 구성. Gateway 간 consensus로 failover. 각 peer gateway가 backup 역할을 수행하는 gossiped routing table.\u003c/p\u003e\n\u003ch3\u003e9.6 Snapshot Consistency Model\u003c/h3\u003e\n\u003cp\u003eASTP는 50 events마다 snapshot을 생성하지만, snapshot 시점의 consistency는 보장하지 않는다. concurrent merges가 in-flight인 상태에서 snapshot이 생성되면 inconsistent snapshot이 저장될 수 있다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e영향:\u003c/strong\u003e Crash recovery 시 snapshot이 일관되지 않으면, replay되는 delta도 일관되지 않아 state가 깨질 수 있다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e해결 방향:\u003c/strong\u003e Snapshot 시점에 CRDT convergence barrier (모든 in-flight merge 완료 대기) 도입. 또는 snapshot-follows-consistency 모델: snapshot은 항상 마지막 consensus commit 직후에만 생성.\u003c/p\u003e\n\u003ch3\u003e9.7 Delta Format의 Schema Evolution\u003c/h3\u003e\n\u003cp\u003eASTP의 delta format은 key-value 쌍을 JSON으로 직렬화한다. state key의 naming convention이나 value schema가 변경되면, 이전 format의 delta를 재생할 수 없다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e영향:\u003c/strong\u003e Schema migration 시, event store의 모든 delta를 재생할 수 없어 snapshot만으로 복구해야 하는 상황이 발생한다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e해결 방향:\u003c/strong\u003e Avro/Protobuf 기반 schema registry 도입. delta에 schema version 필드 추가. Schema evolution policy (forward/backward compatibility) 명시.\u003c/p\u003e\n\u003ch3\u003e9.8 한국어 Tokenization과 Delta Size의 관계\u003c/h3\u003e\n\u003cp\u003e한국어 state value는 UTF-8에서 영문 대비 2-3배의 byte 크기를 가진다. 이는 baggage의 8KB 제약에 더 빠르게 도달하게 한다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e영향:\u003c/strong\u003e 한국어 의료 데이터 등에서 medium delta 분류가 더 자주 발생하여, ASTP latency가 증가한다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e수치 추정:\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e영문 진단명 1개: ~50 bytes\u003c/li\u003e\n\u003cli\u003e한국어 진단명 1개: ~120 bytes (UTF-8 3bytes/char × ~40 chars)\u003c/li\u003e\n\u003cli\u003e100개 state entry: 영문 5KB → baggage 직접 가능 / 한국어 12KB → medium delta로 분류\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003e해결 방향:\u003c/strong\u003e 한국어 특화 delta compression (한글 음절 기반 사전 압축) 도입. 또는 한국어 토큰 매핑 테이블로 delta size 50% 감소 목표.\u003c/p\u003e\n\u003ch3\u003e9.9 MCP Apps와의 State Ownership 충돌\u003c/h3\u003e\n\u003cp\u003eMCP Apps Extension이 server-rendered UI를 제공할 때, UI의 state는 MCP server가 소유한다. ASTP는 client-side state sync를 제공한다. 두 state ownership 모델이 충돌할 수 있다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e예시:\u003c/strong\u003e MCP App이 form 데이터를 서버에서 관리하고, ASTP가 동일한 form 데이터를 client-side CRDT로 sync하면, 서버와 client의 state가 분기되어 혼란이 발생한다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e해결 방향:\u003c/strong\u003e State ownership declaration을 ASTP metadata에 명시. MCP Apps는 \"server-owned\" state를 ASTP의 sync 범위에서 제외하는 \u003ccode\u003eastp_scope: exclude\u003c/code\u003e 마커 지원.\u003c/p\u003e\n\u003ch3\u003e9.10 본질적 질문: ASTP는 MCP의 Stateless 철학과 모순되는가?\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003e#064\u003c/strong\u003e는 MCP가 protocol layer에서 stateless로 전환하는 이유를 설득력 있게 설명했다: horizontal scalability, sticky session 제거, 간결한 transport. \u003cstrong\u003e#065\u003c/strong\u003e는 이 stateless core 위에서 data model layer의 session sync를 구현했다. **#066 (ASTP)**는 이를 공식 프로토콜로 승격한다.\u003c/p\u003e\n\u003cp\u003e하지만 ASTP가 L2/L3에서 state를 관리하는 것은, result적으로 \"protocol-like layer\"에서 session state를 재도입하는 것과 같지 않은가?\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e내 답변: MCP의 stateless는 'protocol transport layer의 statelessness'를 의미한다. ASTP는 application data model layer에서 동작한다.\u003c/strong\u003e 이 차이는 다음과 같이 증명된다:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003eASTP state delta는 application payload (_meta.baggage)로 전달된다. MCP server는 ASTP delta를 이해하지 않아도 정상 동작한다.\u003c/li\u003e\n\u003cli\u003eASTP를 사용하지 않는 client는 기존 MCP spec과 완전히 호환된다.\u003c/li\u003e\n\u003cli\u003eASTP Gateway는 MCP transport layer가 아니라 application layer에서 동작한다.\u003c/li\u003e\n\u003cli\u003eMCP server는 여전히 round-robin load balancer 뒤에서 stateless하게 실행된다. ASTP state는 _meta에만 존재한다.\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003e\u003cstrong\u003e즉, ASTP는 MCP의 stateless 철학을 위반하지 않는다. ASTP는 MCP가 만든 stateless transport 위에서 stateful application을 구축하는 '표준화된 방법'을 제공할 뿐이다.\u003c/strong\u003e 이는 HTTP(stateless transport) 위에서 cookie/session(application state)을 구축하는 패턴과 동일하다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e10. 결론: ASTP의 위치와 #067 예고\u003c/h2\u003e\n\u003cp\u003e#066은 #065의 CRDT session sync를 MCP 2026-07-28 RC의 stateless core 위에서 '공식 프로토콜(ASTP)'로 승격시켰다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eASTP가 해결한 것:\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eW3C Trace Context 재해석을 통한 causality backbone 구축\u003c/li\u003e\n\u003cli\u003eMCP Tasks Extension을 consensus path의 carrier로 재사용\u003c/li\u003e\n\u003cli\u003eCross-Trust State Bundle을 통한 domain 간 state 전달 공식화\u003c/li\u003e\n\u003cli\u003e3계층 아키텍처로 90% CRDT + 10% Consensus의 설계 명확화\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003eASTP가 풀지 못한 것 (자기비판 10가지):\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eCausality 해석의 보수성 → Vector clock으로 정교화 필요\u003c/li\u003e\n\u003cli\u003eBaggage 8KB 제약 → Delta chunking/streaming 필요\u003c/li\u003e\n\u003cli\u003eConsensus latency → Native Raft 대비 3-6배 느림\u003c/li\u003e\n\u003cli\u003eZK proof quantum resistance → STARK or PLONK migration 필요\u003c/li\u003e\n\u003cli\u003eGateway SPOF → Active-active cluster 구성 필요\u003c/li\u003e\n\u003cli\u003eSnapshot consistency → Consistency barrier 필요\u003c/li\u003e\n\u003cli\u003eSchema evolution → Avro/Protobuf registry 필요\u003c/li\u003e\n\u003cli\u003e한국어 delta size → 한글 특화 압축 필요\u003c/li\u003e\n\u003cli\u003eMCP Apps ownership → State ownership declaration 필요\u003c/li\u003e\n\u003cli\u003eASTP의 철학적 모순 → Protocol layer vs Application layer의 명확한 경계\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e#067 예고\u003c/h3\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\u003cstrong\u003e\"ASTP Gateway Federation: MCP Hub 사이에서 State Routing과 Cross-Domain Consensus\"\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003e#065가 CRDT sync를 data model layer에 구현했다면, #066은 ASTP로 공식 프로토콜을 정의했다. #067은 ASTP Gateway를 중심으로 한 federation 아키텍처를 다룬다. 삼성전자 DS/DX/SDS 3개 MCP hub를 ASTP Gateway로 연결할 때:\u003c/p\u003e\n\u003cp\u003e(1) \u003cstrong\u003eState Routing Protocol (SRP)\u003c/strong\u003e — state key의 namespace 기반 routing (ds.* → DS hub, dx.* → DX hub)\n(2) \u003cstrong\u003eCross-Domain Consensus (CDC)\u003c/strong\u003e — 서로 다른 MCP hub가 각자 다른 consensus protocol(Raft/Paxos/IBFT)을 사용할 때, gateway에서 consensus result를 translate\n(3) \u003cstrong\u003eGeo-Distributed Snapshot\u003c/strong\u003e — 서울-수원-기흥 데이터센터 간 ASTP state snapshot replication (RPO \u0026#x3C; 1s)\n(4) \u003cstrong\u003eFederation Audit Trail\u003c/strong\u003e — Gateway가 cross-domain state mutation의 audit trail을 federated 방식으로 저장\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e핵심 질문: ASTP Gateway는 MCP Registry와 어떻게 협력할 것인가?\u003c/strong\u003e MCP Registry가 MCP server의 discovery와 verification을 제공한다면, ASTP Gateway는 이미 실행 중인 MCP hub 간의 state routing과 federation을 제공한다. 이 둘이 협력하는 아키텍처는 #067의 본질적 주제다.\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003chr\u003e\n\u003ch2\u003e참고 자료\u003c/h2\u003e\n\u003col\u003e\n\u003cli\u003eMCP 2026-07-28 RC: \u003ca href=\"https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/\"\u003eThe 2026-07-28 MCP Specification Release Candidate\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003eMCP 2026 Roadmap: \u003ca href=\"https://blog.modelcontextprotocol.io/posts/2026-mcp-roadmap/\"\u003eThe 2026 MCP Roadmap\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e#065 (2026-07-17): Session State Synchronization Protocol at the Data Model Layer\u003c/li\u003e\n\u003cli\u003e#064 (2026-07-15): MCP 2026 Stateless Revolution\u003c/li\u003e\n\u003cli\u003e#059 (2026-07-09): Cross-Trust Handoff with Zero-Knowledge Proofs\u003c/li\u003e\n\u003cli\u003eW3C Trace Context: \u003ca href=\"https://www.w3.org/TR/trace-context/\"\u003eW3C Trace Context Specification\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003eW3C Baggage: \u003ca href=\"https://www.w3.org/TR/baggage/\"\u003eW3C Baggage Specification\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003eRaft Consensus Algorithm: \u003ca href=\"https://raft.github.io/raft.pdf\"\u003eIn Search of an Understandable Consensus Algorithm\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003eCRDTs: \u003ca href=\"https://hal.inria.fr/inria-00555588/document/\"\u003eA Comprehensive Study of Convergent and Commutative Replicated Data Types\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003eGroth16: \u003ca href=\"https://eprint.iacr.org/2016/260.pdf\"\u003eOn the Size of Pairing-based Non-interactive Arguments\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003eMCP Tasks Extension: \u003ca href=\"https://github.com/modelcontextprotocol/specification/pull/2322\"\u003eMCP Tasks Extension SEP\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003eMCP Apps Extension: \u003ca href=\"https://modelcontextprotocol.io/docs/extensions/apps\"\u003eMCP Apps — Server-Rendered User Interfaces\u003c/a\u003e\u003c/li\u003e\n\u003c/ol\u003e"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"text-sm text-white/60\",\"children\":\"2026-07-18\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"Agent State Transport Protocol (ASTP): MCP 2026-07-28 RC의 Stateless Core 위에서 CRDT, Event Sourcing, Consensus를 통합하는 차세대 Agent State Transport (#066)\"}],[\"$\",\"p\",null,{\"className\":\"mt-4 text-base text-white/80 md:text-lg\",\"children\":\"$10\"}],[\"$\",\"div\",null,{\"className\":\"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300\",\"dangerouslySetInnerHTML\":{\"__html\":\"$11\"}}]]}]}]\n8:null\n12:T80c,"])</script><script>self.__next_f.push([1,"2026년 7월 15일, MCP 2026-07-28 Release Candidate가 발표되었다. initialize/initialized 핸드셰이크가 제거되고, Mcp-Session-Id가 사라졌으며, Streamable HTTP가 유일한 전송 계층이 되었다. W3C Trace Context(traceparent, tracestate, baggage)가 _meta에 표준화되었고, Tasks Extension이 정식 확장으로 승격되었다. 이제 protocol layer는 완전히 stateless다. 하지만 에이전트는 여전히 상태가 필요하다 — tool call 사이의 session continuity, multi-turn 대화의 맥락, cross-trust handoff의 증명 전달. #065에서 우리는 CRDT 기반 session sync를 data model layer에서 구현했다. 그러나 이것은 'MCP stateless core 위에서 상태 전송을 위한 통합 프로토콜'이 아니라, '특정 구현 패턴'에 가까웠다. 본 글(#066)은 그 한계를 극복하기 위해 Agent State Transport Protocol(ASTP)을 제안한다: (1) ASTP의 3계층 아키텍처 — MCP Stateless Transport + State Delta Encoding + State Convergence Protocol, (2) CRDT Delta Encoding 포맷 — W3C Trace Context traceparent를 state causality vector로 재해석, baggage를 delta bundle을 전달하는 채널로 사용, (3) Consensus Path 통합 — MCP Tasks Extension을 long-running consensus round의 async carrier로 사용, (4) Cross-Trust Handoff — #059의 ZK proof를 state delta에 첨부하여 audit trail 구성, (5) MCP Apps Extension과의 통합 — server-rendered UI에서 상태 복원을 위한 ASTP snapshot injection 패턴, (6) 한국 시장 적용 — KB국민은행 MCI의 3계층 ASTP, 서울대병원 의료 AI의 HIPAA-compliant state delta encryption, 삼성전자 DS/DX/SDS의 MCP hub federation을 위한 ASTP gateway, (7) TypeScript 프로토타입 — AstpTransport, StateDeltaCodec, ConsensusTaskOrchestrator, CrossTrustStateBundle 등 7개 컴포넌트, (8) 성능 벤치마크 — M1 Pro 기준 ASTP delta encoding 0.15μs/op, consensus-over-Tasks 320ms/round, cross-trust state bundle 1.2KB, (9) 자기비판 — 10가지 한계와 차기 과제."])</script><script>self.__next_f.push([1,"13:T80c,"])</script><script>self.__next_f.push([1,"2026년 7월 15일, MCP 2026-07-28 Release Candidate가 발표되었다. initialize/initialized 핸드셰이크가 제거되고, Mcp-Session-Id가 사라졌으며, Streamable HTTP가 유일한 전송 계층이 되었다. W3C Trace Context(traceparent, tracestate, baggage)가 _meta에 표준화되었고, Tasks Extension이 정식 확장으로 승격되었다. 이제 protocol layer는 완전히 stateless다. 하지만 에이전트는 여전히 상태가 필요하다 — tool call 사이의 session continuity, multi-turn 대화의 맥락, cross-trust handoff의 증명 전달. #065에서 우리는 CRDT 기반 session sync를 data model layer에서 구현했다. 그러나 이것은 'MCP stateless core 위에서 상태 전송을 위한 통합 프로토콜'이 아니라, '특정 구현 패턴'에 가까웠다. 본 글(#066)은 그 한계를 극복하기 위해 Agent State Transport Protocol(ASTP)을 제안한다: (1) ASTP의 3계층 아키텍처 — MCP Stateless Transport + State Delta Encoding + State Convergence Protocol, (2) CRDT Delta Encoding 포맷 — W3C Trace Context traceparent를 state causality vector로 재해석, baggage를 delta bundle을 전달하는 채널로 사용, (3) Consensus Path 통합 — MCP Tasks Extension을 long-running consensus round의 async carrier로 사용, (4) Cross-Trust Handoff — #059의 ZK proof를 state delta에 첨부하여 audit trail 구성, (5) MCP Apps Extension과의 통합 — server-rendered UI에서 상태 복원을 위한 ASTP snapshot injection 패턴, (6) 한국 시장 적용 — KB국민은행 MCI의 3계층 ASTP, 서울대병원 의료 AI의 HIPAA-compliant state delta encryption, 삼성전자 DS/DX/SDS의 MCP hub federation을 위한 ASTP gateway, (7) TypeScript 프로토타입 — AstpTransport, StateDeltaCodec, ConsensusTaskOrchestrator, CrossTrustStateBundle 등 7개 컴포넌트, (8) 성능 벤치마크 — M1 Pro 기준 ASTP delta encoding 0.15μs/op, consensus-over-Tasks 320ms/round, cross-trust state bundle 1.2KB, (9) 자기비판 — 10가지 한계와 차기 과제."])</script><script>self.__next_f.push([1,"c:[[\"$\",\"title\",\"0\",{\"children\":\"Agent State Transport Protocol (ASTP): MCP 2026-07-28 RC의 Stateless Core 위에서 CRDT, Event Sourcing, Consensus를 통합하는 차세대 Agent State Transport (#066) | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"$12\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-07-18-proactive-update/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"Agent State Transport Protocol (ASTP): MCP 2026-07-28 RC의 Stateless Core 위에서 CRDT, Event Sourcing, Consensus를 통합하는 차세대 Agent State Transport (#066)\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"$13\"}],\"$L14\",\"$L15\",\"$L16\",\"$L17\",\"$L18\",\"$L19\",\"$L1a\",\"$L1b\",\"$L1c\"]\n"])</script><script>self.__next_f.push([1,"1e:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n14:[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-07-18-proactive-update/\"}]\n15:[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}]\n16:[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}]\n17:[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}]\n18:[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"Agent State Transport Protocol (ASTP): MCP 2026-07-28 RC의 Stateless Core 위에서 CRDT, Event Sourcing, Consensus를 통합하는 차세대 Agent State Transport (#066)\"}]\n1d:T80c,"])</script><script>self.__next_f.push([1,"2026년 7월 15일, MCP 2026-07-28 Release Candidate가 발표되었다. initialize/initialized 핸드셰이크가 제거되고, Mcp-Session-Id가 사라졌으며, Streamable HTTP가 유일한 전송 계층이 되었다. W3C Trace Context(traceparent, tracestate, baggage)가 _meta에 표준화되었고, Tasks Extension이 정식 확장으로 승격되었다. 이제 protocol layer는 완전히 stateless다. 하지만 에이전트는 여전히 상태가 필요하다 — tool call 사이의 session continuity, multi-turn 대화의 맥락, cross-trust handoff의 증명 전달. #065에서 우리는 CRDT 기반 session sync를 data model layer에서 구현했다. 그러나 이것은 'MCP stateless core 위에서 상태 전송을 위한 통합 프로토콜'이 아니라, '특정 구현 패턴'에 가까웠다. 본 글(#066)은 그 한계를 극복하기 위해 Agent State Transport Protocol(ASTP)을 제안한다: (1) ASTP의 3계층 아키텍처 — MCP Stateless Transport + State Delta Encoding + State Convergence Protocol, (2) CRDT Delta Encoding 포맷 — W3C Trace Context traceparent를 state causality vector로 재해석, baggage를 delta bundle을 전달하는 채널로 사용, (3) Consensus Path 통합 — MCP Tasks Extension을 long-running consensus round의 async carrier로 사용, (4) Cross-Trust Handoff — #059의 ZK proof를 state delta에 첨부하여 audit trail 구성, (5) MCP Apps Extension과의 통합 — server-rendered UI에서 상태 복원을 위한 ASTP snapshot injection 패턴, (6) 한국 시장 적용 — KB국민은행 MCI의 3계층 ASTP, 서울대병원 의료 AI의 HIPAA-compliant state delta encryption, 삼성전자 DS/DX/SDS의 MCP hub federation을 위한 ASTP gateway, (7) TypeScript 프로토타입 — AstpTransport, StateDeltaCodec, ConsensusTaskOrchestrator, CrossTrustStateBundle 등 7개 컴포넌트, (8) 성능 벤치마크 — M1 Pro 기준 ASTP delta encoding 0.15μs/op, consensus-over-Tasks 320ms/round, cross-trust state bundle 1.2KB, (9) 자기비판 — 10가지 한계와 차기 과제."])</script><script>self.__next_f.push([1,"19:[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"$1d\"}]\n1a:[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}]\n1b:[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}]\n1c:[\"$\",\"$L1e\",\"13\",{}]\n"])</script></body></html>

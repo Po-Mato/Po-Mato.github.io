@@ -1,0 +1,481 @@
+<!DOCTYPE html><!--I0h1m__4yn4ihPv3zSN7e--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/b848662595cda15b.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/329e63eb984ada35.js" async=""></script><meta name="next-size-adjust" content=""/><title>AI Agent 평가 프레임워크 깊이 분석: SWE-bench에서 BEAM까지, 2026년 벤치마크의 모든 것 | Mato Po Tech Blog</title><meta name="description" content="AI 에이전트의 성능을 어떻게 측정할 것인가? SWE-bench, BEAM, SocialReasoning-Bench 등 주요 벤치마크의 아키텍처적 특성을 분석하고, 평가 프레임워크 설계 시 고려해야 할 핵심 원리를 심층적으로 다룬다."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-05-17-proactive-update/"/><meta property="og:title" content="AI Agent 평가 프레임워크 깊이 분석: SWE-bench에서 BEAM까지, 2026년 벤치마크의 모든 것"/><meta property="og:description" content="AI 에이전트의 성능을 어떻게 측정할 것인가? SWE-bench, BEAM, SocialReasoning-Bench 등 주요 벤치마크의 아키텍처적 특성을 분석하고, 평가 프레임워크 설계 시 고려해야 할 핵심 원리를 심층적으로 다룬다."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-05-17-proactive-update/"/><meta property="og:image" content="https://po-mato.github.io/milkyway.jpg"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="AI Agent 평가 프레임워크 깊이 분석: SWE-bench에서 BEAM까지, 2026년 벤치마크의 모든 것"/><meta name="twitter:description" content="AI 에이전트의 성능을 어떻게 측정할 것인가? SWE-bench, BEAM, SocialReasoning-Bench 등 주요 벤치마크의 아키텍처적 특성을 분석하고, 평가 프레임워크 설계 시 고려해야 할 핵심 원리를 심층적으로 다룬다."/><meta name="twitter:image" content="https://po-mato.github.io/milkyway.jpg"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><div class="text-sm text-white/60">2026-05-17</div><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">AI Agent 평가 프레임워크 깊이 분석: SWE-bench에서 BEAM까지, 2026년 벤치마크의 모든 것</h1><p class="mt-4 text-base text-white/80 md:text-lg">AI 에이전트의 성능을 어떻게 측정할 것인가? SWE-bench, BEAM, SocialReasoning-Bench 등 주요 벤치마크의 아키텍처적 특성을 분석하고, 평가 프레임워크 설계 시 고려해야 할 핵심 원리를 심층적으로 다룬다.</p><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><h2>서론: 왜 AI Agent 평가는 어려운가</h2>
+<p>전통적 소프트웨어 테스트와 달리, AI Agent의 평가는 본질적으로 불확실성을 다룬다. 시스템의 출력이 단일 정답이 아닌 확률적 분포에서 나오며, 동일한 입력에 대해서도 실행마다 결과가 달라질 수 있다. 게다가 Agent는 도구를 호출하고, 외부 시스템과 상호작용하며, 복잡한 multi-step 워크플로우를 수행한다. 이런 특성 때문에 "정답"을 정의하기 어렵고,就算 찾았다 해도 그것이 "좋은 행동"인지 판단하기 어렵다.</p>
+<p>2026년 현재, 이러한 도전课题에 대응하기 위해 다양한 평가 프레임워크가 등장했다. 이 글에서는 주요 벤치마크의 설계 철학을 분석하고, 효과적인 Agent 평가를 위한 아키텍처적 고려사항을 심층적으로 다룬다.</p>
+<hr>
+<h2>1. 평가 프레임워크의 세 가지 축</h2>
+<p>AI Agent 평가를 위한 벤치마크는 일반적으로 세 가지 차원에서 측정한다:</p>
+<h3>1.1 태스크 Completeness (작업 완료율)</h3>
+<p>가장 직관적인 지표다. "주어진 태스크를 완료했는가?"</p>
+<ul>
+<li><strong>End-to-end success rate</strong>: 에이전트가 최종 목표를 달성했는가?</li>
+<li><strong>Step completion rate</strong>: 중간 단계별 완료율은 어떠한가?</li>
+<li><strong>Partial success handling</strong>: 부분적 성공을 어떻게 처리하는가?</li>
+</ul>
+<h3>1.2 행동 Quality (행동의 질)</h3>
+<p>태스크를完成了했더라도, 어떻게完成了했는지가 중요하다.</p>
+<ul>
+<li><strong>도구 호출의 적절성</strong>: 올바른 도구를 올바른 시점에 사용했는가?</li>
+<li><strong>리소스 사용 효율성</strong>: 불필요하게 많은 LLM 호출이나 API 호출을 했는가?</li>
+<li><strong>실행 시간</strong>: 태스크 완료까지 소요된 시간은 합리적인가?</li>
+</ul>
+<h3>1.3 적응력 &#x26; 일반화 (Generalization)</h3>
+<p>학습 데이터에 없는 unseen scenario에 대한 적응력이다.</p>
+<ul>
+<li><strong>Domain transfer</strong>: 한 도메인에서 학습한 능력을 다른 도메인에 적용할 수 있는가?</li>
+<li><strong>Few-shot adaptation</strong>: 최소한의 예시로 새로운 태스크를 이해할 수 있는가?</li>
+<li><strong>Abstention capability</strong>: 모르는 것을 "모른다"고 인정할 수 있는가?</li>
+</ul>
+<hr>
+<h2>2. 코딩 에이전트 벤치마크: SWE-bench의 깊이 있는 분석</h2>
+<h3>2.1 SWE-bench의 설계 철학</h3>
+<p>SWE-bench는 실제 GitHub 이슈를 기반으로 코딩 에이전트의 능력을 평가하는 벤치마크다. 핵심 설계 원칙은 다음과 같다:</p>
+<pre><code class="language-python"># SWE-bench의 평가 구조
+class SWEBenchEvaluator:
+    def __init__(self, dataset: List[GitHubIssue]):
+        self.dataset = dataset
+        self.ground_truth_env = {}  # 각 이슈의 테스트 환경
+    
+    def evaluate(self, agent: CodingAgent) -> EvaluationResult:
+        """
+        코딩 에이전트를 평가하는 핵심 로직
+        
+        1. 이슈 정보를 agent에게 전달
+        2. Agent가 코드 수정 시도
+        3. 수정된 코드를 ground truth 환경에서 실행
+        4. 테스트 케이스 성공 여부로 점수 산정
+        """
+        results = []
+        for issue in self.dataset:
+            env = self.setup_ground_truth_env(issue)
+            patch = agent.attempt_fix(issue.description, issue.repo_context)
+            test_result = env.run_tests(issue.test_cases, patch)
+            results.append(test_result)
+        
+        return self.aggregate_results(results)
+</code></pre>
+<h3>2.2 SWE-bench Verified vs SWE-bench Pro</h3>
+<p>2026년 현재 SWE-bench는 두 가지 주요 버전으로 나뉜다:</p>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>SWE-bench Verified</th>
+<th>SWE-bench Pro</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>난이도</td>
+<td>중간 (70%+ 달성 가능)</td>
+<td>매우 높음 (최상위 모델도 ~23%)</td>
+</tr>
+<tr>
+<td>규모</td>
+<td>~2,200 이슈</td>
+<td>~1,000 이슈</td>
+</tr>
+<tr>
+<td>목적</td>
+<td>안정적인 성능 비교</td>
+<td>실제 문제 해결 능력 측정</td>
+</tr>
+<tr>
+<td>대표 점수</td>
+<td>Claude Opus 4.7: 76%</td>
+<td>Claude Mythos Preview: 77.8%</td>
+</tr>
+</tbody>
+</table>
+<p>SWE-bench Pro가 더 어렵다는 것은 주목할 만하다. 이는 "쉬운 벤치마크에서 고점수를 받는 것"이 실제 성능을 보장하지 않음을 의미한다.</p>
+<h3>2.3 코딩 에이전트의 평가 지표 계층</h3>
+<pre><code class="language-typescript">// 코딩 에이전트 평가의 다층적 지표 구조
+interface CodingAgentMetrics {
+  // Level 1: End-to-end 결과
+  issue_resolution_rate: number;      // 이슈 해결률
+  test_pass_rate: number;            // 테스트 통과율
+  
+  // Level 2: 행동 과정
+  patch_quality: {
+    correct_location_rate: number;    // 정확한 파일/함수 수정
+    minimal_change_rate: number;      // 필요한 만큼만 수정
+    side_effect_free_rate: number;    // 부수 효과 없음
+  };
+  
+  // Level 3: 리소스 효율성
+  efficiency: {
+    llm_calls_per_task: number;       // 태스크당 LLM 호출 수
+    total_execution_time: number;      // 총 실행 시간
+    context_window_utilization: number; // 컨텍스트 활용도
+  };
+  
+  // Level 4: 일반화 능력
+  generalization: {
+    cross_language_transfer: number; // 언어 간 전이 능력
+    unseen_framework_adaptation: number; // 미학습 프레임워크 적응력
+  };
+}
+</code></pre>
+<hr>
+<h2>3. 메모리 평가의 새로운 기준: BEAM Benchmark</h2>
+<h3>3.1 BEAM의 탄생 배경</h3>
+<p>기존 벤치마크들은 에이전트의 "지식 활용"이나 "작업 완료"에 집중했다. 그러나 실제 production 환경에서 가장 중요한 것 중 하나는 <strong>메모리 관리</strong>다. 에이전트가 세션 간에 정보를 얼마나 효과적으로 보존하고 활용하는지가 궁극적인用户体验를 좌우한다.</p>
+<p>BEAM(Benchmark for Agent Memory)은 이러한 요구사항을 해결하기 위해 설계된 벤치마크다. 2026년 현재 가장 포괄적인 메모리 평가 프레임워크로 자리잡았다.</p>
+<h3>3.2 BEAM의 10가지 평가 카테고리</h3>
+<p>BEAM은 에이전트의 메모리 능력을 10가지 카테고리로 세분화하여 평가한다:</p>
+<pre><code class="language-python"># BEAM Benchmark의 평가 카테고리
+class BEAMEvaluator:
+    CATEGORIES = {
+        # 1. Preference Following - 사용자 선호도 기억 및 적용
+        "preference_following": {
+            "description": "과거 상호작용에서 학습한 사용자 선호도를 따르는 능력",
+            "metrics": ["preference_accuracy", "adaptation_rate"]
+        },
+        
+        # 2. Instruction Following - 명시적 지시사항 기억
+        "instruction_following": {
+            "description": "이전 세션에서 주어진 복잡한 지시사항을 기억하고 따르는 능력",
+            "metrics": ["instruction_retention", "compliance_rate"]
+        },
+        
+        # 3. Information Extraction - 저장된 정보에서 정확히 필요한 부분 추출
+        "information_extraction": {
+            "description": "방대한 메모리에서 관련 정보를 정확히 찾아내는 능력",
+            "metrics": ["extraction_precision", "relevant_recall"]
+        },
+        
+        # 4. Knowledge Update - 새로운 정보로 기존 지식 업데이트
+        "knowledge_update": {
+            "description": "새로운 사실이 등장했을 때 기존 지식과 통합하는 능력",
+            "metrics": ["update_accuracy", "consistency_maintenance"]
+        },
+        
+        # 5. Multi-Session Reasoning - 여러 세션에 걸친 추론
+        "multi_session_reasoning": {
+            "description": "분산된 세션의 정보를 연결하여 복잡한 추론을 수행하는 능력",
+            "metrics": ["cross_session_accuracy", "temporal_reasoning"]
+        },
+        
+        # 6. Summarization - 정보 압축 및 요약
+        "summarization": {
+            "description": "긴 대화나 문서를 핵심만 남겨 요약하는 능력",
+            "metrics": ["compression_ratio", "key_point_retention"]
+        },
+        
+        # 7. Temporal Reasoning - 시간 기반 정보 처리
+        "temporal_reasoning": {
+            "description": "시간 순서, 만료 기한, 일정을 관리하는 능력",
+            "metrics": ["time_accuracy", "scheduling_correctness"]
+        },
+        
+        # 8. Event Ordering - 사건의 시간적 순서 추적
+        "event_ordering": {
+            "description": "여러 사건의 선후 관계를 정확히 파악하는 능력",
+            "metrics": ["ordering_accuracy", "causality_inference"]
+        },
+        
+        # 9. Abstention - 모르는 것을 인정하는 능력
+        "abstention": {
+            "description": "메모리에 정보가 없을 때 부정확한 답을 만들지 않는 능력",
+            "metrics": ["false_hallucination_rate", "unknown_acknowledgment"]
+        },
+        
+        # 10. Contradiction Resolution - 상충되는 정보 처리
+        "contradiction_resolution": {
+            "description": "상충되는 메모리 정보가 있을 때 올바르게 해결하는 능력",
+            "metrics": ["resolution_accuracy", "conflict_detection_rate"]
+        }
+    }
+</code></pre>
+<h3>3.3 BEAM 평가의 핵심 아키텍처</h3>
+<pre><code class="language-python"># BEAM 평가기의 내부 구조
+class BEAMEvaluationEngine:
+    def __init__(self):
+        self.memory_store = EpisodicMemoryStore()
+        self.evaluation_suite = BEAMEvaluationSuite()
+        self.scorer = MultiDimensionalScorer()
+    
+    async def run_evaluation(self, agent: Agent) -> BEAMScore:
+        """
+        BEAM 평가의 핵심 파이프라인:
+        1. 에이전트의 메모리 상태 초기화
+        2. 시나리오 시퀀스 주입
+        3. 각 카테고리별 성능 측정
+        4. 종합 점수 산출
+        """
+        results = {}
+        
+        for category_name, category_config in self.CATEGORIES.items():
+            # 각 카테고리에 대한 시나리오 실행
+            scenario_suite = self.evaluation_suite.get_scenarios(category_name)
+            
+            category_scores = []
+            for scenario in scenario_suite:
+                memory_state = self.setup_initial_memory(scenario)
+                agent.set_memory_state(memory_state)
+                
+                # 에이전트가 메모리를 활용하여 태스크 수행
+                task_result = await agent.execute(scenario.task)
+                
+                # 정답과의 비교 및 점수 산출
+                score = self.score_response(
+                    expected=scenario.expected,
+                    actual=task_result.response,
+                    memory_utilization=taskResult.memory_access_pattern
+                )
+                category_scores.append(score)
+            
+            results[category_name] = self.aggregate_category_scores(category_scores)
+        
+        return self.compute_final_beam_score(results)
+</code></pre>
+<h3>3.4 BEAM의 중요한 통찰: 컨텍스트 윈도우만으로는 부족하다</h3>
+<p>BEAM의 가장 중요한 발견은 <strong>컨텍스트 윈도우 확장만으로 메모리 문제를 해결할 수 없다</strong>는 것이다.</p>
+<p>컨텍스트 윈도우가 1M 토큰이라도:</p>
+<ul>
+<li>관련 정보를 "찾아내는" 능력이 없으면 의미가 없다.</li>
+<li>정보의 중요도를 판단하지 못하면 노이즈만 증가한다.</li>
+<li>시간적으로 분산된 정보를 "연결"하는 능력이 필요하다.</li>
+</ul>
+<p>이는 vector search, memory retrieval mechanism, episodic memory organization 같은 추가 메커니즘이 필수적임을 보여준다.</p>
+<hr>
+<h2>4. Social Reasoning: 에이전트의 사회적 능력 평가</h2>
+<h3>4.1 SocialReasoning-Bench의 등장</h3>
+<p>Microsoft Research가 2026년 5월에 출시한 SocialReasoning-Bench는 AI 에이전트의 "사회적 추론 능력"을 측정한다. 이 벤치마크는 다음과 같은 시나리오를 평가한다:</p>
+<ul>
+<li><strong>캘린더 조율</strong>: 여러 이해관계자의 일정을 고려하여 최적의 meeting 시간 찾기</li>
+<li><strong>장터 협상</strong>: 두 당사자 간의 이익을 조율하여双赢 결과 도출</li>
+</ul>
+<p>핵심은 에이전트가 "단독으로"가 아닌 "다른 주체와 상호작용"하며 목표를 달성해야 한다는 점이다.</p>
+<h3>4.2 Multi-Agent 시나리오 평가의 도전</h3>
+<pre><code class="language-python"># SocialReasoning 평가의 복잡성
+class SocialReasoningEvaluator:
+    async def evaluate_calendar_coordination(self, agent: Agent) -> Score:
+        """
+        캘린더 조율 시나리오 평가
+        
+        에이전트는:
+        1. 각 참석자의 가용 시간 파악
+        2. 우선순위와 긴급도 분석
+        3. 제약 조건 내에서 최적의 시간 제안
+        4. 당사자들의 피드백에 따라 조정
+        """
+        participants = [
+            Participant(id="alice", schedule=alice_cal, priority="high"),
+            Participant(id="bob", schedule=bob_cal, priority="medium"),
+            Participant(id="carol", schedule=carol_cal, priority="low")
+        ]
+        
+        initial_proposal = agent.propose_meeting(participants, requirements)
+        
+        # 첫 번째 제안에 대한 피드백 시뮬레이션
+        feedback_round1 = self.simulate_feedback(participants, initial_proposal)
+        adjusted_proposal = agent.adjust_based_on_feedback(feedback_round1)
+        
+        # 추가 조정 라운드
+        feedback_round2 = self.simulate_feedback(participants, adjusted_proposal)
+        final_proposal = agent.finalize(feedback_round2)
+        
+        return self.evaluate_outcome(final_proposal, optimal_solution)
+    
+    async def evaluate_marketplace_negotiation(self, agent: Agent) -> Score:
+        """
+        장터 협상 시나리오 평가
+        
+        에이전트는:
+        1. 상대방의 이익 파악
+        2. 자신의MANDATE 이해
+        3. trade-off 분석
+        4. 창의적인 해결책 제시
+        """
+        # ... similar structure
+</code></pre>
+<hr>
+<h2>5. 평가 프레임워크 설계 원칙</h2>
+<h3>5.1 통합적 평가의 필요성</h3>
+<p>단일 벤치마크로 Agent의 모든 측면을 평가할 수 없다. 효과적인 평가 체계는 여러 벤치마크를 조합하여 사용해야 한다:</p>
+<pre><code class="language-python"># 통합 평가 프레임워크
+class IntegratedAgentEvaluation:
+    def __init__(self):
+        self.benchmarks = {
+            "coding": SWEBenchEvaluator(),
+            "memory": BEAMEvaluator(),
+            "social": SocialReasoningEvaluator(),
+            "safety": SafetyBenchmark(),
+            "efficiency": EfficiencyBenchmark()
+        }
+        self.weights = {
+            "coding": 0.25,
+            "memory": 0.20,
+            "social": 0.15,
+            "safety": 0.25,
+            "efficiency": 0.15
+        }
+    
+    def evaluate(self, agent: Agent) -> ComprehensiveScore:
+        scores = {}
+        for benchmark_name, evaluator in self.benchmarks.items():
+            scores[benchmark_name] = evaluator.evaluate(agent)
+        
+        weighted_score = sum(
+            scores[name] * self.weights[name] 
+            for name in self.benchmarks.keys()
+        )
+        
+        return ComprehensiveScore(
+            overall=weighted_score,
+            breakdown=scores,
+            percentile=self.compute_percentile(weighted_score)
+        )
+</code></pre>
+<h3>5.2 평가의 오류 최소화</h3>
+<p>평가 과정에서 발생할 수 있는 편향과 오류를 최소화하기 위한 원칙:</p>
+<p><strong>1. 인간 평가와의 hybrid 평가</strong></p>
+<ul>
+<li>자동화된 벤치마크만으로는 품질의 모든 측면을 포착할 수 없다.</li>
+<li>최종 인간 평가자를 통해 "품질감"을 보정한다.</li>
+</ul>
+<p><strong>2. 다중 시나리오 기반 평가</strong></p>
+<ul>
+<li>단일 시나리오로의 평가는 운에 의한 결과일 수 있다.</li>
+<li>동일 Kategorie의 여러 시나리오로 평균을 내어 안정성을 확보한다.</li>
+</ul>
+<p><strong>3. 방어적 평가 (Adversarial Evaluation)</strong></p>
+<ul>
+<li>"가장 어렵게 만드는" 시나리오도 함께 평가한다.</li>
+<li>에이전트의 약점을 발견하는 것이 성능 향상의 첫걸음이다.</li>
+</ul>
+<hr>
+<h2>6. DeepEval: 기업용 평가 프레임워크</h2>
+<h3>6.1 Pytest 스타일의 평가</h3>
+<p>DeepEval은 LLM 애플리케이션 평가를 위한 오픈소스 프레임워크로, pytest 스타일의 인터페이스를 제공한다:</p>
+<pre><code class="language-python"># DeepEval을 사용한 에이전트 평가 예시
+import deepeval
+from deepeval.metrics import GEval, ContextualRecall, ContextualPrecision
+
+# 코딩 에이전트 태스크 평가
+@deepeval.evaluate(
+    metrics=[
+        ContextualPrecision(threshold=0.8),
+        ContextualRecall(threshold=0.9),
+        GEval(
+            name="Code Quality",
+            criteria="응답이 정확한 파일에 정확한 수정을 했는가",
+            evaluation_params=[
+                EvaluationParam(name="response", prompt="..."),
+                EvaluationParam(name="expected", prompt="...")
+            ]
+        )
+    ]
+)
+def test_coding_agent_fix():
+    # 에이전트의 코드 수정 결과 평가
+    agent = CodingAgent()
+    result = agent.attempt_fix(
+        issue="Function X should handle empty input gracefully",
+        repo_context=sample_repo
+    )
+    
+    assert result.test_pass_rate > 0.95
+    assert result.actual_changes == expected_patch
+</code></pre>
+<h3>6.2 Real-time 평가 파이프라인</h3>
+<pre><code class="language-python"># Production 환경에서의 실시간 평가
+class ProductionEvaluationPipeline:
+    def __init__(self, agent: Agent, evaluators: List[Metric]):
+        self.agent = agent
+        self.evaluators = evaluators
+        self.alert_threshold = 0.8
+    
+    async def run_with_evaluation(self, task: Task) -> EvaluationResult:
+        # 태스크 실행
+        result = await self.agent.execute(task)
+        
+        # 모든 metric으로 평가
+        eval_results = []
+        for evaluator in self.evaluators:
+            score = await evaluator.measure(result)
+            eval_results.append(eval_result)
+        
+        # 종합 점수
+        aggregate_score = self.compute_aggregate(eval_results)
+        
+        # 임계치 이하일 경우 알림
+        if aggregate_score &#x3C; self.alert_threshold:
+            await self.send_alert(agent_id=self.agent.id, score=aggregate_score)
+        
+        return EvaluationResult(
+            task_result=result,
+            evaluation_scores=eval_results,
+            aggregate_score=aggregate_score
+        )
+</code></pre>
+<hr>
+<h2>7. 2026년 평가 프레임워크의 미래 방향</h2>
+<h3>7.1 현재의 한계</h3>
+<p>2026년 현재 주요 벤치마크들은 다음과 같은 한계가 있다:</p>
+<table>
+<thead>
+<tr>
+<th>한계</th>
+<th>설명</th>
+<th>영향</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>벤치마크 오염</td>
+<td>모델이 벤치마크 데이터 학습</td>
+<td>점수 과대 추정</td>
+</tr>
+<tr>
+<td>환경 의존성</td>
+<td>평가 환경과 실제 환경의 차이</td>
+<td>실제 성능과乖離</td>
+</tr>
+<tr>
+<td>주관성</td>
+<td>"품질"의 주관적 측면</td>
+<td>완전히 객관화 어려움</td>
+</tr>
+<tr>
+<td>동적 변화</td>
+<td>벤치마크 자체의陳腐화</td>
+<td>정기적 업데이트 필요</td>
+</tr>
+</tbody>
+</table>
+<h3>7.2 새로운 방향: 종합 평가 에코시스템</h3>
+<p>미래의 평가 프레임워크는 다음과 같은 방향으로 진화할 것이다:</p>
+<p><strong>1. 연속적 평가 (Continuous Evaluation)</strong></p>
+<ul>
+<li>일회성이 아닌 지속적인 평가
+--production 환경에서 실시간으로 성능 모니터링</li>
+</ul>
+<p><strong>2. 다차원적 지표</strong></p>
+<ul>
+<li>단일 점수가 아닌 다차원적 프로파일</li>
+<li>강점/약점 분석을 통한个体화 발전</li>
+</ul>
+<p><strong>3. 적응적 벤치마크</strong></p>
+<ul>
+<li>에이전트의 수준에 맞게 난이도 조정</li>
+<li>더 정확한 능력 측정 가능</li>
+</ul>
+<p><strong>4. 협동적 평가</strong></p>
+<ul>
+<li>여러 벤치마크의 결과를 통합</li>
+<li>cross-benchmark 학습을 통한 종합적 판단</li>
+</ul>
+<hr>
+<h2>결론: 평가는 발전의 시작이다</h2>
+<p>AI Agent 평가 프레임워크는 단순히 "점수를 매기는" 도구가 아니다. 효과적인 평가는:</p>
+<ol>
+<li><strong>에이전트의 강점과 약점을 명확히 파악</strong>하게 해준다.</li>
+<li><strong>개선의 방향을 제시</strong>한다.</li>
+<li><strong>실제 환경에서의 성능을 예측</strong>하게 해준다.</li>
+</ol>
+<p>2026년 현재 SWE-bench, BEAM, SocialReasoning-Bench 등 다양한 벤치마크가 등장했지만, 아직 완벽한 평가는 없다. 중요한 것은 이러한 벤치마크들을 종합적으로 활용하여 Agent의 다차원적 능력을 파악하는 것이다.</p>
+<p>궁극적으로, 평가 프레임워크의 발전은 AI Agent 기술 자체의 발전과 밀접하게 연결되어 있다. 더 나은 평가를 통해 더 나은 에이전트를 만들 수 있고, 더 나은 에이전트가 더 정교한 평가를 요구하는 선순환이 지속될 것이다.</p>
+<blockquote>
+<p><strong>개발자 참고</strong>: 에이전트 개발 시一开始就評価 프레임워크를 통합하는 것이 좋다. TDD(테스트 주도 개발)의 개념을 AI Agent 개발에 적용하여, 평가 가능한振る험을 먼저 정의하고 그에 따라 에이전트를 설계하는 것이 효과적이다.</p>
+</blockquote></div></article></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/b848662595cda15b.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"I0h1m__4yn4ihPv3zSN7e\",\"c\":[\"\",\"posts\",\"2026-05-17-proactive-update\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-05-17-proactive-update\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/b848662595cda15b.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/329e63eb984ada35.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"11:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n10:T561d,"])</script><script>self.__next_f.push([1,"\u003ch2\u003e서론: 왜 AI Agent 평가는 어려운가\u003c/h2\u003e\n\u003cp\u003e전통적 소프트웨어 테스트와 달리, AI Agent의 평가는 본질적으로 불확실성을 다룬다. 시스템의 출력이 단일 정답이 아닌 확률적 분포에서 나오며, 동일한 입력에 대해서도 실행마다 결과가 달라질 수 있다. 게다가 Agent는 도구를 호출하고, 외부 시스템과 상호작용하며, 복잡한 multi-step 워크플로우를 수행한다. 이런 특성 때문에 \"정답\"을 정의하기 어렵고,就算 찾았다 해도 그것이 \"좋은 행동\"인지 판단하기 어렵다.\u003c/p\u003e\n\u003cp\u003e2026년 현재, 이러한 도전课题에 대응하기 위해 다양한 평가 프레임워크가 등장했다. 이 글에서는 주요 벤치마크의 설계 철학을 분석하고, 효과적인 Agent 평가를 위한 아키텍처적 고려사항을 심층적으로 다룬다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e1. 평가 프레임워크의 세 가지 축\u003c/h2\u003e\n\u003cp\u003eAI Agent 평가를 위한 벤치마크는 일반적으로 세 가지 차원에서 측정한다:\u003c/p\u003e\n\u003ch3\u003e1.1 태스크 Completeness (작업 완료율)\u003c/h3\u003e\n\u003cp\u003e가장 직관적인 지표다. \"주어진 태스크를 완료했는가?\"\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eEnd-to-end success rate\u003c/strong\u003e: 에이전트가 최종 목표를 달성했는가?\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eStep completion rate\u003c/strong\u003e: 중간 단계별 완료율은 어떠한가?\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003ePartial success handling\u003c/strong\u003e: 부분적 성공을 어떻게 처리하는가?\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e1.2 행동 Quality (행동의 질)\u003c/h3\u003e\n\u003cp\u003e태스크를完成了했더라도, 어떻게完成了했는지가 중요하다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003e도구 호출의 적절성\u003c/strong\u003e: 올바른 도구를 올바른 시점에 사용했는가?\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e리소스 사용 효율성\u003c/strong\u003e: 불필요하게 많은 LLM 호출이나 API 호출을 했는가?\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e실행 시간\u003c/strong\u003e: 태스크 완료까지 소요된 시간은 합리적인가?\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e1.3 적응력 \u0026#x26; 일반화 (Generalization)\u003c/h3\u003e\n\u003cp\u003e학습 데이터에 없는 unseen scenario에 대한 적응력이다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eDomain transfer\u003c/strong\u003e: 한 도메인에서 학습한 능력을 다른 도메인에 적용할 수 있는가?\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eFew-shot adaptation\u003c/strong\u003e: 최소한의 예시로 새로운 태스크를 이해할 수 있는가?\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eAbstention capability\u003c/strong\u003e: 모르는 것을 \"모른다\"고 인정할 수 있는가?\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003ch2\u003e2. 코딩 에이전트 벤치마크: SWE-bench의 깊이 있는 분석\u003c/h2\u003e\n\u003ch3\u003e2.1 SWE-bench의 설계 철학\u003c/h3\u003e\n\u003cp\u003eSWE-bench는 실제 GitHub 이슈를 기반으로 코딩 에이전트의 능력을 평가하는 벤치마크다. 핵심 설계 원칙은 다음과 같다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003e# SWE-bench의 평가 구조\nclass SWEBenchEvaluator:\n    def __init__(self, dataset: List[GitHubIssue]):\n        self.dataset = dataset\n        self.ground_truth_env = {}  # 각 이슈의 테스트 환경\n    \n    def evaluate(self, agent: CodingAgent) -\u003e EvaluationResult:\n        \"\"\"\n        코딩 에이전트를 평가하는 핵심 로직\n        \n        1. 이슈 정보를 agent에게 전달\n        2. Agent가 코드 수정 시도\n        3. 수정된 코드를 ground truth 환경에서 실행\n        4. 테스트 케이스 성공 여부로 점수 산정\n        \"\"\"\n        results = []\n        for issue in self.dataset:\n            env = self.setup_ground_truth_env(issue)\n            patch = agent.attempt_fix(issue.description, issue.repo_context)\n            test_result = env.run_tests(issue.test_cases, patch)\n            results.append(test_result)\n        \n        return self.aggregate_results(results)\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e2.2 SWE-bench Verified vs SWE-bench Pro\u003c/h3\u003e\n\u003cp\u003e2026년 현재 SWE-bench는 두 가지 주요 버전으로 나뉜다:\u003c/p\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e구분\u003c/th\u003e\n\u003cth\u003eSWE-bench Verified\u003c/th\u003e\n\u003cth\u003eSWE-bench Pro\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e난이도\u003c/td\u003e\n\u003ctd\u003e중간 (70%+ 달성 가능)\u003c/td\u003e\n\u003ctd\u003e매우 높음 (최상위 모델도 ~23%)\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e규모\u003c/td\u003e\n\u003ctd\u003e~2,200 이슈\u003c/td\u003e\n\u003ctd\u003e~1,000 이슈\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e목적\u003c/td\u003e\n\u003ctd\u003e안정적인 성능 비교\u003c/td\u003e\n\u003ctd\u003e실제 문제 해결 능력 측정\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e대표 점수\u003c/td\u003e\n\u003ctd\u003eClaude Opus 4.7: 76%\u003c/td\u003e\n\u003ctd\u003eClaude Mythos Preview: 77.8%\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003cp\u003eSWE-bench Pro가 더 어렵다는 것은 주목할 만하다. 이는 \"쉬운 벤치마크에서 고점수를 받는 것\"이 실제 성능을 보장하지 않음을 의미한다.\u003c/p\u003e\n\u003ch3\u003e2.3 코딩 에이전트의 평가 지표 계층\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// 코딩 에이전트 평가의 다층적 지표 구조\ninterface CodingAgentMetrics {\n  // Level 1: End-to-end 결과\n  issue_resolution_rate: number;      // 이슈 해결률\n  test_pass_rate: number;            // 테스트 통과율\n  \n  // Level 2: 행동 과정\n  patch_quality: {\n    correct_location_rate: number;    // 정확한 파일/함수 수정\n    minimal_change_rate: number;      // 필요한 만큼만 수정\n    side_effect_free_rate: number;    // 부수 효과 없음\n  };\n  \n  // Level 3: 리소스 효율성\n  efficiency: {\n    llm_calls_per_task: number;       // 태스크당 LLM 호출 수\n    total_execution_time: number;      // 총 실행 시간\n    context_window_utilization: number; // 컨텍스트 활용도\n  };\n  \n  // Level 4: 일반화 능력\n  generalization: {\n    cross_language_transfer: number; // 언어 간 전이 능력\n    unseen_framework_adaptation: number; // 미학습 프레임워크 적응력\n  };\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e3. 메모리 평가의 새로운 기준: BEAM Benchmark\u003c/h2\u003e\n\u003ch3\u003e3.1 BEAM의 탄생 배경\u003c/h3\u003e\n\u003cp\u003e기존 벤치마크들은 에이전트의 \"지식 활용\"이나 \"작업 완료\"에 집중했다. 그러나 실제 production 환경에서 가장 중요한 것 중 하나는 \u003cstrong\u003e메모리 관리\u003c/strong\u003e다. 에이전트가 세션 간에 정보를 얼마나 효과적으로 보존하고 활용하는지가 궁극적인用户体验를 좌우한다.\u003c/p\u003e\n\u003cp\u003eBEAM(Benchmark for Agent Memory)은 이러한 요구사항을 해결하기 위해 설계된 벤치마크다. 2026년 현재 가장 포괄적인 메모리 평가 프레임워크로 자리잡았다.\u003c/p\u003e\n\u003ch3\u003e3.2 BEAM의 10가지 평가 카테고리\u003c/h3\u003e\n\u003cp\u003eBEAM은 에이전트의 메모리 능력을 10가지 카테고리로 세분화하여 평가한다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003e# BEAM Benchmark의 평가 카테고리\nclass BEAMEvaluator:\n    CATEGORIES = {\n        # 1. Preference Following - 사용자 선호도 기억 및 적용\n        \"preference_following\": {\n            \"description\": \"과거 상호작용에서 학습한 사용자 선호도를 따르는 능력\",\n            \"metrics\": [\"preference_accuracy\", \"adaptation_rate\"]\n        },\n        \n        # 2. Instruction Following - 명시적 지시사항 기억\n        \"instruction_following\": {\n            \"description\": \"이전 세션에서 주어진 복잡한 지시사항을 기억하고 따르는 능력\",\n            \"metrics\": [\"instruction_retention\", \"compliance_rate\"]\n        },\n        \n        # 3. Information Extraction - 저장된 정보에서 정확히 필요한 부분 추출\n        \"information_extraction\": {\n            \"description\": \"방대한 메모리에서 관련 정보를 정확히 찾아내는 능력\",\n            \"metrics\": [\"extraction_precision\", \"relevant_recall\"]\n        },\n        \n        # 4. Knowledge Update - 새로운 정보로 기존 지식 업데이트\n        \"knowledge_update\": {\n            \"description\": \"새로운 사실이 등장했을 때 기존 지식과 통합하는 능력\",\n            \"metrics\": [\"update_accuracy\", \"consistency_maintenance\"]\n        },\n        \n        # 5. Multi-Session Reasoning - 여러 세션에 걸친 추론\n        \"multi_session_reasoning\": {\n            \"description\": \"분산된 세션의 정보를 연결하여 복잡한 추론을 수행하는 능력\",\n            \"metrics\": [\"cross_session_accuracy\", \"temporal_reasoning\"]\n        },\n        \n        # 6. Summarization - 정보 압축 및 요약\n        \"summarization\": {\n            \"description\": \"긴 대화나 문서를 핵심만 남겨 요약하는 능력\",\n            \"metrics\": [\"compression_ratio\", \"key_point_retention\"]\n        },\n        \n        # 7. Temporal Reasoning - 시간 기반 정보 처리\n        \"temporal_reasoning\": {\n            \"description\": \"시간 순서, 만료 기한, 일정을 관리하는 능력\",\n            \"metrics\": [\"time_accuracy\", \"scheduling_correctness\"]\n        },\n        \n        # 8. Event Ordering - 사건의 시간적 순서 추적\n        \"event_ordering\": {\n            \"description\": \"여러 사건의 선후 관계를 정확히 파악하는 능력\",\n            \"metrics\": [\"ordering_accuracy\", \"causality_inference\"]\n        },\n        \n        # 9. Abstention - 모르는 것을 인정하는 능력\n        \"abstention\": {\n            \"description\": \"메모리에 정보가 없을 때 부정확한 답을 만들지 않는 능력\",\n            \"metrics\": [\"false_hallucination_rate\", \"unknown_acknowledgment\"]\n        },\n        \n        # 10. Contradiction Resolution - 상충되는 정보 처리\n        \"contradiction_resolution\": {\n            \"description\": \"상충되는 메모리 정보가 있을 때 올바르게 해결하는 능력\",\n            \"metrics\": [\"resolution_accuracy\", \"conflict_detection_rate\"]\n        }\n    }\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e3.3 BEAM 평가의 핵심 아키텍처\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003e# BEAM 평가기의 내부 구조\nclass BEAMEvaluationEngine:\n    def __init__(self):\n        self.memory_store = EpisodicMemoryStore()\n        self.evaluation_suite = BEAMEvaluationSuite()\n        self.scorer = MultiDimensionalScorer()\n    \n    async def run_evaluation(self, agent: Agent) -\u003e BEAMScore:\n        \"\"\"\n        BEAM 평가의 핵심 파이프라인:\n        1. 에이전트의 메모리 상태 초기화\n        2. 시나리오 시퀀스 주입\n        3. 각 카테고리별 성능 측정\n        4. 종합 점수 산출\n        \"\"\"\n        results = {}\n        \n        for category_name, category_config in self.CATEGORIES.items():\n            # 각 카테고리에 대한 시나리오 실행\n            scenario_suite = self.evaluation_suite.get_scenarios(category_name)\n            \n            category_scores = []\n            for scenario in scenario_suite:\n                memory_state = self.setup_initial_memory(scenario)\n                agent.set_memory_state(memory_state)\n                \n                # 에이전트가 메모리를 활용하여 태스크 수행\n                task_result = await agent.execute(scenario.task)\n                \n                # 정답과의 비교 및 점수 산출\n                score = self.score_response(\n                    expected=scenario.expected,\n                    actual=task_result.response,\n                    memory_utilization=taskResult.memory_access_pattern\n                )\n                category_scores.append(score)\n            \n            results[category_name] = self.aggregate_category_scores(category_scores)\n        \n        return self.compute_final_beam_score(results)\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e3.4 BEAM의 중요한 통찰: 컨텍스트 윈도우만으로는 부족하다\u003c/h3\u003e\n\u003cp\u003eBEAM의 가장 중요한 발견은 \u003cstrong\u003e컨텍스트 윈도우 확장만으로 메모리 문제를 해결할 수 없다\u003c/strong\u003e는 것이다.\u003c/p\u003e\n\u003cp\u003e컨텍스트 윈도우가 1M 토큰이라도:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e관련 정보를 \"찾아내는\" 능력이 없으면 의미가 없다.\u003c/li\u003e\n\u003cli\u003e정보의 중요도를 판단하지 못하면 노이즈만 증가한다.\u003c/li\u003e\n\u003cli\u003e시간적으로 분산된 정보를 \"연결\"하는 능력이 필요하다.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이는 vector search, memory retrieval mechanism, episodic memory organization 같은 추가 메커니즘이 필수적임을 보여준다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e4. Social Reasoning: 에이전트의 사회적 능력 평가\u003c/h2\u003e\n\u003ch3\u003e4.1 SocialReasoning-Bench의 등장\u003c/h3\u003e\n\u003cp\u003eMicrosoft Research가 2026년 5월에 출시한 SocialReasoning-Bench는 AI 에이전트의 \"사회적 추론 능력\"을 측정한다. 이 벤치마크는 다음과 같은 시나리오를 평가한다:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003e캘린더 조율\u003c/strong\u003e: 여러 이해관계자의 일정을 고려하여 최적의 meeting 시간 찾기\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e장터 협상\u003c/strong\u003e: 두 당사자 간의 이익을 조율하여双赢 결과 도출\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e핵심은 에이전트가 \"단독으로\"가 아닌 \"다른 주체와 상호작용\"하며 목표를 달성해야 한다는 점이다.\u003c/p\u003e\n\u003ch3\u003e4.2 Multi-Agent 시나리오 평가의 도전\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003e# SocialReasoning 평가의 복잡성\nclass SocialReasoningEvaluator:\n    async def evaluate_calendar_coordination(self, agent: Agent) -\u003e Score:\n        \"\"\"\n        캘린더 조율 시나리오 평가\n        \n        에이전트는:\n        1. 각 참석자의 가용 시간 파악\n        2. 우선순위와 긴급도 분석\n        3. 제약 조건 내에서 최적의 시간 제안\n        4. 당사자들의 피드백에 따라 조정\n        \"\"\"\n        participants = [\n            Participant(id=\"alice\", schedule=alice_cal, priority=\"high\"),\n            Participant(id=\"bob\", schedule=bob_cal, priority=\"medium\"),\n            Participant(id=\"carol\", schedule=carol_cal, priority=\"low\")\n        ]\n        \n        initial_proposal = agent.propose_meeting(participants, requirements)\n        \n        # 첫 번째 제안에 대한 피드백 시뮬레이션\n        feedback_round1 = self.simulate_feedback(participants, initial_proposal)\n        adjusted_proposal = agent.adjust_based_on_feedback(feedback_round1)\n        \n        # 추가 조정 라운드\n        feedback_round2 = self.simulate_feedback(participants, adjusted_proposal)\n        final_proposal = agent.finalize(feedback_round2)\n        \n        return self.evaluate_outcome(final_proposal, optimal_solution)\n    \n    async def evaluate_marketplace_negotiation(self, agent: Agent) -\u003e Score:\n        \"\"\"\n        장터 협상 시나리오 평가\n        \n        에이전트는:\n        1. 상대방의 이익 파악\n        2. 자신의MANDATE 이해\n        3. trade-off 분석\n        4. 창의적인 해결책 제시\n        \"\"\"\n        # ... similar structure\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e5. 평가 프레임워크 설계 원칙\u003c/h2\u003e\n\u003ch3\u003e5.1 통합적 평가의 필요성\u003c/h3\u003e\n\u003cp\u003e단일 벤치마크로 Agent의 모든 측면을 평가할 수 없다. 효과적인 평가 체계는 여러 벤치마크를 조합하여 사용해야 한다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003e# 통합 평가 프레임워크\nclass IntegratedAgentEvaluation:\n    def __init__(self):\n        self.benchmarks = {\n            \"coding\": SWEBenchEvaluator(),\n            \"memory\": BEAMEvaluator(),\n            \"social\": SocialReasoningEvaluator(),\n            \"safety\": SafetyBenchmark(),\n            \"efficiency\": EfficiencyBenchmark()\n        }\n        self.weights = {\n            \"coding\": 0.25,\n            \"memory\": 0.20,\n            \"social\": 0.15,\n            \"safety\": 0.25,\n            \"efficiency\": 0.15\n        }\n    \n    def evaluate(self, agent: Agent) -\u003e ComprehensiveScore:\n        scores = {}\n        for benchmark_name, evaluator in self.benchmarks.items():\n            scores[benchmark_name] = evaluator.evaluate(agent)\n        \n        weighted_score = sum(\n            scores[name] * self.weights[name] \n            for name in self.benchmarks.keys()\n        )\n        \n        return ComprehensiveScore(\n            overall=weighted_score,\n            breakdown=scores,\n            percentile=self.compute_percentile(weighted_score)\n        )\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e5.2 평가의 오류 최소화\u003c/h3\u003e\n\u003cp\u003e평가 과정에서 발생할 수 있는 편향과 오류를 최소화하기 위한 원칙:\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e1. 인간 평가와의 hybrid 평가\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e자동화된 벤치마크만으로는 품질의 모든 측면을 포착할 수 없다.\u003c/li\u003e\n\u003cli\u003e최종 인간 평가자를 통해 \"품질감\"을 보정한다.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003e2. 다중 시나리오 기반 평가\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e단일 시나리오로의 평가는 운에 의한 결과일 수 있다.\u003c/li\u003e\n\u003cli\u003e동일 Kategorie의 여러 시나리오로 평균을 내어 안정성을 확보한다.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003e3. 방어적 평가 (Adversarial Evaluation)\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\"가장 어렵게 만드는\" 시나리오도 함께 평가한다.\u003c/li\u003e\n\u003cli\u003e에이전트의 약점을 발견하는 것이 성능 향상의 첫걸음이다.\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003ch2\u003e6. DeepEval: 기업용 평가 프레임워크\u003c/h2\u003e\n\u003ch3\u003e6.1 Pytest 스타일의 평가\u003c/h3\u003e\n\u003cp\u003eDeepEval은 LLM 애플리케이션 평가를 위한 오픈소스 프레임워크로, pytest 스타일의 인터페이스를 제공한다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003e# DeepEval을 사용한 에이전트 평가 예시\nimport deepeval\nfrom deepeval.metrics import GEval, ContextualRecall, ContextualPrecision\n\n# 코딩 에이전트 태스크 평가\n@deepeval.evaluate(\n    metrics=[\n        ContextualPrecision(threshold=0.8),\n        ContextualRecall(threshold=0.9),\n        GEval(\n            name=\"Code Quality\",\n            criteria=\"응답이 정확한 파일에 정확한 수정을 했는가\",\n            evaluation_params=[\n                EvaluationParam(name=\"response\", prompt=\"...\"),\n                EvaluationParam(name=\"expected\", prompt=\"...\")\n            ]\n        )\n    ]\n)\ndef test_coding_agent_fix():\n    # 에이전트의 코드 수정 결과 평가\n    agent = CodingAgent()\n    result = agent.attempt_fix(\n        issue=\"Function X should handle empty input gracefully\",\n        repo_context=sample_repo\n    )\n    \n    assert result.test_pass_rate \u003e 0.95\n    assert result.actual_changes == expected_patch\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e6.2 Real-time 평가 파이프라인\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003e# Production 환경에서의 실시간 평가\nclass ProductionEvaluationPipeline:\n    def __init__(self, agent: Agent, evaluators: List[Metric]):\n        self.agent = agent\n        self.evaluators = evaluators\n        self.alert_threshold = 0.8\n    \n    async def run_with_evaluation(self, task: Task) -\u003e EvaluationResult:\n        # 태스크 실행\n        result = await self.agent.execute(task)\n        \n        # 모든 metric으로 평가\n        eval_results = []\n        for evaluator in self.evaluators:\n            score = await evaluator.measure(result)\n            eval_results.append(eval_result)\n        \n        # 종합 점수\n        aggregate_score = self.compute_aggregate(eval_results)\n        \n        # 임계치 이하일 경우 알림\n        if aggregate_score \u0026#x3C; self.alert_threshold:\n            await self.send_alert(agent_id=self.agent.id, score=aggregate_score)\n        \n        return EvaluationResult(\n            task_result=result,\n            evaluation_scores=eval_results,\n            aggregate_score=aggregate_score\n        )\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e7. 2026년 평가 프레임워크의 미래 방향\u003c/h2\u003e\n\u003ch3\u003e7.1 현재의 한계\u003c/h3\u003e\n\u003cp\u003e2026년 현재 주요 벤치마크들은 다음과 같은 한계가 있다:\u003c/p\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e한계\u003c/th\u003e\n\u003cth\u003e설명\u003c/th\u003e\n\u003cth\u003e영향\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e벤치마크 오염\u003c/td\u003e\n\u003ctd\u003e모델이 벤치마크 데이터 학습\u003c/td\u003e\n\u003ctd\u003e점수 과대 추정\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e환경 의존성\u003c/td\u003e\n\u003ctd\u003e평가 환경과 실제 환경의 차이\u003c/td\u003e\n\u003ctd\u003e실제 성능과乖離\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e주관성\u003c/td\u003e\n\u003ctd\u003e\"품질\"의 주관적 측면\u003c/td\u003e\n\u003ctd\u003e완전히 객관화 어려움\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e동적 변화\u003c/td\u003e\n\u003ctd\u003e벤치마크 자체의陳腐화\u003c/td\u003e\n\u003ctd\u003e정기적 업데이트 필요\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003ch3\u003e7.2 새로운 방향: 종합 평가 에코시스템\u003c/h3\u003e\n\u003cp\u003e미래의 평가 프레임워크는 다음과 같은 방향으로 진화할 것이다:\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e1. 연속적 평가 (Continuous Evaluation)\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e일회성이 아닌 지속적인 평가\n--production 환경에서 실시간으로 성능 모니터링\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003e2. 다차원적 지표\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e단일 점수가 아닌 다차원적 프로파일\u003c/li\u003e\n\u003cli\u003e강점/약점 분석을 통한个体화 발전\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003e3. 적응적 벤치마크\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e에이전트의 수준에 맞게 난이도 조정\u003c/li\u003e\n\u003cli\u003e더 정확한 능력 측정 가능\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003e4. 협동적 평가\u003c/strong\u003e\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e여러 벤치마크의 결과를 통합\u003c/li\u003e\n\u003cli\u003ecross-benchmark 학습을 통한 종합적 판단\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003ch2\u003e결론: 평가는 발전의 시작이다\u003c/h2\u003e\n\u003cp\u003eAI Agent 평가 프레임워크는 단순히 \"점수를 매기는\" 도구가 아니다. 효과적인 평가는:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e에이전트의 강점과 약점을 명확히 파악\u003c/strong\u003e하게 해준다.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e개선의 방향을 제시\u003c/strong\u003e한다.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e실제 환경에서의 성능을 예측\u003c/strong\u003e하게 해준다.\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003e2026년 현재 SWE-bench, BEAM, SocialReasoning-Bench 등 다양한 벤치마크가 등장했지만, 아직 완벽한 평가는 없다. 중요한 것은 이러한 벤치마크들을 종합적으로 활용하여 Agent의 다차원적 능력을 파악하는 것이다.\u003c/p\u003e\n\u003cp\u003e궁극적으로, 평가 프레임워크의 발전은 AI Agent 기술 자체의 발전과 밀접하게 연결되어 있다. 더 나은 평가를 통해 더 나은 에이전트를 만들 수 있고, 더 나은 에이전트가 더 정교한 평가를 요구하는 선순환이 지속될 것이다.\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\u003cstrong\u003e개발자 참고\u003c/strong\u003e: 에이전트 개발 시一开始就評価 프레임워크를 통합하는 것이 좋다. TDD(테스트 주도 개발)의 개념을 AI Agent 개발에 적용하여, 평가 가능한振る험을 먼저 정의하고 그에 따라 에이전트를 설계하는 것이 효과적이다.\u003c/p\u003e\n\u003c/blockquote\u003e"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"text-sm text-white/60\",\"children\":\"2026-05-17\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"AI Agent 평가 프레임워크 깊이 분석: SWE-bench에서 BEAM까지, 2026년 벤치마크의 모든 것\"}],[\"$\",\"p\",null,{\"className\":\"mt-4 text-base text-white/80 md:text-lg\",\"children\":\"AI 에이전트의 성능을 어떻게 측정할 것인가? SWE-bench, BEAM, SocialReasoning-Bench 등 주요 벤치마크의 아키텍처적 특성을 분석하고, 평가 프레임워크 설계 시 고려해야 할 핵심 원리를 심층적으로 다룬다.\"}],[\"$\",\"div\",null,{\"className\":\"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300\",\"dangerouslySetInnerHTML\":{\"__html\":\"$10\"}}]]}]}]\n8:null\n"])</script><script>self.__next_f.push([1,"c:[[\"$\",\"title\",\"0\",{\"children\":\"AI Agent 평가 프레임워크 깊이 분석: SWE-bench에서 BEAM까지, 2026년 벤치마크의 모든 것 | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"AI 에이전트의 성능을 어떻게 측정할 것인가? SWE-bench, BEAM, SocialReasoning-Bench 등 주요 벤치마크의 아키텍처적 특성을 분석하고, 평가 프레임워크 설계 시 고려해야 할 핵심 원리를 심층적으로 다룬다.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-05-17-proactive-update/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"AI Agent 평가 프레임워크 깊이 분석: SWE-bench에서 BEAM까지, 2026년 벤치마크의 모든 것\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"AI 에이전트의 성능을 어떻게 측정할 것인가? SWE-bench, BEAM, SocialReasoning-Bench 등 주요 벤치마크의 아키텍처적 특성을 분석하고, 평가 프레임워크 설계 시 고려해야 할 핵심 원리를 심층적으로 다룬다.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-05-17-proactive-update/\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"AI Agent 평가 프레임워크 깊이 분석: SWE-bench에서 BEAM까지, 2026년 벤치마크의 모든 것\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"AI 에이전트의 성능을 어떻게 측정할 것인가? SWE-bench, BEAM, SocialReasoning-Bench 등 주요 벤치마크의 아키텍처적 특성을 분석하고, 평가 프레임워크 설계 시 고려해야 할 핵심 원리를 심층적으로 다룬다.\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}],[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}],[\"$\",\"$L11\",\"13\",{}]]\n"])</script></body></html>

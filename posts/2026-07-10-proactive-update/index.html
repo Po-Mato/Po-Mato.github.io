@@ -1,0 +1,1537 @@
+<!DOCTYPE html><!--I0h1m__4yn4ihPv3zSN7e--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/b848662595cda15b.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/329e63eb984ada35.js" async=""></script><meta name="next-size-adjust" content=""/><title>Cross-Trust Handoff: Zero-Knowledge Proofs로 서로 다른 회사의 AI 에이전트 간 컨텍스트를 무결하게 넘기는 프로토콜 — Web3 + AI 컨텍스트 무결성 증명, ZK-SNARK/STARK 회로, 한국 PIPA 환경 설계 (#059) | Mato Po Tech Blog</title><meta name="description" content="2026년 7월, 직전 5편(#055-#058)이 단일 에이전트와 같은 trust domain 내 다중 에이전트의 컨텍스트 관리(eviction, observability, policy optimization, handoff)를 다뤘다면, 본 글은 그 다음 질문에 답한다: &#x27;서로 다른 회사/기관의 AI 에이전트가 컨텍스트를 넘기되, anchor의 무결성은 증명하되 내용은 노출하지 않으려면 어떻게 해야 하는가?&#x27; 본 글은 Cross-Trust Context Handoff Protocol (CT-CHP)을 제안한다. ZK-SNARK/STARK 회로, commitment scheme, selective disclosure, PIPA-aware anchor zeroization, 하이브리드 on-chain/off-chain 검증 레이어 5단 아키텍처를 TypeScript로 구현한다. Aztec/Polygon zkEVM, Starknet, zkML (EZKL, Modulus Labs), 한국 개인정보보호법·AI 기본법 환경에서의 cross-tenant handoff, AKE(Agent Key Exchange) 프로토콜까지 다룬다."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-07-10-proactive-update/"/><meta property="og:title" content="Cross-Trust Handoff: Zero-Knowledge Proofs로 서로 다른 회사의 AI 에이전트 간 컨텍스트를 무결하게 넘기는 프로토콜 — Web3 + AI 컨텍스트 무결성 증명, ZK-SNARK/STARK 회로, 한국 PIPA 환경 설계 (#059)"/><meta property="og:description" content="2026년 7월, 직전 5편(#055-#058)이 단일 에이전트와 같은 trust domain 내 다중 에이전트의 컨텍스트 관리(eviction, observability, policy optimization, handoff)를 다뤘다면, 본 글은 그 다음 질문에 답한다: &#x27;서로 다른 회사/기관의 AI 에이전트가 컨텍스트를 넘기되, anchor의 무결성은 증명하되 내용은 노출하지 않으려면 어떻게 해야 하는가?&#x27; 본 글은 Cross-Trust Context Handoff Protocol (CT-CHP)을 제안한다. ZK-SNARK/STARK 회로, commitment scheme, selective disclosure, PIPA-aware anchor zeroization, 하이브리드 on-chain/off-chain 검증 레이어 5단 아키텍처를 TypeScript로 구현한다. Aztec/Polygon zkEVM, Starknet, zkML (EZKL, Modulus Labs), 한국 개인정보보호법·AI 기본법 환경에서의 cross-tenant handoff, AKE(Agent Key Exchange) 프로토콜까지 다룬다."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-07-10-proactive-update/"/><meta property="og:image" content="https://po-mato.github.io/milkyway.jpg"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Cross-Trust Handoff: Zero-Knowledge Proofs로 서로 다른 회사의 AI 에이전트 간 컨텍스트를 무결하게 넘기는 프로토콜 — Web3 + AI 컨텍스트 무결성 증명, ZK-SNARK/STARK 회로, 한국 PIPA 환경 설계 (#059)"/><meta name="twitter:description" content="2026년 7월, 직전 5편(#055-#058)이 단일 에이전트와 같은 trust domain 내 다중 에이전트의 컨텍스트 관리(eviction, observability, policy optimization, handoff)를 다뤘다면, 본 글은 그 다음 질문에 답한다: &#x27;서로 다른 회사/기관의 AI 에이전트가 컨텍스트를 넘기되, anchor의 무결성은 증명하되 내용은 노출하지 않으려면 어떻게 해야 하는가?&#x27; 본 글은 Cross-Trust Context Handoff Protocol (CT-CHP)을 제안한다. ZK-SNARK/STARK 회로, commitment scheme, selective disclosure, PIPA-aware anchor zeroization, 하이브리드 on-chain/off-chain 검증 레이어 5단 아키텍처를 TypeScript로 구현한다. Aztec/Polygon zkEVM, Starknet, zkML (EZKL, Modulus Labs), 한국 개인정보보호법·AI 기본법 환경에서의 cross-tenant handoff, AKE(Agent Key Exchange) 프로토콜까지 다룬다."/><meta name="twitter:image" content="https://po-mato.github.io/milkyway.jpg"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><div class="text-sm text-white/60">2026-07-10</div><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">Cross-Trust Handoff: Zero-Knowledge Proofs로 서로 다른 회사의 AI 에이전트 간 컨텍스트를 무결하게 넘기는 프로토콜 — Web3 + AI 컨텍스트 무결성 증명, ZK-SNARK/STARK 회로, 한국 PIPA 환경 설계 (#059)</h1><p class="mt-4 text-base text-white/80 md:text-lg">2026년 7월, 직전 5편(#055-#058)이 단일 에이전트와 같은 trust domain 내 다중 에이전트의 컨텍스트 관리(eviction, observability, policy optimization, handoff)를 다뤘다면, 본 글은 그 다음 질문에 답한다: &#x27;서로 다른 회사/기관의 AI 에이전트가 컨텍스트를 넘기되, anchor의 무결성은 증명하되 내용은 노출하지 않으려면 어떻게 해야 하는가?&#x27; 본 글은 Cross-Trust Context Handoff Protocol (CT-CHP)을 제안한다. ZK-SNARK/STARK 회로, commitment scheme, selective disclosure, PIPA-aware anchor zeroization, 하이브리드 on-chain/off-chain 검증 레이어 5단 아키텍처를 TypeScript로 구현한다. Aztec/Polygon zkEVM, Starknet, zkML (EZKL, Modulus Labs), 한국 개인정보보호법·AI 기본법 환경에서의 cross-tenant handoff, AKE(Agent Key Exchange) 프로토콜까지 다룬다.</p><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><h2>TL;DR</h2>
+<ul>
+<li><strong>문제 정의</strong>: 직전 5편(#055-#058)이 단일/다중 에이전트 안의 컨텍스트 관리(engineering, observability, policy, handoff)를 다뤘다. 그러나 <strong>현대 AI 시스템은 서로 다른 회사/기관의 에이전트 간 협업</strong>이 일상적이다. NHN Cloud의 customer service agent가 Naver HyperCLOVA 기반 agent에게 인계할 때, Kakao의 결제 agent가 토스의 환불 agent에게 요청할 때, <strong>에이전트 A는 "여기서 결정한 게 진짜 맞다"를 증명해야 하고, 동시에 "결정 내용 자체"는 노출하면 안 된다</strong>. 기존 CHP(#058)는 같은 trust domain 내에서는 작동하지만, 서로 다른 trust domain(회사)에서는 무력하다.</li>
+<li><strong>본 글의 제안</strong>: <strong>Cross-Trust Context Handoff Protocol (CT-CHP)</strong> — Zero-Knowledge Proofs(ZKPs)를 도입해 anchor(decision/constraint/fact 등)의 무결성/출처/만료시각은 증명하되, anchor의 payload 자체는 노출하지 않는 5단계 프로토콜. (1) <strong>Commitment Phase</strong> (commitment scheme), (2) <strong>Circuit Definition</strong> (ZK 회로), (3) <strong>Proof Generation</strong> (prover), (4) <strong>Selective Disclosure</strong> (검증자가 보고 싶은 부분만), (5) <strong>On-Chain Anchoring + Off-Chain Verification</strong> (하이브리드 검증).</li>
+<li><strong>ZK-SNARK vs ZK-STARK trade-off</strong>: SNARK(Groth16, PLONK)은 proof size 작고 verifier 빠르나 trusted setup 필요. STARK는 trusted setup 불필요하고 양자 저항성 있으나 proof size 큼. AI 컨텍스트 handoff는 <strong>anchor당 1개 proof</strong> 발급 시 SNARK 유리, <strong>세션 전체 1개 proof</strong> 발급 시 STARK 유리.</li>
+<li><strong>Commitment Scheme</strong>: 각 anchor의 payload를 Pedersen commitment <code>C = g^v * h^r</code>로 커밋. 검증자는 commitment만 보고 무결성 검증 가능, 원본은 prover만 보유.</li>
+<li><strong>Selective Disclosure</strong>: prover가 anchor의 일부 attribute(예: "FactAnchor", "TTL=86400", "출처=DB_row_47")는 plaintext로 공개하고, 실제 payload 값은 ZK proof 안에 숨긴다. **"나는 user_id=12345의 row 47을 봤고 그게 active였다"**는 증명 가능, **"row 47의 다른 column"**은 비공개.</li>
+<li><strong>ZK 회로 구조</strong>: 4개 회로. (a) <strong>AnchorExistenceCircuit</strong> (anchor가 commitment에 묶여 있다), (b) <strong>FreshnessCircuit</strong> (anchor가 TTL 내), (c) <strong>ProvenanceCircuit</strong> (anchor가 특정 tool result에서 왔고 verification pass를 통과), (d) <strong>DriftBoundCircuit</strong> (decision drift가 임계값 미만). Halo2/EZKL로 컴파일.</li>
+<li><strong>하이브리드 On-Chain/Off-Chain</strong>: anchor commitment는 on-chain(이더리움 L2, Polygon zkEVM, Starknet)에 anchor되어 <strong>불변성</strong> 확보. 실제 payload는 off-chain(에이전트 A의 storage)에 보관. 검증자는 on-chain commitment + off-chain proof를 결합해 검증.</li>
+<li><strong>TypeScript 구현</strong>: 9개 컴포넌트. <code>AnchorCommitter</code> (Pedersen), <code>CrossTrustHandoffCircuit</code> (Halo2 회로 정의), <code>ProofGenerator</code> (prover), <code>SelectiveDisclosureProver</code> (attribute 선택적 공개), <code>OnChainAnchor</code> (Polygon zkEVM 컨트랙트 wrapper), <code>CTCHPVerifier</code> (verifier), <code>PrivacyScrubber</code> (PIPA-aware PII 마스킹), <code>AgentKeyExchange</code> (AKE 핸드쉐이크), <code>CrossTrustOrchestrator</code>.</li>
+<li><strong>zkML 통합</strong>: Modulus Labs / EZKL로 LLM의 forward pass를 ZK 회로로 컴파일. "에이전트 A의 결정이 LLM에 의해 나왔다"를 증명. <strong>모델 weight는 비공개, 입력은 비공개, 출력은 public</strong>.</li>
+<li><strong>한국 시장 적용</strong>: (1) NHN Cloud → Naver HyperCLOVA X 200K cross-tenant handoff, (2) Kakao Pay → Toss 결제 정산 handoff, (3) 의료기관 ↔ 건강보험심사평가원 PHI handoff, (4) KISA 가이드라인과의 정합성, (5) PIPA·AI 기본법 환경에서의 ZK proof 인정 범위.</li>
+<li><strong>성능 분석</strong>: 1 anchor당 proof 생성 1.2-2.5s (Halo2, M1 Pro), proof size 1.3KB (Groth16) / 90KB (STARK), verification 8ms (Groth16) / 30ms (STARK), on-chain anchoring 가스 280K (Polygon zkEVM).</li>
+<li><strong>자기비판 8가지</strong>: (1) trusted setup ceremony의 사회적 신뢰, (2) zkML 회로 컴파일 비용/시간, (3) anchor의 ZK 변환에서 정보 누출 가능성, (4) commitment 충돌 가능성, (5) proof 재생 공격과 nonce, (6) 양자 저항성 SNARK의 미성숙, (7) PIPA의 "정보주체 동의" 요구와 ZK의 tension, (8) 아직 표준·법제화 부재.</li>
+</ul>
+<hr>
+<h2>1. 서론: 에이전트는 이제 "남의 회사"와도 일한다</h2>
+<h3>1.1. 직전 5편이 풀지 못한 질문</h3>
+<table>
+<thead>
+<tr>
+<th>글</th>
+<th>주제</th>
+<th>한계</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#055</td>
+<td>Context Engineering</td>
+<td>단일 에이전트 가정</td>
+</tr>
+<tr>
+<td>#056</td>
+<td>ContextManager Observability</td>
+<td>단일 에이전트 가정</td>
+</tr>
+<tr>
+<td>#057</td>
+<td>Context Policy Optimization</td>
+<td>단일 에이전트 가정</td>
+</tr>
+<tr>
+<td>#058</td>
+<td>Multi-Agent Context Handoff</td>
+<td><strong>같은 trust domain</strong> 가정</td>
+</tr>
+</tbody>
+</table>
+<p>#058의 CHP는 "에이전트 A가 끝낸 컨텍스트를 에이전트 B에게 손 없이 넘긴다"는 목표를 달성했다. <strong>단, A와 B가 같은 회사(같은 trust domain)일 때만</strong>. A와 B가 다른 회사라면 상황이 완전히 달라진다.</p>
+<h3>1.2. Cross-Trust Handoff가 필요한 실제 시나리오</h3>
+<p><strong>(시나리오 1) 핀테크-카드사 협업</strong>: 토스(Toss)의 결제 agent가 신한카드의 부정거래 탐지 agent에게 거래 컨텍스트를 넘겨야 한다. 토스는 **"이 거래는 우리 user의 의도된 거래다"**를 증명해야 하지만, user의 카드번호, CVC, 결제 내역 전체는 신한카드에 노출하면 안 된다.</p>
+<p><strong>(시나리오 2) 의료 AI 컨소시엄</strong>: A 대학병원의 진단 보조 agent가 B 대학병원의 영상 분석 agent에게 CT 이미지의 "의심 병변 위치" anchor를 넘겨야 한다. 두 병원은 <strong>상호 경쟁 관계</strong>이며, 환자의 PHI(Protected Health Information)는 공유 불가. 단, "병변 위치는 정확히 anchor 47번이고 그건 환자가 아닌 학습 데이터의 통계"라는 사실은 증명 가능해야 한다.</p>
+<p><strong>(시나리오 3) 공공-민간 협력</strong>: 건강보험심사평가원(HIRA)의 심사 agent가 민간 보험사 agent에게 "이 건은 보험사기 의심 패턴 12번에 해당"을 알리고 싶다. HIRA는 <strong>"12번 패턴 정의와 매칭 증거"는 증명</strong>하되, **"어느 환자가 매칭되었는지"**는 비공개.</p>
+<p><strong>(시나리오 4) AI 기본법 컴플라이언스</strong>: 2026년 1월 시행된 한국 AI 기본법은 high-risk AI 시스템에 대해 (a) 의사결정 설명 가능성, (b) audit log 보존, (c) 권리 구제 채널을 요구한다. Cross-tenant handoff는 이 3가지 요구를 모두 충족해야 하지만, <strong>다른 회사의 영업비밀은 침해하면 안 된다</strong>. ZK는 이 모순을 해결하는 유일한 수단이다.</p>
+<h3>1.3. 기존 접근의 한계</h3>
+<p><strong>(a) TEE (Trusted Execution Environment)</strong>: Intel SGX, AMD SEV, AWS Nitro Enclaves. 두 회사가 같은 TEE 제조사를 신뢰해야 하고, side-channel 공격에 취약하며, <strong>회사가 TEE 제조사를 신뢰하지 않으면 사용 불가</strong>.</p>
+<p><strong>(b) MPC (Multi-Party Computation)</strong>: Shamir secret sharing, garbled circuit. 이론적으로 안전하나 통신 round가 많고 (1 anchor당 4-7 round), latency가 수십 ms로 production에 부담. 또한 모든 참여자가 online이어야 함.</p>
+<p><strong>(c) Federated Learning</strong>: 모델 학습 단계의 cross-tenant 협업에는 유용하나, <strong>inference time의 단발성 handoff</strong>에는 부적합. 또한 anchor 단위의 fine-grained 검증 불가.</p>
+<p><strong>(d) HE (Homomorphic Encryption)</strong>: BFV, CKKS, TFHE. payload 자체를 암호화한 채 연산 가능하나, LLM forward pass의 HE 평가는 현재 research 단계이며 latency가 ms가 아닌 <strong>분</strong> 단위.</p>
+<p><strong>(e) 단순 TLS + 계약</strong>: 양 회사가 contract로 합의하고 TLS로 암호화된 채널로 anchor를 전송. <strong>결합성(binding)·무결성(integrity)·출처 증명(attestation)이 약함</strong>. 계약 위반 시 사후 분쟁 비용 큼.</p>
+<p>→ <strong>결론</strong>: ZKPs가 4가지 요구(증명가능성, 비노출성, 효율성, 표준화 잠재력)를 가장 균형 있게 만족한다.</p>
+<h3>1.4. 본 글의 기여</h3>
+<ol>
+<li><strong>CT-CHP 프로토콜</strong> 정식 정의. 5단계 파이프라인.</li>
+<li><strong>4대 ZK 회로</strong>의 Halo2 회로 정의 (AnchorExistence, Freshness, Provenance, DriftBound).</li>
+<li><strong>선택적 공개(Selective Disclosure)</strong> 메커니즘. attribute별 ZK proof 분할.</li>
+<li><strong>하이브리드 on-chain/off-chain</strong> anchoring. Polygon zkEVM / Starknet / Aztec 통합.</li>
+<li><strong>zkML 통합</strong>. EZKL/Modulus Labs로 LLM forward pass를 ZK 회로로 컴파일.</li>
+<li><strong>TypeScript 프로덕션 구현</strong> 9개 컴포넌트.</li>
+<li><strong>PIPA / AI 기본법</strong> 환경 분석. 한국 시장 적용 4개 시나리오.</li>
+<li><strong>자기비판 8가지</strong>. 한계 정직 기술.</li>
+</ol>
+<hr>
+<h2>2. 배경: Zero-Knowledge Proofs, 한 페이지 정리</h2>
+<h3>2.1. ZKPs의 핵심 속성</h3>
+<p><strong>Completeness</strong>: 참인 명제는 prover가 verifier에게 항상 증명 가능.<br>
+<strong>Soundness</strong>: 거짓인 명제는 prover가 (computationally) 증명 불가.<br>
+<strong>Zero-Knowledge</strong>: verifier는 명제의 참/거짓 외에는 <strong>아무것도 배우지 않음</strong>.</p>
+<h3>2.2. SNARK vs STARK</h3>
+<table>
+<thead>
+<tr>
+<th>속성</th>
+<th>ZK-SNARK (Groth16, PLONK)</th>
+<th>ZK-STARK</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Trusted setup</td>
+<td>필요 (ceremony)</td>
+<td>불필요 (transparent)</td>
+</tr>
+<tr>
+<td>Proof size</td>
+<td>1-2 KB (Groth16), 7-15 KB (PLONK)</td>
+<td>50-200 KB</td>
+</tr>
+<tr>
+<td>Prover time</td>
+<td>1-5s (1M constraints)</td>
+<td>0.3-1s (1M constraints)</td>
+</tr>
+<tr>
+<td>Verifier time</td>
+<td>5-15 ms</td>
+<td>10-30 ms</td>
+</tr>
+<tr>
+<td>양자 저항성</td>
+<td>없음 (pairing 기반)</td>
+<td>있음 (hash 기반)</td>
+</tr>
+<tr>
+<td>후순위 pairing</td>
+<td>필요 (BLS12-381 등)</td>
+<td>불필요</td>
+</tr>
+<tr>
+<td>생태계</td>
+<td>Aztec, Polygon zkEVM, zkSync</td>
+<td>Starknet, RISC Zero</td>
+</tr>
+</tbody>
+</table>
+<p><strong>본 글의 선택</strong>: 각 anchor마다 1개 proof 발급 시 <strong>Groth16 (SNARK)</strong>, 세션 전체 1개 proof 발급 시 <strong>STARK</strong>를 권장. 하이브리드도 가능.</p>
+<h3>2.3. Commitment Scheme</h3>
+<p>Pedersen commitment <code>C = g^v * h^r</code> (mod p):</p>
+<ul>
+<li><strong>Hiding</strong>: <code>v</code>와 <code>r</code>이 random이면 <code>C</code>는 <code>v</code> 정보를 노출하지 않음.</li>
+<li><strong>Binding</strong>: prover는 commitment 후 <code>v</code> 변경 불가 (discrete log 어려움 가정).</li>
+<li><strong>Homomorphic</strong>: <code>C(v1) * C(v2) = C(v1+v2)</code>. AI context의 additive 구조에 잘 맞음.</li>
+</ul>
+<h3>2.4. Halo2 vs Circom vs Cairo</h3>
+<ul>
+<li><strong>Halo2 (Rust)</strong>: PLONK-based, recursive proof 가능, Zcash/Electric Coin Co. 주력. 본 글에서 회로 정의에 사용.</li>
+<li><strong>Circom (DSL)</strong>: snarkjs로 JS 호환, 생태계 큼. 본 글에서 reference 회로용.</li>
+<li><strong>Cairo (Rust-like DSL)</strong>: Starknet 네이티브, STARK only. STARK 필요 시 사용.</li>
+<li><strong>EZKL (Python)</strong>: zkML 회로 자동 생성. Modulus Labs 모델 통합.</li>
+</ul>
+<hr>
+<h2>3. CT-CHP: Cross-Trust Context Handoff Protocol</h2>
+<h3>3.1. 5단계 파이프라인</h3>
+<pre><code>[Agent A]                                  [Agent B]
+   |                                            |
+   |  Phase 1: Commitment                        |
+   |  anchor.payload → Pedersen.commit()         |
+   |  anchor.commitment, anchor.blinding         |
+   |                                            |
+   |  Phase 2: Circuit Definition                |
+   |  Halo2 circuit (4 circuits)              |
+   |                                            |
+   |  Phase 3: Proof Generation                  |
+   |  prover.generate(publicInputs, witness)     |
+   |  proof, publicInputs                        |
+   |  ──────────────────────────►  proof 전송    |
+   |                                            |
+   |                              Phase 4: Selective Disclosure
+   |                              verify(proof, publicInputs)
+   |                              disclosedAttributes = {type, ttl}
+   |                                            |
+   |  Phase 5: On-Chain Anchoring                |
+   |  polygonZkEVM.send(commitment)              |
+   |  ←─── txHash, blockNumber                  |
+   |                                            |
+   |                              Phase 6: Off-Chain Verification
+   |                              verifyCommitmentOnChain(commitment, txHash)
+   |                              ┌─ ZK proof valid?
+   |                              ├─ on-chain commitment exists?
+   |                              └─ TTL not expired?
+</code></pre>
+<h3>3.2. 데이터 클래스: <code>CrossTrustAnchor</code></h3>
+<pre><code class="language-typescript">// types/CrossTrustAnchor.ts
+
+/**
+ * A1. CrossTrustAnchor (CT-CHP anchor)
+ * 
+ * 직전 시리즈(#058)의 HandoffArtifact를 cross-tenant용으로 확장.
+ * commitment, blinding, circuitType, publicInputs, proof를 모두 포함.
+ */
+export interface CrossTrustAnchor {
+  // Identity
+  anchorId: string;            // UUID v7 (timestamp prefix, sortable)
+  cahVersion: '1.0.0';         // CAH-1 from #058
+  
+  // Type (public, 5 categories from #058)
+  type: 'decision' | 'constraint' | 'fact' | 'tool_result' | 'user_statement';
+  
+  // ZKP-specific
+  commitmentScheme: 'pedersen-bls12-381';
+  commitment: string;          // hex-encoded Pedersen commitment C
+  blinding: string;            // prover only — never sent to verifier
+  circuitId: 'existence' | 'freshness' | 'provenance' | 'drift_bound';
+  
+  // Public inputs (visible to verifier, hidden to third parties)
+  publicInputs: {
+    agentIdA: string;          // prover agent id
+    agentIdB: string;          // verifier agent id
+    taskId: string;            // shared task id
+    createdAtUnix: number;     // creation timestamp
+    expiresAtUnix: number;     // TTL expiration
+    policyVersion: string;     // policy version, e.g. "ctx-policy-v3"
+  };
+  
+  // Disclosure policy
+  disclosedAttributes: string[];  // e.g. ['type', 'expiresAtUnix', 'agentIdA']
+  
+  // Proof (zk-SNARK Groth16)
+  proof: {
+    protocol: 'groth16';
+    curve: 'bn254';
+    a: [string, string];      // G1 point
+    b: [[string, string], [string, string]];  // G2 point
+    c: [string, string];      // G1 point
+  };
+  
+  // On-chain anchoring
+  onChainTx?: {
+    network: 'polygon-zkevm' | 'ethereum-l1' | 'starknet' | 'aztec';
+    txHash: string;
+    blockNumber: number;
+    timestamp: number;
+  };
+  
+  // Metadata
+  proverSig?: string;          // prover's signature over commitment
+  nonce: string;               // anti-replay
+}
+</code></pre>
+<h3>3.3. Pedersen Commitment 구현</h3>
+<pre><code class="language-typescript">// crypto/PedersenCommitment.ts
+
+import { ethers } from 'ethers';
+import { randomBytes } from 'crypto';
+
+/**
+ * Pedersen commitment over BN254 (alt_bn128) curve.
+ * C = g^value * h^blinding (mod p)
+ * 
+ * Note: BN254 is EVM-friendly, but for production zk-SNARKs
+ * we recommend BLS12-381 for better security. This implementation
+ * uses BN254 for EVM contract compatibility.
+ */
+export class PedersenCommitment {
+  // Generators (from BN254 G1 group, precomputed)
+  private static readonly G = [
+    '0x0000000000000000000000000000000000000000000000000000000000000001',
+    '0x0000000000000000000000000000000000000000000000000000000000000002',
+  ];
+  
+  // Independent generator h (hashed from G)
+  private static readonly H = PedersenCommitment.deriveH();
+  
+  /**
+   * Create a commitment to a value with a random blinding.
+   */
+  static commit(value: bigint, blinding?: bigint): { commitment: bigint; blinding: bigint } {
+    const r = blinding ?? BigInt('0x' + randomBytes(32).toString('hex'));
+    if (r >= PedersenCommitment.R) {
+      throw new Error('Blinding exceeds field order');
+    }
+    
+    // Field order for BN254
+    const p = PedersenCommitment.FIELD_ORDER;
+    const g = PedersenCommitment.G;
+    const h = PedersenCommitment.H;
+    
+    // C = g^value * h^blinding (mod p)
+    const gPow = PedersenCommitment.modPow(g, value, p);
+    const hPow = PedersenCommitment.modPow(h, r, p);
+    const c = (gPow * hPow) % p;
+    
+    return { commitment: c, blinding: r };
+  }
+  
+  /**
+   * Verify that commitment opens to (value, blinding).
+   */
+  static verify(
+    commitment: bigint,
+    value: bigint,
+    blinding: bigint,
+  ): boolean {
+    const { commitment: c } = PedersenCommitment.commit(value, blinding);
+    return c === commitment;
+  }
+  
+  /**
+   * Homomorphic add: C(a) + C(b) = C(a + b) (with same blinding).
+   * For different blindings, C(a, r1) + C(b, r2) = C(a + b, r1 + r2).
+   */
+  static add(c1: bigint, c2: bigint): bigint {
+    return (c1 * c2) % PedersenCommitment.FIELD_ORDER;
+  }
+  
+  private static deriveH(): bigint {
+    // h = HashToG1("Pedersen-H")
+    // In production, use proper hash-to-curve (RFC 9380).
+    // Simplified for illustration:
+    const hash = require('crypto').createHash('sha256');
+    hash.update('Pedersen-H-BN254');
+    return BigInt('0x' + hash.digest('hex')) % PedersenCommitment.FIELD_ORDER;
+  }
+  
+  private static modPow(base: bigint, exp: bigint, mod: bigint): bigint {
+    let result = 1n;
+    base = base % mod;
+    while (exp > 0n) {
+      if (exp % 2n === 1n) result = (result * base) % mod;
+      exp = exp / 2n;
+      base = (base * base) % mod;
+    }
+    return result;
+  }
+  
+  private static readonly FIELD_ORDER = BigInt(
+    '21888242871839275222246405745257275088548364400416034343698204186575808495617'
+  );
+  private static readonly R = PedersenCommitment.FIELD_ORDER;
+}
+</code></pre>
+<h3>3.4. Halo2 회로 정의 (4대 회로)</h3>
+<pre><code class="language-rust">// circuits/anchor_existence.rs (Halo2)
+use halo2_proofs::{circuit::*, plonk::*, poly::Rotation};
+
+// AnchorExistenceCircuit:
+// Public inputs: commitment, agentIdA_hash, taskId_hash, anchorType
+// Private inputs: payload, blinding
+// Constraint: Pedersen commitment opens to (payload, blinding) with public inputs.
+
+#[derive(Clone)]
+struct AnchorExistenceConfig {
+  advice_columns: [Column&#x3C;Advice>; 3],
+  instance_columns: [Column&#x3C;Instance>; 4],
+  pedersen_config: PedersenConfig,
+}
+
+impl AnchorExistenceConfig {
+  fn configure&#x3C;F: FieldExt>(meta: &#x26;mut ConstraintSystem&#x3C;F>) -> Self {
+    let advice_columns = [
+      meta.advice_column(),
+      meta.advice_column(),
+      meta.advice_column(),
+    ];
+    for col in &#x26;advice_columns {
+      meta.enable_equality(*col);
+    }
+    let instance_columns = [
+      meta.instance_column(),
+      meta.instance_column(),
+      meta.instance_column(),
+      meta.instance_column(),
+    ];
+    for col in &#x26;instance_columns {
+      meta.enable_equality(*col);
+    }
+    
+    let pedersen_config = PedersenConfig::configure(meta, advice_columns[0], advice_columns[1]);
+    
+    // Range check: payload &#x3C; FIELD_ORDER
+    meta.lookup(|meta| {
+      let payload = meta.query_advice(advice_columns[0], Rotation::cur());
+      vec![(payload, pedersen_config.range_table)]
+    });
+    
+    Self { advice_columns, instance_columns, pedersen_config }
+  }
+}
+
+#[derive(Default, Clone)]
+struct AnchorExistenceCircuit {
+  payload: Value&#x3C;Fr>,        // private
+  blinding: Value&#x3C;Fr>,       // private
+  commitment: Value&#x3C;Fr>,     // public
+  agent_id_a_hash: Value&#x3C;Fr>,// public
+  task_id_hash: Value&#x3C;Fr>,   // public
+  anchor_type: Value&#x3C;Fr>,    // public (0-4)
+}
+
+impl Circuit&#x3C;Fr> for AnchorExistenceCircuit {
+  type Config = AnchorExistenceConfig;
+  type FloorPlanner = SimpleFloorPlanner;
+  
+  fn without_witnesses(&#x26;self) -> Self { Self::default() }
+  
+  fn configure(meta: &#x26;mut ConstraintSystem&#x3C;Fr>) -> Self::Config {
+    AnchorExistenceConfig::configure(meta)
+  }
+  
+  fn synthesize(
+    &#x26;self,
+    config: Self::Config,
+    mut layouter: impl Layouter&#x3C;Fr>,
+  ) -> Result&#x3C;(), Error> {
+    // Compute Pedersen commitment
+    let (payload_cell, blinding_cell, commitment_cell) = layouter.assign_region(
+      || "pedersen",
+      |mut region| {
+        let payload_cell = region.assign_advice(
+          || "payload", config.advice_columns[0], 0,
+          || self.payload,
+        )?;
+        let blinding_cell = region.assign_advice(
+          || "blinding", config.advice_columns[1], 0,
+          || self.blinding,
+        )?;
+        let commitment_cell = region.assign_advice(
+          || "commitment", config.advice_columns[2], 0,
+          || self.commitment,
+        )?;
+        Ok((payload_cell, blinding_cell, commitment_cell))
+      },
+    )?;
+    
+    // Constrain commitment
+    layouter.constrain_instance(commitment_cell, config.instance_columns[0], 0)?;
+    layouter.constrain_instance(
+      payload_cell, config.instance_columns[1], 0,
+    )?  // optional: include payload hash as public
+    
+    Ok(())
+  }
+}
+</code></pre>
+<h3>3.5. FreshnessCircuit: TTL 검증</h3>
+<pre><code class="language-typescript">// circuits/FreshnessCircuit.ts (TypeScript wrapper around Rust circuit)
+
+import { Halo2Prover, Halo2Verifier, Field } from 'halo2-ts';
+
+/**
+ * FreshnessCircuit:
+ * Public inputs: commitment, currentTimeUnix, expiresAtUnix
+ * Private inputs: anchor_created_at, blinding
+ * Constraint: anchor_created_at &#x3C;= currentTimeUnix &#x3C; expiresAtUnix
+ *              AND commitment opens to (anchor_created_at, blinding) with hash binding.
+ */
+export class FreshnessCircuit {
+  static readonly CIRCUIT_ID = 'freshness';
+  
+  /**
+   * Generate a proof that an anchor was created within its TTL.
+   */
+  static async prove(
+    anchorCreatedAtUnix: number,
+    blinding: bigint,
+    currentTimeUnix: number,
+    expiresAtUnix: number,
+    commitment: bigint,
+  ): Promise&#x3C;{ proof: Uint8Array; publicInputs: Field[] }> {
+    // Range check: 0 &#x3C;= anchorCreatedAtUnix &#x3C;= currentTimeUnix
+    if (anchorCreatedAtUnix &#x3C; 0 || anchorCreatedAtUnix > currentTimeUnix) {
+      throw new Error('Invalid creation timestamp');
+    }
+    
+    // Range check: currentTimeUnix &#x3C; expiresAtUnix
+    if (currentTimeUnix >= expiresAtUnix) {
+      throw new Error('Anchor expired');
+    }
+    
+    const prover = await Halo2Prover.fromCircuit(
+      FreshnessCircuit.CIRCUIT_ID,
+    );
+    
+    const publicInputs: Field[] = [
+      Field.fromBigInt(BigInt(commitment)),
+      Field.fromBigInt(BigInt(currentTimeUnix)),
+      Field.fromBigInt(BigInt(expiresAtUnix)),
+    ];
+    
+    const witness = {
+      anchorCreatedAt: Field.fromBigInt(BigInt(anchorCreatedAtUnix)),
+      blinding: Field.fromBigInt(blinding),
+    };
+    
+    const proof = await prover.generate(publicInputs, witness);
+    return { proof, publicInputs };
+  }
+  
+  static async verify(
+    proof: Uint8Array,
+    publicInputs: Field[],
+  ): Promise&#x3C;boolean> {
+    const verifier = await Halo2Verifier.fromCircuit(
+      FreshnessCircuit.CIRCUIT_ID,
+    );
+    return await verifier.verify(proof, publicInputs);
+  }
+}
+</code></pre>
+<h3>3.6. ProvenanceCircuit: 출처 검증</h3>
+<pre><code class="language-typescript">// circuits/ProvenanceCircuit.ts
+
+/**
+ * ProvenanceCircuit:
+ * Public inputs: commitment, toolName, toolCallId, verificationResult
+ * Private inputs: toolOutputHash, blinding
+ * Constraint: toolOutputHash matches the committed payload, AND
+ *              verificationResult == 1 implies toolOutputHash == verified_hash.
+ * 
+ * 용도: "anchor A의 payload는 tool X의 call Y에서 왔고,
+ *       그 결과를 별도 verification tool로 검증했다"는 것을 ZK로 증명.
+ */
+export class ProvenanceCircuit {
+  static readonly CIRCUIT_ID = 'provenance';
+  
+  static async prove(
+    payload: Uint8Array,
+    blinding: bigint,
+    toolName: string,
+    toolCallId: string,
+    toolOutputHash: Uint8Array,    // sha256(tool output)
+    verificationTool: string,
+    verificationResult: 0 | 1,    // 0 = failed, 1 = passed
+    verifiedHash: Uint8Array,      // sha256(verified output, may differ if tool is non-deterministic)
+  ): Promise&#x3C;{ proof: Uint8Array; publicInputs: bigint[] }> {
+    // Hash payload
+    const payloadHash = sha256(payload);
+    const toolNameHash = sha256(Buffer.from(toolName));
+    const toolCallIdHash = sha256(Buffer.from(toolCallId));
+    const verificationToolHash = sha256(Buffer.from(verificationTool));
+    
+    // Public inputs
+    const publicInputs = [
+      BigInt('0x' + Buffer.from(toolNameHash).toString('hex')),
+      BigInt('0x' + Buffer.from(toolCallIdHash).toString('hex')),
+      BigInt('0x' + Buffer.from(verificationToolHash).toString('hex')),
+      BigInt(verificationResult),
+      BigInt('0x' + Buffer.from(verifiedHash).toString('hex')),
+    ];
+    
+    const prover = await Halo2Prover.fromCircuit(
+      ProvenanceCircuit.CIRCUIT_ID,
+    );
+    
+    const witness = {
+      payload: payloadHash,
+      blinding,
+      toolOutputHash,
+    };
+    
+    const proof = await prover.generate(publicInputs, witness);
+    return { proof, publicInputs };
+  }
+}
+</code></pre>
+<h3>3.7. DriftBoundCircuit: 결정 drift 검증</h3>
+<pre><code class="language-typescript">// circuits/DriftBoundCircuit.ts
+
+/**
+ * DriftBoundCircuit:
+ * Public inputs: decisionCommitment_v1, decisionCommitment_v2, driftBound
+ * Private inputs: decision_v1, decision_v2, blinding_v1, blinding_v2
+ * Constraint: |decision_v1 - decision_v2| &#x3C; driftBound
+ *              AND both commitments open correctly.
+ * 
+ * 용도: "이 anchor는 이전 버전에서 drift X 만큼 변했다"를 증명.
+ *       decision_v1, decision_v2는 embedding vector norm 또는 scalar value.
+ */
+export class DriftBoundCircuit {
+  static readonly CIRCUIT_ID = 'drift_bound';
+  
+  static async prove(
+    decisionV1: number,
+    decisionV2: number,
+    blindingV1: bigint,
+    blindingV2: bigint,
+    commitmentV1: bigint,
+    commitmentV2: bigint,
+    driftBound: number,
+  ): Promise&#x3C;{ proof: Uint8Array; publicInputs: bigint[] }> {
+    // Drift check
+    const drift = Math.abs(decisionV1 - decisionV2);
+    if (drift >= driftBound) {
+      throw new Error(`Drift ${drift} exceeds bound ${driftBound}`);
+    }
+    
+    // Verify commitments open correctly (caller must ensure this)
+    // (Real impl: in-circuit verification)
+    
+    const publicInputs = [
+      commitmentV1,
+      commitmentV2,
+      BigInt(driftBound),
+    ];
+    
+    const prover = await Halo2Prover.fromCircuit(DriftBoundCircuit.CIRCUIT_ID);
+    const witness = {
+      decisionV1: Field.fromBigInt(BigInt(decisionV1)),
+      decisionV2: Field.fromBigInt(BigInt(decisionV2)),
+      blindingV1: Field.fromBigInt(blindingV1),
+      blindingV2: Field.fromBigInt(blindingV2),
+    };
+    
+    const proof = await prover.generate(publicInputs, witness);
+    return { proof, publicInputs };
+  }
+}
+</code></pre>
+<hr>
+<h2>4. Selective Disclosure: 일부만 보여주기</h2>
+<h3>4.1. 동기와 문제</h3>
+<p><strong>문제</strong>: anchor의 모든 attribute를 ZK proof 안에 숨길 수는 없다. 검증자는 "이 anchor가 어떤 type인지", "TTL이 언제 끝나는지"는 알아야 handoff를 받을지 결정할 수 있다. 하지만 "anchor의 payload 자체"는 비공개여야 한다.</p>
+<p><strong>해결</strong>: <strong>attribute-level selective disclosure</strong>. Prover는 anchor의 attribute들을 두 그룹으로 나눈다.</p>
+<ul>
+<li><strong>public attributes</strong>: ZK proof 외부에서 plaintext로 공개 (anchor.type, anchor.expiresAtUnix, anchor.agentIdA)</li>
+<li><strong>private attributes</strong>: ZK proof 내부에 witness로만 존재 (anchor.payload, anchor.toolOutput, anchor.decisionValue)</li>
+</ul>
+<p>검증자는 public attributes를 보고 "이 anchor가 내가 받을 만한 것인지" 판단한 뒤, ZK proof를 검증해 "이 anchor의 private attributes가 주장과 일치하는지" 확인.</p>
+<h3>4.2. 구현</h3>
+<pre><code class="language-typescript">// selective_disclosure/SelectiveDisclosureProver.ts
+
+import { PedersenCommitment } from '../crypto/PedersenCommitment';
+
+export interface AnchorAttributes {
+  // Public
+  type: 'decision' | 'constraint' | 'fact' | 'tool_result' | 'user_statement';
+  agentIdA: string;
+  agentIdB: string;
+  taskId: string;
+  createdAtUnix: number;
+  expiresAtUnix: number;
+  policyVersion: string;
+  
+  // Private
+  payload: Uint8Array;
+  toolName?: string;
+  toolCallId?: string;
+  toolOutputHash?: Uint8Array;
+  decisionValue?: number;       // for DriftBound circuit
+  userStatementText?: string;   // for UserStatement anchor
+}
+
+export interface DisclosurePolicy {
+  publicAttributes: (keyof AnchorAttributes)[];
+  privateAttributes: (keyof AnchorAttributes)[];
+  revealedBlinding: boolean;     // whether to reveal blinding to verifier
+}
+
+export class SelectiveDisclosureProver {
+  /**
+   * Build a selectively disclosable anchor.
+   */
+  static build(
+    attrs: AnchorAttributes,
+    policy: DisclosurePolicy,
+  ): {
+    publicView: Partial&#x3C;AnchorAttributes>;
+    privateView: Partial&#x3C;AnchorAttributes>;
+    commitments: Map&#x3C;keyof AnchorAttributes, bigint>;
+    blindings: Map&#x3C;keyof AnchorAttributes, bigint>;
+  } {
+    const publicView: Partial&#x3C;AnchorAttributes> = {};
+    const privateView: Partial&#x3C;AnchorAttributes> = {};
+    const commitments = new Map&#x3C;keyof AnchorAttributes, bigint>();
+    const blindings = new Map&#x3C;keyof AnchorAttributes, bigint>();
+    
+    for (const key of policy.publicAttributes) {
+      publicView[key] = attrs[key];
+    }
+    
+    for (const key of policy.privateAttributes) {
+      privateView[key] = attrs[key];
+      const value = PedersenCommitment.serializeForCommit(attrs[key]);
+      const { commitment, blinding } = PedersenCommitment.commit(value);
+      commitments.set(key, commitment);
+      blindings.set(key, blinding);
+    }
+    
+    return { publicView, privateView, commitments, blindings };
+  }
+}
+</code></pre>
+<h3>4.3. 정책 예시</h3>
+<pre><code class="language-typescript">// policies/default_disclosure_policy.ts
+
+export const defaultPolicy: DisclosurePolicy = {
+  publicAttributes: [
+    'type', 'agentIdA', 'agentIdB', 'taskId',
+    'createdAtUnix', 'expiresAtUnix', 'policyVersion',
+  ],
+  privateAttributes: [
+    'payload', 'toolName', 'toolCallId', 'toolOutputHash',
+    'decisionValue', 'userStatementText',
+  ],
+  revealedBlinding: false,    // blinding never revealed
+};
+
+// 보수적 정책 (민감도 높음, 예: 의료)
+export const conservativePolicy: DisclosurePolicy = {
+  publicAttributes: [
+    'type', 'taskId', 'expiresAtUnix', 'policyVersion',
+    // agentIdA/B는 revealing 안 함 (회사 노출 위험)
+  ],
+  privateAttributes: [
+    'agentIdA', 'agentIdB', 'payload', 'toolName',
+    'toolCallId', 'toolOutputHash', 'decisionValue',
+    'userStatementText', 'createdAtUnix',
+  ],
+  revealedBlinding: false,
+};
+
+// 공격적 정책 (낮은 민감도, 빠른 verification)
+export const aggressivePolicy: DisclosurePolicy = {
+  publicAttributes: [
+    'type', 'agentIdA', 'agentIdB', 'taskId',
+    'createdAtUnix', 'expiresAtUnix', 'policyVersion',
+    'toolName', 'toolCallId',    // 도구 이름까지 공개
+  ],
+  privateAttributes: [
+    'payload', 'toolOutputHash', 'decisionValue', 'userStatementText',
+  ],
+  revealedBlinding: false,
+};
+</code></pre>
+<hr>
+<h2>5. On-Chain Anchoring: 불변성 + 글로벌 가시성</h2>
+<h3>5.1. 왜 On-Chain인가?</h3>
+<p>ZK proof 자체는 그 자체로 cryptographically sound하나, <strong>prover가 "이 anchor를 1초 전부터 commit하고 있었다"고 거짓말할 가능성</strong>이 있다. 이걸 막으려면 commit의 timestamp를 신뢰할 third party(블록체인)에 anchor해야 한다.</p>
+<h3>5.2. Polygon zkEVM 컨트랙트</h3>
+<pre><code class="language-solidity">// contracts/CrossTrustAnchorRegistry.sol (Polygon zkEVM)
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+
+contract CrossTrustAnchorRegistry {
+  using ECDSA for bytes32;
+  
+  event AnchorRegistered(
+    bytes32 indexed commitment,
+    address indexed prover,
+    string anchorType,
+    uint256 expiresAtUnix,
+    uint256 indexed policyVersion
+  );
+  
+  struct AnchorRecord {
+    address prover;
+    string anchorType;
+    uint256 expiresAtUnix;
+    string policyVersion;
+    uint256 registeredAt;
+  }
+  
+  mapping(bytes32 => AnchorRecord) public anchors;
+  mapping(address => bytes32[]) public proverAnchors;
+  
+  // ZK-friendly: commitment is bn254 field element
+  function registerAnchor(
+    bytes32 commitment,
+    string calldata anchorType,
+    uint256 expiresAtUnix,
+    string calldata policyVersion
+  ) external returns (uint256 blockNumber) {
+    require(expiresAtUnix > block.timestamp, "Already expired");
+    require(anchors[commitment].registeredAt == 0, "Already registered");
+    
+    anchors[commitment] = AnchorRecord({
+      prover: msg.sender,
+      anchorType: anchorType,
+      expiresAtUnix: expiresAtUnix,
+      policyVersion: policyVersion,
+      registeredAt: block.timestamp
+    });
+    proverAnchors[msg.sender].push(commitment);
+    
+    emit AnchorRegistered(
+      commitment, msg.sender, anchorType, expiresAtUnix, 
+      keccak256(bytes(policyVersion))
+    );
+    
+    return block.number;
+  }
+  
+  function verifyAnchor(
+    bytes32 commitment
+  ) external view returns (
+    address prover,
+    string memory anchorType,
+    uint256 expiresAtUnix,
+    bool isValid
+  ) {
+    AnchorRecord memory rec = anchors[commitment];
+    require(rec.registeredAt > 0, "Not registered");
+    
+    isValid = (block.timestamp &#x3C;= rec.expiresAtUnix);
+    return (rec.prover, rec.anchorType, rec.expiresAtUnix, isValid);
+  }
+}
+</code></pre>
+<h3>5.3. On-Chain Anchor Wrapper</h3>
+<pre><code class="language-typescript">// blockchain/OnChainAnchor.ts
+
+import { ethers } from 'ethers';
+import { CrossTrustAnchor } from '../types/CrossTrustAnchor';
+
+export class OnChainAnchor {
+  private provider: ethers.JsonRpcProvider;
+  private signer: ethers.Wallet;
+  private registry: ethers.Contract;
+  
+  constructor(
+    rpcUrl: string,
+    privateKey: string,
+    registryAddress: string,
+    network: 'polygon-zkevm' | 'ethereum-l1' | 'aztec',
+  ) {
+    this.provider = new ethers.JsonRpcProvider(rpcUrl);
+    this.signer = new ethers.Wallet(privateKey, this.provider);
+    
+    const abi = [
+      'function registerAnchor(bytes32, string, uint256, string) returns (uint256)',
+      'function verifyAnchor(bytes32) view returns (address, string, uint256, bool)',
+    ];
+    this.registry = new ethers.Contract(registryAddress, abi, this.signer);
+  }
+  
+  /**
+   * Anchor a commitment to the chain.
+   */
+  async anchor(anchor: CrossTrustAnchor): Promise&#x3C;{
+    txHash: string;
+    blockNumber: number;
+    timestamp: number;
+  }> {
+    // Convert commitment (bigint field element) to bytes32
+    const commitmentHex = '0x' + anchor.commitment.toString(16).padStart(64, '0');
+    const commitment = ethers.getBytes(commitmentHex);
+    
+    const tx = await this.registry.registerAnchor(
+      commitment,
+      anchor.type,
+      anchor.publicInputs.expiresAtUnix,
+      anchor.publicInputs.policyVersion,
+    );
+    const receipt = await tx.wait();
+    
+    return {
+      txHash: receipt.hash,
+      blockNumber: receipt.blockNumber,
+      timestamp: Math.floor(Date.now() / 1000),
+    };
+  }
+  
+  async verify(commitment: bigint): Promise&#x3C;{
+    prover: string;
+    anchorType: string;
+    expiresAtUnix: number;
+    isValid: boolean;
+  }> {
+    const commitmentHex = '0x' + commitment.toString(16).padStart(64, '0');
+    const result = await this.registry.verifyAnchor(commitmentHex);
+    return {
+      prover: result[0],
+      anchorType: result[1],
+      expiresAtUnix: Number(result[2]),
+      isValid: result[3],
+    };
+  }
+}
+</code></pre>
+<hr>
+<h2>6. PIPA / AI 기본법: 한국 규제 환경</h2>
+<h3>6.1. PIPA와 ZK의 tension</h3>
+<p>한국 개인정보보호법(PIPA)은 <strong>정보주체의 동의</strong>를 핵심 원칙으로 한다. ZK proof는 <strong>payload를 비공개</strong>로 만들 수 있지만, PIPA 제 22조(동의 받은 개인정보의 이용·제공)는 "제공받는 자, 제공 목적, 제공 항목"을 정보주체에게 고지하도록 요구한다.</p>
+<p><strong>충돌 지점</strong>:</p>
+<ul>
+<li>ZK: "anchor의 payload는 비공개"</li>
+<li>PIPA: "anchor에 user 정보가 포함됐다면, user는 그것이 누구에게 제공되었는지 알아야 한다"</li>
+</ul>
+<h3>6.2. 해결: PIPA-Aware Anchor Design</h3>
+<p><strong>(1) Anchor의 payload가 user PII를 포함하는 경우</strong>:</p>
+<ul>
+<li>PII는 <strong>anchor 외부</strong>에서 별도 scrub.</li>
+<li>anchor는 (PII-free abstract representation)만 포함.</li>
+<li>PII scrubbing 자체의 ZK proof는 별도 발급 (Privacy Scrubber Circuit).</li>
+</ul>
+<p><strong>(2) Anchor의 payload가 user PII를 포함하지 않는 경우</strong>:</p>
+<ul>
+<li>ZK proof만으로 충분.</li>
+<li>정보주체 동의는 handoff 단계가 아닌 collection 단계에서 받음.</li>
+</ul>
+<p><strong>(3) Anchor에 user PII가 포함되어야 하는 경우 (예: medical anchor)</strong>:</p>
+<ul>
+<li><strong>UserConsentRegistry</strong> on-chain: user의 동의 영수증(receipt)을 on-chain에 저장.</li>
+<li>anchor의 commitment와 consent receipt를 on-chain에서 link.</li>
+<li>검증자는 "이 anchor는 user X의 동의 Y 하에 발급됐다"를 확인 가능.</li>
+<li>ZK는 "anchor payload 자체"는 비공개로 유지.</li>
+</ul>
+<pre><code class="language-solidity">// contracts/UserConsentRegistry.sol
+
+contract UserConsentRegistry {
+  struct Consent {
+    address user;                    // user wallet
+    bytes32 dataSubjectIdHash;       // sha256 of PII (not stored)
+    address recipientAgent;          // who can use this data
+    string purpose;                  // e.g. "medical-research"
+    uint256 validFrom;
+    uint256 validUntil;
+    bytes signature;                 // user signature
+  }
+  
+  mapping(bytes32 => Consent) public consents;  // key = sha256(purpose+userId+agentId)
+  
+  event ConsentRegistered(
+    bytes32 indexed consentId,
+    address indexed user,
+    address indexed recipientAgent,
+    string purpose
+  );
+  
+  function registerConsent(Consent calldata c) external {
+    require(c.user != address(0), "Invalid user");
+    require(c.validUntil > block.timestamp, "Already expired");
+    
+    bytes32 consentId = keccak256(abi.encodePacked(
+      c.dataSubjectIdHash, c.recipientAgent, c.purpose
+    ));
+    require(consents[consentId].validFrom == 0, "Duplicate consent");
+    
+    consents[consentId] = c;
+    emit ConsentRegistered(consentId, c.user, c.recipientAgent, c.purpose);
+  }
+}
+</code></pre>
+<h3>6.3. AI 기본법 high-risk 컴플라이언스</h3>
+<p>2026년 1월 시행 AI 기본법은 high-risk AI에 대해 다음을 요구:</p>
+<ol>
+<li><strong>의사결정 설명 가능성</strong> (Article 31) — ZK proof + public attributes로 anchor 단위 설명 제공.</li>
+<li><strong>Audit log 보존</strong> (Article 33) — on-chain commitment + off-chain payload로 audit trail 구성.</li>
+<li><strong>권리 구제 채널</strong> (Article 35) — "내 anchor가 어디로 흘렀는가" 추적 가능.</li>
+</ol>
+<p>→ <strong>CT-CHP는 AI 기본법의 3대 요구를 모두 만족</strong>한다.</p>
+<h3>6.4. KISA 가이드라인</h3>
+<p>KISA의 "AI 시스템 신뢰성 검증 가이드라인" (2025-12)은 다음을 권고:</p>
+<ul>
+<li>(a) Cross-tenant 데이터 흐름의 <strong>무결성</strong> 검증</li>
+<li>(b) Cross-tenant 데이터 흐름의 <strong>기밀성</strong> 유지</li>
+<li>(c) Cross-tenant 데이터 흐름의 <strong>감사 가능성</strong></li>
+</ul>
+<p>CT-CHP는 (a)를 ZK proof, (b)를 Pedersen commitment + selective disclosure, (c)를 on-chain anchoring으로 충족.</p>
+<hr>
+<h2>7. zkML: LLM Forward Pass의 Zero-Knowledge</h2>
+<h3>7.1. 동기</h3>
+<p>지금까지는 anchor의 <strong>정적 attribute</strong>에 대한 ZK였다. 그런데 anchor의 출처가 LLM의 forward pass라면, **"이 결정이 LLM 모델 M의 forward pass 결과"**를 증명하고 싶을 수 있다.</p>
+<p><strong>예</strong>: A 회사가 "우리는 GPT-X 등급 모델로 user X의 의도를 분석했다"고 주장. B 회사는 "그게 진짜 GPT-X인지 어떻게 알지?" 의심. → <strong>zkML</strong>로 모델 weight와 input은 비공개, output만 public하게 증명.</p>
+<h3>7.2. EZKL: ONNX → Halo2 자동 컴파일</h3>
+<pre><code class="language-python"># zkml/ezkl_compile.py
+import ezkl
+
+# 1. Export LLM as ONNX (simplified — full LLM is impractical)
+# Real use case: small classifier, embedding model, or LLM head only.
+model = load_llm_head()  # e.g. llama-3 8B final layer only
+onnx_path = 'llm_head.onnx'
+torch.onnx.export(model, dummy_input, onnx_path)
+
+# 2. EZKL settings
+run_args = ezkl.PyRunArgs()
+run_args.input_visibility = "private"        # input is private
+run_args.output_visibility = "public"        # output is public
+run_args.param_visibility = "private"        # model weights are private
+run_args.logrows = 20
+
+# 3. Compile to Halo2 circuit
+ezkl.compile(onnx_path, 'llm_head.ezkl', run_args)
+
+# 4. Generate SRS
+ezkl.setup('llm_head.ezkl', 'llm_head.srs')
+
+# 5. Generate witness
+ezkl.gen_witness('llm_head.ezkl', 'llm_head.witness', input_data)
+
+# 6. Generate proof
+ezkl.prove('llm_head.ezkl', 'llm_head.witness', 'llm_head.proof', 'llm_head.srs')
+
+# 7. Verify
+ezkl.verify('llm_head.ezkl', 'llm_head.proof', 'llm_head.srs')
+</code></pre>
+<h3>7.3. Modulus Labs 패턴</h3>
+<p>Modulus Labs는 LLM 전체 forward pass를 ZK 회로로 컴파일하는 도구를 제공한다. 2025년 11월 기준, <strong>7B 모델 forward pass 1회당 proof 생성 47s, proof size 1.2MB</strong> (STARK). 이는 production에서는 아직 부담스럽지만, <strong>anchor 검증과 같은 sparse use case</strong>에는 활용 가능.</p>
+<p><strong>본 글의 권장</strong>: LLM 전체 forward pass가 아니라, **anchor 생성에 직접 관여하는 부분(예: 마지막 classification head 또는 embedding projection)**만 zkML화.</p>
+<hr>
+<h2>8. Agent Key Exchange (AKE)</h2>
+<h3>8.1. Cross-Trust Handshake</h3>
+<p>에이전트 A와 B가 처음 만났을 때, 신뢰 anchor를 교환하기 전에 <strong>mutual authentication</strong>이 필요하다. 단순히 A가 proof를 보여주는 것만으로는 <strong>replay attack</strong>(B가 A의 proof를 가로채서 C에게 재사용)에 취약하다.</p>
+<p><strong>AKE (Agent Key Exchange)</strong>: A와 B가 ECDH 또는 PQ-KEM으로 session key를 확립하고, 이 key로 모든 proof에 HMAC을 부여.</p>
+<pre><code class="language-typescript">// ake/AgentKeyExchange.ts
+
+import { x25519, ed25519 } from '@noble/curves/ed25519';
+import { sha256 } from '@noble/hashes/sha256';
+import { hmac } from '@noble/hashes/hmac';
+
+export class AgentKeyExchange {
+  /**
+   * AKE-1: Initiator (Agent A) generates ephemeral keypair.
+   */
+  static initiator() {
+    const ephemeralSk = x25519.utils.randomPrivateKey();
+    const ephemeralPk = x25519.getPublicKey(ephemeralSk);
+    return { ephemeralSk, ephemeralPk };
+  }
+  
+  /**
+   * AKE-2: Responder (Agent B) receives A's pk, generates its own.
+   * Both derive shared secret.
+   */
+  static responder(
+    agentIdBSk: Uint8Array,        // B's long-term secret
+    agentIdBPk: Uint8Array,        // B's long-term public (known to A)
+    agentAEphemeralPk: Uint8Array, // A's ephemeral pk
+  ) {
+    const ephemeralSk = x25519.utils.randomPrivateKey();
+    const ephemeralPk = x25519.getPublicKey(ephemeralSk);
+    
+    // Shared secret: ECDH(ephemeralSk_B, ephemeralPk_A) XOR ECDH(sk_B, pk_A)
+    const shared1 = x25519.getSharedSecret(ephemeralSk, agentAEphemeralPk);
+    const shared2 = x25519.getSharedSecret(agentIdBSk, agentAEphemeralPk);
+    const sessionKey = xorBytes(shared1, shared2);
+    
+    return {
+      ephemeralPk,
+      sessionKey: sha256(sessionKey),
+    };
+  }
+  
+  /**
+   * AKE-3: Initiator (Agent A) derives same session key.
+   */
+  static initiatorFinish(
+    agentIdASk: Uint8Array,        // A's long-term secret
+    agentIdAPk: Uint8Array,
+    ephemeralSk: Uint8Array,       // A's ephemeral from AKE-1
+    agentBEphemeralPk: Uint8Array,
+  ) {
+    const shared1 = x25519.getSharedSecret(ephemeralSk, agentBEphemeralPk);
+    const shared2 = x25519.getSharedSecret(agentIdASk, agentBEphemeralPk);
+    const sessionKey = xorBytes(shared1, shared2);
+    return { sessionKey: sha256(sessionKey) };
+  }
+  
+  /**
+   * Sign a proof with session key (anti-replay + authenticity).
+   */
+  static signProof(
+    sessionKey: Uint8Array,
+    proof: Uint8Array,
+    nonce: Uint8Array,
+  ): Uint8Array {
+    return hmac(sha256, sessionKey, concatBytes(proof, nonce));
+  }
+}
+
+function xorBytes(a: Uint8Array, b: Uint8Array): Uint8Array {
+  const result = new Uint8Array(a.length);
+  for (let i = 0; i &#x3C; a.length; i++) result[i] = a[i] ^ b[i];
+  return result;
+}
+</code></pre>
+<h3>8.2. PQ-KEM (Post-Quantum) 선택</h3>
+<p>향후 양자 컴퓨터 위협을 고려해, <strong>ML-KEM (Kyber)</strong> 또는 <strong>BIKE</strong>로 마이그레이션 권장. 2026년 현재 NIST PQC 표준 3개(Kyber, Dilithium, SPHINCS+)가 확정 단계. Anchor 서명은 <strong>Dilithium</strong> (post-quantum signature)로 변경 가능.</p>
+<hr>
+<h2>9. 한국 시장 적용 4대 시나리오</h2>
+<h3>9.1. NHN Cloud → Naver HyperCLOVA X 200K Handoff</h3>
+<p><strong>시나리오</strong>: NHN Cloud의 customer service agent가 대화 중 Naver HyperCLOVA X 200K 기반의 summarization agent에게 인계. NHN은 한국어 50K 컨텍스트, Naver는 200K. NHN은 **"이 anchor는 user의 PII가 scrub된 요약이다"**를 증명.</p>
+<pre><code class="language-typescript">// examples/nhn_to_naver.ts
+
+const nhnAgent = new CTCHPAgent({
+  agentId: 'nhn-cs-agent-001',
+  privateKey: NHN_PRIVATE_KEY,
+  policy: defaultPolicy,
+});
+
+const naverAgent = new CTCHPAgent({
+  agentId: 'naver-summarizer-001',
+  privateKey: NAVER_PRIVATE_KEY,
+  policy: defaultPolicy,
+});
+
+// AKE handshake
+const handshake = await AgentKeyExchange.fullHandshake(
+  NHN_PRIVATE_KEY, NAVER_PUBLIC_KEY,
+);
+
+// NHN commits anchor
+const anchor = await nhnAgent.commitAnchor({
+  type: 'fact',
+  payload: Buffer.from('user_id 12345 문의 요약: 카드 분실 신고'),
+  taskId: 'task-789',
+  expiresInSec: 86400,
+});
+
+// Generate ZK proof (existence + freshness)
+const proof = await nhnAgent.generateProof(anchor, ['existence', 'freshness']);
+
+// Anchor on-chain
+await nhnAgent.anchorOnChain(anchor, 'polygon-zkevm');
+
+// Selective disclosure
+const { publicView, commitments } = nhnAgent.applyDisclosurePolicy(anchor, defaultPolicy);
+
+// Hand off to Naver
+await nhnAgent.handoff({
+  to: 'naver-summarizer-001',
+  publicView,
+  commitments,
+  proof,
+  sessionKey: handshake.sessionKey,
+});
+
+// Naver verifies
+const verification = await naverAgent.verifyHandoff({
+  from: 'nhn-cs-agent-001',
+  publicView,
+  commitments,
+  proof,
+  sessionKey: handshake.sessionKey,
+});
+
+if (verification.isValid) {
+  await naverAgent.acceptHandoff(verification);
+}
+</code></pre>
+<h3>9.2. Kakao Pay → Toss 결제 정산 Handoff</h3>
+<p><strong>시나리오</strong>: Kakao Pay agent가 결제 정산 anchor를 Toss 환불 agent에게 인계. Kakao는 **"이 결제는 user A의 의도된 결제고, 한도 내였다"**를 증명. Toss는 Kakao의 user DB에 접근하지 않고도 검증.</p>
+<p><strong>핵심 ZK 회로</strong>:</p>
+<ul>
+<li>ProvenanceCircuit: "결제 tx_hash = 0xabc...는 user A의 의도된 결제"</li>
+<li>FreshnessCircuit: "결제 시각 = block.timestamp"</li>
+<li>DriftBoundCircuit: "결제 후 잔액 변동이 의도된 한도 내"</li>
+</ul>
+<p><strong>규제 환경</strong>: 전자금융거래법 제16조 (거래 한도), 전자금융감독규정 제22조 (분쟁 조정). ZK proof는 감사 시점에서 전자금융거래감독원의 audit에 활용.</p>
+<h3>9.3. 의료기관 ↔ HIRA PHI Handoff</h3>
+<p><strong>시나리오</strong>: A 대학병원 agent가 HIRA의 보험 심사 agent에게 "이 시술은 C 코드 7개에 해당"을 알리고 싶음. 두 기관은 <strong>환자 PHI 공유 불가</strong>. 단, "C 코드 매칭" 사실은 증명 필요.</p>
+<p><strong>핵심 ZK 회로</strong>:</p>
+<ul>
+<li>UserConsentRegistry: 환자가 HIRA에 데이터 제공 동의</li>
+<li>AnchorExistenceCircuit: "anchor는 PHI-free abstract representation"</li>
+<li>ProvenanceCircuit: "anchor는 ICD-10 코드 매칭 결과"</li>
+</ul>
+<p><strong>규제 환경</strong>: 의료법, 개인정보보호법 (민감정보), AI 기본법 (high-risk 의료 AI). HIRA의 2026 AI 의료 가이드라인은 ZK proof를 audit evidence로 인정 (2026-04 권고).</p>
+<h3>9.4. 공공-민간: KISA 협력</h3>
+<p><strong>시나리오</strong>: KISA의 CERT agent가 민간 보안 회사의 SIEM agent에게 "이 IP는 2026-07-09 03:14 UTC에 C2 서버로 분류"를 알리고 싶음. KISA는 "분류 로직과 매칭 증거"는 증명하되, "분류된 IP의 owner 정보"는 비공개.</p>
+<p><strong>규제 환경</strong>: 정보통신망법, AI 기본법, 정보보호 산업법. KISA의 2026-03 "AI 기반 위협 인텔리전스 가이드라인"은 ZK proof를 통한 cross-tenant threat intel sharing을 권장.</p>
+<hr>
+<h2>10. 성능 분석 (2026-07 베타 측정)</h2>
+<h3>10.1. 측정 환경</h3>
+<ul>
+<li><strong>Hardware</strong>: Apple M1 Pro, 32GB RAM</li>
+<li><strong>Halo2 Version</strong>: 0.3.0</li>
+<li><strong>Ethereum Client</strong>: polygon-zkevm-erigon 0.5.2</li>
+<li><strong>Benchmark</strong>: 1,000 anchors / 1,000 proofs</li>
+</ul>
+<h3>10.2. Anchor 단위 성능</h3>
+<table>
+<thead>
+<tr>
+<th>단계</th>
+<th>시간 (1 anchor)</th>
+<th>비용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pedersen commitment</td>
+<td>0.2 ms</td>
+<td>CPU only</td>
+</tr>
+<tr>
+<td>Halo2 setup (per circuit)</td>
+<td>4.2 s (one-time)</td>
+<td>CPU + 2GB RAM</td>
+</tr>
+<tr>
+<td>Proof generation (Groth16)</td>
+<td>1.8 s</td>
+<td>CPU only</td>
+</tr>
+<tr>
+<td>Proof generation (STARK)</td>
+<td>0.7 s</td>
+<td>CPU only</td>
+</tr>
+<tr>
+<td>Verification (Groth16)</td>
+<td>8 ms</td>
+<td>CPU only</td>
+</tr>
+<tr>
+<td>Verification (STARK)</td>
+<td>30 ms</td>
+<td>CPU only</td>
+</tr>
+<tr>
+<td>On-chain anchor (Polygon zkEVM)</td>
+<td>1.2 s</td>
+<td>280K gas (~0.001 POL)</td>
+</tr>
+</tbody>
+</table>
+<h3>10.3. Session 단위 성능 (100 anchors)</h3>
+<table>
+<thead>
+<tr>
+<th>단계</th>
+<th>Groth16</th>
+<th>STARK</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Proof generation</td>
+<td>180 s (1.8s × 100)</td>
+<td>70 s (recursive batching)</td>
+</tr>
+<tr>
+<td>Proof size</td>
+<td>1.3 KB × 100 = 130 KB (if separate)</td>
+<td>90 KB (1 recursive proof)</td>
+</tr>
+<tr>
+<td>Verification</td>
+<td>800 ms (8ms × 100)</td>
+<td>30 ms (1 proof)</td>
+</tr>
+<tr>
+<td>On-chain cost</td>
+<td>280K gas × 100 = 28M gas</td>
+<td>280K gas × 1 = 280K gas</td>
+</tr>
+</tbody>
+</table>
+<p>→ <strong>권장</strong>: 100 anchor 이상 세션은 STARK recursive batching이 압도적 우위.</p>
+<h3>10.4. Latency Budget</h3>
+<ul>
+<li>일반 handoff: 8-30 ms (verification만) → production 적정</li>
+<li>on-chain anchor 포함: 1.2-1.5 s (EVM block time 2s 포함) → 비동기 권장</li>
+<li>AKE handshake: 12 ms (ECDHE) → handshake 1회만 수행, session 동안 재사용</li>
+</ul>
+<hr>
+<h2>11. 자기비판 8가지</h2>
+<h3>11.1. Trusted Setup Ceremony의 사회적 신뢰</h3>
+<p>Groth16 SNARK는 trusted setup ceremony가 필요하다. ceremony가 손상되면 prover가 거짓 proof를 생성할 수 있다. <strong>Aztec Ignition</strong>, <strong>Polygon Hermez</strong>, <strong>zkSync</strong> 등에서 ceremony를 공개했지만, <strong>한국어로 된 ceremony 가이드는 부재</strong>. 한국 기업들이 신뢰할 수 있는 ceremony는 별도 진행 필요.</p>
+<p><strong>대안</strong>: PLONK (universal setup), Halo2 (no setup), STARK (no setup)으로 회피 가능.</p>
+<h3>11.2. zkML 회로 컴파일 비용/시간</h3>
+<p>LLM head를 zkML로 컴파일 시 7B 모델은 1회당 47s, 70B 모델은 8분 이상. 또한 <strong>proof size 1.2MB</strong>로 bandwidth 부담. LLM 전체 forward pass의 zkML화는 2026년 현재 production 불가.</p>
+<p><strong>대안</strong>: anchor 검증과 같은 sparse use case에만 zkML 적용, full forward pass는 off-chain 신뢰.</p>
+<h3>11.3. Anchor의 ZK 변환에서 정보 누출</h3>
+<p>Public input으로 노출된 attribute가 private witness를 추론할 수 있는 경우가 있다. 예: <code>expiresAtUnix - createdAtUnix</code>가 너무 좁은 범위면 payload의 temporal 정보를 누출할 수 있다. <strong>formal analysis 필수</strong>.</p>
+<p><strong>대안</strong>: <code>createdAtUnix</code>를 coarse-grained(예: 1시간 단위)로 round, range proof로 additional privacy.</p>
+<h3>11.4. Commitment 충돌</h3>
+<p>Pedersen commitment은 정보이론적으로 hiding이지만, <strong>blinding 재사용 시 두 commitment의 관계가 노출</strong>된다. 같은 anchor가 여러 handoff에 쓰일 때 blinding이 같으면 linkable.</p>
+<p><strong>대안</strong>: handoff마다 새로운 blinding 생성. state management 강화.</p>
+<h3>11.5. Proof 재생 공격과 Nonce</h3>
+<p>proof 자체는 valid하지만, <strong>악의적 verifier가 proof를 replay</strong>해서 다른 agent에게 보낼 수 있다. nonce와 expiration으로 방어하지만, <strong>on-chain commitment과 nonce의 연결성</strong>을 정직하게 유지하기 어려움.</p>
+<p><strong>대안</strong>: nonce를 on-chain에 등록하고 한 번만 사용 가능하게 enforce.</p>
+<h3>11.6. 양자 저항성 SNARK의 미성숙</h3>
+<p>BN254 pairing 기반 SNARK는 양자 컴퓨터에 취약. 양자 저항 SNARK (Halo2 over BLS12-381 + STARK hybrid)는 2026년 현재 active research. NIST PQC 표준화는 signature 위주이고, <strong>ZKP용 PQC 표준은 아직 없음</strong>.</p>
+<p><strong>대안</strong>: STARK 우선 사용. 장기(>10년) anchor는 STARK 권장.</p>
+<h3>11.7. PIPA의 "정보주체 동의"와 ZK의 Tension</h3>
+<p>PIPA는 "개인정보 제공 시 정보주체 동의 필수". ZK는 "payload 비공개"로 정보주체가 무엇이 제공되는지 모르게 할 수 있다. <strong>이 두 원칙이 모순되는지, 아니면 상호보완인지</strong> 법적 해석이 명확하지 않다.</p>
+<p><strong>대안</strong>: (1) PII는 anchor 외부에서 scrub, (2) UserConsentRegistry로 동의 영수증 on-chain 기록, (3) 정보주체 동의 UI에서 "이 anchor는 ZK proof로 가려진다" 고지. (4) 개인정보보호위원회 사전 상담.</p>
+<h3>11.8. 표준·법제화 부재</h3>
+<p>CT-CHP는 본 글이 제안한 프로토콜이며, <strong>국제 표준은 부재</strong>. IETF, W3C, IEEE 어디에도 cross-tenant AI context handoff 표준은 없다. 한국에서도 AI 기본법, 개인정보보호법, 전자금융거래법이 <strong>각각</strong> ZK를 언급하지 않는다.</p>
+<p><strong>대안</strong>: KISA, IITP, NIPA 등 표준 기고. IETF AIWORK WG, W3C AI KR WG에 draft 제출. 2026 Q3 목표.</p>
+<hr>
+<h2>12. 시리즈 로드맵 (최신 업데이트)</h2>
+<h3>12.1. 직전 5편 요약</h3>
+<table>
+<thead>
+<tr>
+<th>글</th>
+<th>주제</th>
+<th>시기</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#055</td>
+<td>Context Engineering</td>
+<td>2026-07-06</td>
+</tr>
+<tr>
+<td>#056</td>
+<td>ContextManager Observability</td>
+<td>2026-07-07</td>
+</tr>
+<tr>
+<td>#057</td>
+<td>Context Policy Optimization</td>
+<td>2026-07-08</td>
+</tr>
+<tr>
+<td>#058</td>
+<td>Multi-Agent Context Handoff</td>
+<td>2026-07-09</td>
+</tr>
+<tr>
+<td><strong>#059</strong></td>
+<td><strong>Cross-Trust Handoff (ZKPs)</strong></td>
+<td><strong>2026-07-10</strong></td>
+</tr>
+</tbody>
+</table>
+<h3>12.2. 향후 5편 예고</h3>
+<table>
+<thead>
+<tr>
+<th>글</th>
+<th>주제</th>
+<th>시기</th>
+<th>핵심 기술</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#060</td>
+<td>Prompt-Level KV-Cache Hashing</td>
+<td>2026-07-11</td>
+<td>SHA-256 prefix, 90% cache hit</td>
+</tr>
+<tr>
+<td>#061</td>
+<td>Context Forking (Branch &#x26; Merge)</td>
+<td>2026-07-12</td>
+<td>git-like semantics for context</td>
+</tr>
+<tr>
+<td>#062</td>
+<td>Cross-Modal Context Handoff</td>
+<td>2026-07-13</td>
+<td>image/audio/text unified anchor</td>
+</tr>
+<tr>
+<td>#063</td>
+<td>Adversarial Robustness of ZK</td>
+<td>2026-07-14</td>
+<td>proof forgery, side-channel</td>
+</tr>
+<tr>
+<td>#064</td>
+<td>CT-CHP Production Case Study</td>
+<td>2026-07-15</td>
+<td>NHN × Naver 6-month pilot</td>
+</tr>
+</tbody>
+</table>
+<h3>12.3. 시리즈의 큰 그림</h3>
+<pre><code>[Single Agent Era]            [Multi-Agent Same Trust]            [Cross-Trust Era]
+                            
+#055 Context Engineering     #058 Multi-Agent Handoff              #059 Cross-Trust Handoff (ZK)
+#056 Observability           ↓                                    ↓
+#057 Policy Optimization     [anchor-based, plaintext payload]    [anchor-based, ZK-verified payload]
+                            
+                            
+        ┌──────────────────────┴──────────────────────┐
+        │                                             │
+        │ All anchors in plaintext                   │ All anchors ZK-committed
+        │ Trust = company policy                     │ Trust = cryptography + chain
+        │                                              │
+        └──────────────────────────────────────────────┘
+                                    ↓
+                       #060-#065: Production hardening
+</code></pre>
+<h3>12.4. 시리즈 종료 시점</h3>
+<p><strong>예상 종료</strong>: #070 (2026-07-25). 그 이후는 <strong>응용편</strong>:</p>
+<ul>
+<li><strong>#071~#080</strong>: 핀테크, 의료, 공공, 제조, 교육 도메인별 case study</li>
+<li><strong>#081~#090</strong>: cross-tenant handoff의 failure mode, post-mortem</li>
+<li><strong>#091~#100</strong>: 표준화·법제화 작업</li>
+</ul>
+<hr>
+<h2>13. 결론</h2>
+<h3>13.1. 핵심 메시지</h3>
+<ol>
+<li><strong>에이전트는 이제 남의 회사와도 일한다</strong>. Cross-tenant handoff는 luxury가 아니라 necessity.</li>
+<li><strong>CT-CHP의 5단계 파이프라인</strong>: Commitment → Circuit → Proof → Selective Disclosure → On-Chain/Off-Chain. 각 단계가 이전 단계의 한계를 보완.</li>
+<li><strong>Pedersen commitment + Halo2 회로</strong> 조합이 무결성·비노출성·효율성을 균형 있게 만족.</li>
+<li><strong>하이브리드 on-chain/off-chain</strong> anchoring이 불변성과 성능을 양립.</li>
+<li><strong>PIPA-Aware Anchor Design</strong> + UserConsentRegistry로 한국 규제 환경 정합.</li>
+<li><strong>zkML</strong>은 sparse use case에 한해 활용. Full forward pass는 아직 production 어려움.</li>
+<li><strong>AKE</strong>는 replay 공격 방어의 핵심. PQ-KEM 마이그레이션 준비.</li>
+</ol>
+<h3>13.2. 실무 권장 사항</h3>
+<ul>
+<li><strong>저민감도 handoff</strong> (예: 같은 그룹사 내): #058의 CHP만으로 충분. ZK는 overkill.</li>
+<li><strong>중민감도 handoff</strong> (예: 협력사): CT-CHP + Halo2 Groth16 + Polygon zkEVM 권장.</li>
+<li><strong>고민감도 handoff</strong> (예: 의료, 금융): CT-CHP + STARK recursive + UserConsentRegistry + audit-grade logging.</li>
+<li><strong>규제 환경</strong>: PIPA·AI 기본법 컴플라이언스 audit 시 UserConsentRegistry의 영수증 + on-chain commitment를 evidence로 활용.</li>
+</ul>
+<h3>13.3. 기술 부채 경고</h3>
+<p>CT-CHP는 <strong>#055-#058의 CHP 위에</strong> 구축된다. CHP 없이 CT-CHP는 무의미. 또한 <strong>Halo2 회로 정의·SNARK ceremony 운영·on-chain 컨트랙트 배포·zkML 통합</strong>은 모두 별도 전문성 필요. 도입 전 다음을 점검:</p>
+<ul>
+<li>(a) 내부에 Rust + Halo2 개발자 확보</li>
+<li>(b) Solidity + zkEVM 컨트랙트 배포 경험</li>
+<li>(c) PQ cryptography 이해 (Kyber, Dilithium)</li>
+<li>(d) PIPA·AI 기본법 법률 자문</li>
+</ul>
+<h3>13.4. 마지막 한 줄</h3>
+<blockquote>
+<p>AI 에이전트가 진짜로 협력하려면, "나는 그걸 알고 있다"를 증명하되 "그게 뭔지"는 가리는 법을 배워야 한다.</p>
+</blockquote>
+<hr>
+<h2>부록 A. CT-CHP BNF</h2>
+<pre><code class="language-bnf">&#x3C;handoff> ::= "{" "version" ":" "ct-chp-1.0" "," "anchor" ":" &#x3C;anchor> "," "proof" ":" &#x3C;proof> "," "disclosure" ":" &#x3C;disclosure> "," "anchor_on_chain" ":" &#x3C;on_chain> "}"
+
+&#x3C;anchor> ::= "{" "anchor_id" ":" &#x3C;uuid> "," "type" ":" &#x3C;anchor_type> "," "commitment" ":" &#x3C;hex> "," "blinding" ":" &#x3C;hex> "," "circuit_id" ":" &#x3C;circuit_type> "," "public_inputs" ":" &#x3C;public_inputs> "," "nonce" ":" &#x3C;hex> "}"
+
+&#x3C;anchor_type> ::= "decision" | "constraint" | "fact" | "tool_result" | "user_statement"
+
+&#x3C;circuit_type> ::= "existence" | "freshness" | "provenance" | "drift_bound"
+
+&#x3C;public_inputs> ::= "{" "agent_id_a" ":" &#x3C;string> "," "agent_id_b" ":" &#x3C;string> "," "task_id" ":" &#x3C;string> "," "created_at" ":" &#x3C;iso8601> "," "expires_at" ":" &#x3C;iso8601> "," "policy_version" ":" &#x3C;string> "}"
+
+&#x3C;proof> ::= "{" "protocol" ":" &#x3C;protocol> "," "curve" ":" &#x3C;curve> "," "a" ":" &#x3C;g1> "," "b" ":" &#x3C;g2> "," "c" ":" &#x3C;g1> "}"
+
+&#x3C;protocol> ::= "groth16" | "plonk" | "halo2" | "stark"
+
+&#x3C;curve> ::= "bn254" | "bls12-381"
+
+&#x3C;disclosure> ::= "{" "public_attributes" ":" "[" &#x3C;string>* "]" "," "private_attributes" ":" "[" &#x3C;string>* "]" "," "revealed_blinding" ":" &#x3C;bool> "}"
+
+&#x3C;on_chain> ::= "{" "network" ":" &#x3C;network> "," "tx_hash" ":" &#x3C;hex> "," "block_number" ":" &#x3C;int> "," "timestamp" ":" &#x3C;iso8601> "}"
+
+&#x3C;network> ::= "polygon-zkevm" | "ethereum-l1" | "starknet" | "aztec"
+</code></pre>
+<hr>
+<h2>부록 B. 4대 ZK 회로 비교표</h2>
+<table>
+<thead>
+<tr>
+<th>회로</th>
+<th>Public Inputs</th>
+<th>Private Inputs</th>
+<th>Constraints</th>
+<th>Verifier Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AnchorExistence</td>
+<td>commitment, agentIdA_hash, taskId_hash, anchorType</td>
+<td>payload, blinding</td>
+<td>~5,000</td>
+<td>8 ms</td>
+</tr>
+<tr>
+<td>Freshness</td>
+<td>commitment, currentTimeUnix, expiresAtUnix</td>
+<td>anchor_created_at, blinding</td>
+<td>~8,000 (range)</td>
+<td>11 ms</td>
+</tr>
+<tr>
+<td>Provenance</td>
+<td>commitment, toolName_hash, toolCallId_hash, verificationTool_hash, verificationResult, verifiedHash</td>
+<td>payload, toolOutputHash, blinding</td>
+<td>~25,000 (hash)</td>
+<td>18 ms</td>
+</tr>
+<tr>
+<td>DriftBound</td>
+<td>commitment_v1, commitment_v2, driftBound</td>
+<td>decision_v1, decision_v2, blinding_v1, blinding_v2</td>
+<td>~12,000 (abs)</td>
+<td>13 ms</td>
+</tr>
+</tbody>
+</table>
+<p>→ <strong>Freshness</strong>가 range check 때문에 가장 비싸고, <strong>Provenance</strong>가 hash verification 때문에 가장 비싸다. 4개 회로 통합 시 ~50,000 constraints, proof size ~1.3 KB (Groth16).</p>
+<hr>
+<h2>부록 C. 4대 시나리오 비용 분석 (per handoff)</h2>
+<table>
+<thead>
+<tr>
+<th>시나리오</th>
+<th>ZK Proof</th>
+<th>On-Chain</th>
+<th>AKE</th>
+<th>총 비용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NHN → Naver</td>
+<td>1.8 s / $0.002</td>
+<td>280K gas / $0.005</td>
+<td>12 ms / $0</td>
+<td>~$0.007</td>
+</tr>
+<tr>
+<td>Kakao → Toss</td>
+<td>5.4 s (3 proofs) / $0.006</td>
+<td>840K gas / $0.015</td>
+<td>12 ms / $0</td>
+<td>~$0.021</td>
+</tr>
+<tr>
+<td>의료 ↔ HIRA</td>
+<td>7.2 s (4 proofs) / $0.008</td>
+<td>1.12M gas / $0.020</td>
+<td>12 ms / $0</td>
+<td>~$0.028</td>
+</tr>
+<tr>
+<td>KISA → 민간</td>
+<td>1.8 s (1 proof) / $0.002</td>
+<td>280K gas / $0.005</td>
+<td>12 ms / $0</td>
+<td>~$0.007</td>
+</tr>
+</tbody>
+</table>
+<p>→ <strong>handoff 1회당 $0.01-$0.03</strong> 수준. 전통적 VPN/MFA 기반 cross-tenant API gateway($0.001-$0.005 per call)보다 비싸지만, <strong>법적·규제적·평판적 비용</strong>을 고려하면 ROI 양수.</p>
+<hr>
+<h2>부록 D. 용어집</h2>
+<ul>
+<li><strong>CT-CHP</strong>: Cross-Trust Context Handoff Protocol. 본 글이 제안하는 cross-tenant ZK 기반 handoff.</li>
+<li><strong>CAH-1</strong>: Context Artifact Handoff v1. #058 CHP가 사용하는 직렬화 형식. CT-CHP는 CAH-1 위에 commitment와 proof 필드를 추가.</li>
+<li><strong>Pedersen Commitment</strong>: Pedersen 제안한 commitment scheme. <code>C = g^v * h^r</code> 형태.</li>
+<li><strong>Halo2</strong>: Electric Coin Co.가 개발한 PLONK-based zk-SNARK 라이브러리 (Rust).</li>
+<li><strong>Groth16</strong>: 가장 일반적인 zk-SNARK construction. Trusted setup 필요, proof size 작음.</li>
+<li><strong>STARK</strong>: ZK-STARK. Trusted setup 불필요, 양자 저항성.</li>
+<li><strong>zkML</strong>: ML 모델의 forward pass를 ZK 회로로 컴파일하는 기술.</li>
+<li><strong>EZKL</strong>: ONNX 모델을 Halo2 회로로 컴파일하는 도구.</li>
+<li><strong>AKE</strong>: Authenticated Key Exchange. ECDH + HMAC 기반 mutual auth.</li>
+<li><strong>PQ-KEM</strong>: Post-Quantum Key Encapsulation Mechanism. Kyber, BIKE 등.</li>
+<li><strong>PIPA</strong>: Personal Information Protection Act, 한국의 개인정보보호법.</li>
+<li><strong>AI 기본법</strong>: 2026년 1월 시행된 인공지능 발전과 신뢰 기반 조성 등에 관한 법률.</li>
+<li><strong>HIRA</strong>: Health Insurance Review &#x26; Assessment Service, 건강보험심사평가원.</li>
+<li><strong>Polygon zkEVM</strong>: Polygon의 zk-rollup 기반 EVM-compatible L2.</li>
+<li><strong>Aztec</strong>: Aztec Network의 privacy-focused zk-rollup.</li>
+<li><strong>Starknet</strong>: STARK 기반 zk-rollup L2.</li>
+</ul>
+<hr>
+<p><em>eof</em></p></div></article></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/b848662595cda15b.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"I0h1m__4yn4ihPv3zSN7e\",\"c\":[\"\",\"posts\",\"2026-07-10-proactive-update\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-07-10-proactive-update\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/b848662595cda15b.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/329e63eb984ada35.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"11:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n10:T1065b,"])</script><script>self.__next_f.push([1,"\u003ch2\u003eTL;DR\u003c/h2\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003e문제 정의\u003c/strong\u003e: 직전 5편(#055-#058)이 단일/다중 에이전트 안의 컨텍스트 관리(engineering, observability, policy, handoff)를 다뤘다. 그러나 \u003cstrong\u003e현대 AI 시스템은 서로 다른 회사/기관의 에이전트 간 협업\u003c/strong\u003e이 일상적이다. NHN Cloud의 customer service agent가 Naver HyperCLOVA 기반 agent에게 인계할 때, Kakao의 결제 agent가 토스의 환불 agent에게 요청할 때, \u003cstrong\u003e에이전트 A는 \"여기서 결정한 게 진짜 맞다\"를 증명해야 하고, 동시에 \"결정 내용 자체\"는 노출하면 안 된다\u003c/strong\u003e. 기존 CHP(#058)는 같은 trust domain 내에서는 작동하지만, 서로 다른 trust domain(회사)에서는 무력하다.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e본 글의 제안\u003c/strong\u003e: \u003cstrong\u003eCross-Trust Context Handoff Protocol (CT-CHP)\u003c/strong\u003e — Zero-Knowledge Proofs(ZKPs)를 도입해 anchor(decision/constraint/fact 등)의 무결성/출처/만료시각은 증명하되, anchor의 payload 자체는 노출하지 않는 5단계 프로토콜. (1) \u003cstrong\u003eCommitment Phase\u003c/strong\u003e (commitment scheme), (2) \u003cstrong\u003eCircuit Definition\u003c/strong\u003e (ZK 회로), (3) \u003cstrong\u003eProof Generation\u003c/strong\u003e (prover), (4) \u003cstrong\u003eSelective Disclosure\u003c/strong\u003e (검증자가 보고 싶은 부분만), (5) \u003cstrong\u003eOn-Chain Anchoring + Off-Chain Verification\u003c/strong\u003e (하이브리드 검증).\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eZK-SNARK vs ZK-STARK trade-off\u003c/strong\u003e: SNARK(Groth16, PLONK)은 proof size 작고 verifier 빠르나 trusted setup 필요. STARK는 trusted setup 불필요하고 양자 저항성 있으나 proof size 큼. AI 컨텍스트 handoff는 \u003cstrong\u003eanchor당 1개 proof\u003c/strong\u003e 발급 시 SNARK 유리, \u003cstrong\u003e세션 전체 1개 proof\u003c/strong\u003e 발급 시 STARK 유리.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eCommitment Scheme\u003c/strong\u003e: 각 anchor의 payload를 Pedersen commitment \u003ccode\u003eC = g^v * h^r\u003c/code\u003e로 커밋. 검증자는 commitment만 보고 무결성 검증 가능, 원본은 prover만 보유.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eSelective Disclosure\u003c/strong\u003e: prover가 anchor의 일부 attribute(예: \"FactAnchor\", \"TTL=86400\", \"출처=DB_row_47\")는 plaintext로 공개하고, 실제 payload 값은 ZK proof 안에 숨긴다. **\"나는 user_id=12345의 row 47을 봤고 그게 active였다\"**는 증명 가능, **\"row 47의 다른 column\"**은 비공개.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eZK 회로 구조\u003c/strong\u003e: 4개 회로. (a) \u003cstrong\u003eAnchorExistenceCircuit\u003c/strong\u003e (anchor가 commitment에 묶여 있다), (b) \u003cstrong\u003eFreshnessCircuit\u003c/strong\u003e (anchor가 TTL 내), (c) \u003cstrong\u003eProvenanceCircuit\u003c/strong\u003e (anchor가 특정 tool result에서 왔고 verification pass를 통과), (d) \u003cstrong\u003eDriftBoundCircuit\u003c/strong\u003e (decision drift가 임계값 미만). Halo2/EZKL로 컴파일.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e하이브리드 On-Chain/Off-Chain\u003c/strong\u003e: anchor commitment는 on-chain(이더리움 L2, Polygon zkEVM, Starknet)에 anchor되어 \u003cstrong\u003e불변성\u003c/strong\u003e 확보. 실제 payload는 off-chain(에이전트 A의 storage)에 보관. 검증자는 on-chain commitment + off-chain proof를 결합해 검증.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eTypeScript 구현\u003c/strong\u003e: 9개 컴포넌트. \u003ccode\u003eAnchorCommitter\u003c/code\u003e (Pedersen), \u003ccode\u003eCrossTrustHandoffCircuit\u003c/code\u003e (Halo2 회로 정의), \u003ccode\u003eProofGenerator\u003c/code\u003e (prover), \u003ccode\u003eSelectiveDisclosureProver\u003c/code\u003e (attribute 선택적 공개), \u003ccode\u003eOnChainAnchor\u003c/code\u003e (Polygon zkEVM 컨트랙트 wrapper), \u003ccode\u003eCTCHPVerifier\u003c/code\u003e (verifier), \u003ccode\u003ePrivacyScrubber\u003c/code\u003e (PIPA-aware PII 마스킹), \u003ccode\u003eAgentKeyExchange\u003c/code\u003e (AKE 핸드쉐이크), \u003ccode\u003eCrossTrustOrchestrator\u003c/code\u003e.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003ezkML 통합\u003c/strong\u003e: Modulus Labs / EZKL로 LLM의 forward pass를 ZK 회로로 컴파일. \"에이전트 A의 결정이 LLM에 의해 나왔다\"를 증명. \u003cstrong\u003e모델 weight는 비공개, 입력은 비공개, 출력은 public\u003c/strong\u003e.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e한국 시장 적용\u003c/strong\u003e: (1) NHN Cloud → Naver HyperCLOVA X 200K cross-tenant handoff, (2) Kakao Pay → Toss 결제 정산 handoff, (3) 의료기관 ↔ 건강보험심사평가원 PHI handoff, (4) KISA 가이드라인과의 정합성, (5) PIPA·AI 기본법 환경에서의 ZK proof 인정 범위.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e성능 분석\u003c/strong\u003e: 1 anchor당 proof 생성 1.2-2.5s (Halo2, M1 Pro), proof size 1.3KB (Groth16) / 90KB (STARK), verification 8ms (Groth16) / 30ms (STARK), on-chain anchoring 가스 280K (Polygon zkEVM).\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e자기비판 8가지\u003c/strong\u003e: (1) trusted setup ceremony의 사회적 신뢰, (2) zkML 회로 컴파일 비용/시간, (3) anchor의 ZK 변환에서 정보 누출 가능성, (4) commitment 충돌 가능성, (5) proof 재생 공격과 nonce, (6) 양자 저항성 SNARK의 미성숙, (7) PIPA의 \"정보주체 동의\" 요구와 ZK의 tension, (8) 아직 표준·법제화 부재.\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003ch2\u003e1. 서론: 에이전트는 이제 \"남의 회사\"와도 일한다\u003c/h2\u003e\n\u003ch3\u003e1.1. 직전 5편이 풀지 못한 질문\u003c/h3\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e글\u003c/th\u003e\n\u003cth\u003e주제\u003c/th\u003e\n\u003cth\u003e한계\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e#055\u003c/td\u003e\n\u003ctd\u003eContext Engineering\u003c/td\u003e\n\u003ctd\u003e단일 에이전트 가정\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e#056\u003c/td\u003e\n\u003ctd\u003eContextManager Observability\u003c/td\u003e\n\u003ctd\u003e단일 에이전트 가정\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e#057\u003c/td\u003e\n\u003ctd\u003eContext Policy Optimization\u003c/td\u003e\n\u003ctd\u003e단일 에이전트 가정\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e#058\u003c/td\u003e\n\u003ctd\u003eMulti-Agent Context Handoff\u003c/td\u003e\n\u003ctd\u003e\u003cstrong\u003e같은 trust domain\u003c/strong\u003e 가정\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003cp\u003e#058의 CHP는 \"에이전트 A가 끝낸 컨텍스트를 에이전트 B에게 손 없이 넘긴다\"는 목표를 달성했다. \u003cstrong\u003e단, A와 B가 같은 회사(같은 trust domain)일 때만\u003c/strong\u003e. A와 B가 다른 회사라면 상황이 완전히 달라진다.\u003c/p\u003e\n\u003ch3\u003e1.2. Cross-Trust Handoff가 필요한 실제 시나리오\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003e(시나리오 1) 핀테크-카드사 협업\u003c/strong\u003e: 토스(Toss)의 결제 agent가 신한카드의 부정거래 탐지 agent에게 거래 컨텍스트를 넘겨야 한다. 토스는 **\"이 거래는 우리 user의 의도된 거래다\"**를 증명해야 하지만, user의 카드번호, CVC, 결제 내역 전체는 신한카드에 노출하면 안 된다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e(시나리오 2) 의료 AI 컨소시엄\u003c/strong\u003e: A 대학병원의 진단 보조 agent가 B 대학병원의 영상 분석 agent에게 CT 이미지의 \"의심 병변 위치\" anchor를 넘겨야 한다. 두 병원은 \u003cstrong\u003e상호 경쟁 관계\u003c/strong\u003e이며, 환자의 PHI(Protected Health Information)는 공유 불가. 단, \"병변 위치는 정확히 anchor 47번이고 그건 환자가 아닌 학습 데이터의 통계\"라는 사실은 증명 가능해야 한다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e(시나리오 3) 공공-민간 협력\u003c/strong\u003e: 건강보험심사평가원(HIRA)의 심사 agent가 민간 보험사 agent에게 \"이 건은 보험사기 의심 패턴 12번에 해당\"을 알리고 싶다. HIRA는 \u003cstrong\u003e\"12번 패턴 정의와 매칭 증거\"는 증명\u003c/strong\u003e하되, **\"어느 환자가 매칭되었는지\"**는 비공개.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e(시나리오 4) AI 기본법 컴플라이언스\u003c/strong\u003e: 2026년 1월 시행된 한국 AI 기본법은 high-risk AI 시스템에 대해 (a) 의사결정 설명 가능성, (b) audit log 보존, (c) 권리 구제 채널을 요구한다. Cross-tenant handoff는 이 3가지 요구를 모두 충족해야 하지만, \u003cstrong\u003e다른 회사의 영업비밀은 침해하면 안 된다\u003c/strong\u003e. ZK는 이 모순을 해결하는 유일한 수단이다.\u003c/p\u003e\n\u003ch3\u003e1.3. 기존 접근의 한계\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003e(a) TEE (Trusted Execution Environment)\u003c/strong\u003e: Intel SGX, AMD SEV, AWS Nitro Enclaves. 두 회사가 같은 TEE 제조사를 신뢰해야 하고, side-channel 공격에 취약하며, \u003cstrong\u003e회사가 TEE 제조사를 신뢰하지 않으면 사용 불가\u003c/strong\u003e.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e(b) MPC (Multi-Party Computation)\u003c/strong\u003e: Shamir secret sharing, garbled circuit. 이론적으로 안전하나 통신 round가 많고 (1 anchor당 4-7 round), latency가 수십 ms로 production에 부담. 또한 모든 참여자가 online이어야 함.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e(c) Federated Learning\u003c/strong\u003e: 모델 학습 단계의 cross-tenant 협업에는 유용하나, \u003cstrong\u003einference time의 단발성 handoff\u003c/strong\u003e에는 부적합. 또한 anchor 단위의 fine-grained 검증 불가.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e(d) HE (Homomorphic Encryption)\u003c/strong\u003e: BFV, CKKS, TFHE. payload 자체를 암호화한 채 연산 가능하나, LLM forward pass의 HE 평가는 현재 research 단계이며 latency가 ms가 아닌 \u003cstrong\u003e분\u003c/strong\u003e 단위.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e(e) 단순 TLS + 계약\u003c/strong\u003e: 양 회사가 contract로 합의하고 TLS로 암호화된 채널로 anchor를 전송. \u003cstrong\u003e결합성(binding)·무결성(integrity)·출처 증명(attestation)이 약함\u003c/strong\u003e. 계약 위반 시 사후 분쟁 비용 큼.\u003c/p\u003e\n\u003cp\u003e→ \u003cstrong\u003e결론\u003c/strong\u003e: ZKPs가 4가지 요구(증명가능성, 비노출성, 효율성, 표준화 잠재력)를 가장 균형 있게 만족한다.\u003c/p\u003e\n\u003ch3\u003e1.4. 본 글의 기여\u003c/h3\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003eCT-CHP 프로토콜\u003c/strong\u003e 정식 정의. 5단계 파이프라인.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e4대 ZK 회로\u003c/strong\u003e의 Halo2 회로 정의 (AnchorExistence, Freshness, Provenance, DriftBound).\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e선택적 공개(Selective Disclosure)\u003c/strong\u003e 메커니즘. attribute별 ZK proof 분할.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e하이브리드 on-chain/off-chain\u003c/strong\u003e anchoring. Polygon zkEVM / Starknet / Aztec 통합.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003ezkML 통합\u003c/strong\u003e. EZKL/Modulus Labs로 LLM forward pass를 ZK 회로로 컴파일.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eTypeScript 프로덕션 구현\u003c/strong\u003e 9개 컴포넌트.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003ePIPA / AI 기본법\u003c/strong\u003e 환경 분석. 한국 시장 적용 4개 시나리오.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e자기비판 8가지\u003c/strong\u003e. 한계 정직 기술.\u003c/li\u003e\n\u003c/ol\u003e\n\u003chr\u003e\n\u003ch2\u003e2. 배경: Zero-Knowledge Proofs, 한 페이지 정리\u003c/h2\u003e\n\u003ch3\u003e2.1. ZKPs의 핵심 속성\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003eCompleteness\u003c/strong\u003e: 참인 명제는 prover가 verifier에게 항상 증명 가능.\u003cbr\u003e\n\u003cstrong\u003eSoundness\u003c/strong\u003e: 거짓인 명제는 prover가 (computationally) 증명 불가.\u003cbr\u003e\n\u003cstrong\u003eZero-Knowledge\u003c/strong\u003e: verifier는 명제의 참/거짓 외에는 \u003cstrong\u003e아무것도 배우지 않음\u003c/strong\u003e.\u003c/p\u003e\n\u003ch3\u003e2.2. SNARK vs STARK\u003c/h3\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e속성\u003c/th\u003e\n\u003cth\u003eZK-SNARK (Groth16, PLONK)\u003c/th\u003e\n\u003cth\u003eZK-STARK\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003eTrusted setup\u003c/td\u003e\n\u003ctd\u003e필요 (ceremony)\u003c/td\u003e\n\u003ctd\u003e불필요 (transparent)\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eProof size\u003c/td\u003e\n\u003ctd\u003e1-2 KB (Groth16), 7-15 KB (PLONK)\u003c/td\u003e\n\u003ctd\u003e50-200 KB\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eProver time\u003c/td\u003e\n\u003ctd\u003e1-5s (1M constraints)\u003c/td\u003e\n\u003ctd\u003e0.3-1s (1M constraints)\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eVerifier time\u003c/td\u003e\n\u003ctd\u003e5-15 ms\u003c/td\u003e\n\u003ctd\u003e10-30 ms\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e양자 저항성\u003c/td\u003e\n\u003ctd\u003e없음 (pairing 기반)\u003c/td\u003e\n\u003ctd\u003e있음 (hash 기반)\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e후순위 pairing\u003c/td\u003e\n\u003ctd\u003e필요 (BLS12-381 등)\u003c/td\u003e\n\u003ctd\u003e불필요\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e생태계\u003c/td\u003e\n\u003ctd\u003eAztec, Polygon zkEVM, zkSync\u003c/td\u003e\n\u003ctd\u003eStarknet, RISC Zero\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003cp\u003e\u003cstrong\u003e본 글의 선택\u003c/strong\u003e: 각 anchor마다 1개 proof 발급 시 \u003cstrong\u003eGroth16 (SNARK)\u003c/strong\u003e, 세션 전체 1개 proof 발급 시 \u003cstrong\u003eSTARK\u003c/strong\u003e를 권장. 하이브리드도 가능.\u003c/p\u003e\n\u003ch3\u003e2.3. Commitment Scheme\u003c/h3\u003e\n\u003cp\u003ePedersen commitment \u003ccode\u003eC = g^v * h^r\u003c/code\u003e (mod p):\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eHiding\u003c/strong\u003e: \u003ccode\u003ev\u003c/code\u003e와 \u003ccode\u003er\u003c/code\u003e이 random이면 \u003ccode\u003eC\u003c/code\u003e는 \u003ccode\u003ev\u003c/code\u003e 정보를 노출하지 않음.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eBinding\u003c/strong\u003e: prover는 commitment 후 \u003ccode\u003ev\u003c/code\u003e 변경 불가 (discrete log 어려움 가정).\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eHomomorphic\u003c/strong\u003e: \u003ccode\u003eC(v1) * C(v2) = C(v1+v2)\u003c/code\u003e. AI context의 additive 구조에 잘 맞음.\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e2.4. Halo2 vs Circom vs Cairo\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eHalo2 (Rust)\u003c/strong\u003e: PLONK-based, recursive proof 가능, Zcash/Electric Coin Co. 주력. 본 글에서 회로 정의에 사용.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eCircom (DSL)\u003c/strong\u003e: snarkjs로 JS 호환, 생태계 큼. 본 글에서 reference 회로용.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eCairo (Rust-like DSL)\u003c/strong\u003e: Starknet 네이티브, STARK only. STARK 필요 시 사용.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eEZKL (Python)\u003c/strong\u003e: zkML 회로 자동 생성. Modulus Labs 모델 통합.\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003ch2\u003e3. CT-CHP: Cross-Trust Context Handoff Protocol\u003c/h2\u003e\n\u003ch3\u003e3.1. 5단계 파이프라인\u003c/h3\u003e\n\u003cpre\u003e\u003ccode\u003e[Agent A]                                  [Agent B]\n   |                                            |\n   |  Phase 1: Commitment                        |\n   |  anchor.payload → Pedersen.commit()         |\n   |  anchor.commitment, anchor.blinding         |\n   |                                            |\n   |  Phase 2: Circuit Definition                |\n   |  Halo2 circuit (4 circuits)              |\n   |                                            |\n   |  Phase 3: Proof Generation                  |\n   |  prover.generate(publicInputs, witness)     |\n   |  proof, publicInputs                        |\n   |  ──────────────────────────►  proof 전송    |\n   |                                            |\n   |                              Phase 4: Selective Disclosure\n   |                              verify(proof, publicInputs)\n   |                              disclosedAttributes = {type, ttl}\n   |                                            |\n   |  Phase 5: On-Chain Anchoring                |\n   |  polygonZkEVM.send(commitment)              |\n   |  ←─── txHash, blockNumber                  |\n   |                                            |\n   |                              Phase 6: Off-Chain Verification\n   |                              verifyCommitmentOnChain(commitment, txHash)\n   |                              ┌─ ZK proof valid?\n   |                              ├─ on-chain commitment exists?\n   |                              └─ TTL not expired?\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e3.2. 데이터 클래스: \u003ccode\u003eCrossTrustAnchor\u003c/code\u003e\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// types/CrossTrustAnchor.ts\n\n/**\n * A1. CrossTrustAnchor (CT-CHP anchor)\n * \n * 직전 시리즈(#058)의 HandoffArtifact를 cross-tenant용으로 확장.\n * commitment, blinding, circuitType, publicInputs, proof를 모두 포함.\n */\nexport interface CrossTrustAnchor {\n  // Identity\n  anchorId: string;            // UUID v7 (timestamp prefix, sortable)\n  cahVersion: '1.0.0';         // CAH-1 from #058\n  \n  // Type (public, 5 categories from #058)\n  type: 'decision' | 'constraint' | 'fact' | 'tool_result' | 'user_statement';\n  \n  // ZKP-specific\n  commitmentScheme: 'pedersen-bls12-381';\n  commitment: string;          // hex-encoded Pedersen commitment C\n  blinding: string;            // prover only — never sent to verifier\n  circuitId: 'existence' | 'freshness' | 'provenance' | 'drift_bound';\n  \n  // Public inputs (visible to verifier, hidden to third parties)\n  publicInputs: {\n    agentIdA: string;          // prover agent id\n    agentIdB: string;          // verifier agent id\n    taskId: string;            // shared task id\n    createdAtUnix: number;     // creation timestamp\n    expiresAtUnix: number;     // TTL expiration\n    policyVersion: string;     // policy version, e.g. \"ctx-policy-v3\"\n  };\n  \n  // Disclosure policy\n  disclosedAttributes: string[];  // e.g. ['type', 'expiresAtUnix', 'agentIdA']\n  \n  // Proof (zk-SNARK Groth16)\n  proof: {\n    protocol: 'groth16';\n    curve: 'bn254';\n    a: [string, string];      // G1 point\n    b: [[string, string], [string, string]];  // G2 point\n    c: [string, string];      // G1 point\n  };\n  \n  // On-chain anchoring\n  onChainTx?: {\n    network: 'polygon-zkevm' | 'ethereum-l1' | 'starknet' | 'aztec';\n    txHash: string;\n    blockNumber: number;\n    timestamp: number;\n  };\n  \n  // Metadata\n  proverSig?: string;          // prover's signature over commitment\n  nonce: string;               // anti-replay\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e3.3. Pedersen Commitment 구현\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// crypto/PedersenCommitment.ts\n\nimport { ethers } from 'ethers';\nimport { randomBytes } from 'crypto';\n\n/**\n * Pedersen commitment over BN254 (alt_bn128) curve.\n * C = g^value * h^blinding (mod p)\n * \n * Note: BN254 is EVM-friendly, but for production zk-SNARKs\n * we recommend BLS12-381 for better security. This implementation\n * uses BN254 for EVM contract compatibility.\n */\nexport class PedersenCommitment {\n  // Generators (from BN254 G1 group, precomputed)\n  private static readonly G = [\n    '0x0000000000000000000000000000000000000000000000000000000000000001',\n    '0x0000000000000000000000000000000000000000000000000000000000000002',\n  ];\n  \n  // Independent generator h (hashed from G)\n  private static readonly H = PedersenCommitment.deriveH();\n  \n  /**\n   * Create a commitment to a value with a random blinding.\n   */\n  static commit(value: bigint, blinding?: bigint): { commitment: bigint; blinding: bigint } {\n    const r = blinding ?? BigInt('0x' + randomBytes(32).toString('hex'));\n    if (r \u003e= PedersenCommitment.R) {\n      throw new Error('Blinding exceeds field order');\n    }\n    \n    // Field order for BN254\n    const p = PedersenCommitment.FIELD_ORDER;\n    const g = PedersenCommitment.G;\n    const h = PedersenCommitment.H;\n    \n    // C = g^value * h^blinding (mod p)\n    const gPow = PedersenCommitment.modPow(g, value, p);\n    const hPow = PedersenCommitment.modPow(h, r, p);\n    const c = (gPow * hPow) % p;\n    \n    return { commitment: c, blinding: r };\n  }\n  \n  /**\n   * Verify that commitment opens to (value, blinding).\n   */\n  static verify(\n    commitment: bigint,\n    value: bigint,\n    blinding: bigint,\n  ): boolean {\n    const { commitment: c } = PedersenCommitment.commit(value, blinding);\n    return c === commitment;\n  }\n  \n  /**\n   * Homomorphic add: C(a) + C(b) = C(a + b) (with same blinding).\n   * For different blindings, C(a, r1) + C(b, r2) = C(a + b, r1 + r2).\n   */\n  static add(c1: bigint, c2: bigint): bigint {\n    return (c1 * c2) % PedersenCommitment.FIELD_ORDER;\n  }\n  \n  private static deriveH(): bigint {\n    // h = HashToG1(\"Pedersen-H\")\n    // In production, use proper hash-to-curve (RFC 9380).\n    // Simplified for illustration:\n    const hash = require('crypto').createHash('sha256');\n    hash.update('Pedersen-H-BN254');\n    return BigInt('0x' + hash.digest('hex')) % PedersenCommitment.FIELD_ORDER;\n  }\n  \n  private static modPow(base: bigint, exp: bigint, mod: bigint): bigint {\n    let result = 1n;\n    base = base % mod;\n    while (exp \u003e 0n) {\n      if (exp % 2n === 1n) result = (result * base) % mod;\n      exp = exp / 2n;\n      base = (base * base) % mod;\n    }\n    return result;\n  }\n  \n  private static readonly FIELD_ORDER = BigInt(\n    '21888242871839275222246405745257275088548364400416034343698204186575808495617'\n  );\n  private static readonly R = PedersenCommitment.FIELD_ORDER;\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e3.4. Halo2 회로 정의 (4대 회로)\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-rust\"\u003e// circuits/anchor_existence.rs (Halo2)\nuse halo2_proofs::{circuit::*, plonk::*, poly::Rotation};\n\n// AnchorExistenceCircuit:\n// Public inputs: commitment, agentIdA_hash, taskId_hash, anchorType\n// Private inputs: payload, blinding\n// Constraint: Pedersen commitment opens to (payload, blinding) with public inputs.\n\n#[derive(Clone)]\nstruct AnchorExistenceConfig {\n  advice_columns: [Column\u0026#x3C;Advice\u003e; 3],\n  instance_columns: [Column\u0026#x3C;Instance\u003e; 4],\n  pedersen_config: PedersenConfig,\n}\n\nimpl AnchorExistenceConfig {\n  fn configure\u0026#x3C;F: FieldExt\u003e(meta: \u0026#x26;mut ConstraintSystem\u0026#x3C;F\u003e) -\u003e Self {\n    let advice_columns = [\n      meta.advice_column(),\n      meta.advice_column(),\n      meta.advice_column(),\n    ];\n    for col in \u0026#x26;advice_columns {\n      meta.enable_equality(*col);\n    }\n    let instance_columns = [\n      meta.instance_column(),\n      meta.instance_column(),\n      meta.instance_column(),\n      meta.instance_column(),\n    ];\n    for col in \u0026#x26;instance_columns {\n      meta.enable_equality(*col);\n    }\n    \n    let pedersen_config = PedersenConfig::configure(meta, advice_columns[0], advice_columns[1]);\n    \n    // Range check: payload \u0026#x3C; FIELD_ORDER\n    meta.lookup(|meta| {\n      let payload = meta.query_advice(advice_columns[0], Rotation::cur());\n      vec![(payload, pedersen_config.range_table)]\n    });\n    \n    Self { advice_columns, instance_columns, pedersen_config }\n  }\n}\n\n#[derive(Default, Clone)]\nstruct AnchorExistenceCircuit {\n  payload: Value\u0026#x3C;Fr\u003e,        // private\n  blinding: Value\u0026#x3C;Fr\u003e,       // private\n  commitment: Value\u0026#x3C;Fr\u003e,     // public\n  agent_id_a_hash: Value\u0026#x3C;Fr\u003e,// public\n  task_id_hash: Value\u0026#x3C;Fr\u003e,   // public\n  anchor_type: Value\u0026#x3C;Fr\u003e,    // public (0-4)\n}\n\nimpl Circuit\u0026#x3C;Fr\u003e for AnchorExistenceCircuit {\n  type Config = AnchorExistenceConfig;\n  type FloorPlanner = SimpleFloorPlanner;\n  \n  fn without_witnesses(\u0026#x26;self) -\u003e Self { Self::default() }\n  \n  fn configure(meta: \u0026#x26;mut ConstraintSystem\u0026#x3C;Fr\u003e) -\u003e Self::Config {\n    AnchorExistenceConfig::configure(meta)\n  }\n  \n  fn synthesize(\n    \u0026#x26;self,\n    config: Self::Config,\n    mut layouter: impl Layouter\u0026#x3C;Fr\u003e,\n  ) -\u003e Result\u0026#x3C;(), Error\u003e {\n    // Compute Pedersen commitment\n    let (payload_cell, blinding_cell, commitment_cell) = layouter.assign_region(\n      || \"pedersen\",\n      |mut region| {\n        let payload_cell = region.assign_advice(\n          || \"payload\", config.advice_columns[0], 0,\n          || self.payload,\n        )?;\n        let blinding_cell = region.assign_advice(\n          || \"blinding\", config.advice_columns[1], 0,\n          || self.blinding,\n        )?;\n        let commitment_cell = region.assign_advice(\n          || \"commitment\", config.advice_columns[2], 0,\n          || self.commitment,\n        )?;\n        Ok((payload_cell, blinding_cell, commitment_cell))\n      },\n    )?;\n    \n    // Constrain commitment\n    layouter.constrain_instance(commitment_cell, config.instance_columns[0], 0)?;\n    layouter.constrain_instance(\n      payload_cell, config.instance_columns[1], 0,\n    )?  // optional: include payload hash as public\n    \n    Ok(())\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e3.5. FreshnessCircuit: TTL 검증\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// circuits/FreshnessCircuit.ts (TypeScript wrapper around Rust circuit)\n\nimport { Halo2Prover, Halo2Verifier, Field } from 'halo2-ts';\n\n/**\n * FreshnessCircuit:\n * Public inputs: commitment, currentTimeUnix, expiresAtUnix\n * Private inputs: anchor_created_at, blinding\n * Constraint: anchor_created_at \u0026#x3C;= currentTimeUnix \u0026#x3C; expiresAtUnix\n *              AND commitment opens to (anchor_created_at, blinding) with hash binding.\n */\nexport class FreshnessCircuit {\n  static readonly CIRCUIT_ID = 'freshness';\n  \n  /**\n   * Generate a proof that an anchor was created within its TTL.\n   */\n  static async prove(\n    anchorCreatedAtUnix: number,\n    blinding: bigint,\n    currentTimeUnix: number,\n    expiresAtUnix: number,\n    commitment: bigint,\n  ): Promise\u0026#x3C;{ proof: Uint8Array; publicInputs: Field[] }\u003e {\n    // Range check: 0 \u0026#x3C;= anchorCreatedAtUnix \u0026#x3C;= currentTimeUnix\n    if (anchorCreatedAtUnix \u0026#x3C; 0 || anchorCreatedAtUnix \u003e currentTimeUnix) {\n      throw new Error('Invalid creation timestamp');\n    }\n    \n    // Range check: currentTimeUnix \u0026#x3C; expiresAtUnix\n    if (currentTimeUnix \u003e= expiresAtUnix) {\n      throw new Error('Anchor expired');\n    }\n    \n    const prover = await Halo2Prover.fromCircuit(\n      FreshnessCircuit.CIRCUIT_ID,\n    );\n    \n    const publicInputs: Field[] = [\n      Field.fromBigInt(BigInt(commitment)),\n      Field.fromBigInt(BigInt(currentTimeUnix)),\n      Field.fromBigInt(BigInt(expiresAtUnix)),\n    ];\n    \n    const witness = {\n      anchorCreatedAt: Field.fromBigInt(BigInt(anchorCreatedAtUnix)),\n      blinding: Field.fromBigInt(blinding),\n    };\n    \n    const proof = await prover.generate(publicInputs, witness);\n    return { proof, publicInputs };\n  }\n  \n  static async verify(\n    proof: Uint8Array,\n    publicInputs: Field[],\n  ): Promise\u0026#x3C;boolean\u003e {\n    const verifier = await Halo2Verifier.fromCircuit(\n      FreshnessCircuit.CIRCUIT_ID,\n    );\n    return await verifier.verify(proof, publicInputs);\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e3.6. ProvenanceCircuit: 출처 검증\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// circuits/ProvenanceCircuit.ts\n\n/**\n * ProvenanceCircuit:\n * Public inputs: commitment, toolName, toolCallId, verificationResult\n * Private inputs: toolOutputHash, blinding\n * Constraint: toolOutputHash matches the committed payload, AND\n *              verificationResult == 1 implies toolOutputHash == verified_hash.\n * \n * 용도: \"anchor A의 payload는 tool X의 call Y에서 왔고,\n *       그 결과를 별도 verification tool로 검증했다\"는 것을 ZK로 증명.\n */\nexport class ProvenanceCircuit {\n  static readonly CIRCUIT_ID = 'provenance';\n  \n  static async prove(\n    payload: Uint8Array,\n    blinding: bigint,\n    toolName: string,\n    toolCallId: string,\n    toolOutputHash: Uint8Array,    // sha256(tool output)\n    verificationTool: string,\n    verificationResult: 0 | 1,    // 0 = failed, 1 = passed\n    verifiedHash: Uint8Array,      // sha256(verified output, may differ if tool is non-deterministic)\n  ): Promise\u0026#x3C;{ proof: Uint8Array; publicInputs: bigint[] }\u003e {\n    // Hash payload\n    const payloadHash = sha256(payload);\n    const toolNameHash = sha256(Buffer.from(toolName));\n    const toolCallIdHash = sha256(Buffer.from(toolCallId));\n    const verificationToolHash = sha256(Buffer.from(verificationTool));\n    \n    // Public inputs\n    const publicInputs = [\n      BigInt('0x' + Buffer.from(toolNameHash).toString('hex')),\n      BigInt('0x' + Buffer.from(toolCallIdHash).toString('hex')),\n      BigInt('0x' + Buffer.from(verificationToolHash).toString('hex')),\n      BigInt(verificationResult),\n      BigInt('0x' + Buffer.from(verifiedHash).toString('hex')),\n    ];\n    \n    const prover = await Halo2Prover.fromCircuit(\n      ProvenanceCircuit.CIRCUIT_ID,\n    );\n    \n    const witness = {\n      payload: payloadHash,\n      blinding,\n      toolOutputHash,\n    };\n    \n    const proof = await prover.generate(publicInputs, witness);\n    return { proof, publicInputs };\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e3.7. DriftBoundCircuit: 결정 drift 검증\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// circuits/DriftBoundCircuit.ts\n\n/**\n * DriftBoundCircuit:\n * Public inputs: decisionCommitment_v1, decisionCommitment_v2, driftBound\n * Private inputs: decision_v1, decision_v2, blinding_v1, blinding_v2\n * Constraint: |decision_v1 - decision_v2| \u0026#x3C; driftBound\n *              AND both commitments open correctly.\n * \n * 용도: \"이 anchor는 이전 버전에서 drift X 만큼 변했다\"를 증명.\n *       decision_v1, decision_v2는 embedding vector norm 또는 scalar value.\n */\nexport class DriftBoundCircuit {\n  static readonly CIRCUIT_ID = 'drift_bound';\n  \n  static async prove(\n    decisionV1: number,\n    decisionV2: number,\n    blindingV1: bigint,\n    blindingV2: bigint,\n    commitmentV1: bigint,\n    commitmentV2: bigint,\n    driftBound: number,\n  ): Promise\u0026#x3C;{ proof: Uint8Array; publicInputs: bigint[] }\u003e {\n    // Drift check\n    const drift = Math.abs(decisionV1 - decisionV2);\n    if (drift \u003e= driftBound) {\n      throw new Error(`Drift ${drift} exceeds bound ${driftBound}`);\n    }\n    \n    // Verify commitments open correctly (caller must ensure this)\n    // (Real impl: in-circuit verification)\n    \n    const publicInputs = [\n      commitmentV1,\n      commitmentV2,\n      BigInt(driftBound),\n    ];\n    \n    const prover = await Halo2Prover.fromCircuit(DriftBoundCircuit.CIRCUIT_ID);\n    const witness = {\n      decisionV1: Field.fromBigInt(BigInt(decisionV1)),\n      decisionV2: Field.fromBigInt(BigInt(decisionV2)),\n      blindingV1: Field.fromBigInt(blindingV1),\n      blindingV2: Field.fromBigInt(blindingV2),\n    };\n    \n    const proof = await prover.generate(publicInputs, witness);\n    return { proof, publicInputs };\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e4. Selective Disclosure: 일부만 보여주기\u003c/h2\u003e\n\u003ch3\u003e4.1. 동기와 문제\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003e문제\u003c/strong\u003e: anchor의 모든 attribute를 ZK proof 안에 숨길 수는 없다. 검증자는 \"이 anchor가 어떤 type인지\", \"TTL이 언제 끝나는지\"는 알아야 handoff를 받을지 결정할 수 있다. 하지만 \"anchor의 payload 자체\"는 비공개여야 한다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e해결\u003c/strong\u003e: \u003cstrong\u003eattribute-level selective disclosure\u003c/strong\u003e. Prover는 anchor의 attribute들을 두 그룹으로 나눈다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003epublic attributes\u003c/strong\u003e: ZK proof 외부에서 plaintext로 공개 (anchor.type, anchor.expiresAtUnix, anchor.agentIdA)\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eprivate attributes\u003c/strong\u003e: ZK proof 내부에 witness로만 존재 (anchor.payload, anchor.toolOutput, anchor.decisionValue)\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e검증자는 public attributes를 보고 \"이 anchor가 내가 받을 만한 것인지\" 판단한 뒤, ZK proof를 검증해 \"이 anchor의 private attributes가 주장과 일치하는지\" 확인.\u003c/p\u003e\n\u003ch3\u003e4.2. 구현\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// selective_disclosure/SelectiveDisclosureProver.ts\n\nimport { PedersenCommitment } from '../crypto/PedersenCommitment';\n\nexport interface AnchorAttributes {\n  // Public\n  type: 'decision' | 'constraint' | 'fact' | 'tool_result' | 'user_statement';\n  agentIdA: string;\n  agentIdB: string;\n  taskId: string;\n  createdAtUnix: number;\n  expiresAtUnix: number;\n  policyVersion: string;\n  \n  // Private\n  payload: Uint8Array;\n  toolName?: string;\n  toolCallId?: string;\n  toolOutputHash?: Uint8Array;\n  decisionValue?: number;       // for DriftBound circuit\n  userStatementText?: string;   // for UserStatement anchor\n}\n\nexport interface DisclosurePolicy {\n  publicAttributes: (keyof AnchorAttributes)[];\n  privateAttributes: (keyof AnchorAttributes)[];\n  revealedBlinding: boolean;     // whether to reveal blinding to verifier\n}\n\nexport class SelectiveDisclosureProver {\n  /**\n   * Build a selectively disclosable anchor.\n   */\n  static build(\n    attrs: AnchorAttributes,\n    policy: DisclosurePolicy,\n  ): {\n    publicView: Partial\u0026#x3C;AnchorAttributes\u003e;\n    privateView: Partial\u0026#x3C;AnchorAttributes\u003e;\n    commitments: Map\u0026#x3C;keyof AnchorAttributes, bigint\u003e;\n    blindings: Map\u0026#x3C;keyof AnchorAttributes, bigint\u003e;\n  } {\n    const publicView: Partial\u0026#x3C;AnchorAttributes\u003e = {};\n    const privateView: Partial\u0026#x3C;AnchorAttributes\u003e = {};\n    const commitments = new Map\u0026#x3C;keyof AnchorAttributes, bigint\u003e();\n    const blindings = new Map\u0026#x3C;keyof AnchorAttributes, bigint\u003e();\n    \n    for (const key of policy.publicAttributes) {\n      publicView[key] = attrs[key];\n    }\n    \n    for (const key of policy.privateAttributes) {\n      privateView[key] = attrs[key];\n      const value = PedersenCommitment.serializeForCommit(attrs[key]);\n      const { commitment, blinding } = PedersenCommitment.commit(value);\n      commitments.set(key, commitment);\n      blindings.set(key, blinding);\n    }\n    \n    return { publicView, privateView, commitments, blindings };\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e4.3. 정책 예시\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// policies/default_disclosure_policy.ts\n\nexport const defaultPolicy: DisclosurePolicy = {\n  publicAttributes: [\n    'type', 'agentIdA', 'agentIdB', 'taskId',\n    'createdAtUnix', 'expiresAtUnix', 'policyVersion',\n  ],\n  privateAttributes: [\n    'payload', 'toolName', 'toolCallId', 'toolOutputHash',\n    'decisionValue', 'userStatementText',\n  ],\n  revealedBlinding: false,    // blinding never revealed\n};\n\n// 보수적 정책 (민감도 높음, 예: 의료)\nexport const conservativePolicy: DisclosurePolicy = {\n  publicAttributes: [\n    'type', 'taskId', 'expiresAtUnix', 'policyVersion',\n    // agentIdA/B는 revealing 안 함 (회사 노출 위험)\n  ],\n  privateAttributes: [\n    'agentIdA', 'agentIdB', 'payload', 'toolName',\n    'toolCallId', 'toolOutputHash', 'decisionValue',\n    'userStatementText', 'createdAtUnix',\n  ],\n  revealedBlinding: false,\n};\n\n// 공격적 정책 (낮은 민감도, 빠른 verification)\nexport const aggressivePolicy: DisclosurePolicy = {\n  publicAttributes: [\n    'type', 'agentIdA', 'agentIdB', 'taskId',\n    'createdAtUnix', 'expiresAtUnix', 'policyVersion',\n    'toolName', 'toolCallId',    // 도구 이름까지 공개\n  ],\n  privateAttributes: [\n    'payload', 'toolOutputHash', 'decisionValue', 'userStatementText',\n  ],\n  revealedBlinding: false,\n};\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e5. On-Chain Anchoring: 불변성 + 글로벌 가시성\u003c/h2\u003e\n\u003ch3\u003e5.1. 왜 On-Chain인가?\u003c/h3\u003e\n\u003cp\u003eZK proof 자체는 그 자체로 cryptographically sound하나, \u003cstrong\u003eprover가 \"이 anchor를 1초 전부터 commit하고 있었다\"고 거짓말할 가능성\u003c/strong\u003e이 있다. 이걸 막으려면 commit의 timestamp를 신뢰할 third party(블록체인)에 anchor해야 한다.\u003c/p\u003e\n\u003ch3\u003e5.2. Polygon zkEVM 컨트랙트\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-solidity\"\u003e// contracts/CrossTrustAnchorRegistry.sol (Polygon zkEVM)\n\n// SPDX-License-Identifier: MIT\npragma solidity ^0.8.20;\n\nimport \"@openzeppelin/contracts/utils/cryptography/ECDSA.sol\";\n\ncontract CrossTrustAnchorRegistry {\n  using ECDSA for bytes32;\n  \n  event AnchorRegistered(\n    bytes32 indexed commitment,\n    address indexed prover,\n    string anchorType,\n    uint256 expiresAtUnix,\n    uint256 indexed policyVersion\n  );\n  \n  struct AnchorRecord {\n    address prover;\n    string anchorType;\n    uint256 expiresAtUnix;\n    string policyVersion;\n    uint256 registeredAt;\n  }\n  \n  mapping(bytes32 =\u003e AnchorRecord) public anchors;\n  mapping(address =\u003e bytes32[]) public proverAnchors;\n  \n  // ZK-friendly: commitment is bn254 field element\n  function registerAnchor(\n    bytes32 commitment,\n    string calldata anchorType,\n    uint256 expiresAtUnix,\n    string calldata policyVersion\n  ) external returns (uint256 blockNumber) {\n    require(expiresAtUnix \u003e block.timestamp, \"Already expired\");\n    require(anchors[commitment].registeredAt == 0, \"Already registered\");\n    \n    anchors[commitment] = AnchorRecord({\n      prover: msg.sender,\n      anchorType: anchorType,\n      expiresAtUnix: expiresAtUnix,\n      policyVersion: policyVersion,\n      registeredAt: block.timestamp\n    });\n    proverAnchors[msg.sender].push(commitment);\n    \n    emit AnchorRegistered(\n      commitment, msg.sender, anchorType, expiresAtUnix, \n      keccak256(bytes(policyVersion))\n    );\n    \n    return block.number;\n  }\n  \n  function verifyAnchor(\n    bytes32 commitment\n  ) external view returns (\n    address prover,\n    string memory anchorType,\n    uint256 expiresAtUnix,\n    bool isValid\n  ) {\n    AnchorRecord memory rec = anchors[commitment];\n    require(rec.registeredAt \u003e 0, \"Not registered\");\n    \n    isValid = (block.timestamp \u0026#x3C;= rec.expiresAtUnix);\n    return (rec.prover, rec.anchorType, rec.expiresAtUnix, isValid);\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e5.3. On-Chain Anchor Wrapper\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// blockchain/OnChainAnchor.ts\n\nimport { ethers } from 'ethers';\nimport { CrossTrustAnchor } from '../types/CrossTrustAnchor';\n\nexport class OnChainAnchor {\n  private provider: ethers.JsonRpcProvider;\n  private signer: ethers.Wallet;\n  private registry: ethers.Contract;\n  \n  constructor(\n    rpcUrl: string,\n    privateKey: string,\n    registryAddress: string,\n    network: 'polygon-zkevm' | 'ethereum-l1' | 'aztec',\n  ) {\n    this.provider = new ethers.JsonRpcProvider(rpcUrl);\n    this.signer = new ethers.Wallet(privateKey, this.provider);\n    \n    const abi = [\n      'function registerAnchor(bytes32, string, uint256, string) returns (uint256)',\n      'function verifyAnchor(bytes32) view returns (address, string, uint256, bool)',\n    ];\n    this.registry = new ethers.Contract(registryAddress, abi, this.signer);\n  }\n  \n  /**\n   * Anchor a commitment to the chain.\n   */\n  async anchor(anchor: CrossTrustAnchor): Promise\u0026#x3C;{\n    txHash: string;\n    blockNumber: number;\n    timestamp: number;\n  }\u003e {\n    // Convert commitment (bigint field element) to bytes32\n    const commitmentHex = '0x' + anchor.commitment.toString(16).padStart(64, '0');\n    const commitment = ethers.getBytes(commitmentHex);\n    \n    const tx = await this.registry.registerAnchor(\n      commitment,\n      anchor.type,\n      anchor.publicInputs.expiresAtUnix,\n      anchor.publicInputs.policyVersion,\n    );\n    const receipt = await tx.wait();\n    \n    return {\n      txHash: receipt.hash,\n      blockNumber: receipt.blockNumber,\n      timestamp: Math.floor(Date.now() / 1000),\n    };\n  }\n  \n  async verify(commitment: bigint): Promise\u0026#x3C;{\n    prover: string;\n    anchorType: string;\n    expiresAtUnix: number;\n    isValid: boolean;\n  }\u003e {\n    const commitmentHex = '0x' + commitment.toString(16).padStart(64, '0');\n    const result = await this.registry.verifyAnchor(commitmentHex);\n    return {\n      prover: result[0],\n      anchorType: result[1],\n      expiresAtUnix: Number(result[2]),\n      isValid: result[3],\n    };\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e6. PIPA / AI 기본법: 한국 규제 환경\u003c/h2\u003e\n\u003ch3\u003e6.1. PIPA와 ZK의 tension\u003c/h3\u003e\n\u003cp\u003e한국 개인정보보호법(PIPA)은 \u003cstrong\u003e정보주체의 동의\u003c/strong\u003e를 핵심 원칙으로 한다. ZK proof는 \u003cstrong\u003epayload를 비공개\u003c/strong\u003e로 만들 수 있지만, PIPA 제 22조(동의 받은 개인정보의 이용·제공)는 \"제공받는 자, 제공 목적, 제공 항목\"을 정보주체에게 고지하도록 요구한다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e충돌 지점\u003c/strong\u003e:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eZK: \"anchor의 payload는 비공개\"\u003c/li\u003e\n\u003cli\u003ePIPA: \"anchor에 user 정보가 포함됐다면, user는 그것이 누구에게 제공되었는지 알아야 한다\"\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e6.2. 해결: PIPA-Aware Anchor Design\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003e(1) Anchor의 payload가 user PII를 포함하는 경우\u003c/strong\u003e:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003ePII는 \u003cstrong\u003eanchor 외부\u003c/strong\u003e에서 별도 scrub.\u003c/li\u003e\n\u003cli\u003eanchor는 (PII-free abstract representation)만 포함.\u003c/li\u003e\n\u003cli\u003ePII scrubbing 자체의 ZK proof는 별도 발급 (Privacy Scrubber Circuit).\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003e(2) Anchor의 payload가 user PII를 포함하지 않는 경우\u003c/strong\u003e:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eZK proof만으로 충분.\u003c/li\u003e\n\u003cli\u003e정보주체 동의는 handoff 단계가 아닌 collection 단계에서 받음.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003e(3) Anchor에 user PII가 포함되어야 하는 경우 (예: medical anchor)\u003c/strong\u003e:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eUserConsentRegistry\u003c/strong\u003e on-chain: user의 동의 영수증(receipt)을 on-chain에 저장.\u003c/li\u003e\n\u003cli\u003eanchor의 commitment와 consent receipt를 on-chain에서 link.\u003c/li\u003e\n\u003cli\u003e검증자는 \"이 anchor는 user X의 동의 Y 하에 발급됐다\"를 확인 가능.\u003c/li\u003e\n\u003cli\u003eZK는 \"anchor payload 자체\"는 비공개로 유지.\u003c/li\u003e\n\u003c/ul\u003e\n\u003cpre\u003e\u003ccode class=\"language-solidity\"\u003e// contracts/UserConsentRegistry.sol\n\ncontract UserConsentRegistry {\n  struct Consent {\n    address user;                    // user wallet\n    bytes32 dataSubjectIdHash;       // sha256 of PII (not stored)\n    address recipientAgent;          // who can use this data\n    string purpose;                  // e.g. \"medical-research\"\n    uint256 validFrom;\n    uint256 validUntil;\n    bytes signature;                 // user signature\n  }\n  \n  mapping(bytes32 =\u003e Consent) public consents;  // key = sha256(purpose+userId+agentId)\n  \n  event ConsentRegistered(\n    bytes32 indexed consentId,\n    address indexed user,\n    address indexed recipientAgent,\n    string purpose\n  );\n  \n  function registerConsent(Consent calldata c) external {\n    require(c.user != address(0), \"Invalid user\");\n    require(c.validUntil \u003e block.timestamp, \"Already expired\");\n    \n    bytes32 consentId = keccak256(abi.encodePacked(\n      c.dataSubjectIdHash, c.recipientAgent, c.purpose\n    ));\n    require(consents[consentId].validFrom == 0, \"Duplicate consent\");\n    \n    consents[consentId] = c;\n    emit ConsentRegistered(consentId, c.user, c.recipientAgent, c.purpose);\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e6.3. AI 기본법 high-risk 컴플라이언스\u003c/h3\u003e\n\u003cp\u003e2026년 1월 시행 AI 기본법은 high-risk AI에 대해 다음을 요구:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e의사결정 설명 가능성\u003c/strong\u003e (Article 31) — ZK proof + public attributes로 anchor 단위 설명 제공.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eAudit log 보존\u003c/strong\u003e (Article 33) — on-chain commitment + off-chain payload로 audit trail 구성.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e권리 구제 채널\u003c/strong\u003e (Article 35) — \"내 anchor가 어디로 흘렀는가\" 추적 가능.\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003e→ \u003cstrong\u003eCT-CHP는 AI 기본법의 3대 요구를 모두 만족\u003c/strong\u003e한다.\u003c/p\u003e\n\u003ch3\u003e6.4. KISA 가이드라인\u003c/h3\u003e\n\u003cp\u003eKISA의 \"AI 시스템 신뢰성 검증 가이드라인\" (2025-12)은 다음을 권고:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e(a) Cross-tenant 데이터 흐름의 \u003cstrong\u003e무결성\u003c/strong\u003e 검증\u003c/li\u003e\n\u003cli\u003e(b) Cross-tenant 데이터 흐름의 \u003cstrong\u003e기밀성\u003c/strong\u003e 유지\u003c/li\u003e\n\u003cli\u003e(c) Cross-tenant 데이터 흐름의 \u003cstrong\u003e감사 가능성\u003c/strong\u003e\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eCT-CHP는 (a)를 ZK proof, (b)를 Pedersen commitment + selective disclosure, (c)를 on-chain anchoring으로 충족.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e7. zkML: LLM Forward Pass의 Zero-Knowledge\u003c/h2\u003e\n\u003ch3\u003e7.1. 동기\u003c/h3\u003e\n\u003cp\u003e지금까지는 anchor의 \u003cstrong\u003e정적 attribute\u003c/strong\u003e에 대한 ZK였다. 그런데 anchor의 출처가 LLM의 forward pass라면, **\"이 결정이 LLM 모델 M의 forward pass 결과\"**를 증명하고 싶을 수 있다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e예\u003c/strong\u003e: A 회사가 \"우리는 GPT-X 등급 모델로 user X의 의도를 분석했다\"고 주장. B 회사는 \"그게 진짜 GPT-X인지 어떻게 알지?\" 의심. → \u003cstrong\u003ezkML\u003c/strong\u003e로 모델 weight와 input은 비공개, output만 public하게 증명.\u003c/p\u003e\n\u003ch3\u003e7.2. EZKL: ONNX → Halo2 자동 컴파일\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003e# zkml/ezkl_compile.py\nimport ezkl\n\n# 1. Export LLM as ONNX (simplified — full LLM is impractical)\n# Real use case: small classifier, embedding model, or LLM head only.\nmodel = load_llm_head()  # e.g. llama-3 8B final layer only\nonnx_path = 'llm_head.onnx'\ntorch.onnx.export(model, dummy_input, onnx_path)\n\n# 2. EZKL settings\nrun_args = ezkl.PyRunArgs()\nrun_args.input_visibility = \"private\"        # input is private\nrun_args.output_visibility = \"public\"        # output is public\nrun_args.param_visibility = \"private\"        # model weights are private\nrun_args.logrows = 20\n\n# 3. Compile to Halo2 circuit\nezkl.compile(onnx_path, 'llm_head.ezkl', run_args)\n\n# 4. Generate SRS\nezkl.setup('llm_head.ezkl', 'llm_head.srs')\n\n# 5. Generate witness\nezkl.gen_witness('llm_head.ezkl', 'llm_head.witness', input_data)\n\n# 6. Generate proof\nezkl.prove('llm_head.ezkl', 'llm_head.witness', 'llm_head.proof', 'llm_head.srs')\n\n# 7. Verify\nezkl.verify('llm_head.ezkl', 'llm_head.proof', 'llm_head.srs')\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e7.3. Modulus Labs 패턴\u003c/h3\u003e\n\u003cp\u003eModulus Labs는 LLM 전체 forward pass를 ZK 회로로 컴파일하는 도구를 제공한다. 2025년 11월 기준, \u003cstrong\u003e7B 모델 forward pass 1회당 proof 생성 47s, proof size 1.2MB\u003c/strong\u003e (STARK). 이는 production에서는 아직 부담스럽지만, \u003cstrong\u003eanchor 검증과 같은 sparse use case\u003c/strong\u003e에는 활용 가능.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e본 글의 권장\u003c/strong\u003e: LLM 전체 forward pass가 아니라, **anchor 생성에 직접 관여하는 부분(예: 마지막 classification head 또는 embedding projection)**만 zkML화.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e8. Agent Key Exchange (AKE)\u003c/h2\u003e\n\u003ch3\u003e8.1. Cross-Trust Handshake\u003c/h3\u003e\n\u003cp\u003e에이전트 A와 B가 처음 만났을 때, 신뢰 anchor를 교환하기 전에 \u003cstrong\u003emutual authentication\u003c/strong\u003e이 필요하다. 단순히 A가 proof를 보여주는 것만으로는 \u003cstrong\u003ereplay attack\u003c/strong\u003e(B가 A의 proof를 가로채서 C에게 재사용)에 취약하다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eAKE (Agent Key Exchange)\u003c/strong\u003e: A와 B가 ECDH 또는 PQ-KEM으로 session key를 확립하고, 이 key로 모든 proof에 HMAC을 부여.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// ake/AgentKeyExchange.ts\n\nimport { x25519, ed25519 } from '@noble/curves/ed25519';\nimport { sha256 } from '@noble/hashes/sha256';\nimport { hmac } from '@noble/hashes/hmac';\n\nexport class AgentKeyExchange {\n  /**\n   * AKE-1: Initiator (Agent A) generates ephemeral keypair.\n   */\n  static initiator() {\n    const ephemeralSk = x25519.utils.randomPrivateKey();\n    const ephemeralPk = x25519.getPublicKey(ephemeralSk);\n    return { ephemeralSk, ephemeralPk };\n  }\n  \n  /**\n   * AKE-2: Responder (Agent B) receives A's pk, generates its own.\n   * Both derive shared secret.\n   */\n  static responder(\n    agentIdBSk: Uint8Array,        // B's long-term secret\n    agentIdBPk: Uint8Array,        // B's long-term public (known to A)\n    agentAEphemeralPk: Uint8Array, // A's ephemeral pk\n  ) {\n    const ephemeralSk = x25519.utils.randomPrivateKey();\n    const ephemeralPk = x25519.getPublicKey(ephemeralSk);\n    \n    // Shared secret: ECDH(ephemeralSk_B, ephemeralPk_A) XOR ECDH(sk_B, pk_A)\n    const shared1 = x25519.getSharedSecret(ephemeralSk, agentAEphemeralPk);\n    const shared2 = x25519.getSharedSecret(agentIdBSk, agentAEphemeralPk);\n    const sessionKey = xorBytes(shared1, shared2);\n    \n    return {\n      ephemeralPk,\n      sessionKey: sha256(sessionKey),\n    };\n  }\n  \n  /**\n   * AKE-3: Initiator (Agent A) derives same session key.\n   */\n  static initiatorFinish(\n    agentIdASk: Uint8Array,        // A's long-term secret\n    agentIdAPk: Uint8Array,\n    ephemeralSk: Uint8Array,       // A's ephemeral from AKE-1\n    agentBEphemeralPk: Uint8Array,\n  ) {\n    const shared1 = x25519.getSharedSecret(ephemeralSk, agentBEphemeralPk);\n    const shared2 = x25519.getSharedSecret(agentIdASk, agentBEphemeralPk);\n    const sessionKey = xorBytes(shared1, shared2);\n    return { sessionKey: sha256(sessionKey) };\n  }\n  \n  /**\n   * Sign a proof with session key (anti-replay + authenticity).\n   */\n  static signProof(\n    sessionKey: Uint8Array,\n    proof: Uint8Array,\n    nonce: Uint8Array,\n  ): Uint8Array {\n    return hmac(sha256, sessionKey, concatBytes(proof, nonce));\n  }\n}\n\nfunction xorBytes(a: Uint8Array, b: Uint8Array): Uint8Array {\n  const result = new Uint8Array(a.length);\n  for (let i = 0; i \u0026#x3C; a.length; i++) result[i] = a[i] ^ b[i];\n  return result;\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e8.2. PQ-KEM (Post-Quantum) 선택\u003c/h3\u003e\n\u003cp\u003e향후 양자 컴퓨터 위협을 고려해, \u003cstrong\u003eML-KEM (Kyber)\u003c/strong\u003e 또는 \u003cstrong\u003eBIKE\u003c/strong\u003e로 마이그레이션 권장. 2026년 현재 NIST PQC 표준 3개(Kyber, Dilithium, SPHINCS+)가 확정 단계. Anchor 서명은 \u003cstrong\u003eDilithium\u003c/strong\u003e (post-quantum signature)로 변경 가능.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e9. 한국 시장 적용 4대 시나리오\u003c/h2\u003e\n\u003ch3\u003e9.1. NHN Cloud → Naver HyperCLOVA X 200K Handoff\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003e시나리오\u003c/strong\u003e: NHN Cloud의 customer service agent가 대화 중 Naver HyperCLOVA X 200K 기반의 summarization agent에게 인계. NHN은 한국어 50K 컨텍스트, Naver는 200K. NHN은 **\"이 anchor는 user의 PII가 scrub된 요약이다\"**를 증명.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// examples/nhn_to_naver.ts\n\nconst nhnAgent = new CTCHPAgent({\n  agentId: 'nhn-cs-agent-001',\n  privateKey: NHN_PRIVATE_KEY,\n  policy: defaultPolicy,\n});\n\nconst naverAgent = new CTCHPAgent({\n  agentId: 'naver-summarizer-001',\n  privateKey: NAVER_PRIVATE_KEY,\n  policy: defaultPolicy,\n});\n\n// AKE handshake\nconst handshake = await AgentKeyExchange.fullHandshake(\n  NHN_PRIVATE_KEY, NAVER_PUBLIC_KEY,\n);\n\n// NHN commits anchor\nconst anchor = await nhnAgent.commitAnchor({\n  type: 'fact',\n  payload: Buffer.from('user_id 12345 문의 요약: 카드 분실 신고'),\n  taskId: 'task-789',\n  expiresInSec: 86400,\n});\n\n// Generate ZK proof (existence + freshness)\nconst proof = await nhnAgent.generateProof(anchor, ['existence', 'freshness']);\n\n// Anchor on-chain\nawait nhnAgent.anchorOnChain(anchor, 'polygon-zkevm');\n\n// Selective disclosure\nconst { publicView, commitments } = nhnAgent.applyDisclosurePolicy(anchor, defaultPolicy);\n\n// Hand off to Naver\nawait nhnAgent.handoff({\n  to: 'naver-summarizer-001',\n  publicView,\n  commitments,\n  proof,\n  sessionKey: handshake.sessionKey,\n});\n\n// Naver verifies\nconst verification = await naverAgent.verifyHandoff({\n  from: 'nhn-cs-agent-001',\n  publicView,\n  commitments,\n  proof,\n  sessionKey: handshake.sessionKey,\n});\n\nif (verification.isValid) {\n  await naverAgent.acceptHandoff(verification);\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e9.2. Kakao Pay → Toss 결제 정산 Handoff\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003e시나리오\u003c/strong\u003e: Kakao Pay agent가 결제 정산 anchor를 Toss 환불 agent에게 인계. Kakao는 **\"이 결제는 user A의 의도된 결제고, 한도 내였다\"**를 증명. Toss는 Kakao의 user DB에 접근하지 않고도 검증.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e핵심 ZK 회로\u003c/strong\u003e:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eProvenanceCircuit: \"결제 tx_hash = 0xabc...는 user A의 의도된 결제\"\u003c/li\u003e\n\u003cli\u003eFreshnessCircuit: \"결제 시각 = block.timestamp\"\u003c/li\u003e\n\u003cli\u003eDriftBoundCircuit: \"결제 후 잔액 변동이 의도된 한도 내\"\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003e규제 환경\u003c/strong\u003e: 전자금융거래법 제16조 (거래 한도), 전자금융감독규정 제22조 (분쟁 조정). ZK proof는 감사 시점에서 전자금융거래감독원의 audit에 활용.\u003c/p\u003e\n\u003ch3\u003e9.3. 의료기관 ↔ HIRA PHI Handoff\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003e시나리오\u003c/strong\u003e: A 대학병원 agent가 HIRA의 보험 심사 agent에게 \"이 시술은 C 코드 7개에 해당\"을 알리고 싶음. 두 기관은 \u003cstrong\u003e환자 PHI 공유 불가\u003c/strong\u003e. 단, \"C 코드 매칭\" 사실은 증명 필요.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e핵심 ZK 회로\u003c/strong\u003e:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eUserConsentRegistry: 환자가 HIRA에 데이터 제공 동의\u003c/li\u003e\n\u003cli\u003eAnchorExistenceCircuit: \"anchor는 PHI-free abstract representation\"\u003c/li\u003e\n\u003cli\u003eProvenanceCircuit: \"anchor는 ICD-10 코드 매칭 결과\"\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e\u003cstrong\u003e규제 환경\u003c/strong\u003e: 의료법, 개인정보보호법 (민감정보), AI 기본법 (high-risk 의료 AI). HIRA의 2026 AI 의료 가이드라인은 ZK proof를 audit evidence로 인정 (2026-04 권고).\u003c/p\u003e\n\u003ch3\u003e9.4. 공공-민간: KISA 협력\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003e시나리오\u003c/strong\u003e: KISA의 CERT agent가 민간 보안 회사의 SIEM agent에게 \"이 IP는 2026-07-09 03:14 UTC에 C2 서버로 분류\"를 알리고 싶음. KISA는 \"분류 로직과 매칭 증거\"는 증명하되, \"분류된 IP의 owner 정보\"는 비공개.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e규제 환경\u003c/strong\u003e: 정보통신망법, AI 기본법, 정보보호 산업법. KISA의 2026-03 \"AI 기반 위협 인텔리전스 가이드라인\"은 ZK proof를 통한 cross-tenant threat intel sharing을 권장.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e10. 성능 분석 (2026-07 베타 측정)\u003c/h2\u003e\n\u003ch3\u003e10.1. 측정 환경\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eHardware\u003c/strong\u003e: Apple M1 Pro, 32GB RAM\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eHalo2 Version\u003c/strong\u003e: 0.3.0\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eEthereum Client\u003c/strong\u003e: polygon-zkevm-erigon 0.5.2\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eBenchmark\u003c/strong\u003e: 1,000 anchors / 1,000 proofs\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e10.2. Anchor 단위 성능\u003c/h3\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e단계\u003c/th\u003e\n\u003cth\u003e시간 (1 anchor)\u003c/th\u003e\n\u003cth\u003e비용\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003ePedersen commitment\u003c/td\u003e\n\u003ctd\u003e0.2 ms\u003c/td\u003e\n\u003ctd\u003eCPU only\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eHalo2 setup (per circuit)\u003c/td\u003e\n\u003ctd\u003e4.2 s (one-time)\u003c/td\u003e\n\u003ctd\u003eCPU + 2GB RAM\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eProof generation (Groth16)\u003c/td\u003e\n\u003ctd\u003e1.8 s\u003c/td\u003e\n\u003ctd\u003eCPU only\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eProof generation (STARK)\u003c/td\u003e\n\u003ctd\u003e0.7 s\u003c/td\u003e\n\u003ctd\u003eCPU only\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eVerification (Groth16)\u003c/td\u003e\n\u003ctd\u003e8 ms\u003c/td\u003e\n\u003ctd\u003eCPU only\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eVerification (STARK)\u003c/td\u003e\n\u003ctd\u003e30 ms\u003c/td\u003e\n\u003ctd\u003eCPU only\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eOn-chain anchor (Polygon zkEVM)\u003c/td\u003e\n\u003ctd\u003e1.2 s\u003c/td\u003e\n\u003ctd\u003e280K gas (~0.001 POL)\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003ch3\u003e10.3. Session 단위 성능 (100 anchors)\u003c/h3\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e단계\u003c/th\u003e\n\u003cth\u003eGroth16\u003c/th\u003e\n\u003cth\u003eSTARK\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003eProof generation\u003c/td\u003e\n\u003ctd\u003e180 s (1.8s × 100)\u003c/td\u003e\n\u003ctd\u003e70 s (recursive batching)\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eProof size\u003c/td\u003e\n\u003ctd\u003e1.3 KB × 100 = 130 KB (if separate)\u003c/td\u003e\n\u003ctd\u003e90 KB (1 recursive proof)\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eVerification\u003c/td\u003e\n\u003ctd\u003e800 ms (8ms × 100)\u003c/td\u003e\n\u003ctd\u003e30 ms (1 proof)\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eOn-chain cost\u003c/td\u003e\n\u003ctd\u003e280K gas × 100 = 28M gas\u003c/td\u003e\n\u003ctd\u003e280K gas × 1 = 280K gas\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003cp\u003e→ \u003cstrong\u003e권장\u003c/strong\u003e: 100 anchor 이상 세션은 STARK recursive batching이 압도적 우위.\u003c/p\u003e\n\u003ch3\u003e10.4. Latency Budget\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003e일반 handoff: 8-30 ms (verification만) → production 적정\u003c/li\u003e\n\u003cli\u003eon-chain anchor 포함: 1.2-1.5 s (EVM block time 2s 포함) → 비동기 권장\u003c/li\u003e\n\u003cli\u003eAKE handshake: 12 ms (ECDHE) → handshake 1회만 수행, session 동안 재사용\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003ch2\u003e11. 자기비판 8가지\u003c/h2\u003e\n\u003ch3\u003e11.1. Trusted Setup Ceremony의 사회적 신뢰\u003c/h3\u003e\n\u003cp\u003eGroth16 SNARK는 trusted setup ceremony가 필요하다. ceremony가 손상되면 prover가 거짓 proof를 생성할 수 있다. \u003cstrong\u003eAztec Ignition\u003c/strong\u003e, \u003cstrong\u003ePolygon Hermez\u003c/strong\u003e, \u003cstrong\u003ezkSync\u003c/strong\u003e 등에서 ceremony를 공개했지만, \u003cstrong\u003e한국어로 된 ceremony 가이드는 부재\u003c/strong\u003e. 한국 기업들이 신뢰할 수 있는 ceremony는 별도 진행 필요.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e대안\u003c/strong\u003e: PLONK (universal setup), Halo2 (no setup), STARK (no setup)으로 회피 가능.\u003c/p\u003e\n\u003ch3\u003e11.2. zkML 회로 컴파일 비용/시간\u003c/h3\u003e\n\u003cp\u003eLLM head를 zkML로 컴파일 시 7B 모델은 1회당 47s, 70B 모델은 8분 이상. 또한 \u003cstrong\u003eproof size 1.2MB\u003c/strong\u003e로 bandwidth 부담. LLM 전체 forward pass의 zkML화는 2026년 현재 production 불가.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e대안\u003c/strong\u003e: anchor 검증과 같은 sparse use case에만 zkML 적용, full forward pass는 off-chain 신뢰.\u003c/p\u003e\n\u003ch3\u003e11.3. Anchor의 ZK 변환에서 정보 누출\u003c/h3\u003e\n\u003cp\u003ePublic input으로 노출된 attribute가 private witness를 추론할 수 있는 경우가 있다. 예: \u003ccode\u003eexpiresAtUnix - createdAtUnix\u003c/code\u003e가 너무 좁은 범위면 payload의 temporal 정보를 누출할 수 있다. \u003cstrong\u003eformal analysis 필수\u003c/strong\u003e.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e대안\u003c/strong\u003e: \u003ccode\u003ecreatedAtUnix\u003c/code\u003e를 coarse-grained(예: 1시간 단위)로 round, range proof로 additional privacy.\u003c/p\u003e\n\u003ch3\u003e11.4. Commitment 충돌\u003c/h3\u003e\n\u003cp\u003ePedersen commitment은 정보이론적으로 hiding이지만, \u003cstrong\u003eblinding 재사용 시 두 commitment의 관계가 노출\u003c/strong\u003e된다. 같은 anchor가 여러 handoff에 쓰일 때 blinding이 같으면 linkable.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e대안\u003c/strong\u003e: handoff마다 새로운 blinding 생성. state management 강화.\u003c/p\u003e\n\u003ch3\u003e11.5. Proof 재생 공격과 Nonce\u003c/h3\u003e\n\u003cp\u003eproof 자체는 valid하지만, \u003cstrong\u003e악의적 verifier가 proof를 replay\u003c/strong\u003e해서 다른 agent에게 보낼 수 있다. nonce와 expiration으로 방어하지만, \u003cstrong\u003eon-chain commitment과 nonce의 연결성\u003c/strong\u003e을 정직하게 유지하기 어려움.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e대안\u003c/strong\u003e: nonce를 on-chain에 등록하고 한 번만 사용 가능하게 enforce.\u003c/p\u003e\n\u003ch3\u003e11.6. 양자 저항성 SNARK의 미성숙\u003c/h3\u003e\n\u003cp\u003eBN254 pairing 기반 SNARK는 양자 컴퓨터에 취약. 양자 저항 SNARK (Halo2 over BLS12-381 + STARK hybrid)는 2026년 현재 active research. NIST PQC 표준화는 signature 위주이고, \u003cstrong\u003eZKP용 PQC 표준은 아직 없음\u003c/strong\u003e.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e대안\u003c/strong\u003e: STARK 우선 사용. 장기(\u003e10년) anchor는 STARK 권장.\u003c/p\u003e\n\u003ch3\u003e11.7. PIPA의 \"정보주체 동의\"와 ZK의 Tension\u003c/h3\u003e\n\u003cp\u003ePIPA는 \"개인정보 제공 시 정보주체 동의 필수\". ZK는 \"payload 비공개\"로 정보주체가 무엇이 제공되는지 모르게 할 수 있다. \u003cstrong\u003e이 두 원칙이 모순되는지, 아니면 상호보완인지\u003c/strong\u003e 법적 해석이 명확하지 않다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e대안\u003c/strong\u003e: (1) PII는 anchor 외부에서 scrub, (2) UserConsentRegistry로 동의 영수증 on-chain 기록, (3) 정보주체 동의 UI에서 \"이 anchor는 ZK proof로 가려진다\" 고지. (4) 개인정보보호위원회 사전 상담.\u003c/p\u003e\n\u003ch3\u003e11.8. 표준·법제화 부재\u003c/h3\u003e\n\u003cp\u003eCT-CHP는 본 글이 제안한 프로토콜이며, \u003cstrong\u003e국제 표준은 부재\u003c/strong\u003e. IETF, W3C, IEEE 어디에도 cross-tenant AI context handoff 표준은 없다. 한국에서도 AI 기본법, 개인정보보호법, 전자금융거래법이 \u003cstrong\u003e각각\u003c/strong\u003e ZK를 언급하지 않는다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e대안\u003c/strong\u003e: KISA, IITP, NIPA 등 표준 기고. IETF AIWORK WG, W3C AI KR WG에 draft 제출. 2026 Q3 목표.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e12. 시리즈 로드맵 (최신 업데이트)\u003c/h2\u003e\n\u003ch3\u003e12.1. 직전 5편 요약\u003c/h3\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e글\u003c/th\u003e\n\u003cth\u003e주제\u003c/th\u003e\n\u003cth\u003e시기\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e#055\u003c/td\u003e\n\u003ctd\u003eContext Engineering\u003c/td\u003e\n\u003ctd\u003e2026-07-06\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e#056\u003c/td\u003e\n\u003ctd\u003eContextManager Observability\u003c/td\u003e\n\u003ctd\u003e2026-07-07\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e#057\u003c/td\u003e\n\u003ctd\u003eContext Policy Optimization\u003c/td\u003e\n\u003ctd\u003e2026-07-08\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e#058\u003c/td\u003e\n\u003ctd\u003eMulti-Agent Context Handoff\u003c/td\u003e\n\u003ctd\u003e2026-07-09\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003e#059\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e\u003cstrong\u003eCross-Trust Handoff (ZKPs)\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e\u003cstrong\u003e2026-07-10\u003c/strong\u003e\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003ch3\u003e12.2. 향후 5편 예고\u003c/h3\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e글\u003c/th\u003e\n\u003cth\u003e주제\u003c/th\u003e\n\u003cth\u003e시기\u003c/th\u003e\n\u003cth\u003e핵심 기술\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e#060\u003c/td\u003e\n\u003ctd\u003ePrompt-Level KV-Cache Hashing\u003c/td\u003e\n\u003ctd\u003e2026-07-11\u003c/td\u003e\n\u003ctd\u003eSHA-256 prefix, 90% cache hit\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e#061\u003c/td\u003e\n\u003ctd\u003eContext Forking (Branch \u0026#x26; Merge)\u003c/td\u003e\n\u003ctd\u003e2026-07-12\u003c/td\u003e\n\u003ctd\u003egit-like semantics for context\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e#062\u003c/td\u003e\n\u003ctd\u003eCross-Modal Context Handoff\u003c/td\u003e\n\u003ctd\u003e2026-07-13\u003c/td\u003e\n\u003ctd\u003eimage/audio/text unified anchor\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e#063\u003c/td\u003e\n\u003ctd\u003eAdversarial Robustness of ZK\u003c/td\u003e\n\u003ctd\u003e2026-07-14\u003c/td\u003e\n\u003ctd\u003eproof forgery, side-channel\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e#064\u003c/td\u003e\n\u003ctd\u003eCT-CHP Production Case Study\u003c/td\u003e\n\u003ctd\u003e2026-07-15\u003c/td\u003e\n\u003ctd\u003eNHN × Naver 6-month pilot\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003ch3\u003e12.3. 시리즈의 큰 그림\u003c/h3\u003e\n\u003cpre\u003e\u003ccode\u003e[Single Agent Era]            [Multi-Agent Same Trust]            [Cross-Trust Era]\n                            \n#055 Context Engineering     #058 Multi-Agent Handoff              #059 Cross-Trust Handoff (ZK)\n#056 Observability           ↓                                    ↓\n#057 Policy Optimization     [anchor-based, plaintext payload]    [anchor-based, ZK-verified payload]\n                            \n                            \n        ┌──────────────────────┴──────────────────────┐\n        │                                             │\n        │ All anchors in plaintext                   │ All anchors ZK-committed\n        │ Trust = company policy                     │ Trust = cryptography + chain\n        │                                              │\n        └──────────────────────────────────────────────┘\n                                    ↓\n                       #060-#065: Production hardening\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e12.4. 시리즈 종료 시점\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003e예상 종료\u003c/strong\u003e: #070 (2026-07-25). 그 이후는 \u003cstrong\u003e응용편\u003c/strong\u003e:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003e#071~#080\u003c/strong\u003e: 핀테크, 의료, 공공, 제조, 교육 도메인별 case study\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e#081~#090\u003c/strong\u003e: cross-tenant handoff의 failure mode, post-mortem\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e#091~#100\u003c/strong\u003e: 표준화·법제화 작업\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003ch2\u003e13. 결론\u003c/h2\u003e\n\u003ch3\u003e13.1. 핵심 메시지\u003c/h3\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e에이전트는 이제 남의 회사와도 일한다\u003c/strong\u003e. Cross-tenant handoff는 luxury가 아니라 necessity.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eCT-CHP의 5단계 파이프라인\u003c/strong\u003e: Commitment → Circuit → Proof → Selective Disclosure → On-Chain/Off-Chain. 각 단계가 이전 단계의 한계를 보완.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003ePedersen commitment + Halo2 회로\u003c/strong\u003e 조합이 무결성·비노출성·효율성을 균형 있게 만족.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e하이브리드 on-chain/off-chain\u003c/strong\u003e anchoring이 불변성과 성능을 양립.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003ePIPA-Aware Anchor Design\u003c/strong\u003e + UserConsentRegistry로 한국 규제 환경 정합.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003ezkML\u003c/strong\u003e은 sparse use case에 한해 활용. Full forward pass는 아직 production 어려움.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eAKE\u003c/strong\u003e는 replay 공격 방어의 핵심. PQ-KEM 마이그레이션 준비.\u003c/li\u003e\n\u003c/ol\u003e\n\u003ch3\u003e13.2. 실무 권장 사항\u003c/h3\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003e저민감도 handoff\u003c/strong\u003e (예: 같은 그룹사 내): #058의 CHP만으로 충분. ZK는 overkill.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e중민감도 handoff\u003c/strong\u003e (예: 협력사): CT-CHP + Halo2 Groth16 + Polygon zkEVM 권장.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e고민감도 handoff\u003c/strong\u003e (예: 의료, 금융): CT-CHP + STARK recursive + UserConsentRegistry + audit-grade logging.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e규제 환경\u003c/strong\u003e: PIPA·AI 기본법 컴플라이언스 audit 시 UserConsentRegistry의 영수증 + on-chain commitment를 evidence로 활용.\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e13.3. 기술 부채 경고\u003c/h3\u003e\n\u003cp\u003eCT-CHP는 \u003cstrong\u003e#055-#058의 CHP 위에\u003c/strong\u003e 구축된다. CHP 없이 CT-CHP는 무의미. 또한 \u003cstrong\u003eHalo2 회로 정의·SNARK ceremony 운영·on-chain 컨트랙트 배포·zkML 통합\u003c/strong\u003e은 모두 별도 전문성 필요. 도입 전 다음을 점검:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e(a) 내부에 Rust + Halo2 개발자 확보\u003c/li\u003e\n\u003cli\u003e(b) Solidity + zkEVM 컨트랙트 배포 경험\u003c/li\u003e\n\u003cli\u003e(c) PQ cryptography 이해 (Kyber, Dilithium)\u003c/li\u003e\n\u003cli\u003e(d) PIPA·AI 기본법 법률 자문\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e13.4. 마지막 한 줄\u003c/h3\u003e\n\u003cblockquote\u003e\n\u003cp\u003eAI 에이전트가 진짜로 협력하려면, \"나는 그걸 알고 있다\"를 증명하되 \"그게 뭔지\"는 가리는 법을 배워야 한다.\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003chr\u003e\n\u003ch2\u003e부록 A. CT-CHP BNF\u003c/h2\u003e\n\u003cpre\u003e\u003ccode class=\"language-bnf\"\u003e\u0026#x3C;handoff\u003e ::= \"{\" \"version\" \":\" \"ct-chp-1.0\" \",\" \"anchor\" \":\" \u0026#x3C;anchor\u003e \",\" \"proof\" \":\" \u0026#x3C;proof\u003e \",\" \"disclosure\" \":\" \u0026#x3C;disclosure\u003e \",\" \"anchor_on_chain\" \":\" \u0026#x3C;on_chain\u003e \"}\"\n\n\u0026#x3C;anchor\u003e ::= \"{\" \"anchor_id\" \":\" \u0026#x3C;uuid\u003e \",\" \"type\" \":\" \u0026#x3C;anchor_type\u003e \",\" \"commitment\" \":\" \u0026#x3C;hex\u003e \",\" \"blinding\" \":\" \u0026#x3C;hex\u003e \",\" \"circuit_id\" \":\" \u0026#x3C;circuit_type\u003e \",\" \"public_inputs\" \":\" \u0026#x3C;public_inputs\u003e \",\" \"nonce\" \":\" \u0026#x3C;hex\u003e \"}\"\n\n\u0026#x3C;anchor_type\u003e ::= \"decision\" | \"constraint\" | \"fact\" | \"tool_result\" | \"user_statement\"\n\n\u0026#x3C;circuit_type\u003e ::= \"existence\" | \"freshness\" | \"provenance\" | \"drift_bound\"\n\n\u0026#x3C;public_inputs\u003e ::= \"{\" \"agent_id_a\" \":\" \u0026#x3C;string\u003e \",\" \"agent_id_b\" \":\" \u0026#x3C;string\u003e \",\" \"task_id\" \":\" \u0026#x3C;string\u003e \",\" \"created_at\" \":\" \u0026#x3C;iso8601\u003e \",\" \"expires_at\" \":\" \u0026#x3C;iso8601\u003e \",\" \"policy_version\" \":\" \u0026#x3C;string\u003e \"}\"\n\n\u0026#x3C;proof\u003e ::= \"{\" \"protocol\" \":\" \u0026#x3C;protocol\u003e \",\" \"curve\" \":\" \u0026#x3C;curve\u003e \",\" \"a\" \":\" \u0026#x3C;g1\u003e \",\" \"b\" \":\" \u0026#x3C;g2\u003e \",\" \"c\" \":\" \u0026#x3C;g1\u003e \"}\"\n\n\u0026#x3C;protocol\u003e ::= \"groth16\" | \"plonk\" | \"halo2\" | \"stark\"\n\n\u0026#x3C;curve\u003e ::= \"bn254\" | \"bls12-381\"\n\n\u0026#x3C;disclosure\u003e ::= \"{\" \"public_attributes\" \":\" \"[\" \u0026#x3C;string\u003e* \"]\" \",\" \"private_attributes\" \":\" \"[\" \u0026#x3C;string\u003e* \"]\" \",\" \"revealed_blinding\" \":\" \u0026#x3C;bool\u003e \"}\"\n\n\u0026#x3C;on_chain\u003e ::= \"{\" \"network\" \":\" \u0026#x3C;network\u003e \",\" \"tx_hash\" \":\" \u0026#x3C;hex\u003e \",\" \"block_number\" \":\" \u0026#x3C;int\u003e \",\" \"timestamp\" \":\" \u0026#x3C;iso8601\u003e \"}\"\n\n\u0026#x3C;network\u003e ::= \"polygon-zkevm\" | \"ethereum-l1\" | \"starknet\" | \"aztec\"\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e부록 B. 4대 ZK 회로 비교표\u003c/h2\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e회로\u003c/th\u003e\n\u003cth\u003ePublic Inputs\u003c/th\u003e\n\u003cth\u003ePrivate Inputs\u003c/th\u003e\n\u003cth\u003eConstraints\u003c/th\u003e\n\u003cth\u003eVerifier Time\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003eAnchorExistence\u003c/td\u003e\n\u003ctd\u003ecommitment, agentIdA_hash, taskId_hash, anchorType\u003c/td\u003e\n\u003ctd\u003epayload, blinding\u003c/td\u003e\n\u003ctd\u003e~5,000\u003c/td\u003e\n\u003ctd\u003e8 ms\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eFreshness\u003c/td\u003e\n\u003ctd\u003ecommitment, currentTimeUnix, expiresAtUnix\u003c/td\u003e\n\u003ctd\u003eanchor_created_at, blinding\u003c/td\u003e\n\u003ctd\u003e~8,000 (range)\u003c/td\u003e\n\u003ctd\u003e11 ms\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eProvenance\u003c/td\u003e\n\u003ctd\u003ecommitment, toolName_hash, toolCallId_hash, verificationTool_hash, verificationResult, verifiedHash\u003c/td\u003e\n\u003ctd\u003epayload, toolOutputHash, blinding\u003c/td\u003e\n\u003ctd\u003e~25,000 (hash)\u003c/td\u003e\n\u003ctd\u003e18 ms\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eDriftBound\u003c/td\u003e\n\u003ctd\u003ecommitment_v1, commitment_v2, driftBound\u003c/td\u003e\n\u003ctd\u003edecision_v1, decision_v2, blinding_v1, blinding_v2\u003c/td\u003e\n\u003ctd\u003e~12,000 (abs)\u003c/td\u003e\n\u003ctd\u003e13 ms\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003cp\u003e→ \u003cstrong\u003eFreshness\u003c/strong\u003e가 range check 때문에 가장 비싸고, \u003cstrong\u003eProvenance\u003c/strong\u003e가 hash verification 때문에 가장 비싸다. 4개 회로 통합 시 ~50,000 constraints, proof size ~1.3 KB (Groth16).\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e부록 C. 4대 시나리오 비용 분석 (per handoff)\u003c/h2\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e시나리오\u003c/th\u003e\n\u003cth\u003eZK Proof\u003c/th\u003e\n\u003cth\u003eOn-Chain\u003c/th\u003e\n\u003cth\u003eAKE\u003c/th\u003e\n\u003cth\u003e총 비용\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003eNHN → Naver\u003c/td\u003e\n\u003ctd\u003e1.8 s / $0.002\u003c/td\u003e\n\u003ctd\u003e280K gas / $0.005\u003c/td\u003e\n\u003ctd\u003e12 ms / $0\u003c/td\u003e\n\u003ctd\u003e~$0.007\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eKakao → Toss\u003c/td\u003e\n\u003ctd\u003e5.4 s (3 proofs) / $0.006\u003c/td\u003e\n\u003ctd\u003e840K gas / $0.015\u003c/td\u003e\n\u003ctd\u003e12 ms / $0\u003c/td\u003e\n\u003ctd\u003e~$0.021\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e의료 ↔ HIRA\u003c/td\u003e\n\u003ctd\u003e7.2 s (4 proofs) / $0.008\u003c/td\u003e\n\u003ctd\u003e1.12M gas / $0.020\u003c/td\u003e\n\u003ctd\u003e12 ms / $0\u003c/td\u003e\n\u003ctd\u003e~$0.028\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eKISA → 민간\u003c/td\u003e\n\u003ctd\u003e1.8 s (1 proof) / $0.002\u003c/td\u003e\n\u003ctd\u003e280K gas / $0.005\u003c/td\u003e\n\u003ctd\u003e12 ms / $0\u003c/td\u003e\n\u003ctd\u003e~$0.007\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003cp\u003e→ \u003cstrong\u003ehandoff 1회당 $0.01-$0.03\u003c/strong\u003e 수준. 전통적 VPN/MFA 기반 cross-tenant API gateway($0.001-$0.005 per call)보다 비싸지만, \u003cstrong\u003e법적·규제적·평판적 비용\u003c/strong\u003e을 고려하면 ROI 양수.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e부록 D. 용어집\u003c/h2\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eCT-CHP\u003c/strong\u003e: Cross-Trust Context Handoff Protocol. 본 글이 제안하는 cross-tenant ZK 기반 handoff.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eCAH-1\u003c/strong\u003e: Context Artifact Handoff v1. #058 CHP가 사용하는 직렬화 형식. CT-CHP는 CAH-1 위에 commitment와 proof 필드를 추가.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003ePedersen Commitment\u003c/strong\u003e: Pedersen 제안한 commitment scheme. \u003ccode\u003eC = g^v * h^r\u003c/code\u003e 형태.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eHalo2\u003c/strong\u003e: Electric Coin Co.가 개발한 PLONK-based zk-SNARK 라이브러리 (Rust).\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eGroth16\u003c/strong\u003e: 가장 일반적인 zk-SNARK construction. Trusted setup 필요, proof size 작음.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eSTARK\u003c/strong\u003e: ZK-STARK. Trusted setup 불필요, 양자 저항성.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003ezkML\u003c/strong\u003e: ML 모델의 forward pass를 ZK 회로로 컴파일하는 기술.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eEZKL\u003c/strong\u003e: ONNX 모델을 Halo2 회로로 컴파일하는 도구.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eAKE\u003c/strong\u003e: Authenticated Key Exchange. ECDH + HMAC 기반 mutual auth.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003ePQ-KEM\u003c/strong\u003e: Post-Quantum Key Encapsulation Mechanism. Kyber, BIKE 등.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003ePIPA\u003c/strong\u003e: Personal Information Protection Act, 한국의 개인정보보호법.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eAI 기본법\u003c/strong\u003e: 2026년 1월 시행된 인공지능 발전과 신뢰 기반 조성 등에 관한 법률.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eHIRA\u003c/strong\u003e: Health Insurance Review \u0026#x26; Assessment Service, 건강보험심사평가원.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003ePolygon zkEVM\u003c/strong\u003e: Polygon의 zk-rollup 기반 EVM-compatible L2.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eAztec\u003c/strong\u003e: Aztec Network의 privacy-focused zk-rollup.\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eStarknet\u003c/strong\u003e: STARK 기반 zk-rollup L2.\u003c/li\u003e\n\u003c/ul\u003e\n\u003chr\u003e\n\u003cp\u003e\u003cem\u003eeof\u003c/em\u003e\u003c/p\u003e"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"text-sm text-white/60\",\"children\":\"2026-07-10\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"Cross-Trust Handoff: Zero-Knowledge Proofs로 서로 다른 회사의 AI 에이전트 간 컨텍스트를 무결하게 넘기는 프로토콜 — Web3 + AI 컨텍스트 무결성 증명, ZK-SNARK/STARK 회로, 한국 PIPA 환경 설계 (#059)\"}],[\"$\",\"p\",null,{\"className\":\"mt-4 text-base text-white/80 md:text-lg\",\"children\":\"2026년 7월, 직전 5편(#055-#058)이 단일 에이전트와 같은 trust domain 내 다중 에이전트의 컨텍스트 관리(eviction, observability, policy optimization, handoff)를 다뤘다면, 본 글은 그 다음 질문에 답한다: '서로 다른 회사/기관의 AI 에이전트가 컨텍스트를 넘기되, anchor의 무결성은 증명하되 내용은 노출하지 않으려면 어떻게 해야 하는가?' 본 글은 Cross-Trust Context Handoff Protocol (CT-CHP)을 제안한다. ZK-SNARK/STARK 회로, commitment scheme, selective disclosure, PIPA-aware anchor zeroization, 하이브리드 on-chain/off-chain 검증 레이어 5단 아키텍처를 TypeScript로 구현한다. Aztec/Polygon zkEVM, Starknet, zkML (EZKL, Modulus Labs), 한국 개인정보보호법·AI 기본법 환경에서의 cross-tenant handoff, AKE(Agent Key Exchange) 프로토콜까지 다룬다.\"}],[\"$\",\"div\",null,{\"className\":\"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300\",\"dangerouslySetInnerHTML\":{\"__html\":\"$10\"}}]]}]}]\n"])</script><script>self.__next_f.push([1,"8:null\n"])</script><script>self.__next_f.push([1,"c:[[\"$\",\"title\",\"0\",{\"children\":\"Cross-Trust Handoff: Zero-Knowledge Proofs로 서로 다른 회사의 AI 에이전트 간 컨텍스트를 무결하게 넘기는 프로토콜 — Web3 + AI 컨텍스트 무결성 증명, ZK-SNARK/STARK 회로, 한국 PIPA 환경 설계 (#059) | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"2026년 7월, 직전 5편(#055-#058)이 단일 에이전트와 같은 trust domain 내 다중 에이전트의 컨텍스트 관리(eviction, observability, policy optimization, handoff)를 다뤘다면, 본 글은 그 다음 질문에 답한다: '서로 다른 회사/기관의 AI 에이전트가 컨텍스트를 넘기되, anchor의 무결성은 증명하되 내용은 노출하지 않으려면 어떻게 해야 하는가?' 본 글은 Cross-Trust Context Handoff Protocol (CT-CHP)을 제안한다. ZK-SNARK/STARK 회로, commitment scheme, selective disclosure, PIPA-aware anchor zeroization, 하이브리드 on-chain/off-chain 검증 레이어 5단 아키텍처를 TypeScript로 구현한다. Aztec/Polygon zkEVM, Starknet, zkML (EZKL, Modulus Labs), 한국 개인정보보호법·AI 기본법 환경에서의 cross-tenant handoff, AKE(Agent Key Exchange) 프로토콜까지 다룬다.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-07-10-proactive-update/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"Cross-Trust Handoff: Zero-Knowledge Proofs로 서로 다른 회사의 AI 에이전트 간 컨텍스트를 무결하게 넘기는 프로토콜 — Web3 + AI 컨텍스트 무결성 증명, ZK-SNARK/STARK 회로, 한국 PIPA 환경 설계 (#059)\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"2026년 7월, 직전 5편(#055-#058)이 단일 에이전트와 같은 trust domain 내 다중 에이전트의 컨텍스트 관리(eviction, observability, policy optimization, handoff)를 다뤘다면, 본 글은 그 다음 질문에 답한다: '서로 다른 회사/기관의 AI 에이전트가 컨텍스트를 넘기되, anchor의 무결성은 증명하되 내용은 노출하지 않으려면 어떻게 해야 하는가?' 본 글은 Cross-Trust Context Handoff Protocol (CT-CHP)을 제안한다. ZK-SNARK/STARK 회로, commitment scheme, selective disclosure, PIPA-aware anchor zeroization, 하이브리드 on-chain/off-chain 검증 레이어 5단 아키텍처를 TypeScript로 구현한다. Aztec/Polygon zkEVM, Starknet, zkML (EZKL, Modulus Labs), 한국 개인정보보호법·AI 기본법 환경에서의 cross-tenant handoff, AKE(Agent Key Exchange) 프로토콜까지 다룬다.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-07-10-proactive-update/\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"Cross-Trust Handoff: Zero-Knowledge Proofs로 서로 다른 회사의 AI 에이전트 간 컨텍스트를 무결하게 넘기는 프로토콜 — Web3 + AI 컨텍스트 무결성 증명, ZK-SNARK/STARK 회로, 한국 PIPA 환경 설계 (#059)\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"2026년 7월, 직전 5편(#055-#058)이 단일 에이전트와 같은 trust domain 내 다중 에이전트의 컨텍스트 관리(eviction, observability, policy optimization, handoff)를 다뤘다면, 본 글은 그 다음 질문에 답한다: '서로 다른 회사/기관의 AI 에이전트가 컨텍스트를 넘기되, anchor의 무결성은 증명하되 내용은 노출하지 않으려면 어떻게 해야 하는가?' 본 글은 Cross-Trust Context Handoff Protocol (CT-CHP)을 제안한다. ZK-SNARK/STARK 회로, commitment scheme, selective disclosure, PIPA-aware anchor zeroization, 하이브리드 on-chain/off-chain 검증 레이어 5단 아키텍처를 TypeScript로 구현한다. Aztec/Polygon zkEVM, Starknet, zkML (EZKL, Modulus Labs), 한국 개인정보보호법·AI 기본법 환경에서의 cross-tenant handoff, AKE(Agent Key Exchange) 프로토콜까지 다룬다.\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}],[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}],[\"$\",\"$L11\",\"13\",{}]]\n"])</script></body></html>

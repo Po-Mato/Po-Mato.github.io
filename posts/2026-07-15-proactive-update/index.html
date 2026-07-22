@@ -1,0 +1,791 @@
+<!DOCTYPE html><!--I0h1m__4yn4ihPv3zSN7e--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/b848662595cda15b.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/329e63eb984ada35.js" async=""></script><meta name="next-size-adjust" content=""/><title>MCP 2026 Stateless Revolution: initialize 핸드셰이크와 Session이 사라진 프로토콜의 설계 철학 (#064) | Mato Po Tech Blog</title><meta name="description" content="2026년 7월 28일, MCP(Model Context Protocol)가 가장 큰 폭의 개정을 맞는다. initialize/initialized 핸드셰이크와 Mcp-Session-Id가 사라지고, 모든 요청은 self-contained HTTP request로 독립 실행된다. 이 변경은 단순한 Transport 개선이 아니라 &quot;프로토콜 레이어의 session 상태를 없애고, 상태 관리를 데이터 모델 레이어로 이동&quot;하는 설계 철학의 전환이다. 본 글은: (1) 2025-11-25 spec vs 2026-07-28 RC의 Before/After 코드 비교, (2) Explicit Handle Pattern — basket_id를 tool argument로 주고받는 새로운 session 관리 방식, (3) InputRequiredResult — SSE 없이 elicitation을 구현하는 stateless multi-round-trip 메커니즘, (4) W3C Trace Context 기반 분산 추적과 ttlMs/cacheScope 캐싱 전략, (5) Breaking Changes Migration Guide (initialize → server/discover, Session-Id → explicit handle, SSE → Streamable HTTP), (6) OAuth 2.1 + PKCE 의무화, Tasks Extension 정식 채택, (7) #059 Cross-Trust Handoff와의 연결 — protocol session 제거가 cross-trust scenario의 session migration 문제를 Data Model Layer로 위임하는 구조적 함의를 다룬다. TypeScript 코드 예시 (ExplicitHandleManager, ElicitationClient, TracePropagationMiddleware)와 실제 배포 구성(Docker Compose + round-robin Nginx)까지 포함한다."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-07-15-proactive-update/"/><meta property="og:title" content="MCP 2026 Stateless Revolution: initialize 핸드셰이크와 Session이 사라진 프로토콜의 설계 철학 (#064)"/><meta property="og:description" content="2026년 7월 28일, MCP(Model Context Protocol)가 가장 큰 폭의 개정을 맞는다. initialize/initialized 핸드셰이크와 Mcp-Session-Id가 사라지고, 모든 요청은 self-contained HTTP request로 독립 실행된다. 이 변경은 단순한 Transport 개선이 아니라 &quot;프로토콜 레이어의 session 상태를 없애고, 상태 관리를 데이터 모델 레이어로 이동&quot;하는 설계 철학의 전환이다. 본 글은: (1) 2025-11-25 spec vs 2026-07-28 RC의 Before/After 코드 비교, (2) Explicit Handle Pattern — basket_id를 tool argument로 주고받는 새로운 session 관리 방식, (3) InputRequiredResult — SSE 없이 elicitation을 구현하는 stateless multi-round-trip 메커니즘, (4) W3C Trace Context 기반 분산 추적과 ttlMs/cacheScope 캐싱 전략, (5) Breaking Changes Migration Guide (initialize → server/discover, Session-Id → explicit handle, SSE → Streamable HTTP), (6) OAuth 2.1 + PKCE 의무화, Tasks Extension 정식 채택, (7) #059 Cross-Trust Handoff와의 연결 — protocol session 제거가 cross-trust scenario의 session migration 문제를 Data Model Layer로 위임하는 구조적 함의를 다룬다. TypeScript 코드 예시 (ExplicitHandleManager, ElicitationClient, TracePropagationMiddleware)와 실제 배포 구성(Docker Compose + round-robin Nginx)까지 포함한다."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-07-15-proactive-update/"/><meta property="og:image" content="https://po-mato.github.io/milkyway.jpg"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="MCP 2026 Stateless Revolution: initialize 핸드셰이크와 Session이 사라진 프로토콜의 설계 철학 (#064)"/><meta name="twitter:description" content="2026년 7월 28일, MCP(Model Context Protocol)가 가장 큰 폭의 개정을 맞는다. initialize/initialized 핸드셰이크와 Mcp-Session-Id가 사라지고, 모든 요청은 self-contained HTTP request로 독립 실행된다. 이 변경은 단순한 Transport 개선이 아니라 &quot;프로토콜 레이어의 session 상태를 없애고, 상태 관리를 데이터 모델 레이어로 이동&quot;하는 설계 철학의 전환이다. 본 글은: (1) 2025-11-25 spec vs 2026-07-28 RC의 Before/After 코드 비교, (2) Explicit Handle Pattern — basket_id를 tool argument로 주고받는 새로운 session 관리 방식, (3) InputRequiredResult — SSE 없이 elicitation을 구현하는 stateless multi-round-trip 메커니즘, (4) W3C Trace Context 기반 분산 추적과 ttlMs/cacheScope 캐싱 전략, (5) Breaking Changes Migration Guide (initialize → server/discover, Session-Id → explicit handle, SSE → Streamable HTTP), (6) OAuth 2.1 + PKCE 의무화, Tasks Extension 정식 채택, (7) #059 Cross-Trust Handoff와의 연결 — protocol session 제거가 cross-trust scenario의 session migration 문제를 Data Model Layer로 위임하는 구조적 함의를 다룬다. TypeScript 코드 예시 (ExplicitHandleManager, ElicitationClient, TracePropagationMiddleware)와 실제 배포 구성(Docker Compose + round-robin Nginx)까지 포함한다."/><meta name="twitter:image" content="https://po-mato.github.io/milkyway.jpg"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><div class="text-sm text-white/60">2026-07-15</div><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">MCP 2026 Stateless Revolution: initialize 핸드셰이크와 Session이 사라진 프로토콜의 설계 철학 (#064)</h1><p class="mt-4 text-base text-white/80 md:text-lg">2026년 7월 28일, MCP(Model Context Protocol)가 가장 큰 폭의 개정을 맞는다. initialize/initialized 핸드셰이크와 Mcp-Session-Id가 사라지고, 모든 요청은 self-contained HTTP request로 독립 실행된다. 이 변경은 단순한 Transport 개선이 아니라 &quot;프로토콜 레이어의 session 상태를 없애고, 상태 관리를 데이터 모델 레이어로 이동&quot;하는 설계 철학의 전환이다. 본 글은: (1) 2025-11-25 spec vs 2026-07-28 RC의 Before/After 코드 비교, (2) Explicit Handle Pattern — basket_id를 tool argument로 주고받는 새로운 session 관리 방식, (3) InputRequiredResult — SSE 없이 elicitation을 구현하는 stateless multi-round-trip 메커니즘, (4) W3C Trace Context 기반 분산 추적과 ttlMs/cacheScope 캐싱 전략, (5) Breaking Changes Migration Guide (initialize → server/discover, Session-Id → explicit handle, SSE → Streamable HTTP), (6) OAuth 2.1 + PKCE 의무화, Tasks Extension 정식 채택, (7) #059 Cross-Trust Handoff와의 연결 — protocol session 제거가 cross-trust scenario의 session migration 문제를 Data Model Layer로 위임하는 구조적 함의를 다룬다. TypeScript 코드 예시 (ExplicitHandleManager, ElicitationClient, TracePropagationMiddleware)와 실제 배포 구성(Docker Compose + round-robin Nginx)까지 포함한다.</p><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><h2>1. 서문: 프로토콜 레이어에서 Session이 사라진다는 것의 의미</h2>
+<p>지난 5주 동안 이 블로그는 AI Agent 생태계의 인프라 레이어를 탐구해왔다:</p>
+<ul>
+<li><strong>#055 Context Engineering</strong>: MCP session에 기반한 context window 관리와 state 유지 전략</li>
+<li><strong>#056 Context Observability</strong>: 어떤 context가 왜 evict되었는지 추적하는 observability layer</li>
+<li><strong>#059 Cross-Trust Handoff</strong>: 서로 다른 trust domain 간 agent session의 전달 문제와 zkML 증명</li>
+</ul>
+<p>이 세 글의 공통 전제는 **"MCP 프로토콜 레이어에 session이 존재한다"**는 것이었다. Client는 initialize 핸드셰이크로 server와 session을 맺고, 모든 후속 요청에 Mcp-Session-Id를 실어 보내며, server는 이 session ID로 client의 state를 추적했다.</p>
+<p><strong>2026년 7월 28일, 그 전제가 사라진다.</strong></p>
+<p>MCP 2026-07-28 Release Candidate는 initialize/initialized 핸드셰이크를 제거하고, Mcp-Session-Id 헤더를 폐기하며, persistent SSE 연결을 self-contained HTTP request로 대체한다. <strong>프로토콜 레이어가 완전히 stateless가 되는 것이다.</strong></p>
+<p>이것은 단순한 Transport 업그레이드가 아니다. MCP의 설계 철학이 <strong>"연결(connection) 기반"에서 "메시지(message) 기반"으로 전환</strong>되었음을 의미한다.</p>
+<p>이 글에서는 2026-07-28 RC의 변경사항을 코드 레벨에서 해부하고, 이 변경이 Agent 배포 아키텍처와 Cross-Trust 시나리오에 주는 함의를 분석한다.</p>
+<hr>
+<h2>2. 무슨 일이 일어났는가: 변경사항의 전모</h2>
+<p>2026-07-28 RC는 6개의 SEP(Specification Enhancement Proposal)가 협력하여 하나의 Stateless Protocol을 완성한다.</p>
+<h3>2.1 제거된 것</h3>
+<table>
+<thead>
+<tr>
+<th>구성요소</th>
+<th>SEP</th>
+<th>변경</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>initialize/initialized 핸드셰이크</td>
+<td>SEP-2575</td>
+<td>제거. protocol version, capabilities는 _meta에 실어 매 요청마다 전송</td>
+</tr>
+<tr>
+<td>Mcp-Session-Id 헤더</td>
+<td>SEP-2567</td>
+<td>제거. session state는 data model layer로 이동</td>
+</tr>
+<tr>
+<td>Persistent SSE 연결</td>
+<td>SEP-2260</td>
+<td>제거. server-initiated request는 client request 처리 중에만 허용</td>
+</tr>
+<tr>
+<td>단일 transport 강제</td>
+<td>—</td>
+<td>Streamable HTTP가 baseline, transport 선택은 application 자유</td>
+</tr>
+</tbody>
+</table>
+<h3>2.2 추가된 것</h3>
+<table>
+<thead>
+<tr>
+<th>구성요소</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MCP-Protocol-Version 헤더</td>
+<td>매 요청마다 protocol version 명시</td>
+</tr>
+<tr>
+<td>Mcp-Method 헤더</td>
+<td>tools/call, resources/read 등 method를 header로 노출 → LB/Gateway가 body 검사 없이 routing 가능</td>
+</tr>
+<tr>
+<td>Mcp-Name 헤더</td>
+<td>tool/resource name을 header로 노출</td>
+</tr>
+<tr>
+<td>_meta field</td>
+<td>clientInfo, capabilities, trace context를 매 request body에 포함</td>
+</tr>
+<tr>
+<td>server/discover method</td>
+<td>기존 initialize가 하던 server capabilities 조회 전용 method</td>
+</tr>
+<tr>
+<td>InputRequiredResult</td>
+<td>SSE 없이 elicitation을 구현하는 새로운 response type</td>
+</tr>
+<tr>
+<td>ttlMs + cacheScope</td>
+<td>list/resource read 응답의 캐싱 정책</td>
+</tr>
+</tbody>
+</table>
+<h3>2.3 실질적 효과</h3>
+<p><strong>Before (2025-11-25)</strong>: MCP server를 horizontal scale-out하려면 sticky session, shared session store, deep packet inspection이 필요했다. SSE 연결이 끊어지면 session이 소멸하고, client는 처음부터 다시 initialize해야 했다.</p>
+<p><strong>After (2026-07-28)</strong>: MCP server는 plain round-robin load balancer 뒤에서 동작한다. 어떤 instance든 어떤 request든 처리할 수 있다. Mcp-Method header로 traffic routing이 가능하고, tools/list 응답은 ttlMs만큼 client-side caching된다.</p>
+<hr>
+<h2>3. Before and After: 코드 레벨 비교</h2>
+<h3>3.1 Tool Call: 2025-11-25 Spec</h3>
+<pre><code class="language-typescript">// === Phase 1: Initialize (Session Establishment) ===
+// Client → Server
+POST /mcp HTTP/1.1
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2025-11-25",
+    "capabilities": { "roots": { "listChanged": true } },
+    "clientInfo": { "name": "my-agent", "version": "1.0.0" }
+  }
+}
+
+// Server → Client (Mcp-Session-Id 발급)
+HTTP/1.1 200 OK
+Mcp-Session-Id: 1868a90c-3a3f-4f5b-9c7d-1e2f3a4b5c6d
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "protocolVersion": "2025-11-25",
+    "capabilities": {
+      "tools": { "listChanged": true }
+    },
+    "serverInfo": { "name": "search-server", "version": "2.0.0" }
+  }
+}
+
+// === Phase 2: Tool Call (Session-ID 의존) ===
+// Client → Server (반드시 같은 instance로 routing되어야 함)
+POST /mcp HTTP/1.1
+Mcp-Session-Id: 1868a90c-3a3f-4f5b-9c7d-1e2f3a4b5c6d
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/call",
+  "params": {
+    "name": "search",
+    "arguments": { "q": "MCP stateless design pattern" }
+  }
+}
+</code></pre>
+<h3>3.2 Tool Call: 2026-07-28 Spec</h3>
+<pre><code class="language-typescript">// === 단일 self-contained request ===
+// 어떤 server instance든 처리 가능
+POST /mcp HTTP/1.1
+MCP-Protocol-Version: 2026-07-28
+Mcp-Method: tools/call
+Mcp-Name: search
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "search",
+    "arguments": { "q": "MCP stateless design pattern" },
+    "_meta": {
+      "io.modelcontextprotocol/clientInfo": {
+        "name": "my-agent",
+        "version": "1.0.0"
+      },
+      "io.modelcontextprotocol/capabilities": {
+        "roots": { "listChanged": true }
+      },
+      "traceparent": "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"
+    }
+  }
+}
+</code></pre>
+<p>핵심 차이:</p>
+<ol>
+<li><strong>핸드셰이크 불필요</strong>: protocol version, client info, capabilities가 _meta에 실려 매 요청마다 전송</li>
+<li><strong>Session-ID 불필요</strong>: server는 요청을 받을 때마다 독립적으로 처리</li>
+<li><strong>LB-friendly</strong>: Mcp-Method, Mcp-Name 헤더로 body 검사 없이 routing 가능</li>
+<li><strong>Trace context 내장</strong>: W3C Trace Context가 _meta에 포함되어 end-to-end tracing 가능</li>
+</ol>
+<h3>3.3 Server Capabilities 조회: initialize → server/discover</h3>
+<p>기존 initialize가 client와 server의 capabilities를 동시에 교환하던 것에서, <strong>server/discover</strong>가 server capabilities만 조회하는 전용 method로 분리되었다.</p>
+<pre><code class="language-typescript">// 2026-07-28: Server Capabilities 조회
+POST /mcp HTTP/1.1
+MCP-Protocol-Version: 2026-07-28
+Mcp-Method: server/discover
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "server/discover",
+  "params": {
+    "_meta": {
+      "io.modelcontextprotocol/clientInfo": {
+        "name": "my-agent", "version": "1.0.0"
+      }
+    }
+  }
+}
+
+// Response
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "protocolVersion": "2026-07-28",
+    "capabilities": {
+      "tools": {
+        "listChanged": true,
+        "ttlMs": 60000
+      },
+      "resources": {
+        "subscribe": true,
+        "ttlMs": 300000
+      },
+      "tasks": {
+        "supported": true,
+        "maxConcurrent": 10
+      }
+    },
+    "serverInfo": {
+      "name": "search-server",
+      "version": "3.0.0"
+    }
+  }
+}
+</code></pre>
+<p>clientInfo가 _meta에 포함되므로, server는 누가 요청했는지 알 수 있다. <strong>연결 기반 인증이 아니라 요청 기반 인증</strong>으로 전환된 것이다.</p>
+<hr>
+<h2>4. Explicit Handle Pattern: Session의 데이터 모델 레이어 이동</h2>
+<p>가장 오해하기 쉬운 지점: <strong>"MCP가 stateless가 되었다 = application도 stateless여야 한다"는 것은 아니다.</strong></p>
+<p>프로토콜 레이어가 session을 관리하지 않을 뿐, application은 필요하다면 자신의 데이터 모델 레이어에서 state를 관리할 수 있다. 그리고 MCP 팀이 권장하는 방식이 바로 <strong>Explicit Handle Pattern</strong>이다.</p>
+<h3>4.1 Explicit Handle Pattern의 원리</h3>
+<p>Server는 tool call의 결과로 <strong>opaque handle</strong>(basket_id, workflow_run_id, session_token 등)을 발급하고, model(client)은 이 handle을 이후 tool call의 argument로 다시 전달한다.</p>
+<pre><code class="language-typescript">// === TypeScript: ExplicitHandleManager ===
+interface SessionState {
+  basketId: string;
+  items: BasketItem[];
+  createdAt: Date;
+  expiresAt: Date;
+}
+
+class ExplicitHandleManager {
+  private store: Map&#x3C;string, SessionState> = new Map();
+
+  /**
+   * tool call 결과로 stateful handle 발급
+   * - handle 자체는 opaque token
+   * - server만이 handle → state 매핑을 알고 있음
+   */
+  createBasket(toolName: string, args: Record&#x3C;string, unknown>): {
+    resultType: "text";
+    text: string;
+    _handle: string;
+  } {
+    const basket: SessionState = {
+      basketId: crypto.randomUUID(),
+      items: [],
+      createdAt: new Date(),
+      expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30분 TTL
+    };
+    this.store.set(basket.basketId, basket);
+
+    return {
+      resultType: "text",
+      text: `Basket created: ${basket.basketId}`,
+      // Handle을 결과의 일부로 반환
+      _handle: basket.basketId,
+    };
+  }
+
+  /**
+   * model이 전달한 handle로 stateful 작업 수행
+   * - model은 handle의 의미를 알 필요 없음
+   * - server가 handle → state 매핑을 수행
+   */
+  addToBasket(basketId: string, item: string): {
+    resultType: "text";
+    text: string;
+  } {
+    const basket = this.store.get(basketId);
+
+    if (!basket || basket.expiresAt &#x3C; new Date()) {
+      return {
+        resultType: "text",
+        text: "Error: Basket not found or expired. Please create a new basket.",
+      };
+    }
+
+    basket.items.push({ id: crypto.randomUUID(), name: item, addedAt: new Date() });
+    return {
+      resultType: "text",
+      text: `Added "${item}" to basket ${basketId}. Total items: ${basket.items.length}`,
+    };
+  }
+}
+</code></pre>
+<h3>4.2 Protocol-Level Session vs Explicit Handle: 왜 Explicit Handle이 더 강력한가</h3>
+<p>MCP 팀의 공식 문서는 이렇게 말한다:</p>
+<blockquote>
+<p>"The model can compose handles across tools, reason about them, and hand them off between steps in ways that externally managed session state, hidden in transport metadata, never really allowed."</p>
+</blockquote>
+<p>즉, protocol-level session은 transport metadata로 감춰져 있어 <strong>model이 session의 존재를 인지하지 못했다</strong>. 반면 explicit handle은:</p>
+<ol>
+<li><strong>Model이 handle을 직접 보고 추론할 수 있다</strong>: "이 basket_id를 가진 장바구니에 물건을 3개 넣었으니, 이제 결제 tool을 호출하자"</li>
+<li><strong>Handle을 cross-tool로 전달할 수 있다</strong>: search tool이 반환한 result_id를, summarize tool에 전달</li>
+<li><strong>Handle을 cross-session으로 전달할 수 있다</strong>: 한 세션에서 생성된 handle을 다른 세션의 model에게 전달</li>
+<li><strong>Handle을 로깅하고 추적할 수 있다</strong>: observability system이 handle을 key로 session state 변화를 추적</li>
+</ol>
+<pre><code class="language-typescript">// === Model의 Handle Reasoning 예시 ===
+// Model이 handle을 tool call 간에 추론하는 패턴
+const THREAD: Message[] = [
+  { role: "user", content: "커피 원두 2kg를 장바구니에 담아줘" },
+  // Model → Server: createBasket()
+  { role: "assistant", content: "장바구니를 생성했습니다.", tool_calls: [
+    {
+      id: "call_1",
+      type: "function",
+      function: {
+        name: "create_basket",
+        arguments: "{}"
+      }
+    }
+  ]},
+  // Server Response: handle 반환
+  { role: "tool", content: '{"resultType":"text","text":"Basket created: basket_abc123","_handle":"basket_abc123"}', tool_call_id: "call_1" },
+  // Model이 handle을 보고 addToBasket 호출 결정
+  { role: "assistant", content: "장바구니(basket_abc123)에 커피 원두 2kg를 추가하겠습니다.", tool_calls: [
+    {
+      id: "call_2",
+      type: "function",
+      function: {
+        name: "add_to_basket",
+        arguments: '{"basketId":"basket_abc123","item":"커피 원두 2kg"}'
+      }
+    }
+  ]}
+];
+</code></pre>
+<h3>4.3 Stateless Elicitation: InputRequiredResult</h3>
+<p>SSE persistent connection이 사라지면서, <strong>server가 client에게 추가 입력을 요청하는 방법</strong>도 바뀌었다. 2025-11-25에서는 SSE stream을 열어두고 server가 임의로 event를 push할 수 있었다. 2026-07-28에서는 <strong>Multi Round-Trip Request</strong> 패턴으로 대체된다.</p>
+<pre><code class="language-typescript">// === TypeScript: ElicitationClient 예시 ===
+
+interface InputRequiredResult {
+  resultType: "inputRequired";
+  inputRequests: Record&#x3C;string, InputRequest>;
+  requestState: string; // opaque token, server가 resume에 필요한 모든 정보를 인코딩
+}
+
+interface InputRequest {
+  type: "elicitation";
+  message: string;
+  schema: JSONSchema;
+}
+
+class ElicitationClient {
+  /**
+   * Server가 inputRequired를 반환하면,
+   * client가 입력을 모아서 다시 같은 요청을 re-issue
+   */
+  async handleElicitation(
+    originalRequest: JSONRPCRequest,
+    inputRequired: InputRequiredResult
+  ): Promise&#x3C;JSONRPCResponse> {
+    // Step 1: inputRequests를 사용자/agent에게 표시
+    const inputResponses: Record&#x3C;string, unknown> = {};
+
+    for (const [key, request] of Object.entries(inputRequired.inputRequests)) {
+      if (request.type === "elicitation") {
+        // User 또는 upstream agent에게 입력 요청
+        inputResponses[key] = await this.promptUser(request.message, request.schema);
+      }
+    }
+
+    // Step 2: 같은 method에 inputResponses + requestState를 실어 재전송
+    const retryRequest: JSONRPCRequest = {
+      ...originalRequest,
+      params: {
+        ...originalRequest.params,
+        inputResponses,
+        requestState: inputRequired.requestState,
+      },
+    };
+
+    // Step 3: 어떤 server instance든 처리 가능
+    // (requestState에 모든 resume 정보가 들어있음)
+    return await this.transport.send(retryRequest);
+  }
+
+  private async promptUser(message: string, schema: JSONSchema): Promise&#x3C;unknown> {
+    // 실제 구현: 사용자에게 dialog 표시 또는 upstream agent 호출
+    console.log(`[Elicitation Required] ${message}`);
+    return schema.type === "boolean" ? true : prompt(message);
+  }
+}
+</code></pre>
+<p><strong>requestState</strong>가 핵심이다. 이 opaque token은 server가 요청을 resume하는 데 필요한 모든 state를 인코딩한다 (base64 encoded JSON, signed JWT, 또는 encrypted blob). Client는 token의 내용을 알 필요 없이, 다음 요청에 그대로 echo하기만 하면 된다.</p>
+<hr>
+<h2>5. 인프라 변화: 배포와 운영</h2>
+<p>Stateless protocol의 가장 실질적인 이점은 <strong>배포 인프라의 단순화</strong>다.</p>
+<h3>5.1 Load Balancing: Sticky Session → Round-Robin</h3>
+<pre><code class="language-yaml"># === Docker Compose: Stateless MCP Server ===
+version: "3.8"
+services:
+  mcp-server:
+    image: my-mcp-server:3.0.0
+    deploy:
+      replicas: 5
+      # sticky session 불필요!
+    environment:
+      - MCP_PROTOCOL_VERSION=2026-07-28
+      - DATA_STORE_URL=redis://redis:6379
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8080:80"
+
+  redis:
+    image: redis:7-alpine
+    # explicit handle의 state store로 사용
+
+# nginx.conf — plain round-robin
+# upstream mcp_servers {
+#   server mcp-server:3000;
+#   server mcp-server:3001;
+#   server mcp-server:3002;
+#   # no ip_hash, no sticky!
+# }
+</code></pre>
+<h3>5.2 Caching: ttlMs + cacheScope</h3>
+<pre><code class="language-typescript">// === Server: tools/list 응답에 cache policy 포함 ===
+server.setRequestHandler(ListToolsRequestSchema, async () => ({
+  tools: [
+    {
+      name: "search",
+      description: "Search the web",
+      inputSchema: { type: "object", properties: { q: { type: "string" } } },
+    }
+  ],
+  // client는 60초 동안 이 응답을 cache 가능
+  // cacheScope: "global" → 모든 user가 동일한 응답 공유 가능
+  _meta: {
+    ttlMs: 60000,
+    cacheScope: "global",
+  }
+}));
+
+// === Client: Cache-Aware Client ===
+class CacheAwareMCPClient {
+  private toolListCache: { tools: Tool[]; expiresAt: number } | null = null;
+
+  async listTools(): Promise&#x3C;Tool[]> {
+    const now = Date.now();
+
+    // ttlMs가 cache hit을 결정
+    if (this.toolListCache &#x26;&#x26; this.toolListCache.expiresAt > now) {
+      return this.toolListCache.tools;
+    }
+
+    const response = await this.sendRequest("tools/list", {});
+    const ttlMs = response._meta?.ttlMs ?? 0;
+
+    if (ttlMs > 0) {
+      this.toolListCache = {
+        tools: response.tools,
+        expiresAt: now + ttlMs,
+      };
+    }
+
+    return response.tools;
+  }
+}
+</code></pre>
+<h3>5.3 Distributed Tracing: W3C Trace Context</h3>
+<p>2026-07-28 RC에서 W3C Trace Context의 key name이 spec에 공식 문서화되었다. <code>traceparent</code>, <code>tracestate</code>, <code>baggage</code>가 <code>_meta</code> 아래 고정 key로 지정된다.</p>
+<pre><code class="language-typescript">// === TypeScript: Trace Context Propagation Middleware ===
+class TracePropagationMiddleware {
+  private tracer: opentelemetry.Tracer;
+
+  /**
+   * MCP request의 _meta에 trace context를 주입
+   * Host application → Client SDK → MCP Server → Downstream API
+   * 전체가 하나의 span tree로 연결됨
+   */
+  injectTraceContext(params: Record&#x3C;string, unknown>): Record&#x3C;string, unknown> {
+    const span = opentelemetry.trace.getActiveSpan();
+    if (!span) return params;
+
+    const traceContext = span.spanContext();
+
+    return {
+      ...params,
+      _meta: {
+        ...(params._meta as Record&#x3C;string, unknown>),
+        // W3C traceparent: version-traceId-spanId-traceFlags
+        traceparent: `00-${traceContext.traceId}-${traceContext.spanId}-${traceContext.traceFlags}`,
+        // tracestate: vendor-specific trace data
+        tracestate: `mcp=tool_call,otel=prod`,
+        // baggage: propagation key-value pairs
+        baggage: `user_id=sjlee,request_id=req_abc123`,
+      },
+    };
+  }
+}
+</code></pre>
+<p>이것의 실질적 의미: <strong>MCP 호출 하나가 Host Application → Agent → MCP Client SDK → MCP Server → Downstream Database로 이어지는 전체 호출 체인이 하나의 OpenTelemetry trace로 연결된다.</strong> 문제가 발생했을 때, "어느 tool call에서 latency spike가 발생했는지"를 단일 trace로 추적할 수 있다.</p>
+<hr>
+<h2>6. Breaking Changes Migration Guide</h2>
+<p>2026-07-28은 <strong>breaking changes를 포함하는 최대 규모의 개정</strong>이다. Early adopters는 7월 28일까지 아래 3가지 migration을 완료해야 한다.</p>
+<h3>6.1 Migration 1: initialize → server/discover</h3>
+<pre><code class="language-typescript">// === Before (2025-11-25) ===
+const client = new MCPClient({
+  transport: new StreamableHTTPTransport("https://mcp.example.com/mcp"),
+});
+
+await client.initialize(); // Handshake + Session Establishment
+
+// === After (2026-07-28) ===
+const client = new MCPClient({
+  transport: new StreamableHTTPTransport("https://mcp.example.com/mcp"),
+  protocolVersion: "2026-07-28",
+});
+
+// initialize 대신 server/discover 호출 (필요시)
+const serverCaps = await client.discover();
+// Server capabilities 조회 후 결정:
+// - tools/list: 캐싱 가능 (ttlMs 확인)
+// - tool call: 바로 가능
+</code></pre>
+<h3>6.2 Migration 2: Mcp-Session-Id → Explicit Handle</h3>
+<pre><code class="language-typescript">// === Before (2025-11-25): Session ID 기반 ===
+class SessionBasedServer {
+  private sessions: Map&#x3C;string, SessionState> = new Map();
+
+  async handleInitialize(sessionId: string): Promise&#x3C;void> {
+    this.sessions.set(sessionId, { context: [], createdAt: new Date() });
+  }
+
+  async handleToolCall(sessionId: string, tool: string, args: unknown): Promise&#x3C;Result> {
+    const session = this.sessions.get(sessionId);
+    if (!session) throw new Error("Session not found");
+    // session context 사용...
+  }
+}
+
+// === After (2026-07-28): Explicit Handle 기반 ===
+class ExplicitHandleServer {
+  private stores: Map&#x3C;string, DataStore> = new Map();
+
+  async handleToolCall(tool: string, args: Record&#x3C;string, unknown>): Promise&#x3C;Result> {
+    // Handle은 tool argument로 직접 전달
+    const handle = args._handle as string | undefined;
+
+    // Handle이 없으면 stateless operation
+    if (!handle) {
+      return this.executeStateless(tool, args);
+    }
+
+    // Handle이 있으면 stateful operation
+    const store = await this.getStore(handle);
+    return this.executeStateful(tool, args, store);
+  }
+}
+</code></pre>
+<h3>6.3 Migration 3: SSE → Streamable HTTP</h3>
+<pre><code class="language-typescript">// === Before (2025-11-25): SSE Transport ===
+// client는 SSE stream을 열어두고 server push를 기다림
+const sseTransport = new SSEClientTransport(
+  new URL("https://mcp.example.com/mcp/sse")
+);
+await sseTransport.start();
+sseTransport.onmessage = (msg) => {
+  if (msg.type === "resource_list_changed") {
+    // SSE stream을 통한 push notification
+  }
+};
+
+// === After (2026-07-28): Streamable HTTP ===
+// 모든 통신은 요청-응답 기반
+// 변경 알림은 listChanged subscription으로 대체
+const transport = new StreamableHTTPTransport(
+  new URL("https://mcp.example.com/mcp"),
+  { protocolVersion: "2026-07-28" }
+);
+
+// 변경 사항은 polling + ttlMs 기반 캐시 무효화로 감지
+// 또는 subscribe method로 변경 알림 구독 (SSE 불필요)
+await transport.subscribe("resource_list_changed");
+</code></pre>
+<hr>
+<h2>7. 확장: Tasks Extension과 OAuth 2.1</h2>
+<p>2026-07-28 RC는 stateless core 외에도 몇 가지 중요한 확장을 포함한다.</p>
+<h3>7.1 Tasks Extension: 장기 실행 작업의 공식 lifecycle</h3>
+<p>Tasks extension이 실험적(experimental)에서 **정식 확장(formal extension)**으로 승격되었다. Clean lifecycle을 제공한다:</p>
+<pre><code class="language-typescript">// === Tasks Lifecycle ===
+// 1. tasks/send: 작업 제출 (즉시 taskId 반환)
+POST /mcp HTTP/1.1
+Mcp-Method: tasks/send
+Content-Type: application/json
+
+{
+  "method": "tasks/send",
+  "params": {
+    "uri": "task://long-running-analysis",
+    "input": {
+      "data": "...",
+      "parameters": { "depth": "full" }
+    }
+  }
+}
+
+// 2. tasks/get: 진행 상태 확인
+POST /mcp HTTP/1.1
+Mcp-Method: tasks/get
+
+{
+  "method": "tasks/get",
+  "params": {
+    "id": "task_analysis_001"
+  }
+}
+
+// 3. tasks/update: 작업 업데이트
+{
+  "method": "tasks/update",
+  "params": {
+    "id": "task_analysis_001",
+    "input": { "priority": "high" }
+  }
+}
+
+// 4. tasks/cancel: 작업 취소
+{
+  "method": "tasks/cancel",
+  "params": {
+    "id": "task_analysis_001",
+    "reason": "user requested cancellation"
+  }
+}
+</code></pre>
+<p>Tasks Extension은 <strong>stateless protocol 위에서 stateful workflow를 실행할 수 있는 표준화된 방법</strong>을 제공한다. Session이 protocol layer에서 data model layer로 이동하면서, long-running 작업의 lifecycle도 명시적인 API 형태로 재정의된 것이다.</p>
+<h3>7.2 OAuth 2.1 + PKCE 의무화</h3>
+<p>모든 remote MCP server는 OAuth 2.1 with PKCE를 <strong>의무적으로</strong> 구현해야 한다. RFC 8707 Resource Indicators도 필수로, token replay attack을 방지한다.</p>
+<pre><code class="language-typescript">// === OAuth 2.1 + PKCE Authorization Flow ===
+// 1. Client: code_verifier와 code_challenge 생성
+const codeVerifier = crypto.randomUUID();
+const codeChallenge = await crypto.subtle.digest("SHA-256",
+  new TextEncoder().encode(codeVerifier)
+).then(buf => btoa(String.fromCharCode(...new Uint8Array(buf))));
+
+// 2. Authorization Request with Resource Indicator
+const authUrl = `https://auth.mcp-server.com/authorize?` +
+  `response_type=code&#x26;` +
+  `client_id=${clientId}&#x26;` +
+  `code_challenge=${codeChallenge}&#x26;` +
+  `code_challenge_method=S256&#x26;` +
+  `resource=https://mcp.example.com/mcp`;  // RFC 8707: token-target binding
+
+// 3. Token Request with code_verifier
+const tokenResponse = await fetch("https://auth.mcp-server.com/token", {
+  method: "POST",
+  headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  body: new URLSearchParams({
+    grant_type: "authorization_code",
+    code: authorizationCode,
+    code_verifier: codeVerifier,
+    client_id: clientId,
+    resource: "https://mcp.example.com/mcp",
+  }),
+});
+</code></pre>
+<hr>
+<h2>8. 이 변경이 Agent 생태계에 주는 의미: #059 Cross-Trust Handoff와의 연결</h2>
+<p>이 변경이 Agent 생태계, 특히 <strong>Cross-Trust Handoff</strong> 시나리오에 주는 함의를 분석하는 것이 이 글의 진짜 목적이다.</p>
+<h3>8.1 Protocol Session이 없어지면 Cross-Trust는 더 쉬워질까?</h3>
+<p>#059에서 다룬 근본 문제는 다음과 같다: Agent A(은행)가 Agent B(보험사)에게 handoff할 때, Agent A의 session context를 어떻게 Agent B에게 안전하게 전달할 것인가?</p>
+<p>2025-11-25 spec에서는 이것이 구조적으로 어려웠다. Session ID는 Server A가 발급했고, Server B는 이 Session ID를 알지 못했다. Session state는 Server A의 메모리에만 존재했다. Cross-trust handoff를 위해서는 <strong>Session Migration</strong>이라는 별도의 메커니즘이 필요했다.</p>
+<p><strong>2026-07-28 spec에서는 이 문제의 성격이 바뀐다.</strong></p>
+<ol>
+<li>
+<p><strong>Protocol layer의 session이 사라졌다</strong>: Server A가 Server B에게 "우리의 Agent A session을 전달해달라"고 요청할 필요가 없다. Protocol layer에 session이 없기 때문이다.</p>
+</li>
+<li>
+<p><strong>Data model layer의 explicit handle은 전달 가능하다</strong>: Server A가 발급한 handle(basket_id, workflow_run_id)은 단순한 string일 뿐이다. Server A가 이 handle을 검증 가능한 방식(signed JWT, zero-knowledge proof)으로 발급했다면, Server B는 이 handle을 그대로 사용할 수 있다.</p>
+</li>
+<li>
+<p><strong>문제는 protocol layer가 아니라 data model layer로 이동했다</strong>: "어떻게 handle이 위조되지 않았는지 증명할 것인가?" "어떻게 handle에 담긴 data가 변조되지 않았는지 보장할 것인가?" — protocol layer의 문제가 사라진 대신, data model layer에서 동일한 문제를 해결해야 한다.</p>
+</li>
+</ol>
+<h3>8.2 Stateless Protocol + Explicit Handle + ZK Proof</h3>
+<p>가장 흥미로운 조합은 <strong>Stateless Protocol + Explicit Handle + Zero-Knowledge Proof</strong>다.</p>
+<pre><code class="language-typescript">// === Cross-Trust Verification Handle ===
+// Server A가 발급한 handle을 Server B가 검증
+interface VerifiableHandle {
+  // opaque handle (Server A의 내부 session key)
+  handle: string;
+
+  // Zero-knowledge proof of handle validity
+  // Server B는 이 proof로 handle이 위조되지 않았음을 검증
+  // Server B는 handle의 내부 데이터를 알 필요 없음
+  proof: {
+    type: "zkp-snark" | "signed-jwt" | "merkle-proof";
+    value: string;
+    // Server A의 public key (verification key)
+    verifier: string;
+    // handle의 검증 가능한 속성들 (선택적 공개)
+    publicAttributes?: Record&#x3C;string, unknown>;
+  };
+
+  // Handle의 만료 시간
+  expiresAt: string;
+}
+</code></pre>
+<p>이 구조에서 protocol layer의 statelessness는 <strong>cross-trust handoff의 복잡성을 protocol transport에서 data integrity 증명으로 이동</strong>시킨다. protocol layer는 "누구나 요청을 보낼 수 있다"는 단순함을 유지하고, 보안과 신뢰는 data model layer의 암호학적 증명이 담당한다.</p>
+<h3>8.3 배포 아키텍처의 변화</h3>
+<pre><code class="language-mermaid">graph LR
+    subgraph "2025-11-25: Session-Dependent"
+        LB1[Load Balancer&#x3C;br/>Sticky Session]
+        S1A[Server A-1]
+        S1B[Server A-2]
+        C1[Client Agent] --> LB1
+        LB1 --> S1A
+        LB1 --> S1B
+        S1A -.->|Session State| SS[(Shared Session Store)]
+        S1B -.->|Session State| SS
+    end
+
+    subgraph "2026-07-28: Fully Stateless"
+        LB2[Load Balancer&#x3C;br/>Round-Robin]
+        S2A[Server A-1]
+        S2B[Server A-2]
+        S2C[Server B-1]
+        C2[Client Agent] --> LB2
+        LB2 --> S2A
+        LB2 --> S2B
+        LB2 --> S2C
+        S2A --> DS1[(Cache Layer&#x3C;br/>Redis)]
+        S2B --> DS1
+        S2C --> DS2[(Data Store&#x3C;br/>Postgres/Redis)]
+    end
+</code></pre>
+<p>좌측(2025-11-25)에서는 모든 server instance가 동일한 shared session store에 접근해야 했고, sticky session이 필요했다. 우측(2026-07-28)에서는 server instance가 완전히 독립적이며, cache layer는 ttlMs 기반의 optional 성능 최적화 도구일 뿐이다.</p>
+<hr>
+<h2>9. 자가 검토 (Self-Critique)</h2>
+<p>이 글의 한계와 차별화 지점을 명시한다:</p>
+<ol>
+<li>
+<p><strong>#055 Context Engineering과의 차별화</strong>: #055는 MCP session 내에서 context window를 관리하는 application-level 전략을 다뤘다. 본 글은 session 자체가 protocol layer에서 제거된 새로운 spec 자체를 분석한다. #055는 "session이 있다는 전제 하에 어떻게 잘 쓸까"였다면, 본 글은 "session이 없어졌는데 어떻게 대처할까"다.</p>
+</li>
+<li>
+<p><strong>#056 Context Observability와의 차별화</strong>: #056은 session eviction을 추적하는 observability layer 구축이 핵심이었다. 본 글은 protocol layer의 stateless화가 observability에 W3C Trace Context 기반의 표준적인 접근을 제공하는 점을 다룬다. 단, 본 글은 observability보다는 protocol architecture에 초점을 맞추며, tracing은 그 일부로만 다룬다.</p>
+</li>
+<li>
+<p><strong>#059 Cross-Trust Handoff와의 차별화</strong>: #059는 다른 trust domain 간 session 전달을 zero-knowledge proof로 해결하는 방법이었다. 본 글은 protocol session 자체의 제거가 cross-trust scenario에 어떤 영향을 주는지 분석한다. 중요한 것은: <strong>protocol session 제거는 cross-trust 문제를 해결하지 않고, 문제의 성격을 protocol layer에서 data model layer로 이동시킨다</strong>는 점이다.</p>
+</li>
+<li>
+<p><strong>이 글의 한계</strong>:</p>
+<ul>
+<li>2026-07-28 RC는 아직 최종 spec이 아니다(7월 28일 확정). 일부 세부사항이 변경될 수 있다.</li>
+<li>Explicit Handle Pattern은 MCP 팀이 권장하는 패턴이지만, 이것이 유일한 방법은 아니다. OAuth 2.1 session token, signed JWT claim 등 다양한 접근이 가능하다.</li>
+<li>Tasks Extension의 구체적인 구현과 성능은 SDK가 안정화된 후 평가해야 한다.</li>
+<li>OAuth 2.1 + PKCE 의무화는 remote server에 한정되며, local(stdio) transport는 해당하지 않는다.</li>
+</ul>
+</li>
+<li>
+<p><strong>다음 글의 방향성</strong>: Session이 data model layer로 이동하면서, "에이전트가 cross-trust 시나리오에서 data model level의 session 상태를 어떻게 안전하게 주고받을 것인가"가 다음 과제가 된다. 이는 <strong>Data Model Level의 Session State Synchronization Protocol</strong>이라는 새로운 주제로 이어질 수 있다. 즉, protocol layer의 단순화는 data model layer의 복잡성을 증가시켰고, 이 복잡성을 해결하기 위한 표준화된 접근이 필요하다.</p>
+</li>
+</ol>
+<hr>
+<h2>10. 결론</h2>
+<p>MCP 2026-07-28의 stateless 전환은 단순한 Transport 업그레이드가 아니라 <strong>"연결 중심(connection-oriented)"에서 "메시지 중심(message-oriented)"으로의 설계 철학 전환</strong>이다.</p>
+<p>변경의 핵심 메시지는 다음과 같다:</p>
+<ol>
+<li>
+<p><strong>프로토콜은 단순해야 한다</strong>: 연결 관리, session state, transport metadata를 protocol layer가 관리하는 것은 복잡하다. Protocol은 message routing과 format만 정의하고, 나머지는 상위 layer에 위임하자.</p>
+</li>
+<li>
+<p><strong>Model에게 노출하라</strong>: Session ID를 transport metadata로 숨기는 대신, explicit handle을 tool argument로 노출하면 model이 state를 추론하고 조작할 수 있다.</p>
+</li>
+<li>
+<p><strong>인프라와 호환되어야 한다</strong>: sticky session, shared session store, deep packet inspection은 표준 HTTP 인프라와 호환되지 않는다. Round-robin LB, standard caching, header-based routing — 이미 검증된 인프라 위에서 동작하게 하자.</p>
+</li>
+<li>
+<p><strong>보안은 protocol이 아니라 data layer에서</strong>: OAuth 2.1, PKCE, signed JWT, ZK proof — protocol이 아니라 data layer의 암호학적 메커니즘이 보안을 담당하게 하자.</p>
+</li>
+</ol>
+<p>2026년 7월 28일, MCP는 실험적인 프로토콜에서 <strong>프로덕션 인프라</strong>로 도약한다. 그리고 이 변화는 Agent 생태계 전체의 아키텍처 설계에 새로운 기준을 제시할 것이다.</p></div></article></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/b848662595cda15b.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"I0h1m__4yn4ihPv3zSN7e\",\"c\":[\"\",\"posts\",\"2026-07-15-proactive-update\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-07-15-proactive-update\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/b848662595cda15b.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/329e63eb984ada35.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"10:T8428,"])</script><script>self.__next_f.push([1,"\u003ch2\u003e1. 서문: 프로토콜 레이어에서 Session이 사라진다는 것의 의미\u003c/h2\u003e\n\u003cp\u003e지난 5주 동안 이 블로그는 AI Agent 생태계의 인프라 레이어를 탐구해왔다:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003e#055 Context Engineering\u003c/strong\u003e: MCP session에 기반한 context window 관리와 state 유지 전략\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e#056 Context Observability\u003c/strong\u003e: 어떤 context가 왜 evict되었는지 추적하는 observability layer\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e#059 Cross-Trust Handoff\u003c/strong\u003e: 서로 다른 trust domain 간 agent session의 전달 문제와 zkML 증명\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이 세 글의 공통 전제는 **\"MCP 프로토콜 레이어에 session이 존재한다\"**는 것이었다. Client는 initialize 핸드셰이크로 server와 session을 맺고, 모든 후속 요청에 Mcp-Session-Id를 실어 보내며, server는 이 session ID로 client의 state를 추적했다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e2026년 7월 28일, 그 전제가 사라진다.\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003eMCP 2026-07-28 Release Candidate는 initialize/initialized 핸드셰이크를 제거하고, Mcp-Session-Id 헤더를 폐기하며, persistent SSE 연결을 self-contained HTTP request로 대체한다. \u003cstrong\u003e프로토콜 레이어가 완전히 stateless가 되는 것이다.\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003e이것은 단순한 Transport 업그레이드가 아니다. MCP의 설계 철학이 \u003cstrong\u003e\"연결(connection) 기반\"에서 \"메시지(message) 기반\"으로 전환\u003c/strong\u003e되었음을 의미한다.\u003c/p\u003e\n\u003cp\u003e이 글에서는 2026-07-28 RC의 변경사항을 코드 레벨에서 해부하고, 이 변경이 Agent 배포 아키텍처와 Cross-Trust 시나리오에 주는 함의를 분석한다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e2. 무슨 일이 일어났는가: 변경사항의 전모\u003c/h2\u003e\n\u003cp\u003e2026-07-28 RC는 6개의 SEP(Specification Enhancement Proposal)가 협력하여 하나의 Stateless Protocol을 완성한다.\u003c/p\u003e\n\u003ch3\u003e2.1 제거된 것\u003c/h3\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e구성요소\u003c/th\u003e\n\u003cth\u003eSEP\u003c/th\u003e\n\u003cth\u003e변경\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003einitialize/initialized 핸드셰이크\u003c/td\u003e\n\u003ctd\u003eSEP-2575\u003c/td\u003e\n\u003ctd\u003e제거. protocol version, capabilities는 _meta에 실어 매 요청마다 전송\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eMcp-Session-Id 헤더\u003c/td\u003e\n\u003ctd\u003eSEP-2567\u003c/td\u003e\n\u003ctd\u003e제거. session state는 data model layer로 이동\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003ePersistent SSE 연결\u003c/td\u003e\n\u003ctd\u003eSEP-2260\u003c/td\u003e\n\u003ctd\u003e제거. server-initiated request는 client request 처리 중에만 허용\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e단일 transport 강제\u003c/td\u003e\n\u003ctd\u003e—\u003c/td\u003e\n\u003ctd\u003eStreamable HTTP가 baseline, transport 선택은 application 자유\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003ch3\u003e2.2 추가된 것\u003c/h3\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e구성요소\u003c/th\u003e\n\u003cth\u003e설명\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003eMCP-Protocol-Version 헤더\u003c/td\u003e\n\u003ctd\u003e매 요청마다 protocol version 명시\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eMcp-Method 헤더\u003c/td\u003e\n\u003ctd\u003etools/call, resources/read 등 method를 header로 노출 → LB/Gateway가 body 검사 없이 routing 가능\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eMcp-Name 헤더\u003c/td\u003e\n\u003ctd\u003etool/resource name을 header로 노출\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e_meta field\u003c/td\u003e\n\u003ctd\u003eclientInfo, capabilities, trace context를 매 request body에 포함\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eserver/discover method\u003c/td\u003e\n\u003ctd\u003e기존 initialize가 하던 server capabilities 조회 전용 method\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003eInputRequiredResult\u003c/td\u003e\n\u003ctd\u003eSSE 없이 elicitation을 구현하는 새로운 response type\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003ettlMs + cacheScope\u003c/td\u003e\n\u003ctd\u003elist/resource read 응답의 캐싱 정책\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003ch3\u003e2.3 실질적 효과\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003eBefore (2025-11-25)\u003c/strong\u003e: MCP server를 horizontal scale-out하려면 sticky session, shared session store, deep packet inspection이 필요했다. SSE 연결이 끊어지면 session이 소멸하고, client는 처음부터 다시 initialize해야 했다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003eAfter (2026-07-28)\u003c/strong\u003e: MCP server는 plain round-robin load balancer 뒤에서 동작한다. 어떤 instance든 어떤 request든 처리할 수 있다. Mcp-Method header로 traffic routing이 가능하고, tools/list 응답은 ttlMs만큼 client-side caching된다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e3. Before and After: 코드 레벨 비교\u003c/h2\u003e\n\u003ch3\u003e3.1 Tool Call: 2025-11-25 Spec\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// === Phase 1: Initialize (Session Establishment) ===\n// Client → Server\nPOST /mcp HTTP/1.1\nContent-Type: application/json\n\n{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 1,\n  \"method\": \"initialize\",\n  \"params\": {\n    \"protocolVersion\": \"2025-11-25\",\n    \"capabilities\": { \"roots\": { \"listChanged\": true } },\n    \"clientInfo\": { \"name\": \"my-agent\", \"version\": \"1.0.0\" }\n  }\n}\n\n// Server → Client (Mcp-Session-Id 발급)\nHTTP/1.1 200 OK\nMcp-Session-Id: 1868a90c-3a3f-4f5b-9c7d-1e2f3a4b5c6d\nContent-Type: application/json\n\n{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 1,\n  \"result\": {\n    \"protocolVersion\": \"2025-11-25\",\n    \"capabilities\": {\n      \"tools\": { \"listChanged\": true }\n    },\n    \"serverInfo\": { \"name\": \"search-server\", \"version\": \"2.0.0\" }\n  }\n}\n\n// === Phase 2: Tool Call (Session-ID 의존) ===\n// Client → Server (반드시 같은 instance로 routing되어야 함)\nPOST /mcp HTTP/1.1\nMcp-Session-Id: 1868a90c-3a3f-4f5b-9c7d-1e2f3a4b5c6d\nContent-Type: application/json\n\n{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 2,\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"search\",\n    \"arguments\": { \"q\": \"MCP stateless design pattern\" }\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e3.2 Tool Call: 2026-07-28 Spec\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// === 단일 self-contained request ===\n// 어떤 server instance든 처리 가능\nPOST /mcp HTTP/1.1\nMCP-Protocol-Version: 2026-07-28\nMcp-Method: tools/call\nMcp-Name: search\nContent-Type: application/json\n\n{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 1,\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"search\",\n    \"arguments\": { \"q\": \"MCP stateless design pattern\" },\n    \"_meta\": {\n      \"io.modelcontextprotocol/clientInfo\": {\n        \"name\": \"my-agent\",\n        \"version\": \"1.0.0\"\n      },\n      \"io.modelcontextprotocol/capabilities\": {\n        \"roots\": { \"listChanged\": true }\n      },\n      \"traceparent\": \"00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01\"\n    }\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e핵심 차이:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e핸드셰이크 불필요\u003c/strong\u003e: protocol version, client info, capabilities가 _meta에 실려 매 요청마다 전송\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eSession-ID 불필요\u003c/strong\u003e: server는 요청을 받을 때마다 독립적으로 처리\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eLB-friendly\u003c/strong\u003e: Mcp-Method, Mcp-Name 헤더로 body 검사 없이 routing 가능\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eTrace context 내장\u003c/strong\u003e: W3C Trace Context가 _meta에 포함되어 end-to-end tracing 가능\u003c/li\u003e\n\u003c/ol\u003e\n\u003ch3\u003e3.3 Server Capabilities 조회: initialize → server/discover\u003c/h3\u003e\n\u003cp\u003e기존 initialize가 client와 server의 capabilities를 동시에 교환하던 것에서, \u003cstrong\u003eserver/discover\u003c/strong\u003e가 server capabilities만 조회하는 전용 method로 분리되었다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// 2026-07-28: Server Capabilities 조회\nPOST /mcp HTTP/1.1\nMCP-Protocol-Version: 2026-07-28\nMcp-Method: server/discover\nContent-Type: application/json\n\n{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 1,\n  \"method\": \"server/discover\",\n  \"params\": {\n    \"_meta\": {\n      \"io.modelcontextprotocol/clientInfo\": {\n        \"name\": \"my-agent\", \"version\": \"1.0.0\"\n      }\n    }\n  }\n}\n\n// Response\nHTTP/1.1 200 OK\nContent-Type: application/json\n\n{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 1,\n  \"result\": {\n    \"protocolVersion\": \"2026-07-28\",\n    \"capabilities\": {\n      \"tools\": {\n        \"listChanged\": true,\n        \"ttlMs\": 60000\n      },\n      \"resources\": {\n        \"subscribe\": true,\n        \"ttlMs\": 300000\n      },\n      \"tasks\": {\n        \"supported\": true,\n        \"maxConcurrent\": 10\n      }\n    },\n    \"serverInfo\": {\n      \"name\": \"search-server\",\n      \"version\": \"3.0.0\"\n    }\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eclientInfo가 _meta에 포함되므로, server는 누가 요청했는지 알 수 있다. \u003cstrong\u003e연결 기반 인증이 아니라 요청 기반 인증\u003c/strong\u003e으로 전환된 것이다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e4. Explicit Handle Pattern: Session의 데이터 모델 레이어 이동\u003c/h2\u003e\n\u003cp\u003e가장 오해하기 쉬운 지점: \u003cstrong\u003e\"MCP가 stateless가 되었다 = application도 stateless여야 한다\"는 것은 아니다.\u003c/strong\u003e\u003c/p\u003e\n\u003cp\u003e프로토콜 레이어가 session을 관리하지 않을 뿐, application은 필요하다면 자신의 데이터 모델 레이어에서 state를 관리할 수 있다. 그리고 MCP 팀이 권장하는 방식이 바로 \u003cstrong\u003eExplicit Handle Pattern\u003c/strong\u003e이다.\u003c/p\u003e\n\u003ch3\u003e4.1 Explicit Handle Pattern의 원리\u003c/h3\u003e\n\u003cp\u003eServer는 tool call의 결과로 \u003cstrong\u003eopaque handle\u003c/strong\u003e(basket_id, workflow_run_id, session_token 등)을 발급하고, model(client)은 이 handle을 이후 tool call의 argument로 다시 전달한다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// === TypeScript: ExplicitHandleManager ===\ninterface SessionState {\n  basketId: string;\n  items: BasketItem[];\n  createdAt: Date;\n  expiresAt: Date;\n}\n\nclass ExplicitHandleManager {\n  private store: Map\u0026#x3C;string, SessionState\u003e = new Map();\n\n  /**\n   * tool call 결과로 stateful handle 발급\n   * - handle 자체는 opaque token\n   * - server만이 handle → state 매핑을 알고 있음\n   */\n  createBasket(toolName: string, args: Record\u0026#x3C;string, unknown\u003e): {\n    resultType: \"text\";\n    text: string;\n    _handle: string;\n  } {\n    const basket: SessionState = {\n      basketId: crypto.randomUUID(),\n      items: [],\n      createdAt: new Date(),\n      expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30분 TTL\n    };\n    this.store.set(basket.basketId, basket);\n\n    return {\n      resultType: \"text\",\n      text: `Basket created: ${basket.basketId}`,\n      // Handle을 결과의 일부로 반환\n      _handle: basket.basketId,\n    };\n  }\n\n  /**\n   * model이 전달한 handle로 stateful 작업 수행\n   * - model은 handle의 의미를 알 필요 없음\n   * - server가 handle → state 매핑을 수행\n   */\n  addToBasket(basketId: string, item: string): {\n    resultType: \"text\";\n    text: string;\n  } {\n    const basket = this.store.get(basketId);\n\n    if (!basket || basket.expiresAt \u0026#x3C; new Date()) {\n      return {\n        resultType: \"text\",\n        text: \"Error: Basket not found or expired. Please create a new basket.\",\n      };\n    }\n\n    basket.items.push({ id: crypto.randomUUID(), name: item, addedAt: new Date() });\n    return {\n      resultType: \"text\",\n      text: `Added \"${item}\" to basket ${basketId}. Total items: ${basket.items.length}`,\n    };\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e4.2 Protocol-Level Session vs Explicit Handle: 왜 Explicit Handle이 더 강력한가\u003c/h3\u003e\n\u003cp\u003eMCP 팀의 공식 문서는 이렇게 말한다:\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\"The model can compose handles across tools, reason about them, and hand them off between steps in ways that externally managed session state, hidden in transport metadata, never really allowed.\"\u003c/p\u003e\n\u003c/blockquote\u003e\n\u003cp\u003e즉, protocol-level session은 transport metadata로 감춰져 있어 \u003cstrong\u003emodel이 session의 존재를 인지하지 못했다\u003c/strong\u003e. 반면 explicit handle은:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003eModel이 handle을 직접 보고 추론할 수 있다\u003c/strong\u003e: \"이 basket_id를 가진 장바구니에 물건을 3개 넣었으니, 이제 결제 tool을 호출하자\"\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eHandle을 cross-tool로 전달할 수 있다\u003c/strong\u003e: search tool이 반환한 result_id를, summarize tool에 전달\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eHandle을 cross-session으로 전달할 수 있다\u003c/strong\u003e: 한 세션에서 생성된 handle을 다른 세션의 model에게 전달\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eHandle을 로깅하고 추적할 수 있다\u003c/strong\u003e: observability system이 handle을 key로 session state 변화를 추적\u003c/li\u003e\n\u003c/ol\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// === Model의 Handle Reasoning 예시 ===\n// Model이 handle을 tool call 간에 추론하는 패턴\nconst THREAD: Message[] = [\n  { role: \"user\", content: \"커피 원두 2kg를 장바구니에 담아줘\" },\n  // Model → Server: createBasket()\n  { role: \"assistant\", content: \"장바구니를 생성했습니다.\", tool_calls: [\n    {\n      id: \"call_1\",\n      type: \"function\",\n      function: {\n        name: \"create_basket\",\n        arguments: \"{}\"\n      }\n    }\n  ]},\n  // Server Response: handle 반환\n  { role: \"tool\", content: '{\"resultType\":\"text\",\"text\":\"Basket created: basket_abc123\",\"_handle\":\"basket_abc123\"}', tool_call_id: \"call_1\" },\n  // Model이 handle을 보고 addToBasket 호출 결정\n  { role: \"assistant\", content: \"장바구니(basket_abc123)에 커피 원두 2kg를 추가하겠습니다.\", tool_calls: [\n    {\n      id: \"call_2\",\n      type: \"function\",\n      function: {\n        name: \"add_to_basket\",\n        arguments: '{\"basketId\":\"basket_abc123\",\"item\":\"커피 원두 2kg\"}'\n      }\n    }\n  ]}\n];\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e4.3 Stateless Elicitation: InputRequiredResult\u003c/h3\u003e\n\u003cp\u003eSSE persistent connection이 사라지면서, \u003cstrong\u003eserver가 client에게 추가 입력을 요청하는 방법\u003c/strong\u003e도 바뀌었다. 2025-11-25에서는 SSE stream을 열어두고 server가 임의로 event를 push할 수 있었다. 2026-07-28에서는 \u003cstrong\u003eMulti Round-Trip Request\u003c/strong\u003e 패턴으로 대체된다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// === TypeScript: ElicitationClient 예시 ===\n\ninterface InputRequiredResult {\n  resultType: \"inputRequired\";\n  inputRequests: Record\u0026#x3C;string, InputRequest\u003e;\n  requestState: string; // opaque token, server가 resume에 필요한 모든 정보를 인코딩\n}\n\ninterface InputRequest {\n  type: \"elicitation\";\n  message: string;\n  schema: JSONSchema;\n}\n\nclass ElicitationClient {\n  /**\n   * Server가 inputRequired를 반환하면,\n   * client가 입력을 모아서 다시 같은 요청을 re-issue\n   */\n  async handleElicitation(\n    originalRequest: JSONRPCRequest,\n    inputRequired: InputRequiredResult\n  ): Promise\u0026#x3C;JSONRPCResponse\u003e {\n    // Step 1: inputRequests를 사용자/agent에게 표시\n    const inputResponses: Record\u0026#x3C;string, unknown\u003e = {};\n\n    for (const [key, request] of Object.entries(inputRequired.inputRequests)) {\n      if (request.type === \"elicitation\") {\n        // User 또는 upstream agent에게 입력 요청\n        inputResponses[key] = await this.promptUser(request.message, request.schema);\n      }\n    }\n\n    // Step 2: 같은 method에 inputResponses + requestState를 실어 재전송\n    const retryRequest: JSONRPCRequest = {\n      ...originalRequest,\n      params: {\n        ...originalRequest.params,\n        inputResponses,\n        requestState: inputRequired.requestState,\n      },\n    };\n\n    // Step 3: 어떤 server instance든 처리 가능\n    // (requestState에 모든 resume 정보가 들어있음)\n    return await this.transport.send(retryRequest);\n  }\n\n  private async promptUser(message: string, schema: JSONSchema): Promise\u0026#x3C;unknown\u003e {\n    // 실제 구현: 사용자에게 dialog 표시 또는 upstream agent 호출\n    console.log(`[Elicitation Required] ${message}`);\n    return schema.type === \"boolean\" ? true : prompt(message);\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003erequestState\u003c/strong\u003e가 핵심이다. 이 opaque token은 server가 요청을 resume하는 데 필요한 모든 state를 인코딩한다 (base64 encoded JSON, signed JWT, 또는 encrypted blob). Client는 token의 내용을 알 필요 없이, 다음 요청에 그대로 echo하기만 하면 된다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e5. 인프라 변화: 배포와 운영\u003c/h2\u003e\n\u003cp\u003eStateless protocol의 가장 실질적인 이점은 \u003cstrong\u003e배포 인프라의 단순화\u003c/strong\u003e다.\u003c/p\u003e\n\u003ch3\u003e5.1 Load Balancing: Sticky Session → Round-Robin\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-yaml\"\u003e# === Docker Compose: Stateless MCP Server ===\nversion: \"3.8\"\nservices:\n  mcp-server:\n    image: my-mcp-server:3.0.0\n    deploy:\n      replicas: 5\n      # sticky session 불필요!\n    environment:\n      - MCP_PROTOCOL_VERSION=2026-07-28\n      - DATA_STORE_URL=redis://redis:6379\n\n  nginx:\n    image: nginx:alpine\n    volumes:\n      - ./nginx.conf:/etc/nginx/conf.d/default.conf\n    ports:\n      - \"8080:80\"\n\n  redis:\n    image: redis:7-alpine\n    # explicit handle의 state store로 사용\n\n# nginx.conf — plain round-robin\n# upstream mcp_servers {\n#   server mcp-server:3000;\n#   server mcp-server:3001;\n#   server mcp-server:3002;\n#   # no ip_hash, no sticky!\n# }\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e5.2 Caching: ttlMs + cacheScope\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// === Server: tools/list 응답에 cache policy 포함 ===\nserver.setRequestHandler(ListToolsRequestSchema, async () =\u003e ({\n  tools: [\n    {\n      name: \"search\",\n      description: \"Search the web\",\n      inputSchema: { type: \"object\", properties: { q: { type: \"string\" } } },\n    }\n  ],\n  // client는 60초 동안 이 응답을 cache 가능\n  // cacheScope: \"global\" → 모든 user가 동일한 응답 공유 가능\n  _meta: {\n    ttlMs: 60000,\n    cacheScope: \"global\",\n  }\n}));\n\n// === Client: Cache-Aware Client ===\nclass CacheAwareMCPClient {\n  private toolListCache: { tools: Tool[]; expiresAt: number } | null = null;\n\n  async listTools(): Promise\u0026#x3C;Tool[]\u003e {\n    const now = Date.now();\n\n    // ttlMs가 cache hit을 결정\n    if (this.toolListCache \u0026#x26;\u0026#x26; this.toolListCache.expiresAt \u003e now) {\n      return this.toolListCache.tools;\n    }\n\n    const response = await this.sendRequest(\"tools/list\", {});\n    const ttlMs = response._meta?.ttlMs ?? 0;\n\n    if (ttlMs \u003e 0) {\n      this.toolListCache = {\n        tools: response.tools,\n        expiresAt: now + ttlMs,\n      };\n    }\n\n    return response.tools;\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e5.3 Distributed Tracing: W3C Trace Context\u003c/h3\u003e\n\u003cp\u003e2026-07-28 RC에서 W3C Trace Context의 key name이 spec에 공식 문서화되었다. \u003ccode\u003etraceparent\u003c/code\u003e, \u003ccode\u003etracestate\u003c/code\u003e, \u003ccode\u003ebaggage\u003c/code\u003e가 \u003ccode\u003e_meta\u003c/code\u003e 아래 고정 key로 지정된다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// === TypeScript: Trace Context Propagation Middleware ===\nclass TracePropagationMiddleware {\n  private tracer: opentelemetry.Tracer;\n\n  /**\n   * MCP request의 _meta에 trace context를 주입\n   * Host application → Client SDK → MCP Server → Downstream API\n   * 전체가 하나의 span tree로 연결됨\n   */\n  injectTraceContext(params: Record\u0026#x3C;string, unknown\u003e): Record\u0026#x3C;string, unknown\u003e {\n    const span = opentelemetry.trace.getActiveSpan();\n    if (!span) return params;\n\n    const traceContext = span.spanContext();\n\n    return {\n      ...params,\n      _meta: {\n        ...(params._meta as Record\u0026#x3C;string, unknown\u003e),\n        // W3C traceparent: version-traceId-spanId-traceFlags\n        traceparent: `00-${traceContext.traceId}-${traceContext.spanId}-${traceContext.traceFlags}`,\n        // tracestate: vendor-specific trace data\n        tracestate: `mcp=tool_call,otel=prod`,\n        // baggage: propagation key-value pairs\n        baggage: `user_id=sjlee,request_id=req_abc123`,\n      },\n    };\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이것의 실질적 의미: \u003cstrong\u003eMCP 호출 하나가 Host Application → Agent → MCP Client SDK → MCP Server → Downstream Database로 이어지는 전체 호출 체인이 하나의 OpenTelemetry trace로 연결된다.\u003c/strong\u003e 문제가 발생했을 때, \"어느 tool call에서 latency spike가 발생했는지\"를 단일 trace로 추적할 수 있다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e6. Breaking Changes Migration Guide\u003c/h2\u003e\n\u003cp\u003e2026-07-28은 \u003cstrong\u003ebreaking changes를 포함하는 최대 규모의 개정\u003c/strong\u003e이다. Early adopters는 7월 28일까지 아래 3가지 migration을 완료해야 한다.\u003c/p\u003e\n\u003ch3\u003e6.1 Migration 1: initialize → server/discover\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// === Before (2025-11-25) ===\nconst client = new MCPClient({\n  transport: new StreamableHTTPTransport(\"https://mcp.example.com/mcp\"),\n});\n\nawait client.initialize(); // Handshake + Session Establishment\n\n// === After (2026-07-28) ===\nconst client = new MCPClient({\n  transport: new StreamableHTTPTransport(\"https://mcp.example.com/mcp\"),\n  protocolVersion: \"2026-07-28\",\n});\n\n// initialize 대신 server/discover 호출 (필요시)\nconst serverCaps = await client.discover();\n// Server capabilities 조회 후 결정:\n// - tools/list: 캐싱 가능 (ttlMs 확인)\n// - tool call: 바로 가능\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e6.2 Migration 2: Mcp-Session-Id → Explicit Handle\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// === Before (2025-11-25): Session ID 기반 ===\nclass SessionBasedServer {\n  private sessions: Map\u0026#x3C;string, SessionState\u003e = new Map();\n\n  async handleInitialize(sessionId: string): Promise\u0026#x3C;void\u003e {\n    this.sessions.set(sessionId, { context: [], createdAt: new Date() });\n  }\n\n  async handleToolCall(sessionId: string, tool: string, args: unknown): Promise\u0026#x3C;Result\u003e {\n    const session = this.sessions.get(sessionId);\n    if (!session) throw new Error(\"Session not found\");\n    // session context 사용...\n  }\n}\n\n// === After (2026-07-28): Explicit Handle 기반 ===\nclass ExplicitHandleServer {\n  private stores: Map\u0026#x3C;string, DataStore\u003e = new Map();\n\n  async handleToolCall(tool: string, args: Record\u0026#x3C;string, unknown\u003e): Promise\u0026#x3C;Result\u003e {\n    // Handle은 tool argument로 직접 전달\n    const handle = args._handle as string | undefined;\n\n    // Handle이 없으면 stateless operation\n    if (!handle) {\n      return this.executeStateless(tool, args);\n    }\n\n    // Handle이 있으면 stateful operation\n    const store = await this.getStore(handle);\n    return this.executeStateful(tool, args, store);\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e6.3 Migration 3: SSE → Streamable HTTP\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// === Before (2025-11-25): SSE Transport ===\n// client는 SSE stream을 열어두고 server push를 기다림\nconst sseTransport = new SSEClientTransport(\n  new URL(\"https://mcp.example.com/mcp/sse\")\n);\nawait sseTransport.start();\nsseTransport.onmessage = (msg) =\u003e {\n  if (msg.type === \"resource_list_changed\") {\n    // SSE stream을 통한 push notification\n  }\n};\n\n// === After (2026-07-28): Streamable HTTP ===\n// 모든 통신은 요청-응답 기반\n// 변경 알림은 listChanged subscription으로 대체\nconst transport = new StreamableHTTPTransport(\n  new URL(\"https://mcp.example.com/mcp\"),\n  { protocolVersion: \"2026-07-28\" }\n);\n\n// 변경 사항은 polling + ttlMs 기반 캐시 무효화로 감지\n// 또는 subscribe method로 변경 알림 구독 (SSE 불필요)\nawait transport.subscribe(\"resource_list_changed\");\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e7. 확장: Tasks Extension과 OAuth 2.1\u003c/h2\u003e\n\u003cp\u003e2026-07-28 RC는 stateless core 외에도 몇 가지 중요한 확장을 포함한다.\u003c/p\u003e\n\u003ch3\u003e7.1 Tasks Extension: 장기 실행 작업의 공식 lifecycle\u003c/h3\u003e\n\u003cp\u003eTasks extension이 실험적(experimental)에서 **정식 확장(formal extension)**으로 승격되었다. Clean lifecycle을 제공한다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// === Tasks Lifecycle ===\n// 1. tasks/send: 작업 제출 (즉시 taskId 반환)\nPOST /mcp HTTP/1.1\nMcp-Method: tasks/send\nContent-Type: application/json\n\n{\n  \"method\": \"tasks/send\",\n  \"params\": {\n    \"uri\": \"task://long-running-analysis\",\n    \"input\": {\n      \"data\": \"...\",\n      \"parameters\": { \"depth\": \"full\" }\n    }\n  }\n}\n\n// 2. tasks/get: 진행 상태 확인\nPOST /mcp HTTP/1.1\nMcp-Method: tasks/get\n\n{\n  \"method\": \"tasks/get\",\n  \"params\": {\n    \"id\": \"task_analysis_001\"\n  }\n}\n\n// 3. tasks/update: 작업 업데이트\n{\n  \"method\": \"tasks/update\",\n  \"params\": {\n    \"id\": \"task_analysis_001\",\n    \"input\": { \"priority\": \"high\" }\n  }\n}\n\n// 4. tasks/cancel: 작업 취소\n{\n  \"method\": \"tasks/cancel\",\n  \"params\": {\n    \"id\": \"task_analysis_001\",\n    \"reason\": \"user requested cancellation\"\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eTasks Extension은 \u003cstrong\u003estateless protocol 위에서 stateful workflow를 실행할 수 있는 표준화된 방법\u003c/strong\u003e을 제공한다. Session이 protocol layer에서 data model layer로 이동하면서, long-running 작업의 lifecycle도 명시적인 API 형태로 재정의된 것이다.\u003c/p\u003e\n\u003ch3\u003e7.2 OAuth 2.1 + PKCE 의무화\u003c/h3\u003e\n\u003cp\u003e모든 remote MCP server는 OAuth 2.1 with PKCE를 \u003cstrong\u003e의무적으로\u003c/strong\u003e 구현해야 한다. RFC 8707 Resource Indicators도 필수로, token replay attack을 방지한다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// === OAuth 2.1 + PKCE Authorization Flow ===\n// 1. Client: code_verifier와 code_challenge 생성\nconst codeVerifier = crypto.randomUUID();\nconst codeChallenge = await crypto.subtle.digest(\"SHA-256\",\n  new TextEncoder().encode(codeVerifier)\n).then(buf =\u003e btoa(String.fromCharCode(...new Uint8Array(buf))));\n\n// 2. Authorization Request with Resource Indicator\nconst authUrl = `https://auth.mcp-server.com/authorize?` +\n  `response_type=code\u0026#x26;` +\n  `client_id=${clientId}\u0026#x26;` +\n  `code_challenge=${codeChallenge}\u0026#x26;` +\n  `code_challenge_method=S256\u0026#x26;` +\n  `resource=https://mcp.example.com/mcp`;  // RFC 8707: token-target binding\n\n// 3. Token Request with code_verifier\nconst tokenResponse = await fetch(\"https://auth.mcp-server.com/token\", {\n  method: \"POST\",\n  headers: { \"Content-Type\": \"application/x-www-form-urlencoded\" },\n  body: new URLSearchParams({\n    grant_type: \"authorization_code\",\n    code: authorizationCode,\n    code_verifier: codeVerifier,\n    client_id: clientId,\n    resource: \"https://mcp.example.com/mcp\",\n  }),\n});\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e8. 이 변경이 Agent 생태계에 주는 의미: #059 Cross-Trust Handoff와의 연결\u003c/h2\u003e\n\u003cp\u003e이 변경이 Agent 생태계, 특히 \u003cstrong\u003eCross-Trust Handoff\u003c/strong\u003e 시나리오에 주는 함의를 분석하는 것이 이 글의 진짜 목적이다.\u003c/p\u003e\n\u003ch3\u003e8.1 Protocol Session이 없어지면 Cross-Trust는 더 쉬워질까?\u003c/h3\u003e\n\u003cp\u003e#059에서 다룬 근본 문제는 다음과 같다: Agent A(은행)가 Agent B(보험사)에게 handoff할 때, Agent A의 session context를 어떻게 Agent B에게 안전하게 전달할 것인가?\u003c/p\u003e\n\u003cp\u003e2025-11-25 spec에서는 이것이 구조적으로 어려웠다. Session ID는 Server A가 발급했고, Server B는 이 Session ID를 알지 못했다. Session state는 Server A의 메모리에만 존재했다. Cross-trust handoff를 위해서는 \u003cstrong\u003eSession Migration\u003c/strong\u003e이라는 별도의 메커니즘이 필요했다.\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e2026-07-28 spec에서는 이 문제의 성격이 바뀐다.\u003c/strong\u003e\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003eProtocol layer의 session이 사라졌다\u003c/strong\u003e: Server A가 Server B에게 \"우리의 Agent A session을 전달해달라\"고 요청할 필요가 없다. Protocol layer에 session이 없기 때문이다.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003eData model layer의 explicit handle은 전달 가능하다\u003c/strong\u003e: Server A가 발급한 handle(basket_id, workflow_run_id)은 단순한 string일 뿐이다. Server A가 이 handle을 검증 가능한 방식(signed JWT, zero-knowledge proof)으로 발급했다면, Server B는 이 handle을 그대로 사용할 수 있다.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003e문제는 protocol layer가 아니라 data model layer로 이동했다\u003c/strong\u003e: \"어떻게 handle이 위조되지 않았는지 증명할 것인가?\" \"어떻게 handle에 담긴 data가 변조되지 않았는지 보장할 것인가?\" — protocol layer의 문제가 사라진 대신, data model layer에서 동일한 문제를 해결해야 한다.\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ol\u003e\n\u003ch3\u003e8.2 Stateless Protocol + Explicit Handle + ZK Proof\u003c/h3\u003e\n\u003cp\u003e가장 흥미로운 조합은 \u003cstrong\u003eStateless Protocol + Explicit Handle + Zero-Knowledge Proof\u003c/strong\u003e다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// === Cross-Trust Verification Handle ===\n// Server A가 발급한 handle을 Server B가 검증\ninterface VerifiableHandle {\n  // opaque handle (Server A의 내부 session key)\n  handle: string;\n\n  // Zero-knowledge proof of handle validity\n  // Server B는 이 proof로 handle이 위조되지 않았음을 검증\n  // Server B는 handle의 내부 데이터를 알 필요 없음\n  proof: {\n    type: \"zkp-snark\" | \"signed-jwt\" | \"merkle-proof\";\n    value: string;\n    // Server A의 public key (verification key)\n    verifier: string;\n    // handle의 검증 가능한 속성들 (선택적 공개)\n    publicAttributes?: Record\u0026#x3C;string, unknown\u003e;\n  };\n\n  // Handle의 만료 시간\n  expiresAt: string;\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 구조에서 protocol layer의 statelessness는 \u003cstrong\u003ecross-trust handoff의 복잡성을 protocol transport에서 data integrity 증명으로 이동\u003c/strong\u003e시킨다. protocol layer는 \"누구나 요청을 보낼 수 있다\"는 단순함을 유지하고, 보안과 신뢰는 data model layer의 암호학적 증명이 담당한다.\u003c/p\u003e\n\u003ch3\u003e8.3 배포 아키텍처의 변화\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-mermaid\"\u003egraph LR\n    subgraph \"2025-11-25: Session-Dependent\"\n        LB1[Load Balancer\u0026#x3C;br/\u003eSticky Session]\n        S1A[Server A-1]\n        S1B[Server A-2]\n        C1[Client Agent] --\u003e LB1\n        LB1 --\u003e S1A\n        LB1 --\u003e S1B\n        S1A -.-\u003e|Session State| SS[(Shared Session Store)]\n        S1B -.-\u003e|Session State| SS\n    end\n\n    subgraph \"2026-07-28: Fully Stateless\"\n        LB2[Load Balancer\u0026#x3C;br/\u003eRound-Robin]\n        S2A[Server A-1]\n        S2B[Server A-2]\n        S2C[Server B-1]\n        C2[Client Agent] --\u003e LB2\n        LB2 --\u003e S2A\n        LB2 --\u003e S2B\n        LB2 --\u003e S2C\n        S2A --\u003e DS1[(Cache Layer\u0026#x3C;br/\u003eRedis)]\n        S2B --\u003e DS1\n        S2C --\u003e DS2[(Data Store\u0026#x3C;br/\u003ePostgres/Redis)]\n    end\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e좌측(2025-11-25)에서는 모든 server instance가 동일한 shared session store에 접근해야 했고, sticky session이 필요했다. 우측(2026-07-28)에서는 server instance가 완전히 독립적이며, cache layer는 ttlMs 기반의 optional 성능 최적화 도구일 뿐이다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e9. 자가 검토 (Self-Critique)\u003c/h2\u003e\n\u003cp\u003e이 글의 한계와 차별화 지점을 명시한다:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003e#055 Context Engineering과의 차별화\u003c/strong\u003e: #055는 MCP session 내에서 context window를 관리하는 application-level 전략을 다뤘다. 본 글은 session 자체가 protocol layer에서 제거된 새로운 spec 자체를 분석한다. #055는 \"session이 있다는 전제 하에 어떻게 잘 쓸까\"였다면, 본 글은 \"session이 없어졌는데 어떻게 대처할까\"다.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003e#056 Context Observability와의 차별화\u003c/strong\u003e: #056은 session eviction을 추적하는 observability layer 구축이 핵심이었다. 본 글은 protocol layer의 stateless화가 observability에 W3C Trace Context 기반의 표준적인 접근을 제공하는 점을 다룬다. 단, 본 글은 observability보다는 protocol architecture에 초점을 맞추며, tracing은 그 일부로만 다룬다.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003e#059 Cross-Trust Handoff와의 차별화\u003c/strong\u003e: #059는 다른 trust domain 간 session 전달을 zero-knowledge proof로 해결하는 방법이었다. 본 글은 protocol session 자체의 제거가 cross-trust scenario에 어떤 영향을 주는지 분석한다. 중요한 것은: \u003cstrong\u003eprotocol session 제거는 cross-trust 문제를 해결하지 않고, 문제의 성격을 protocol layer에서 data model layer로 이동시킨다\u003c/strong\u003e는 점이다.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003e이 글의 한계\u003c/strong\u003e:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e2026-07-28 RC는 아직 최종 spec이 아니다(7월 28일 확정). 일부 세부사항이 변경될 수 있다.\u003c/li\u003e\n\u003cli\u003eExplicit Handle Pattern은 MCP 팀이 권장하는 패턴이지만, 이것이 유일한 방법은 아니다. OAuth 2.1 session token, signed JWT claim 등 다양한 접근이 가능하다.\u003c/li\u003e\n\u003cli\u003eTasks Extension의 구체적인 구현과 성능은 SDK가 안정화된 후 평가해야 한다.\u003c/li\u003e\n\u003cli\u003eOAuth 2.1 + PKCE 의무화는 remote server에 한정되며, local(stdio) transport는 해당하지 않는다.\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003e다음 글의 방향성\u003c/strong\u003e: Session이 data model layer로 이동하면서, \"에이전트가 cross-trust 시나리오에서 data model level의 session 상태를 어떻게 안전하게 주고받을 것인가\"가 다음 과제가 된다. 이는 \u003cstrong\u003eData Model Level의 Session State Synchronization Protocol\u003c/strong\u003e이라는 새로운 주제로 이어질 수 있다. 즉, protocol layer의 단순화는 data model layer의 복잡성을 증가시켰고, 이 복잡성을 해결하기 위한 표준화된 접근이 필요하다.\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ol\u003e\n\u003chr\u003e\n\u003ch2\u003e10. 결론\u003c/h2\u003e\n\u003cp\u003eMCP 2026-07-28의 stateless 전환은 단순한 Transport 업그레이드가 아니라 \u003cstrong\u003e\"연결 중심(connection-oriented)\"에서 \"메시지 중심(message-oriented)\"으로의 설계 철학 전환\u003c/strong\u003e이다.\u003c/p\u003e\n\u003cp\u003e변경의 핵심 메시지는 다음과 같다:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003e프로토콜은 단순해야 한다\u003c/strong\u003e: 연결 관리, session state, transport metadata를 protocol layer가 관리하는 것은 복잡하다. Protocol은 message routing과 format만 정의하고, 나머지는 상위 layer에 위임하자.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003eModel에게 노출하라\u003c/strong\u003e: Session ID를 transport metadata로 숨기는 대신, explicit handle을 tool argument로 노출하면 model이 state를 추론하고 조작할 수 있다.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003e인프라와 호환되어야 한다\u003c/strong\u003e: sticky session, shared session store, deep packet inspection은 표준 HTTP 인프라와 호환되지 않는다. Round-robin LB, standard caching, header-based routing — 이미 검증된 인프라 위에서 동작하게 하자.\u003c/p\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003cp\u003e\u003cstrong\u003e보안은 protocol이 아니라 data layer에서\u003c/strong\u003e: OAuth 2.1, PKCE, signed JWT, ZK proof — protocol이 아니라 data layer의 암호학적 메커니즘이 보안을 담당하게 하자.\u003c/p\u003e\n\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003e2026년 7월 28일, MCP는 실험적인 프로토콜에서 \u003cstrong\u003e프로덕션 인프라\u003c/strong\u003e로 도약한다. 그리고 이 변화는 Agent 생태계 전체의 아키텍처 설계에 새로운 기준을 제시할 것이다.\u003c/p\u003e"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"text-sm text-white/60\",\"children\":\"2026-07-15\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"MCP 2026 Stateless Revolution: initialize 핸드셰이크와 Session이 사라진 프로토콜의 설계 철학 (#064)\"}],[\"$\",\"p\",null,{\"className\":\"mt-4 text-base text-white/80 md:text-lg\",\"children\":\"2026년 7월 28일, MCP(Model Context Protocol)가 가장 큰 폭의 개정을 맞는다. initialize/initialized 핸드셰이크와 Mcp-Session-Id가 사라지고, 모든 요청은 self-contained HTTP request로 독립 실행된다. 이 변경은 단순한 Transport 개선이 아니라 \\\"프로토콜 레이어의 session 상태를 없애고, 상태 관리를 데이터 모델 레이어로 이동\\\"하는 설계 철학의 전환이다. 본 글은: (1) 2025-11-25 spec vs 2026-07-28 RC의 Before/After 코드 비교, (2) Explicit Handle Pattern — basket_id를 tool argument로 주고받는 새로운 session 관리 방식, (3) InputRequiredResult — SSE 없이 elicitation을 구현하는 stateless multi-round-trip 메커니즘, (4) W3C Trace Context 기반 분산 추적과 ttlMs/cacheScope 캐싱 전략, (5) Breaking Changes Migration Guide (initialize → server/discover, Session-Id → explicit handle, SSE → Streamable HTTP), (6) OAuth 2.1 + PKCE 의무화, Tasks Extension 정식 채택, (7) #059 Cross-Trust Handoff와의 연결 — protocol session 제거가 cross-trust scenario의 session migration 문제를 Data Model Layer로 위임하는 구조적 함의를 다룬다. TypeScript 코드 예시 (ExplicitHandleManager, ElicitationClient, TracePropagationMiddleware)와 실제 배포 구성(Docker Compose + round-robin Nginx)까지 포함한다.\"}],[\"$\",\"div\",null,{\"className\":\"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300\",\"dangerouslySetInnerHTML\":{\"__html\":\"$10\"}}]]}]}]\n"])</script><script>self.__next_f.push([1,"8:null\n"])</script><script>self.__next_f.push([1,"c:[[\"$\",\"title\",\"0\",{\"children\":\"MCP 2026 Stateless Revolution: initialize 핸드셰이크와 Session이 사라진 프로토콜의 설계 철학 (#064) | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"2026년 7월 28일, MCP(Model Context Protocol)가 가장 큰 폭의 개정을 맞는다. initialize/initialized 핸드셰이크와 Mcp-Session-Id가 사라지고, 모든 요청은 self-contained HTTP request로 독립 실행된다. 이 변경은 단순한 Transport 개선이 아니라 \\\"프로토콜 레이어의 session 상태를 없애고, 상태 관리를 데이터 모델 레이어로 이동\\\"하는 설계 철학의 전환이다. 본 글은: (1) 2025-11-25 spec vs 2026-07-28 RC의 Before/After 코드 비교, (2) Explicit Handle Pattern — basket_id를 tool argument로 주고받는 새로운 session 관리 방식, (3) InputRequiredResult — SSE 없이 elicitation을 구현하는 stateless multi-round-trip 메커니즘, (4) W3C Trace Context 기반 분산 추적과 ttlMs/cacheScope 캐싱 전략, (5) Breaking Changes Migration Guide (initialize → server/discover, Session-Id → explicit handle, SSE → Streamable HTTP), (6) OAuth 2.1 + PKCE 의무화, Tasks Extension 정식 채택, (7) #059 Cross-Trust Handoff와의 연결 — protocol session 제거가 cross-trust scenario의 session migration 문제를 Data Model Layer로 위임하는 구조적 함의를 다룬다. TypeScript 코드 예시 (ExplicitHandleManager, ElicitationClient, TracePropagationMiddleware)와 실제 배포 구성(Docker Compose + round-robin Nginx)까지 포함한다.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-07-15-proactive-update/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"MCP 2026 Stateless Revolution: initialize 핸드셰이크와 Session이 사라진 프로토콜의 설계 철학 (#064)\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"2026년 7월 28일, MCP(Model Context Protocol)가 가장 큰 폭의 개정을 맞는다. initialize/initialized 핸드셰이크와 Mcp-Session-Id가 사라지고, 모든 요청은 self-contained HTTP request로 독립 실행된다. 이 변경은 단순한 Transport 개선이 아니라 \\\"프로토콜 레이어의 session 상태를 없애고, 상태 관리를 데이터 모델 레이어로 이동\\\"하는 설계 철학의 전환이다. 본 글은: (1) 2025-11-25 spec vs 2026-07-28 RC의 Before/After 코드 비교, (2) Explicit Handle Pattern — basket_id를 tool argument로 주고받는 새로운 session 관리 방식, (3) InputRequiredResult — SSE 없이 elicitation을 구현하는 stateless multi-round-trip 메커니즘, (4) W3C Trace Context 기반 분산 추적과 ttlMs/cacheScope 캐싱 전략, (5) Breaking Changes Migration Guide (initialize → server/discover, Session-Id → explicit handle, SSE → Streamable HTTP), (6) OAuth 2.1 + PKCE 의무화, Tasks Extension 정식 채택, (7) #059 Cross-Trust Handoff와의 연결 — protocol session 제거가 cross-trust scenario의 session migration 문제를 Data Model Layer로 위임하는 구조적 함의를 다룬다. TypeScript 코드 예시 (ExplicitHandleManager, ElicitationClient, TracePropagationMiddleware)와 실제 배포 구성(Docker Compose + round-robin Nginx)까지 포함한다.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-07-15-proactive-update/\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"MCP 2026 Stateless Revolution: initialize 핸드셰이크와 Session이 사라진 프로토콜의 설계 철학 (#064)\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"2026년 7월 28일, MCP(Model Context Protocol)가 가장 큰 폭의 개정을 맞는다. initialize/initialized 핸드셰이크와 Mcp-Session-Id가 사라지고, 모든 요청은 self-contained HTTP request로 독립 실행된다. 이 변경은 단순한 Transport 개선이 아니라 \\\"프로토콜 레이어의 session 상태를 없애고, 상태 관리를 데이터 모델 레이어로 이동\\\"하는 설계 철학의 전환이다. 본 글은: (1) 2025-11-25 spec vs 2026-07-28 RC의 Before/After 코드 비교, (2) Explicit Handle Pattern — basket_id를 tool argument로 주고받는 새로운 session 관리 방식, (3) InputRequiredResult — SSE 없이 elicitation을 구현하는 stateless multi-round-trip 메커니즘, (4) W3C Trace Context 기반 분산 추적과 ttlMs/cacheScope 캐싱 전략, (5) Breaking Changes Migration Guide (initialize → server/discover, Session-Id → explicit handle, SSE → Streamable HTTP), (6) OAuth 2.1 + PKCE 의무화, Tasks Extension 정식 채택, (7) #059 Cross-Trust Handoff와의 연결 — protocol session 제거가 cross-trust scenario의 session migration 문제를 Data Model Layer로 위임하는 구조적 함의를 다룬다. TypeScript 코드 예시 (ExplicitHandleManager, ElicitationClient, TracePropagationMiddleware)와 실제 배포 구성(Docker Compose + round-robin Nginx)까지 포함한다.\"}],\"$L11\",\"$L12\",\"$L13\"]\n"])</script><script>self.__next_f.push([1,"14:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n11:[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}]\n12:[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}]\n13:[\"$\",\"$L14\",\"13\",{}]\n"])</script></body></html>
