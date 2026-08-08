@@ -1,0 +1,584 @@
+<!DOCTYPE html><!--1htRIQq1RhdK0rI9lqK5A--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/b848662595cda15b.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/329e63eb984ada35.js" async=""></script><meta name="next-size-adjust" content=""/><title>AI 코딩 에이전트의 기억력 문제: agentmemory가 제시하는Persistent Memory 아키텍처 | Mato Po Tech Blog</title><meta name="description" content="AI 에이전트가 대화를 넘어 실제로 &#x27;학습&#x27;할 수 있게 만드는 Persistent Memory 아키텍처의 핵심 원리를深人 分析하고, agentmemory 프로젝트의 설계 철학을 중심으로 메모리 계층 구조와 검색 전략을 深掘합니다."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-05-13-proactive-update/"/><meta property="og:title" content="AI 코딩 에이전트의 기억력 문제: agentmemory가 제시하는Persistent Memory 아키텍처"/><meta property="og:description" content="AI 에이전트가 대화를 넘어 실제로 &#x27;학습&#x27;할 수 있게 만드는 Persistent Memory 아키텍처의 핵심 원리를深人 分析하고, agentmemory 프로젝트의 설계 철학을 중심으로 메모리 계층 구조와 검색 전략을 深掘합니다."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-05-13-proactive-update/"/><meta property="og:image" content="https://po-mato.github.io/milkyway.jpg"/><meta property="og:type" content="article"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="AI 코딩 에이전트의 기억력 문제: agentmemory가 제시하는Persistent Memory 아키텍처"/><meta name="twitter:description" content="AI 에이전트가 대화를 넘어 실제로 &#x27;학습&#x27;할 수 있게 만드는 Persistent Memory 아키텍처의 핵심 원리를深人 分析하고, agentmemory 프로젝트의 설계 철학을 중심으로 메모리 계층 구조와 검색 전략을 深掘합니다."/><meta name="twitter:image" content="https://po-mato.github.io/milkyway.jpg"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><div class="text-sm text-white/60">2026-05-13</div><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">AI 코딩 에이전트의 기억력 문제: agentmemory가 제시하는Persistent Memory 아키텍처</h1><p class="mt-4 text-base text-white/80 md:text-lg">AI 에이전트가 대화를 넘어 실제로 &#x27;학습&#x27;할 수 있게 만드는 Persistent Memory 아키텍처의 핵심 원리를深人 分析하고, agentmemory 프로젝트의 설계 철학을 중심으로 메모리 계층 구조와 검색 전략을 深掘합니다.</p><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><h2>서론: 에이전트는 왜 기억하지 못하는가</h2>
+<p>AI 코딩 에이전트(Cursor, Copilot, Cline 등)는 놀라운 코드 생성 능력을 보여줍니다. 그러나 한 가지 근본적인 한계가 있습니다 — <strong>이전 세션에서 배운 것을 기억하지 못한다</strong>는 것입니다.</p>
+<p>오늘날 대부분의 AI 코딩 에이전트는 다음과 같이 동작합니다:</p>
+<ol>
+<li>사용자가 "这段代码哪里有问题?"라고 질문</li>
+<li>에이전트가 코드베이스를 분석하고 답변</li>
+<li>세션이 종료되면 모든上下文이 사라짐</li>
+<li>다음 세션에서 같은 질문 → 처음부터 다시 분석</li>
+</ol>
+<p>이는 에이전트가 **단기 기억(Working Memory)**만 보유하고, **지속적 기억(Persistent Memory)**이 없기 때문입니다.</p>
+<p>본 글에서는 AI 코딩 에이전트에 Persistent Memory를 구현하는 아키텍처를深人 分析하고, 2026년 5월 GitHub Trending 1위에 오른 <strong>agentmemory</strong> 프로젝트의 설계 철학을 중심으)로 메모리 계층 구조와 검색 전략을 深掘합니다.</p>
+<hr>
+<h2>1. 문제 정의: 왜 AI 에이전트에 Memory가 중요한가</h2>
+<h3>1.1 현재 에이전트의 한계</h3>
+<p>AI 에이전트가 production 환경에서 실패하는 주요 원인 중 하나가 바로 <strong>컨텍스트 손실</strong>입니다:</p>
+<pre><code>[Session 1]
+> 에이전트: 이 프로젝트의 인증은 OAuth 2.0을 사용합니다
+> 에이전트: 회원가입은 custom JWT 기반입니다
+> 사용자: 세션 종료
+> (모든 정보 손실)
+
+[Session 2]
+> 사용자: 로그인 기능 추가해줘
+> 에이전트: JWT 기반 인증을 구현하겠습니다
+> 에이전트: ...OAuth 2.0도 함께 지원해야 하나요?
+> (불필요한 clarification round-trip)
+</code></pre>
+<h3>1.2 Memory가 해결하는 문제들</h3>
+<table>
+<thead>
+<tr>
+<th>문제</th>
+<th>Memory 미적용</th>
+<th>Memory 적용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>반복 clarification</td>
+<td>매 세션마다 같은 질문</td>
+<td>历史 기록 기반 자동 판단</td>
+</tr>
+<tr>
+<td>코드베이스演化 추적</td>
+<td>변경 사항을 기억 못함</td>
+<td>이전 결정과 아키텍처 선택 기억</td>
+</tr>
+<tr>
+<td>팀内 관례 학습</td>
+<td>팀 코딩 스타일을 매번 물음</td>
+<td>팀별 naming, testing 패턴 기억</td>
+</tr>
+<tr>
+<td>성능劣化</td>
+<td>긴 컨텍스트 → 토큰 낭비</td>
+<td>핵심 정보만 retrieval → 효율적</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>2. Memory Architecture: 계층 구조의重要性</h2>
+<h3>2.1 인간의 기억 모델에서 배우는 것</h3>
+<p>인간은 기억을 계층적으로 관리합니다:</p>
+<pre><code>┌─────────────────────────────────────────────┐
+│         Long-term Memory (LTM)              │
+│  - Semantic: 개념, 사실, 지식               │
+│  - Episodic: 경험, 사건                      │
+│  - 10+ year retention                       │
+├─────────────────────────────────────────────┤
+│         Working Memory (WM)                 │
+│  - 현재 작업에 필요한 활성 정보              │
+│  - 7±2 items (Miller's Law)                 │
+│  - 30-60 second typical retention           │
+├─────────────────────────────────────────────┤
+│         Sensory Memory                       │
+│  - 원시 입력 데이터                          │
+│  - 밀리초 수준의 초단기 저장                 │
+└─────────────────────────────────────────────┘
+</code></pre>
+<p>AI 에이전트의 Memory Architecture도 유사한 계층 구조를 가져야 합니다:</p>
+<h3>2.2 AI 에이전트 Memory의 3-tier Architecture</h3>
+<pre><code>┌──────────────────────────────────────────────────────────┐
+│          Tier 1: Episodic Memory (경험 기억)              │
+│  - 세션 간 주요 상호작용 기록                              │
+│  - "사용자가 previously拒绝了这个方案"                    │
+│  - Storage: Vector DB (embedding search)                  │
+├──────────────────────────────────────────────────────────┤
+│          Tier 2: Semantic Memory (의미 기억)              │
+│  - 코드베이스의 구조적 지식                                │
+│  - "이 프로젝트는 Monorepo 구조, BE는 Go, FE는 Next.js"   │
+│  - Storage: Knowledge Graph + Document Store             │
+├──────────────────────────────────────────────────────────┤
+│          Tier 3: Procedural Memory (절차 기억)             │
+│  - 에이전트가 수행한 작업의 절차                          │
+│  - "authentication module은 이전에 이 방식으로 구현함"    │
+│  - Storage: Object Store (serialized action sequences)    │
+└──────────────────────────────────────────────────────────┘
+</code></pre>
+<h3>2.3 Tier별 접근 전략</h3>
+<pre><code class="language-typescript">// 각 Memory Tier의 접근 전략
+
+interface MemoryConfig {
+  episodic: {
+    embeddingModel: "text-embedding-3-small";
+    topK: 5;                          // 최근 5개 세션 검색
+    similarityThreshold: 0.75;
+    maxAge: 90;                       // 90일 이상된 기록 자동 만료
+  };
+  semantic: {
+    chunkStrategy: "semantic-split";  // 코드 구조 기반 분할
+    indexUpdateTrigger: "git-hook";   // 파일 변경 시 재인덱싱
+    freshnessWeight: 0.3;            // 최신 정보 가중치
+  };
+  procedural: {
+    actionSequenceLength: 10;         // 최대 10단계 절차 기록
+    deduplicationWindow: 5;          // 5단계 이내 중복 제거
+    storageFormat: "json-lines";       // 읽기 편한 직렬화 형식
+  };
+}
+</code></pre>
+<hr>
+<h2>3. Retrieval Strategy: 어떻게 필요한 Memory를 찾는가</h2>
+<h3>3.1 Naive Vector Search의 한계</h3>
+<p>단순히 "가장 유사한 embedding을 검색"하는 방식은 AI 에이전트 Memory에서는 충분하지 않습니다:</p>
+<p><strong>문제점:</strong></p>
+<ol>
+<li><strong>시간성 누락</strong>: 최근 정보가 더 relevant할 수 있음</li>
+<li><strong>구조적 관계 무시</strong>: 코드 의존성 그래프를 반영 못함</li>
+<li><strong>다중 쿼리 불일치</strong>: 한 번의 검색으로复合 쿼리 처리 못함</li>
+</ol>
+<h3>3.2 Hybrid Retrieval Architecture</h3>
+<p>agentmemory가 채택한 접근법은 <strong>Hybrid Retrieval</strong>입니다:</p>
+<pre><code class="language-typescript">// Hybrid Retrieval: Vector + Keyword + Temporal Fusion
+
+class HybridMemoryRetriever {
+  constructor(
+    private vectorStore: VectorStore,
+    private keywordIndex: KeywordIndex,
+    private temporalStore: TemporalStore
+  ) {}
+
+  async retrieve(query: string, context: AgentContext): Promise&#x3C;MemoryEntry[]> {
+    // 1. Parallel retrieval from all stores
+    const [vectorResults, keywordResults, temporalResults] = await Promise.all([
+      this.vectorStore.search(query, { topK: 10 }),
+      this.keywordIndex.search(query),
+      this.temporalStore.getRecent(context.agentId, { hours: 24 })
+    ]);
+
+    // 2. Reciprocal Rank Fusion (RRF) for score fusion
+    const fusedScores = this.reciprocalRankFusion(
+      [vectorResults, keywordResults, temporalResults],
+      { vector: 0.5, keyword: 0.3, temporal: 0.2 }
+    );
+
+    // 3. Context-aware reranking
+    const reranked = await this.contextualRerank(fusedScores, context);
+
+    // 4. Deduplication and diversity boost
+    return this.diversifyResults(reranked, { maxResults: 5 });
+  }
+
+  private reciprocalRankFusion(
+    resultSets: MemoryEntry[][],
+    weights: Record&#x3C;string, number>
+  ): Map&#x3C;string, number> {
+    const scores = new Map&#x3C;string, number>();
+    
+    resultSets.forEach((results, idx) => {
+      const weight = weights[Object.keys(weights)[idx]] || 1;
+      results.forEach((result, rank) => {
+        const score = (scores.get(result.id) || 0) + (weight / (60 + rank));
+        scores.set(result.id, score);
+      });
+    });
+
+    return scores;
+  }
+}
+</code></pre>
+<h3>3.3 Memory TTL (Time-To-Live) 전략</h3>
+<p>모든 Memory가 영구적으로 저장되면 검색 품질이 저하됩니다. TTL 전략이 필수적입니다:</p>
+<pre><code class="language-typescript">// Memory TTL based on type and usage frequency
+
+const MEMORY_TTL_CONFIG = {
+  episodic: {
+    defaultTTL: 90 * 24 * 60 * 60 * 1000,  // 90 days
+    accessDecay: {
+      0: 1.0,       // 1시간 이내: 완전 가중치
+      24: 0.8,      // 24시간 이내: 80% 가중치
+      168: 0.5,     // 7일 이내: 50% 가중치
+      720: 0.2,     // 30일 이후: 20% 가중치
+    }
+  },
+  semantic: {
+    defaultTTL: 365 * 24 * 60 * 60 * 1000,  // 1 year
+    updateOnChange: true,                     // 코드 변경 시 갱신
+  },
+  procedural: {
+    defaultTTL: 30 * 24 * 60 * 60 * 1000,   // 30 days
+    patternVerification: true,                // 패턴 검증 후 유지
+  }
+};
+
+function calculateEffectiveTTL(memory: MemoryEntry): number {
+  const config = MEMORY_TTL_CONFIG[memory.type];
+  const baseTTL = config.defaultTTL;
+  const lastAccessedHours = (Date.now() - memory.lastAccessed) / (1000 * 60 * 60);
+  const decayCurve = config.accessDecay;
+  
+  // Calculate decay factor
+  const decayKeys = Object.keys(decayCurve).map(Number).sort((a, b) => b - a);
+  let decayFactor = 1.0;
+  for (const hours of decayKeys) {
+    if (lastAccessedHours &#x3C;= hours) {
+      decayFactor = decayCurve[hours];
+    }
+  }
+
+  return Math.floor(baseTTL * decayFactor);
+}
+</code></pre>
+<hr>
+<h2>4. agentmemory 프로젝트 深掘</h2>
+<h3>4.1 프로젝트 개요</h3>
+<p><strong>agentmemory</strong>는 AI 코딩 에이전트에 Persistent Memory 기능을 제공하는 TypeScript 라이브러리입니다. 2026년 5월 기준:</p>
+<ul>
+<li><strong>GitHub</strong>: 5,731 stars, 하루 1,067 stars 증가</li>
+<li><strong>GitHub Trending 1위</strong></li>
+<li><strong>핵심 차별점</strong>: 벤치마크 기반 Memory 검색 성능 측정</li>
+</ul>
+<h3>4.2 핵심 설계 원칙</h3>
+<pre><code class="language-typescript">// agentmemory의 Memory Manager 설계 (개념적 표현)
+
+import { ChromaClient } from 'chromadb';
+import { SQLDatabase } from 'langchain/sql';
+
+class AgentMemoryManager {
+  private episodicStore: VectorStore;      // ChromaDB for embeddings
+  private semanticStore: KnowledgeGraph;   // Graph DB for relationships
+  private proceduralStore: ObjectStore;   // Structured storage for sequences
+  
+  constructor(config: MemoryConfig) {
+    // Initialize stores based on config
+    this.episodicStore = new ChromaClient(config.chromaPath);
+    this.semanticStore = new KnowledgeGraph(config.graphDbUri);
+    this.proceduralStore = new ObjectStore(config.s3Bucket);
+  }
+
+  async store(type: MemoryType, data: MemoryData): Promise&#x3C;string> {
+    switch (type) {
+      case 'episodic':
+        return this.storeEpisodic(data);
+      case 'semantic':
+        return this.storeSemantic(data);
+      case 'procedural':
+        return this.storeProcedural(data);
+    }
+  }
+
+  async retrieve(query: RetrievalQuery): Promise&#x3C;MemoryResult[]> {
+    // 1. Encode query to embedding
+    const queryEmbedding = await this.embeddingModel.encode(query.text);
+    
+    // 2. Multi-store retrieval
+    const [episodic, semantic, procedural] = await Promise.all([
+      this.episodicStore.search(queryEmbedding, { topK: query.topK }),
+      this.semanticStore.search(query.text, query.filters),
+      this.proceduralStore.search(query.pattern)
+    ]);
+
+    // 3. Fusion and ranking
+    return this.fusionEngine.fuse([episodic, semantic, procedural], query.context);
+  }
+
+  async learnFromInteraction(interaction: AgentInteraction): Promise&#x3C;void> {
+    // Store in all relevant tiers
+    await Promise.all([
+      this.store('episodic', {
+        summary: interaction.summary,
+        embedding: await this.embedding(interaction.summary),
+        timestamp: interaction.timestamp,
+        agentId: interaction.agentId
+      }),
+      this.store('semantic', {
+        facts: interaction.facts,
+        relationships: interaction.relationships,
+        sourceFile: interaction.affectedFiles
+      }),
+      this.store('procedural', {
+        actions: interaction.actionSequence,
+        success: interaction.outcome,
+        context: interaction.context
+      })
+    ]);
+
+    // Update TTL and trigger background compaction
+    this.scheduleCompaction(interaction.agentId);
+  }
+}
+</code></pre>
+<h3>4.3 Memory와 Tool Calling의融合</h3>
+<p>agentmemory의 가장 중요한 innovation은 <strong>Tool Calling 결과의 자동 Memory화</strong>입니다:</p>
+<pre><code class="language-typescript">// Tool 결과를 자동으로 Memory에 저장하는 예시
+
+class ToolResultMemory {
+  async captureToolExecution(toolResult: ToolExecution): Promise&#x3C;void> {
+    const memoryEntry = {
+      type: 'procedural' as const,
+      tool: toolResult.toolName,
+      parameters: toolResult.parameters,
+      outcome: toolResult.result,
+      success: toolResult.success,
+      timestamp: toolResult.endTime - toolResult.startTime,
+      context: {
+        file: toolResult.targetFile,
+        language: detectLanguage(toolResult.targetFile),
+        project: extractProjectContext(toolResult.workspace)
+      }
+    };
+
+    // Store for future similar situations
+    await this.memory.store('procedural', memoryEntry);
+
+    // Extract learnings
+    if (!toolResult.success) {
+      await this.memory.store('episodic', {
+        summary: `Tool ${toolResult.toolName} failed with: ${toolResult.errorMessage}`,
+        resolution: toolResult.recoveredWith || 'none',
+        type: 'failure-pattern'
+      });
+    }
+  }
+}
+
+// Usage in agent loop
+async function agentLoop(agent: Agent, task: Task) {
+  while (!task.complete) {
+    const action = await agent.decideNextAction(task);
+    
+    // Add retrieved memory context to action
+    const relevantMemory = await memory.retrieve({
+      query: `类似任务: ${task.description}`,
+      context: { projectId: task.projectId }
+    });
+    
+    action.context.memories = relevantMemory;
+    
+    const result = await agent.execute(action);
+    
+    // Auto-learn from execution
+    await memory.learnFromInteraction({
+      summary: `Executed ${action.type} on ${action.target}`,
+      facts: extractFacts(result),
+      actionSequence: action.history,
+      outcome: result.success ? 'success' : 'failure'
+    });
+  }
+}
+</code></pre>
+<hr>
+<h2>5. 실제 구현: Memory-backed Coding Agent 만들기</h2>
+<h3>5.1 전체 Architecture</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                    AI Coding Agent (User Interface)              │
+│        Cursor, Copilot, Cline, Claude Desktop, etc.              │
+└───────────────────────────────┬─────────────────────────────────┘
+                                │
+┌───────────────────────────────▼─────────────────────────────────┐
+│                    Memory Manager (agentmemory)                  │
+│                                                                   │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │
+│  │  Episodic   │  │  Semantic   │  │ Procedural  │              │
+│  │  Memory     │  │  Memory     │  │  Memory     │              │
+│  │  (ChromaDB) │  │  (KG+Doc)   │  │  (JSON L)   │              │
+│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘              │
+│         │                │                │                      │
+│         └────────────────┼────────────────┘                      │
+│                          │                                        │
+│              ┌───────────▼───────────┐                           │
+│              │   Retrieval Engine    │                           │
+│              │   (Hybrid Search)     │                           │
+│              └───────────┬───────────┘                           │
+└──────────────────────────┼───────────────────────────────────────┘
+                           │
+┌──────────────────────────▼───────────────────────────────────────┐
+│                    External Tools                                  │
+│  ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐          │
+│  │ Git    │ │FileSys │ │ Terminal│ │Browser │ │ Search │         │
+│  └────────┘ └────────┘ └────────┘ └────────┘ └────────┘          │
+└─────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3>5.2 구현 예시: TypeScript</h3>
+<pre><code class="language-typescript">import { AgentMemory } from '@agentmemory/core';
+
+// Initialize Memory Manager
+const memory = new AgentMemory({
+  provider: 'chroma',           // or 'qdrant', 'pinecone'
+  episodic: {
+    collection: 'agent-episodes',
+    embeddingModel: 'text-embedding-3-small',
+    ttlDays: 90
+  },
+  semantic: {
+    indexOnStartup: ['*.ts', '*.tsx', '*.py'],
+    excludePatterns: ['node_modules/**', 'dist/**']
+  },
+  procedural: {
+    storagePath: './memory/procedural',
+    maxSequenceLength: 20
+  }
+});
+
+// Connect to existing agent
+const agent = new ClaudeAgent({
+  model: 'claude-3-5-sonnet',
+  systemPrompt: `You are a coding agent with persistent memory.
+  Previous relevant experiences will be injected into your context.`
+});
+
+// Memory-aware agent loop
+agent.on('before-decide', async (context) => {
+  const relevantMemories = await memory.retrieve({
+    query: context.task,
+    projectContext: {
+      root: context.workspaceRoot,
+      language: detectLanguage(context.targetFile)
+    },
+    filters: {
+      agentId: 'default',
+      maxAge: 90
+    }
+  });
+
+  if (relevantMemories.length > 0) {
+    context.prompt += `\n\nRelevant past experiences:\n${relevantMemories.map(m => `- ${m.summary}`).join('\n')}`;
+  }
+});
+
+agent.on('after-action', async (action, result) => {
+  await memory.store({
+    type: action.success ? 'procedural' : 'episodic',
+    data: {
+      summary: `${action.tool} on ${action.target}: ${action.success ? 'SUCCESS' : 'FAILED'}`,
+      toolName: action.tool,
+      target: action.target,
+      success: action.success,
+      errorMessage: action.error,
+      resolution: result.resolvedWith,
+      timestamp: new Date()
+    }
+  });
+});
+
+// Start agent
+await agent.start();
+</code></pre>
+<hr>
+<h2>6. 평가: Memory Architecture의 성능 측정</h2>
+<h3>6.1 측정 지표</h3>
+<p>Memory 시스템의 성능은 전통적인 정보 검색 지표와 다른 접근이 필요합니다:</p>
+<table>
+<thead>
+<tr>
+<th>지표</th>
+<th>정의</th>
+<th>목표</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Recall@5</strong></td>
+<td>관련 Memory 5개 중检索된 비율</td>
+<td>> 0.85</td>
+</tr>
+<tr>
+<td><strong>Latency</strong></td>
+<td>검색 → 결과 반환 시간</td>
+<td>&#x3C; 100ms</td>
+</tr>
+<tr>
+<td><strong>Memory Size</strong></td>
+<td>전체 저장 용량</td>
+<td>적정 유지</td>
+</tr>
+<tr>
+<td><strong>Hit Rate</strong></td>
+<td>Memory가 실제로 유용했던 비율</td>
+<td>> 0.7</td>
+</tr>
+<tr>
+<td><strong>False Positive Rate</strong></td>
+<td>관련 없는 Memory 검색 비율</td>
+<td>&#x3C; 0.1</td>
+</tr>
+</tbody>
+</table>
+<h3>6.2 Benchmarking Framework</h3>
+<pre><code class="language-python"># Memory system benchmark example
+
+class MemoryBenchmark:
+    def __init__(self, memory_system, test_scenarios):
+        self.memory = memory_system
+        self.scenarios = test_scenarios
+    
+    def run_recall_benchmark(self):
+        results = []
+        for scenario in self.scenarios:
+            # Inject known memories
+            self.memory.store_multiple(scenario.fixtures)
+            
+            # Query and measure recall
+            retrieved = self.memory.retrieve(scenario.query, top_k=5)
+            relevant = set(scenario.relevant_ids)
+            retrieved_ids = set(r.id for r in retrieved)
+            
+            recall = len(relevant &#x26; retrieved_ids) / len(relevant) if relevant else 0
+            
+            results.append({
+                'scenario': scenario.name,
+                'recall@5': recall,
+                'latency_ms': retrieved.latency
+            })
+        
+        return results
+    
+    def run_hit_rate_tracking(self):
+        """Track how often stored memories are actually useful"""
+        hits = 0
+        total = 0
+        
+        for interaction in self.get_live_interactions(duration='1h'):
+            memories = self.memory.retrieve(interaction.task)
+            
+            # Check if retrieved memories changed agent's decision
+            if self.memory_impacted_decision(memories, interaction):
+                hits += 1
+            total += 1
+        
+        return hits / total if total > 0 else 0
+
+# Run benchmark
+benchmark = MemoryBenchmark(agentmemory, test_scenarios)
+results = benchmark.run_recall_benchmark()
+print(f"平均 Recall@5: {np.mean([r['recall@5'] for r in results]):.2%}")
+</code></pre>
+<hr>
+<h2>7. 미래展望: Memory-Enhanced Agents의演化</h2>
+<h3>7.1 단기 발전 방향</h3>
+<ol>
+<li><strong>Cross-agent Memory Sharing</strong>: 여러 에이전트가 공유 Knowledge Base 활용</li>
+<li><strong>Real-time Memory Update</strong>: 파일 변경 시 자동 반영 (git-hook integration)</li>
+<li><strong>Multi-modal Memory</strong>: 코드 + 디자인 파일 + 문서 통합检索</li>
+</ol>
+<h3>7.2 장기 비전</h3>
+<p>AI 에이전트가 "학습하는 시스템"으로 진화하면:</p>
+<pre><code>2026 (현재): Session-level Memory
+  → 에이전트가 현재 세션 내에서 정보를 유지
+
+2027 (단기): Project-level Memory  
+  → 프로젝트 전체的历史 추적, 의존성 그래프 형성
+
+2028 (중기): Organization-level Memory
+  → 팀/조직의 코딩 표준, 아키텍처 결정, 技术债务 knowledge
+
+2029+ (장기): General-purpose Memory
+  → 에이전트가 사용자의 작업 스타일을 완전히 학습,
+    Personal AI as a Long-term Companion
+</code></pre>
+<hr>
+<h2>결론: Memory는 AI 에이전트의 경쟁력이다</h2>
+<p>AI 코딩 에이전트의 차세대 경쟁력은 **"얼마나 효과적으로 기억하고 활용하는가"**로 결정될 것입니다. agentmemory가 제시한 Persistent Memory Architecture는 그 첫 걸음입니다.</p>
+<p>핵심 takeaways:</p>
+<ol>
+<li><strong>3-tier Memory Architecture</strong>로 단기, 중기, 장기 기억을分层管理</li>
+<li><strong>Hybrid Retrieval</strong>으로 Vector + Keyword + Temporal 검색融合</li>
+<li><strong>TTL + Decay</strong>로 Storage 효율과 검색 품질 균형</li>
+<li><strong>Tool Calling 결과 자동 Memory화</strong>로 에이전트의 학습 속도 가속화</li>
+<li><strong>Benchmark-driven development</strong>로 Memory 시스템의 지속적 개선</li>
+</ol>
+<p>AI 에이전트가 단순한 도구를 넘어 <strong>함께 성장하는 파트너</strong>가 되려면, 먼저 기억할 줄 알아야 합니다.</p>
+<hr>
+<p><em>본 글은 2026년 5월 13일자 기술 블로그입니다.</em>
+<em>참고: agentmemory (github.com/rohitg00/agentmemory), 2026-05-13 GitHub Trending 1위</em></p></div></article></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/b848662595cda15b.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"1htRIQq1RhdK0rI9lqK5A\",\"c\":[\"\",\"posts\",\"2026-05-13-proactive-update\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-05-13-proactive-update\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/b848662595cda15b.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/329e63eb984ada35.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/329e63eb984ada35.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"11:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n10:T62f7,"])</script><script>self.__next_f.push([1,"\u003ch2\u003e서론: 에이전트는 왜 기억하지 못하는가\u003c/h2\u003e\n\u003cp\u003eAI 코딩 에이전트(Cursor, Copilot, Cline 등)는 놀라운 코드 생성 능력을 보여줍니다. 그러나 한 가지 근본적인 한계가 있습니다 — \u003cstrong\u003e이전 세션에서 배운 것을 기억하지 못한다\u003c/strong\u003e는 것입니다.\u003c/p\u003e\n\u003cp\u003e오늘날 대부분의 AI 코딩 에이전트는 다음과 같이 동작합니다:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e사용자가 \"这段代码哪里有问题?\"라고 질문\u003c/li\u003e\n\u003cli\u003e에이전트가 코드베이스를 분석하고 답변\u003c/li\u003e\n\u003cli\u003e세션이 종료되면 모든上下文이 사라짐\u003c/li\u003e\n\u003cli\u003e다음 세션에서 같은 질문 → 처음부터 다시 분석\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003e이는 에이전트가 **단기 기억(Working Memory)**만 보유하고, **지속적 기억(Persistent Memory)**이 없기 때문입니다.\u003c/p\u003e\n\u003cp\u003e본 글에서는 AI 코딩 에이전트에 Persistent Memory를 구현하는 아키텍처를深人 分析하고, 2026년 5월 GitHub Trending 1위에 오른 \u003cstrong\u003eagentmemory\u003c/strong\u003e 프로젝트의 설계 철학을 중심으)로 메모리 계층 구조와 검색 전략을 深掘합니다.\u003c/p\u003e\n\u003chr\u003e\n\u003ch2\u003e1. 문제 정의: 왜 AI 에이전트에 Memory가 중요한가\u003c/h2\u003e\n\u003ch3\u003e1.1 현재 에이전트의 한계\u003c/h3\u003e\n\u003cp\u003eAI 에이전트가 production 환경에서 실패하는 주요 원인 중 하나가 바로 \u003cstrong\u003e컨텍스트 손실\u003c/strong\u003e입니다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e[Session 1]\n\u003e 에이전트: 이 프로젝트의 인증은 OAuth 2.0을 사용합니다\n\u003e 에이전트: 회원가입은 custom JWT 기반입니다\n\u003e 사용자: 세션 종료\n\u003e (모든 정보 손실)\n\n[Session 2]\n\u003e 사용자: 로그인 기능 추가해줘\n\u003e 에이전트: JWT 기반 인증을 구현하겠습니다\n\u003e 에이전트: ...OAuth 2.0도 함께 지원해야 하나요?\n\u003e (불필요한 clarification round-trip)\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e1.2 Memory가 해결하는 문제들\u003c/h3\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e문제\u003c/th\u003e\n\u003cth\u003eMemory 미적용\u003c/th\u003e\n\u003cth\u003eMemory 적용\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e반복 clarification\u003c/td\u003e\n\u003ctd\u003e매 세션마다 같은 질문\u003c/td\u003e\n\u003ctd\u003e历史 기록 기반 자동 판단\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e코드베이스演化 추적\u003c/td\u003e\n\u003ctd\u003e변경 사항을 기억 못함\u003c/td\u003e\n\u003ctd\u003e이전 결정과 아키텍처 선택 기억\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e팀内 관례 학습\u003c/td\u003e\n\u003ctd\u003e팀 코딩 스타일을 매번 물음\u003c/td\u003e\n\u003ctd\u003e팀별 naming, testing 패턴 기억\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e성능劣化\u003c/td\u003e\n\u003ctd\u003e긴 컨텍스트 → 토큰 낭비\u003c/td\u003e\n\u003ctd\u003e핵심 정보만 retrieval → 효율적\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003chr\u003e\n\u003ch2\u003e2. Memory Architecture: 계층 구조의重要性\u003c/h2\u003e\n\u003ch3\u003e2.1 인간의 기억 모델에서 배우는 것\u003c/h3\u003e\n\u003cp\u003e인간은 기억을 계층적으로 관리합니다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e┌─────────────────────────────────────────────┐\n│         Long-term Memory (LTM)              │\n│  - Semantic: 개념, 사실, 지식               │\n│  - Episodic: 경험, 사건                      │\n│  - 10+ year retention                       │\n├─────────────────────────────────────────────┤\n│         Working Memory (WM)                 │\n│  - 현재 작업에 필요한 활성 정보              │\n│  - 7±2 items (Miller's Law)                 │\n│  - 30-60 second typical retention           │\n├─────────────────────────────────────────────┤\n│         Sensory Memory                       │\n│  - 원시 입력 데이터                          │\n│  - 밀리초 수준의 초단기 저장                 │\n└─────────────────────────────────────────────┘\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eAI 에이전트의 Memory Architecture도 유사한 계층 구조를 가져야 합니다:\u003c/p\u003e\n\u003ch3\u003e2.2 AI 에이전트 Memory의 3-tier Architecture\u003c/h3\u003e\n\u003cpre\u003e\u003ccode\u003e┌──────────────────────────────────────────────────────────┐\n│          Tier 1: Episodic Memory (경험 기억)              │\n│  - 세션 간 주요 상호작용 기록                              │\n│  - \"사용자가 previously拒绝了这个方案\"                    │\n│  - Storage: Vector DB (embedding search)                  │\n├──────────────────────────────────────────────────────────┤\n│          Tier 2: Semantic Memory (의미 기억)              │\n│  - 코드베이스의 구조적 지식                                │\n│  - \"이 프로젝트는 Monorepo 구조, BE는 Go, FE는 Next.js\"   │\n│  - Storage: Knowledge Graph + Document Store             │\n├──────────────────────────────────────────────────────────┤\n│          Tier 3: Procedural Memory (절차 기억)             │\n│  - 에이전트가 수행한 작업의 절차                          │\n│  - \"authentication module은 이전에 이 방식으로 구현함\"    │\n│  - Storage: Object Store (serialized action sequences)    │\n└──────────────────────────────────────────────────────────┘\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e2.3 Tier별 접근 전략\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// 각 Memory Tier의 접근 전략\n\ninterface MemoryConfig {\n  episodic: {\n    embeddingModel: \"text-embedding-3-small\";\n    topK: 5;                          // 최근 5개 세션 검색\n    similarityThreshold: 0.75;\n    maxAge: 90;                       // 90일 이상된 기록 자동 만료\n  };\n  semantic: {\n    chunkStrategy: \"semantic-split\";  // 코드 구조 기반 분할\n    indexUpdateTrigger: \"git-hook\";   // 파일 변경 시 재인덱싱\n    freshnessWeight: 0.3;            // 최신 정보 가중치\n  };\n  procedural: {\n    actionSequenceLength: 10;         // 최대 10단계 절차 기록\n    deduplicationWindow: 5;          // 5단계 이내 중복 제거\n    storageFormat: \"json-lines\";       // 읽기 편한 직렬화 형식\n  };\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e3. Retrieval Strategy: 어떻게 필요한 Memory를 찾는가\u003c/h2\u003e\n\u003ch3\u003e3.1 Naive Vector Search의 한계\u003c/h3\u003e\n\u003cp\u003e단순히 \"가장 유사한 embedding을 검색\"하는 방식은 AI 에이전트 Memory에서는 충분하지 않습니다:\u003c/p\u003e\n\u003cp\u003e\u003cstrong\u003e문제점:\u003c/strong\u003e\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e시간성 누락\u003c/strong\u003e: 최근 정보가 더 relevant할 수 있음\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e구조적 관계 무시\u003c/strong\u003e: 코드 의존성 그래프를 반영 못함\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e다중 쿼리 불일치\u003c/strong\u003e: 한 번의 검색으로复合 쿼리 처리 못함\u003c/li\u003e\n\u003c/ol\u003e\n\u003ch3\u003e3.2 Hybrid Retrieval Architecture\u003c/h3\u003e\n\u003cp\u003eagentmemory가 채택한 접근법은 \u003cstrong\u003eHybrid Retrieval\u003c/strong\u003e입니다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// Hybrid Retrieval: Vector + Keyword + Temporal Fusion\n\nclass HybridMemoryRetriever {\n  constructor(\n    private vectorStore: VectorStore,\n    private keywordIndex: KeywordIndex,\n    private temporalStore: TemporalStore\n  ) {}\n\n  async retrieve(query: string, context: AgentContext): Promise\u0026#x3C;MemoryEntry[]\u003e {\n    // 1. Parallel retrieval from all stores\n    const [vectorResults, keywordResults, temporalResults] = await Promise.all([\n      this.vectorStore.search(query, { topK: 10 }),\n      this.keywordIndex.search(query),\n      this.temporalStore.getRecent(context.agentId, { hours: 24 })\n    ]);\n\n    // 2. Reciprocal Rank Fusion (RRF) for score fusion\n    const fusedScores = this.reciprocalRankFusion(\n      [vectorResults, keywordResults, temporalResults],\n      { vector: 0.5, keyword: 0.3, temporal: 0.2 }\n    );\n\n    // 3. Context-aware reranking\n    const reranked = await this.contextualRerank(fusedScores, context);\n\n    // 4. Deduplication and diversity boost\n    return this.diversifyResults(reranked, { maxResults: 5 });\n  }\n\n  private reciprocalRankFusion(\n    resultSets: MemoryEntry[][],\n    weights: Record\u0026#x3C;string, number\u003e\n  ): Map\u0026#x3C;string, number\u003e {\n    const scores = new Map\u0026#x3C;string, number\u003e();\n    \n    resultSets.forEach((results, idx) =\u003e {\n      const weight = weights[Object.keys(weights)[idx]] || 1;\n      results.forEach((result, rank) =\u003e {\n        const score = (scores.get(result.id) || 0) + (weight / (60 + rank));\n        scores.set(result.id, score);\n      });\n    });\n\n    return scores;\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e3.3 Memory TTL (Time-To-Live) 전략\u003c/h3\u003e\n\u003cp\u003e모든 Memory가 영구적으로 저장되면 검색 품질이 저하됩니다. TTL 전략이 필수적입니다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// Memory TTL based on type and usage frequency\n\nconst MEMORY_TTL_CONFIG = {\n  episodic: {\n    defaultTTL: 90 * 24 * 60 * 60 * 1000,  // 90 days\n    accessDecay: {\n      0: 1.0,       // 1시간 이내: 완전 가중치\n      24: 0.8,      // 24시간 이내: 80% 가중치\n      168: 0.5,     // 7일 이내: 50% 가중치\n      720: 0.2,     // 30일 이후: 20% 가중치\n    }\n  },\n  semantic: {\n    defaultTTL: 365 * 24 * 60 * 60 * 1000,  // 1 year\n    updateOnChange: true,                     // 코드 변경 시 갱신\n  },\n  procedural: {\n    defaultTTL: 30 * 24 * 60 * 60 * 1000,   // 30 days\n    patternVerification: true,                // 패턴 검증 후 유지\n  }\n};\n\nfunction calculateEffectiveTTL(memory: MemoryEntry): number {\n  const config = MEMORY_TTL_CONFIG[memory.type];\n  const baseTTL = config.defaultTTL;\n  const lastAccessedHours = (Date.now() - memory.lastAccessed) / (1000 * 60 * 60);\n  const decayCurve = config.accessDecay;\n  \n  // Calculate decay factor\n  const decayKeys = Object.keys(decayCurve).map(Number).sort((a, b) =\u003e b - a);\n  let decayFactor = 1.0;\n  for (const hours of decayKeys) {\n    if (lastAccessedHours \u0026#x3C;= hours) {\n      decayFactor = decayCurve[hours];\n    }\n  }\n\n  return Math.floor(baseTTL * decayFactor);\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e4. agentmemory 프로젝트 深掘\u003c/h2\u003e\n\u003ch3\u003e4.1 프로젝트 개요\u003c/h3\u003e\n\u003cp\u003e\u003cstrong\u003eagentmemory\u003c/strong\u003e는 AI 코딩 에이전트에 Persistent Memory 기능을 제공하는 TypeScript 라이브러리입니다. 2026년 5월 기준:\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003eGitHub\u003c/strong\u003e: 5,731 stars, 하루 1,067 stars 증가\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eGitHub Trending 1위\u003c/strong\u003e\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e핵심 차별점\u003c/strong\u003e: 벤치마크 기반 Memory 검색 성능 측정\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch3\u003e4.2 핵심 설계 원칙\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// agentmemory의 Memory Manager 설계 (개념적 표현)\n\nimport { ChromaClient } from 'chromadb';\nimport { SQLDatabase } from 'langchain/sql';\n\nclass AgentMemoryManager {\n  private episodicStore: VectorStore;      // ChromaDB for embeddings\n  private semanticStore: KnowledgeGraph;   // Graph DB for relationships\n  private proceduralStore: ObjectStore;   // Structured storage for sequences\n  \n  constructor(config: MemoryConfig) {\n    // Initialize stores based on config\n    this.episodicStore = new ChromaClient(config.chromaPath);\n    this.semanticStore = new KnowledgeGraph(config.graphDbUri);\n    this.proceduralStore = new ObjectStore(config.s3Bucket);\n  }\n\n  async store(type: MemoryType, data: MemoryData): Promise\u0026#x3C;string\u003e {\n    switch (type) {\n      case 'episodic':\n        return this.storeEpisodic(data);\n      case 'semantic':\n        return this.storeSemantic(data);\n      case 'procedural':\n        return this.storeProcedural(data);\n    }\n  }\n\n  async retrieve(query: RetrievalQuery): Promise\u0026#x3C;MemoryResult[]\u003e {\n    // 1. Encode query to embedding\n    const queryEmbedding = await this.embeddingModel.encode(query.text);\n    \n    // 2. Multi-store retrieval\n    const [episodic, semantic, procedural] = await Promise.all([\n      this.episodicStore.search(queryEmbedding, { topK: query.topK }),\n      this.semanticStore.search(query.text, query.filters),\n      this.proceduralStore.search(query.pattern)\n    ]);\n\n    // 3. Fusion and ranking\n    return this.fusionEngine.fuse([episodic, semantic, procedural], query.context);\n  }\n\n  async learnFromInteraction(interaction: AgentInteraction): Promise\u0026#x3C;void\u003e {\n    // Store in all relevant tiers\n    await Promise.all([\n      this.store('episodic', {\n        summary: interaction.summary,\n        embedding: await this.embedding(interaction.summary),\n        timestamp: interaction.timestamp,\n        agentId: interaction.agentId\n      }),\n      this.store('semantic', {\n        facts: interaction.facts,\n        relationships: interaction.relationships,\n        sourceFile: interaction.affectedFiles\n      }),\n      this.store('procedural', {\n        actions: interaction.actionSequence,\n        success: interaction.outcome,\n        context: interaction.context\n      })\n    ]);\n\n    // Update TTL and trigger background compaction\n    this.scheduleCompaction(interaction.agentId);\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e4.3 Memory와 Tool Calling의融合\u003c/h3\u003e\n\u003cp\u003eagentmemory의 가장 중요한 innovation은 \u003cstrong\u003eTool Calling 결과의 자동 Memory화\u003c/strong\u003e입니다:\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003e// Tool 결과를 자동으로 Memory에 저장하는 예시\n\nclass ToolResultMemory {\n  async captureToolExecution(toolResult: ToolExecution): Promise\u0026#x3C;void\u003e {\n    const memoryEntry = {\n      type: 'procedural' as const,\n      tool: toolResult.toolName,\n      parameters: toolResult.parameters,\n      outcome: toolResult.result,\n      success: toolResult.success,\n      timestamp: toolResult.endTime - toolResult.startTime,\n      context: {\n        file: toolResult.targetFile,\n        language: detectLanguage(toolResult.targetFile),\n        project: extractProjectContext(toolResult.workspace)\n      }\n    };\n\n    // Store for future similar situations\n    await this.memory.store('procedural', memoryEntry);\n\n    // Extract learnings\n    if (!toolResult.success) {\n      await this.memory.store('episodic', {\n        summary: `Tool ${toolResult.toolName} failed with: ${toolResult.errorMessage}`,\n        resolution: toolResult.recoveredWith || 'none',\n        type: 'failure-pattern'\n      });\n    }\n  }\n}\n\n// Usage in agent loop\nasync function agentLoop(agent: Agent, task: Task) {\n  while (!task.complete) {\n    const action = await agent.decideNextAction(task);\n    \n    // Add retrieved memory context to action\n    const relevantMemory = await memory.retrieve({\n      query: `类似任务: ${task.description}`,\n      context: { projectId: task.projectId }\n    });\n    \n    action.context.memories = relevantMemory;\n    \n    const result = await agent.execute(action);\n    \n    // Auto-learn from execution\n    await memory.learnFromInteraction({\n      summary: `Executed ${action.type} on ${action.target}`,\n      facts: extractFacts(result),\n      actionSequence: action.history,\n      outcome: result.success ? 'success' : 'failure'\n    });\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e5. 실제 구현: Memory-backed Coding Agent 만들기\u003c/h2\u003e\n\u003ch3\u003e5.1 전체 Architecture\u003c/h3\u003e\n\u003cpre\u003e\u003ccode\u003e┌─────────────────────────────────────────────────────────────────┐\n│                    AI Coding Agent (User Interface)              │\n│        Cursor, Copilot, Cline, Claude Desktop, etc.              │\n└───────────────────────────────┬─────────────────────────────────┘\n                                │\n┌───────────────────────────────▼─────────────────────────────────┐\n│                    Memory Manager (agentmemory)                  │\n│                                                                   │\n│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │\n│  │  Episodic   │  │  Semantic   │  │ Procedural  │              │\n│  │  Memory     │  │  Memory     │  │  Memory     │              │\n│  │  (ChromaDB) │  │  (KG+Doc)   │  │  (JSON L)   │              │\n│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘              │\n│         │                │                │                      │\n│         └────────────────┼────────────────┘                      │\n│                          │                                        │\n│              ┌───────────▼───────────┐                           │\n│              │   Retrieval Engine    │                           │\n│              │   (Hybrid Search)     │                           │\n│              └───────────┬───────────┘                           │\n└──────────────────────────┼───────────────────────────────────────┘\n                           │\n┌──────────────────────────▼───────────────────────────────────────┐\n│                    External Tools                                  │\n│  ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐          │\n│  │ Git    │ │FileSys │ │ Terminal│ │Browser │ │ Search │         │\n│  └────────┘ └────────┘ └────────┘ └────────┘ └────────┘          │\n└─────────────────────────────────────────────────────────────────┘\n\u003c/code\u003e\u003c/pre\u003e\n\u003ch3\u003e5.2 구현 예시: TypeScript\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-typescript\"\u003eimport { AgentMemory } from '@agentmemory/core';\n\n// Initialize Memory Manager\nconst memory = new AgentMemory({\n  provider: 'chroma',           // or 'qdrant', 'pinecone'\n  episodic: {\n    collection: 'agent-episodes',\n    embeddingModel: 'text-embedding-3-small',\n    ttlDays: 90\n  },\n  semantic: {\n    indexOnStartup: ['*.ts', '*.tsx', '*.py'],\n    excludePatterns: ['node_modules/**', 'dist/**']\n  },\n  procedural: {\n    storagePath: './memory/procedural',\n    maxSequenceLength: 20\n  }\n});\n\n// Connect to existing agent\nconst agent = new ClaudeAgent({\n  model: 'claude-3-5-sonnet',\n  systemPrompt: `You are a coding agent with persistent memory.\n  Previous relevant experiences will be injected into your context.`\n});\n\n// Memory-aware agent loop\nagent.on('before-decide', async (context) =\u003e {\n  const relevantMemories = await memory.retrieve({\n    query: context.task,\n    projectContext: {\n      root: context.workspaceRoot,\n      language: detectLanguage(context.targetFile)\n    },\n    filters: {\n      agentId: 'default',\n      maxAge: 90\n    }\n  });\n\n  if (relevantMemories.length \u003e 0) {\n    context.prompt += `\\n\\nRelevant past experiences:\\n${relevantMemories.map(m =\u003e `- ${m.summary}`).join('\\n')}`;\n  }\n});\n\nagent.on('after-action', async (action, result) =\u003e {\n  await memory.store({\n    type: action.success ? 'procedural' : 'episodic',\n    data: {\n      summary: `${action.tool} on ${action.target}: ${action.success ? 'SUCCESS' : 'FAILED'}`,\n      toolName: action.tool,\n      target: action.target,\n      success: action.success,\n      errorMessage: action.error,\n      resolution: result.resolvedWith,\n      timestamp: new Date()\n    }\n  });\n});\n\n// Start agent\nawait agent.start();\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e6. 평가: Memory Architecture의 성능 측정\u003c/h2\u003e\n\u003ch3\u003e6.1 측정 지표\u003c/h3\u003e\n\u003cp\u003eMemory 시스템의 성능은 전통적인 정보 검색 지표와 다른 접근이 필요합니다:\u003c/p\u003e\n\u003ctable\u003e\n\u003cthead\u003e\n\u003ctr\u003e\n\u003cth\u003e지표\u003c/th\u003e\n\u003cth\u003e정의\u003c/th\u003e\n\u003cth\u003e목표\u003c/th\u003e\n\u003c/tr\u003e\n\u003c/thead\u003e\n\u003ctbody\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003eRecall@5\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e관련 Memory 5개 중检索된 비율\u003c/td\u003e\n\u003ctd\u003e\u003e 0.85\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003eLatency\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e검색 → 결과 반환 시간\u003c/td\u003e\n\u003ctd\u003e\u0026#x3C; 100ms\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003eMemory Size\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e전체 저장 용량\u003c/td\u003e\n\u003ctd\u003e적정 유지\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003eHit Rate\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003eMemory가 실제로 유용했던 비율\u003c/td\u003e\n\u003ctd\u003e\u003e 0.7\u003c/td\u003e\n\u003c/tr\u003e\n\u003ctr\u003e\n\u003ctd\u003e\u003cstrong\u003eFalse Positive Rate\u003c/strong\u003e\u003c/td\u003e\n\u003ctd\u003e관련 없는 Memory 검색 비율\u003c/td\u003e\n\u003ctd\u003e\u0026#x3C; 0.1\u003c/td\u003e\n\u003c/tr\u003e\n\u003c/tbody\u003e\n\u003c/table\u003e\n\u003ch3\u003e6.2 Benchmarking Framework\u003c/h3\u003e\n\u003cpre\u003e\u003ccode class=\"language-python\"\u003e# Memory system benchmark example\n\nclass MemoryBenchmark:\n    def __init__(self, memory_system, test_scenarios):\n        self.memory = memory_system\n        self.scenarios = test_scenarios\n    \n    def run_recall_benchmark(self):\n        results = []\n        for scenario in self.scenarios:\n            # Inject known memories\n            self.memory.store_multiple(scenario.fixtures)\n            \n            # Query and measure recall\n            retrieved = self.memory.retrieve(scenario.query, top_k=5)\n            relevant = set(scenario.relevant_ids)\n            retrieved_ids = set(r.id for r in retrieved)\n            \n            recall = len(relevant \u0026#x26; retrieved_ids) / len(relevant) if relevant else 0\n            \n            results.append({\n                'scenario': scenario.name,\n                'recall@5': recall,\n                'latency_ms': retrieved.latency\n            })\n        \n        return results\n    \n    def run_hit_rate_tracking(self):\n        \"\"\"Track how often stored memories are actually useful\"\"\"\n        hits = 0\n        total = 0\n        \n        for interaction in self.get_live_interactions(duration='1h'):\n            memories = self.memory.retrieve(interaction.task)\n            \n            # Check if retrieved memories changed agent's decision\n            if self.memory_impacted_decision(memories, interaction):\n                hits += 1\n            total += 1\n        \n        return hits / total if total \u003e 0 else 0\n\n# Run benchmark\nbenchmark = MemoryBenchmark(agentmemory, test_scenarios)\nresults = benchmark.run_recall_benchmark()\nprint(f\"平均 Recall@5: {np.mean([r['recall@5'] for r in results]):.2%}\")\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e7. 미래展望: Memory-Enhanced Agents의演化\u003c/h2\u003e\n\u003ch3\u003e7.1 단기 발전 방향\u003c/h3\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003eCross-agent Memory Sharing\u003c/strong\u003e: 여러 에이전트가 공유 Knowledge Base 활용\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eReal-time Memory Update\u003c/strong\u003e: 파일 변경 시 자동 반영 (git-hook integration)\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eMulti-modal Memory\u003c/strong\u003e: 코드 + 디자인 파일 + 문서 통합检索\u003c/li\u003e\n\u003c/ol\u003e\n\u003ch3\u003e7.2 장기 비전\u003c/h3\u003e\n\u003cp\u003eAI 에이전트가 \"학습하는 시스템\"으로 진화하면:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e2026 (현재): Session-level Memory\n  → 에이전트가 현재 세션 내에서 정보를 유지\n\n2027 (단기): Project-level Memory  \n  → 프로젝트 전체的历史 추적, 의존성 그래프 형성\n\n2028 (중기): Organization-level Memory\n  → 팀/조직의 코딩 표준, 아키텍처 결정, 技术债务 knowledge\n\n2029+ (장기): General-purpose Memory\n  → 에이전트가 사용자의 작업 스타일을 완전히 학습,\n    Personal AI as a Long-term Companion\n\u003c/code\u003e\u003c/pre\u003e\n\u003chr\u003e\n\u003ch2\u003e결론: Memory는 AI 에이전트의 경쟁력이다\u003c/h2\u003e\n\u003cp\u003eAI 코딩 에이전트의 차세대 경쟁력은 **\"얼마나 효과적으로 기억하고 활용하는가\"**로 결정될 것입니다. agentmemory가 제시한 Persistent Memory Architecture는 그 첫 걸음입니다.\u003c/p\u003e\n\u003cp\u003e핵심 takeaways:\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003e3-tier Memory Architecture\u003c/strong\u003e로 단기, 중기, 장기 기억을分层管理\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eHybrid Retrieval\u003c/strong\u003e으로 Vector + Keyword + Temporal 검색融合\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eTTL + Decay\u003c/strong\u003e로 Storage 효율과 검색 품질 균형\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eTool Calling 결과 자동 Memory화\u003c/strong\u003e로 에이전트의 학습 속도 가속화\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eBenchmark-driven development\u003c/strong\u003e로 Memory 시스템의 지속적 개선\u003c/li\u003e\n\u003c/ol\u003e\n\u003cp\u003eAI 에이전트가 단순한 도구를 넘어 \u003cstrong\u003e함께 성장하는 파트너\u003c/strong\u003e가 되려면, 먼저 기억할 줄 알아야 합니다.\u003c/p\u003e\n\u003chr\u003e\n\u003cp\u003e\u003cem\u003e본 글은 2026년 5월 13일자 기술 블로그입니다.\u003c/em\u003e\n\u003cem\u003e참고: agentmemory (github.com/rohitg00/agentmemory), 2026-05-13 GitHub Trending 1위\u003c/em\u003e\u003c/p\u003e"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"div\",null,{\"className\":\"text-sm text-white/60\",\"children\":\"2026-05-13\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"AI 코딩 에이전트의 기억력 문제: agentmemory가 제시하는Persistent Memory 아키텍처\"}],[\"$\",\"p\",null,{\"className\":\"mt-4 text-base text-white/80 md:text-lg\",\"children\":\"AI 에이전트가 대화를 넘어 실제로 '학습'할 수 있게 만드는 Persistent Memory 아키텍처의 핵심 원리를深人 分析하고, agentmemory 프로젝트의 설계 철학을 중심으로 메모리 계층 구조와 검색 전략을 深掘합니다.\"}],[\"$\",\"div\",null,{\"className\":\"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300\",\"dangerouslySetInnerHTML\":{\"__html\":\"$10\"}}]]}]}]\n8:null\n"])</script><script>self.__next_f.push([1,"c:[[\"$\",\"title\",\"0\",{\"children\":\"AI 코딩 에이전트의 기억력 문제: agentmemory가 제시하는Persistent Memory 아키텍처 | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"AI 에이전트가 대화를 넘어 실제로 '학습'할 수 있게 만드는 Persistent Memory 아키텍처의 핵심 원리를深人 分析하고, agentmemory 프로젝트의 설계 철학을 중심으로 메모리 계층 구조와 검색 전략을 深掘합니다.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-05-13-proactive-update/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"AI 코딩 에이전트의 기억력 문제: agentmemory가 제시하는Persistent Memory 아키텍처\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"AI 에이전트가 대화를 넘어 실제로 '학습'할 수 있게 만드는 Persistent Memory 아키텍처의 핵심 원리를深人 分析하고, agentmemory 프로젝트의 설계 철학을 중심으로 메모리 계층 구조와 검색 전략을 深掘합니다.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-05-13-proactive-update/\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"AI 코딩 에이전트의 기억력 문제: agentmemory가 제시하는Persistent Memory 아키텍처\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"AI 에이전트가 대화를 넘어 실제로 '학습'할 수 있게 만드는 Persistent Memory 아키텍처의 핵심 원리를深人 分析하고, agentmemory 프로젝트의 설계 철학을 중심으로 메모리 계층 구조와 검색 전략을 深掘합니다.\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}],[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}],[\"$\",\"$L11\",\"13\",{}]]\n"])</script></body></html>

@@ -1,0 +1,45 @@
+1:"$Sreact.fragment"
+3:I[5035,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"default"]
+4:I[28921,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"default"]
+6:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+7:"$Sreact.suspense"
+9:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"ViewportBoundary"]
+b:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"MetadataBoundary"]
+d:I[80036,[],"default"]
+:HL["/_next/static/chunks/b848662595cda15b.css","style"]
+:HL["/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"P":null,"b":"1htRIQq1RhdK0rI9lqK5A","c":["","posts","2026-08-07-proactive-update",""],"q":"","i":false,"f":[[["",{"children":["posts",{"children":[["slug","2026-08-07-proactive-update","d"],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",true],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/b848662595cda15b.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/_next/static/chunks/329e63eb984ada35.js","async":true,"nonce":"$undefined"}]],"$L2"]}],{"children":[["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":["$L5",null,["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],["$","$1","h",{"children":[null,["$","$L9",null,{"children":"$La"}],["$","div",null,{"hidden":true,"children":["$","$Lb",null,{"children":["$","$7",null,{"name":"Next.Metadata","children":"$Lc"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],false]],"m":"$undefined","G":["$d",[]],"S":true}
+e:I[2407,["/_next/static/chunks/329e63eb984ada35.js"],"default"]
+f:I[20531,["/_next/static/chunks/329e63eb984ada35.js"],"default"]
+2:["$","html",null,{"lang":"ko-KR","dir":"ltr","className":"h-full","children":["$","body",null,{"className":"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500","children":[["$","$Le",null,{}],["$","div",null,{"className":"relative z-10 min-h-full","children":[["$","$Lf",null,{}],["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]]}]]}]}]
+a:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+11:I[94966,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"IconMark"]
+10:T925,<h1>2026년의 소프트웨어 엔지니어링: 멀티 에이전트 아키텍처로의 전환</h1>
+<p>2026년, 소프트웨어 엔지니어링의 패러다임은 'AI 보조(AI-Augmented)'에서 '에이전트 중심(Agentic)'으로 급격히 이동하고 있습니다. 단순한 코드 완성을 넘어, 이제는 복잡한 태스크를 해결하는 멀티 에이전트 아키텍처가 기업 생산성의 핵심이 되었습니다.</p>
+<h2>1. 싱글 에이전트의 한계와 멀티 에이전트의 등장</h2>
+<p>초기 코드 어시스턴트(Copilot, Claude 등)는 단일 컨텍스트 윈도우 내에서 순차적인 처리에 의존했습니다. 하지만 대규모 코드베이스를 다룰 때, 단일 에이전트는 맥락 유지와 아키텍처적 일관성 측면에서 한계에 봉착했습니다.</p>
+<p>멀티 에이전트 시스템은 '오케스트레이터(Orchestrator)'를 중심으로, 특정 영역(UI/UX, Backend, QA, DevOps)에 전문화된 에이전트들이 병렬적으로 작업을 수행합니다.</p>
+<h2>2. 기술적 아키텍처 예시 (개념적 코드)</h2>
+<pre><code class="language-python"># 멀티 에이전트 오케스트레이션 예시
+class AgentOrchestrator:
+    def __init__(self):
+        self.architect = Agent("Architect")
+        self.developer = Agent("Developer")
+        self.tester = Agent("QA")
+
+    async def execute_task(self, requirement):
+        plan = await self.architect.create_plan(requirement)
+        code = await self.developer.implement(plan)
+        report = await self.tester.verify(code)
+        
+        if not report.passed:
+            return await self.execute_task(report.feedback)
+        return code
+</code></pre>
+<h2>3. 엔지니어의 역할 변화</h2>
+<p>이러한 흐름 속에서 엔지니어는 '코더'에서 '시스템 오케스트레이터'로 변화해야 합니다. 에이전트가 생성한 결과물을 검증하고, 전체적인 아키텍처의 의도를 유지하는 것이 시니어 엔지니어의 핵심 역량이 되었습니다.</p>
+<h2>결론</h2>
+<p>단순한 코드 생성을 넘어, 엔지니어링 팀은 이제 에이전트 간의 워크플로우를 설계하고 최적화하는 데 집중해야 합니다. 2026년은 인공지능이 코드를 쓰는 시대가 아닌, 엔지니어가 인공지능 팀을 운영하는 시대입니다.</p>5:["$","main",null,{"className":"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8","children":["$","article",null,{"className":"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10","children":[["$","div",null,{"className":"text-sm text-white/60","children":"Fri Aug 07 2026 00:00:00 GMT+0000 (Coordinated Universal Time)"}],["$","h1",null,{"className":"mt-2 text-3xl font-bold leading-snug md:text-5xl","children":"2026년의 소프트웨어 엔지니어링: 멀티 에이전트 아키텍처로의 전환"}],["$","p",null,{"className":"mt-4 text-base text-white/80 md:text-lg","children":"단일 코딩 어시스턴트를 넘어, 전문화된 멀티 에이전트 오케스트레이션이 소프트웨어 개발의 생산성을 어떻게 재정의하고 있는지 분석합니다."}],["$","div",null,{"className":"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300","dangerouslySetInnerHTML":{"__html":"$10"}}]]}]}]
+8:null
+c:[["$","title","0",{"children":"2026년의 소프트웨어 엔지니어링: 멀티 에이전트 아키텍처로의 전환 | Mato Po Tech Blog"}],["$","meta","1",{"name":"description","content":"단일 코딩 어시스턴트를 넘어, 전문화된 멀티 에이전트 오케스트레이션이 소프트웨어 개발의 생산성을 어떻게 재정의하고 있는지 분석합니다."}],["$","link","2",{"rel":"canonical","href":"https://po-mato.github.io/posts/2026-08-07-proactive-update/"}],["$","meta","3",{"property":"og:title","content":"2026년의 소프트웨어 엔지니어링: 멀티 에이전트 아키텍처로의 전환"}],["$","meta","4",{"property":"og:description","content":"단일 코딩 어시스턴트를 넘어, 전문화된 멀티 에이전트 오케스트레이션이 소프트웨어 개발의 생산성을 어떻게 재정의하고 있는지 분석합니다."}],["$","meta","5",{"property":"og:url","content":"https://po-mato.github.io/posts/2026-08-07-proactive-update/"}],["$","meta","6",{"property":"og:image","content":"https://po-mato.github.io/milkyway.jpg"}],["$","meta","7",{"property":"og:type","content":"article"}],["$","meta","8",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","9",{"name":"twitter:title","content":"2026년의 소프트웨어 엔지니어링: 멀티 에이전트 아키텍처로의 전환"}],["$","meta","10",{"name":"twitter:description","content":"단일 코딩 어시스턴트를 넘어, 전문화된 멀티 에이전트 오케스트레이션이 소프트웨어 개발의 생산성을 어떻게 재정의하고 있는지 분석합니다."}],["$","meta","11",{"name":"twitter:image","content":"https://po-mato.github.io/milkyway.jpg"}],["$","link","12",{"rel":"icon","href":"/favicon.ico?favicon.0b3bf435.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L11","13",{}]]
