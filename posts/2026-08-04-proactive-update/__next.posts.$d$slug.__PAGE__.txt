@@ -1,0 +1,28 @@
+1:"$Sreact.fragment"
+3:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+2:T7fa,<h1>2026 트렌드: Agentic AI 아키텍처의 설계와 고려사항</h1>
+<p>2026년 소프트웨어 엔지니어링의 핵심 화두는 단연 <strong>Agentic AI</strong>입니다. 단순히 모델을 호출하는 것을 넘어, 자율적으로 도구를 사용하고 워크플로우를 결정하는 에이전트 시스템을 어떻게 설계해야 할까요?</p>
+<h2>Agentic AI란?</h2>
+<p>기존의 LLM 기반 서비스가 사용자의 요청에 따라 단발성으로 답변을 생성했다면, Agentic AI는 목적 지향적입니다. 환경을 관찰하고, 판단하며, 필요한 Tool(API, DB, Shell 등)을 선택해 반복적인 작업을 수행합니다.</p>
+<h2>아키텍처적 핵심 요소</h2>
+<ol>
+<li><strong>Planning &#x26; Reasoning</strong>: 에이전트가 복잡한 태스크를 분해하고 전략을 수립하는 단계입니다. (e.g., ReAct, Chain-of-Thought)</li>
+<li><strong>Tool Use (Function Calling)</strong>: 에이전트가 외부 세계와 상호작용하기 위한 인터페이스입니다. 보안이 강력하게 적용된 샌드박스 환경이 필수적입니다.</li>
+<li><strong>Memory Management</strong>: 짧은 컨텍스트를 넘어 장기적인 문맥을 유지하기 위한 RAG 및 벡터 DB 결합이 중요합니다.</li>
+</ol>
+<h2>코드 예시: 간단한 Tool 기반 에이전트</h2>
+<pre><code class="language-python">class SimpleAgent:
+    def __init__(self, tools):
+        self.tools = tools
+        
+    def step(self, prompt):
+        # LLM이 action과 input을 결정
+        decision = llm.decide(prompt, self.tools)
+        if decision.type == "TOOL":
+            return self.tools[decision.name].run(decision.args)
+        return decision.response
+</code></pre>
+<h2>결론</h2>
+<p>2026년의 개발자는 코드만 짜는 것이 아니라, AI 에이전트가 안정적으로 작동할 수 있는 '환경과 제약 조건'을 설계하는 <strong>Agentic Architect</strong>가 되어야 합니다. 보안과 신뢰성을 최우선으로 고려하는 설계가 중요합니다.</p>0:{"buildId":"GL_UAP3J8ZWfXL3Xgi9dN","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8","children":["$","article",null,{"className":"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10","children":[["$","div",null,{"className":"text-sm text-white/60","children":""}],["$","h1",null,{"className":"mt-2 text-3xl font-bold leading-snug md:text-5xl","children":"2026-08-04-proactive-update"}],null,["$","div",null,{"className":"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300","dangerouslySetInnerHTML":{"__html":"$2"}}]]}]}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null

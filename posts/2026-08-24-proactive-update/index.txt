@@ -1,0 +1,48 @@
+1:"$Sreact.fragment"
+3:I[5035,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"default"]
+4:I[28921,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"default"]
+6:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+7:"$Sreact.suspense"
+9:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"ViewportBoundary"]
+b:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"MetadataBoundary"]
+d:I[80036,[],"default"]
+:HL["/_next/static/chunks/b848662595cda15b.css","style"]
+:HL["/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"P":null,"b":"GL_UAP3J8ZWfXL3Xgi9dN","c":["","posts","2026-08-24-proactive-update",""],"q":"","i":false,"f":[[["",{"children":["posts",{"children":[["slug","2026-08-24-proactive-update","d"],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",true],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/b848662595cda15b.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/_next/static/chunks/329e63eb984ada35.js","async":true,"nonce":"$undefined"}]],"$L2"]}],{"children":[["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":["$L5",null,["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],["$","$1","h",{"children":[null,["$","$L9",null,{"children":"$La"}],["$","div",null,{"hidden":true,"children":["$","$Lb",null,{"children":["$","$7",null,{"name":"Next.Metadata","children":"$Lc"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],false]],"m":"$undefined","G":["$d",[]],"S":true}
+e:I[2407,["/_next/static/chunks/329e63eb984ada35.js"],"default"]
+f:I[20531,["/_next/static/chunks/329e63eb984ada35.js"],"default"]
+2:["$","html",null,{"lang":"ko-KR","dir":"ltr","className":"h-full","children":["$","body",null,{"className":"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500","children":[["$","$Le",null,{}],["$","div",null,{"className":"relative z-10 min-h-full","children":[["$","$Lf",null,{}],["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]]}]]}]}]
+a:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+11:I[94966,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"IconMark"]
+10:Tb07,<h2>들어가는 말: 코딩 어시스턴트에서 에이전트로</h2>
+<p>2026년 중반을 지나며 소프트웨어 개발 환경은 거대한 변곡점에 서 있습니다. 단순히 코드를 추천해주던 AI 어시스턴트를 넘어, 이제는 스스로 의사결정을 내리고 복잡한 엔지니어링 워크플로우를 완수하는 'Agentic AI'가 개발의 핵심 파트너로 자리 잡고 있습니다. 이번 글에서는 이 변화가 시스템 아키텍처와 엔지니어의 역할에 어떤 의미를 가지는지 심층적으로 분석합니다.</p>
+<h2>Agentic AI의 아키텍처적 핵심</h2>
+<p>전통적인 AI 모델이 단순히 프롬프트에 대한 응답(Completion)을 생성했다면, Agentic AI는 다음과 같은 구성 요소로 동작합니다.</p>
+<ol>
+<li><strong>Reasoning Engine</strong>: 모델이 복잡한 문제를 하위 작업(Sub-task)으로 분해합니다.</li>
+<li><strong>Tool Use</strong>: LLM이 API 호출, 파일 시스템 탐색, 코드 컴파일 등을 수행할 수 있는 외부 도구와의 인터페이스를 갖습니다.</li>
+<li><strong>Memory</strong>: 과거의 컨텍스트를 유지하여 반복적인 실행 과정에서 학습하고 개선합니다.</li>
+</ol>
+<h3>간단한 워크플로우 예시 (Conceptual)</h3>
+<pre><code class="language-python"># 에이전트가 수행하는 가상의 Self-Correction 루프
+class DeveloperAgent:
+    def execute_task(self, task):
+        plan = self.reasoner.create_plan(task)
+        for step in plan:
+            result = self.tool_executor.run(step)
+            if not result.success:
+                # Agentic AI는 스스로 실패 원인을 파악하고 재시도합니다
+                new_plan = self.reasoner.refine_plan(result.error)
+                self.execute_task(new_plan)
+</code></pre>
+<h2>엔지니어가 준비해야 할 것</h2>
+<p>이제 시니어 엔지니어의 핵심 역량은 '코드를 직접 타이핑하는 것'에서 **'AI 에이전트가 올바른 의사결정을 내리도록 가이드하는 아키텍트'**가 되는 것으로 이동하고 있습니다.</p>
+<ul>
+<li><strong>Security &#x26; Compliance</strong>: AI가 제어하는 코드 배포 파이프라인에서 보안 취약점을 감지하는 자동화된 가드레일이 필수가 되었습니다.</li>
+<li><strong>System Thinking</strong>: 개별 모듈이 아닌, AI 에이전트들이 상호작용하는 시스템 전체의 복잡도를 관리하는 능력이 더욱 중요해졌습니다.</li>
+</ul>
+<h2>맺음말</h2>
+<p>Agentic AI는 엔지니어의 일자리를 대체하는 것이 아니라, 더 고차원적인 문제 해결에 집중할 수 있도록 엔지니어의 생산성을 극대화합니다. 기술의 파도를 타고 우리가 더 나은 시스템을 설계하는 데 집중할 때입니다.</p>5:["$","main",null,{"className":"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8","children":["$","article",null,{"className":"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10","children":[["$","div",null,{"className":"text-sm text-white/60","children":"Mon Aug 24 2026 00:00:00 GMT+0000 (Coordinated Universal Time)"}],["$","h1",null,{"className":"mt-2 text-3xl font-bold leading-snug md:text-5xl","children":"Agentic AI의 부상: 단순 보조를 넘어선 개발 프로세스의 핵심 파트너"}],null,["$","div",null,{"className":"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300","dangerouslySetInnerHTML":{"__html":"$10"}}]]}]}]
+8:null
+c:[["$","title","0",{"children":"Agentic AI의 부상: 단순 보조를 넘어선 개발 프로세스의 핵심 파트너 | Mato Po Tech Blog"}],["$","meta","1",{"name":"description","content":"개발하면서 배운 것과 삽질 로그를 기록합니다."}],["$","link","2",{"rel":"canonical","href":"https://po-mato.github.io/posts/2026-08-24-proactive-update/"}],["$","meta","3",{"property":"og:title","content":"Agentic AI의 부상: 단순 보조를 넘어선 개발 프로세스의 핵심 파트너"}],["$","meta","4",{"property":"og:description","content":"개발하면서 배운 것과 삽질 로그를 기록합니다."}],["$","meta","5",{"property":"og:url","content":"https://po-mato.github.io/posts/2026-08-24-proactive-update/"}],["$","meta","6",{"property":"og:image","content":"https://po-mato.github.io/milkyway.jpg"}],["$","meta","7",{"property":"og:type","content":"article"}],["$","meta","8",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","9",{"name":"twitter:title","content":"Agentic AI의 부상: 단순 보조를 넘어선 개발 프로세스의 핵심 파트너"}],["$","meta","10",{"name":"twitter:description","content":"개발하면서 배운 것과 삽질 로그를 기록합니다."}],["$","meta","11",{"name":"twitter:image","content":"https://po-mato.github.io/milkyway.jpg"}],["$","link","12",{"rel":"icon","href":"/favicon.ico?favicon.0b3bf435.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L11","13",{}]]

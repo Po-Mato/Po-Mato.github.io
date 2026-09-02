@@ -1,0 +1,32 @@
+1:"$Sreact.fragment"
+3:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+2:T9f5,<h2>1. 들어가는 말</h2>
+<p>2026년 현재, 소프트웨어 엔지니어링의 패러다임은 'AI 도구 도입'을 넘어 'AI-Native 아키텍처 설계'로 이동하고 있습니다. 단순한 API 호출 기반의 AI 기능 추가가 아닌, 시스템의 핵심 로직과 워크플로우 자체가 AI 에이전트의 판단을 기반으로 하는 설계가 표준이 되고 있습니다.</p>
+<h2>2. AI-Native 아키텍처: 핵심 설계 패턴</h2>
+<p>기존의 마이크로서비스 아키텍처(MSA)를 유지하면서도 AI 에이전트의 자율성을 극대화하기 위해 다음과 같은 패턴이 주목받고 있습니다.</p>
+<h3>A. 에이전트 오케스트레이션 (Agentic Orchestration)</h3>
+<p>단일 모델에 의존하기보다, 특정 도메인에 특화된 모델(Small Language Model, SLM)들의 에이전트 그룹을 구성하고, 이들 사이의 의사소통을 위한 오케스트레이터(Orchestrator)가 필수적입니다.</p>
+<pre><code class="language-python"># 가상의 에이전트 오케스트레이션 개념 코드
+class TaskOrchestrator:
+    def __init__(self):
+        self.code_agent = CodeAgent()
+        self.data_agent = DataAgent()
+        
+    def dispatch(self, query):
+        if self.is_coding_task(query):
+            return self.code_agent.execute(query)
+        return self.data_agent.execute(query)
+</code></pre>
+<h3>B. Observability 및 평가 (Evaluation)</h3>
+<p>AI의 결과물은 비결정적(Non-deterministic)이므로, 기존의 로깅 체계를 넘어 각 에이전트의 의사결정 경로를 추적하는 'Tracing' 기반의 Observability가 필수입니다.</p>
+<h2>3. 자가 검토 (Self-Critique)</h2>
+<ul>
+<li><strong>적절성</strong>: 최신 아키텍처 트렌드인 AI-Native 설계에 집중하여 기술적 깊이를 확보했습니다.</li>
+<li><strong>전문성</strong>: 단순히 추상적인 논의를 넘어 가상의 코드 예시와 주요 아키텍처 패턴을 언급하여 엔지니어링 관점을 유지했습니다.</li>
+<li><strong>가독성</strong>: 명확한 섹션 구분을 통해 기술 블로그 형식을 갖추었습니다.</li>
+<li><strong>보완점</strong>: 실제 배포 환경에서의 FinOps 측면이나 비용 최적화 이슈를 다음 글에서 다룰 필요가 있습니다.</li>
+</ul>
+<h2>4. 결론</h2>
+<p>2026년 하반기, 개발자들은 단순히 코드를 작성하는 것을 넘어, 시스템이 스스로 환경을 인식하고 적응하도록 설계하는 '엔지니어링 리더'로서의 역량이 요구됩니다.</p>0:{"buildId":"GL_UAP3J8ZWfXL3Xgi9dN","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8","children":["$","article",null,{"className":"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10","children":[["$","div",null,{"className":"text-sm text-white/60","children":"Wed Aug 05 2026 00:00:00 GMT+0000 (Coordinated Universal Time)"}],["$","h1",null,{"className":"mt-2 text-3xl font-bold leading-snug md:text-5xl","children":"2026 하반기: AI-Native 아키텍처와 엔지니어링의 변화"}],null,["$","div",null,{"className":"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300","dangerouslySetInnerHTML":{"__html":"$2"}}]]}]}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null

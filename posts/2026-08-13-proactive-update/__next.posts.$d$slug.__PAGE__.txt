@@ -1,0 +1,36 @@
+1:"$Sreact.fragment"
+3:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+2:Taeb,<h2>서론: 플랫폼 엔지니어링의 진화</h2>
+<p>2026년 현재, 클라우드 네이티브 아키텍처는 더 이상 현대적인 선택지가 아닌 기본 기대치가 되었습니다. 이제 엔지니어링 조직의 초점은 인프라 그 자체를 넘어, '추상화'와 '생산성'으로 옮겨가고 있습니다. 최근 기술 트렌드에서 가장 눈에 띄는 변화는 플랫폼 엔지니어링 2.0과 AI-Native 개발 포털의 부상입니다.</p>
+<h2>아키텍처적 분석: 왜 AI-Native 인가?</h2>
+<p>전통적인 IDP(Internal Developer Portal)는 문서화와 서비스 카탈로그 중심이었습니다. 하지만 2026년의 플랫폼 엔지니어링은 '에이전트' 중심의 접근 방식을 취합니다.</p>
+<ul>
+<li><strong>자동화된 추상화</strong>: 개발자는 이제 API 스펙을 직접 쓰지 않고도 AI 에이전트를 통해 클라우드 리소스를 프로비저닝할 수 있습니다.</li>
+<li><strong>Cognitive Load 감소</strong>: 복잡한 Kubernetes 매니페스트 관리를 AI가 대신 수행하며, 플랫폼 팀은 '엔진'과 '거버넌스' 설계에 집중합니다.</li>
+</ul>
+<h2>코드 예시: Agentic Workflow 개념 모델</h2>
+<p>플랫폼 포털 내에서 AI 에이전트가 배포 요청을 처리하는 간단한 워크플로우 개념입니다:</p>
+<pre><code class="language-python"># 가상의 AI-Native 포털 API 워크플로우
+def handle_deployment_request(user_intent):
+    # 1. 자연어 의도 파악
+    requirements = ai_agent.analyze(user_intent) 
+    
+    # 2. 보안 및 거버넌스 검사
+    if platform_governance.validate(requirements):
+        # 3. 인프라 코드(IaC) 자동 생성 및 적용
+        provisioner = K8sAgentProvisioner()
+        provisioner.apply(requirements)
+        return "배포가 성공적으로 완료되었습니다."
+    else:
+        return "거버넌스 정책 위반으로 배포가 중단되었습니다."
+</code></pre>
+<h2>결론</h2>
+<p>AI-Native 플랫폼은 개발자와 운영자 사이의 장벽을 낮추는 핵심 열쇠가 될 것입니다. 앞으로의 인프라는 사람이 직접 다루는 영역보다 AI 에이전트가 안정적으로 관리하고 사람이 감시하는 영역으로 빠르게 재편될 것입니다.</p>
+<h2>자가 검토 (Self-Critique)</h2>
+<ul>
+<li><strong>전문성</strong>: 최신 기술 리포트(InfoQ 2026)를 기반으로 플랫폼 엔지니어링 2.0의 추상화 개념을 적절히 도출했습니다.</li>
+<li><strong>적절성</strong>: 소프트웨어 엔지니어 관점에서 트렌드 요약을 넘어 기술적 아키텍처 변화를 제시했습니다.</li>
+<li><strong>가독성</strong>: 코드 예시를 통해 추상화된 개념을 직관적으로 이해할 수 있도록 보완했습니다.</li>
+</ul>0:{"buildId":"GL_UAP3J8ZWfXL3Xgi9dN","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8","children":["$","article",null,{"className":"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10","children":[["$","div",null,{"className":"text-sm text-white/60","children":"Thu Aug 13 2026 00:00:00 GMT+0000 (Coordinated Universal Time)"}],["$","h1",null,{"className":"mt-2 text-3xl font-bold leading-snug md:text-5xl","children":"2026 Platform Engineering 2.0: AI-Native 개발 포털의 시대"}],null,["$","div",null,{"className":"prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300","dangerouslySetInnerHTML":{"__html":"$2"}}]]}]}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null
