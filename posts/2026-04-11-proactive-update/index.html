@@ -1,0 +1,460 @@
+<!DOCTYPE html><!--N2fGP1s8j8yZpESImpc1U--><html lang="ko-KR" dir="ltr" class="h-full"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="/_next/static/chunks/93d861d9c34e9486.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/99a8e0514ad7b9f1.js"/><script src="/_next/static/chunks/3e498bb7d512b3e5.js" async=""></script><script src="/_next/static/chunks/3d018fdfbbbe5d52.js" async=""></script><script src="/_next/static/chunks/ed2d60c0080b8d4d.js" async=""></script><script src="/_next/static/chunks/turbopack-65882d2085b3ed57.js" async=""></script><script src="/_next/static/chunks/9b57d60b52ca2954.js" async=""></script><script src="/_next/static/chunks/44c984f229072c4f.js" async=""></script><script src="/_next/static/chunks/0323a6ac23c48c07.js" async=""></script><script src="/_next/static/chunks/3b2ce2c68d173db7.js" async=""></script><meta name="next-size-adjust" content=""/><title>에이전트 메모리의 네 계층과 컨텍스트 관리 | Mato Po Tech Blog</title><meta name="description" content="작업·일화·의미·절차 기억의 역할을 나누고, 대화 사이에 문맥을 유지하기 위한 검색·보존·삭제의 균형을 설명합니다."/><link rel="canonical" href="https://po-mato.github.io/posts/2026-04-11-proactive-update/"/><meta property="og:title" content="에이전트 메모리의 네 계층과 컨텍스트 관리"/><meta property="og:description" content="작업·일화·의미·절차 기억의 역할을 나누고, 대화 사이에 문맥을 유지하기 위한 검색·보존·삭제의 균형을 설명합니다."/><meta property="og:url" content="https://po-mato.github.io/posts/2026-04-11-proactive-update/"/><meta property="og:image" content="https://po-mato.github.io/milkyway.jpg"/><meta property="og:type" content="article"/><meta property="article:published_time" content="2026-04-11T00:00:00.000Z"/><meta property="article:tag" content="AI Agents"/><meta property="article:tag" content="Agent Architecture"/><meta property="article:tag" content="Memory System"/><meta property="article:tag" content="Context Management"/><meta property="article:tag" content="RAG"/><meta property="article:tag" content="Production AI"/><meta property="article:tag" content="System Design"/><meta property="article:tag" content="TypeScript"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="에이전트 메모리의 네 계층과 컨텍스트 관리"/><meta name="twitter:description" content="작업·일화·의미·절차 기억의 역할을 나누고, 대화 사이에 문맥을 유지하기 위한 검색·보존·삭제의 균형을 설명합니다."/><meta name="twitter:image" content="https://po-mato.github.io/milkyway.jpg"/><link rel="icon" href="/favicon.ico?favicon.0b3bf435.ico" sizes="256x256" type="image/x-icon"/><script src="/_next/static/chunks/a6dad97d9634a72d.js" noModule=""></script></head><body class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500"><div hidden=""><!--$--><!--/$--></div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--><div class="relative z-10 min-h-full"><header class="sticky top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl transition duration-300"><div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-8"><a class="w-fit text-sm font-semibold tracking-[0.16em] text-white/90 transition duration-300 hover:text-cyan-100" href="/">PO-MATO DEVLOG</a><nav aria-label="메인 네비게이션" class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden"><a aria-current="page" class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-cyan-300/50 bg-cyan-300/20 text-cyan-50 shadow-[0_0_0_1px_rgba(56,189,248,0.25)]" href="/">블로그</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/series/">시리즈</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/games/">게임</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/portfolio/">포트폴리오</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/search/">검색</a><a class="whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium transition duration-200 border-white/10 bg-white/[0.06] text-white/75 hover:border-white/20 hover:bg-white/12 hover:text-white" href="/tags/">태그</a></nav></div></header><main class="mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8"><article class="rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10"><a class="mb-6 inline-block text-sm text-cyan-200" href="/">← 블로그 홈</a><time dateTime="2026-04-11T00:00:00.000Z" class="block font-mono text-sm text-white/60">2026.04.11</time><h1 class="mt-2 text-3xl font-bold leading-snug md:text-5xl">에이전트 메모리의 네 계층과 컨텍스트 관리</h1><p class="mt-4 text-base text-white/80 md:text-lg">작업·일화·의미·절차 기억의 역할을 나누고, 대화 사이에 문맥을 유지하기 위한 검색·보존·삭제의 균형을 설명합니다.</p><div class="mt-5 flex flex-wrap gap-3"><a class="text-xs text-cyan-200 hover:underline" href="/tags/AI%20Agents/">#<!-- -->AI Agents</a><a class="text-xs text-cyan-200 hover:underline" href="/tags/Agent%20Architecture/">#<!-- -->Agent Architecture</a><a class="text-xs text-cyan-200 hover:underline" href="/tags/Memory%20System/">#<!-- -->Memory System</a><a class="text-xs text-cyan-200 hover:underline" href="/tags/Context%20Management/">#<!-- -->Context Management</a><a class="text-xs text-cyan-200 hover:underline" href="/tags/RAG/">#<!-- -->RAG</a><a class="text-xs text-cyan-200 hover:underline" href="/tags/Production%20AI/">#<!-- -->Production AI</a><a class="text-xs text-cyan-200 hover:underline" href="/tags/System%20Design/">#<!-- -->System Design</a><a class="text-xs text-cyan-200 hover:underline" href="/tags/TypeScript/">#<!-- -->TypeScript</a></div><nav aria-label="이 글의 목차" class="post-toc mt-8 rounded-xl border border-cyan-200/20 bg-slate-950/60 p-5"><details open=""><summary class="cursor-pointer font-semibold text-cyan-100">이 글의 목차 <span class="ml-2 text-sm font-normal text-white/60">10<!-- -->개 항목</span></summary><ol class="mt-3 max-h-72 space-y-1 overflow-y-auto pr-2"><li class=""><a href="#section-%EC%84%9C%EB%A1%A0-%EC%99%9C-agent-memory%EC%9D%B8%EA%B0%80" class="block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200">서론: 왜 Agent Memory인가</a></li><li class=""><a href="#section-agent-memory%EC%9D%98-4%EA%B3%84%EC%B8%B5-%EA%B5%AC%EC%A1%B0" class="block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200">Agent Memory의 4계층 구조</a></li><li class=""><a href="#section-working-memory-context-window%EC%9D%98-%EC%A0%84%EB%9E%B5%EC%A0%81-%EA%B4%80%EB%A6%AC" class="block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200">Working Memory: Context Window의 전략적 관리</a></li><li class=""><a href="#section-episodic-memory-%EC%84%B8%EC%85%98-%EA%B2%BD%ED%97%98%EC%9D%84%EC%8B%9C%EA%B0%84%EC%88%9C-%EA%B8%B0%EB%A1%9D%EC%9C%BC%EB%A1%9C-%EB%B3%80%ED%99%98" class="block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200">Episodic Memory: 세션 경험을시간순 기록으로 변환</a></li><li class=""><a href="#section-semantic-memory-%EC%82%AC%EC%9A%A9%EC%9E%90-%ED%94%84%EB%A1%9C%ED%8C%8C%EC%9D%BC%EC%9D%98-%EC%98%81%EC%86%8D%EC%A0%81-%EC%A0%80%EC%9E%A5%EC%86%8C" class="block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200">Semantic Memory: 사용자 프로파일의 영속적 저장소</a></li><li class=""><a href="#section-procedural-memory-%ED%96%89%EB%8F%99-%EC%A0%95%EC%B1%85%EC%9D%98-%EB%B2%84%EC%A0%84-%EA%B4%80%EB%A6%AC" class="block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200">Procedural Memory: 행동 정책의 버전 관리</a></li><li class=""><a href="#section-memory-%EA%B0%84-%EC%83%81%ED%98%B8%EC%9E%91%EC%9A%A9-forget%EC%9D%98-%EA%B3%BC%ED%95%99" class="block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200">Memory 간 상호작용: Forget의 과학</a></li><li class=""><a href="#section-memory-%EA%B2%80%EC%83%89-context-window%EC%97%90-%EB%84%A3%EC%9D%84-%EB%95%8C-%ED%92%88%EC%A7%88-%EA%B2%B0%EC%A0%95%ED%95%98%EA%B8%B0" class="block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200">Memory 검색: Context Window에 넣을 때 품질 결정하기</a></li><li class=""><a href="#section-memory-system%EC%9D%84-%EB%A7%8C%EB%93%9C%EB%8A%94-%ED%8C%80-%EC%B2%B4%ED%81%AC%EB%A6%AC%EC%8A%A4%ED%8A%B8" class="block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200">Memory System을 만드는 팀 체크리스트</a></li><li class=""><a href="#section-%EA%B2%B0%EB%A1%A0" class="block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200">결론</a></li></ol></details></nav><div class="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-p:text-white/80 prose-a:text-cyan-300 prose-a:transition prose-a:hover:text-cyan-100 prose-li:marker:text-cyan-300"><h2 id="section-서론-왜-agent-memory인가" tabindex="-1">서론: 왜 Agent Memory인가<a href="#section-%EC%84%9C%EB%A1%A0-%EC%99%9C-agent-memory%EC%9D%B8%EA%B0%80" class="heading-anchor" aria-label="서론: 왜 Agent Memory인가 항목 링크">#</a></h2>
+<p>이전 글(2026-04-10)에서 Agent SLO와 Execution Journal를 통해 Agent의<strong>실행 품질을 측정</strong>하는 방법을 살펴봤다. 하지만 측정만으로는 불완전하다. Agent가<strong>이전 대화를 기억하지 못한다</strong>면, TCR은 아무리 높아도 사용자를 만족시키지 못한다.</p>
+<p>인간 뇌의 기억은 단일 메커니즘이 아니다. Working memory는 현재 사고를 뒷받침하는 단기 기억이고, episodic memory는 경험의 시간순 기록이며, semantic memory는 개념과 사실의 지식 기반, procedural memory는기술과 절차의 묶음이다. AI Agent의 Memory도 마찬가지로 다층 구조가 필요하다.</p>
+<h2 id="section-agent-memory의-4계층-구조" tabindex="-1">Agent Memory의 4계층 구조<a href="#section-agent-memory%EC%9D%98-4%EA%B3%84%EC%B8%B5-%EA%B5%AC%EC%A1%B0" class="heading-anchor" aria-label="Agent Memory의 4계층 구조 항목 링크">#</a></h2>
+<pre><code>Agent Memory Architecture
+├── Working Memory          (현재 세션, LLM Context Window)
+│   └── 가장 최근 N턴의 대화 + 현재 작업 상태
+│
+├── Episodic Memory         (과거 세션의 경험)
+│   └── 세션별 주요 이벤트, 결정, 결과의 시계열 기록
+│
+├── Semantic Memory         (영속적 지식 베이스)
+│   └── 사용자 프로파일, 선호도, 프로젝트 맥락
+│
+└── Procedural Memory       (행동 정책)
+    └── 프롬프트 템플릿, 도구 사용 정책, SLO 규칙
+</code></pre>
+<p>이 구조에서 핵심 질문은 세 가지다.</p>
+<ol>
+<li><strong>Working Memory가 넘칠 때</strong> → 무엇을 episodic으로 보존할 것인가</li>
+<li><strong>Episodic이 증가할 때</strong> → Semantic Memory로 어떻게 압축할 것인가</li>
+<li><strong>Semantic이 노후화할 때</strong> → 어떻게 정렬(refresh)할 것인가</li>
+</ol>
+<h2 id="section-working-memory-context-window의-전략적-관리" tabindex="-1">Working Memory: Context Window의 전략적 관리<a href="#section-working-memory-context-window%EC%9D%98-%EC%A0%84%EB%9E%B5%EC%A0%81-%EA%B4%80%EB%A6%AC" class="heading-anchor" aria-label="Working Memory: Context Window의 전략적 관리 항목 링크">#</a></h2>
+<p>LLM의 Context Window는 유한한 자원이다. 128K 토큰이 있더라도, 모든 대화를 넣으면 최근 중요 정보가 묻힐 수 있다. Working Memory 관리의 핵심은<strong>중요도 기반 선별(salience-based triage)</strong> 이다.</p>
+<pre><code class="language-ts">type ConversationTurn = {
+  role: "user" | "assistant" | "system";
+  content: string;
+  timestamp: number;
+  tokens: number;
+  salient: boolean;   // 사용자가 명시적으로 표시
+  autoSalient: boolean; // 키워드/감정 분석으로 자동 판단
+};
+
+type WorkingMemoryConfig = {
+  maxTokens: number;
+ reservedRatio: number;       // 항상 유지하는 시스템 프롬프트 비율 (0.3 = 30%)
+  salientBoost: number;  // salient=true 메시지의 가중치 배수
+};
+
+class WorkingMemoryManager {
+  private config: WorkingMemoryConfig;
+  private conversationHistory: ConversationTurn[] = [];
+
+  constructor(config: WorkingMemoryConfig) {
+    this.config = config;
+  }
+
+  addTurn(role: ConversationTurn["role"], content: string, salient = false) {
+    const tokens = this.estimateTokens(content);
+    this.conversationHistory.push({ role, content, timestamp: Date.now(), tokens, salient, autoSalient: false });
+    this.evictIfNeeded();
+  }
+
+  getContext(): { role: ConversationTurn["role"]; content: string }[] {
+    const reserved = this.getSystemPrompt();
+    const reservedTokens = this.estimateTokens(reserved);
+    const availableTokens = this.config.maxTokens * (1 - this.config.reservedRatio);
+
+    const turns = this.conversationHistory
+      .map((t) => ({
+        ...t,
+        weight: t.salient || t.autoSalient ? this.config.salientBoost : 1,
+        effectiveTokens: t.tokens * (t.salient || t.autoSalient ? this.config.salientBoost : 1),
+      }))
+      .sort((a, b) => {
+        // 중요도 가중치 × 시간 신선도(time decay)
+        const freshnessA = this.timeDecay(a.timestamp);
+        const freshnessB = this.timeDecay(b.timestamp);
+        return b.weight * freshnessB - a.weight * freshnessA;
+      });
+
+    let used = reservedTokens;
+    const selected: ConversationTurn[] = [];
+
+    for (const turn of turns) {
+      if (used + turn.tokens &#x3C;= availableTokens) {
+        selected.push(turn);
+        used += turn.tokens;
+      } else {
+        break;
+      }
+    }
+
+    // 시간순 정렬 후 반환
+    return [
+      { role: "system", content: reserved },
+      ...selected.sort((a, b) => a.timestamp - b.timestamp),
+    ];
+  }
+
+  private timeDecay(timestamp: number): number {
+    const hoursAgo = (Date.now() - timestamp) / (1000 * 60 * 60);
+    return Math.exp(-hoursAgo / 24); // 24시간 반감기
+  }
+
+  private evictIfNeeded() {
+    // Eviction은 getContext() 호출 시lazy하게 처리
+  }
+
+  private estimateTokens(text: string): number {
+    // Approximate: 한글 기준 2자 ≈ 1토큰
+    return Math.ceil(text.length / 2);
+  }
+
+  private getSystemPrompt(): string {
+    return "You are a helpful AI assistant. Keep responses concise and context-aware.";
+  }
+}
+</code></pre>
+<p>이 구조의 핵심 설계 의도는 두 가지다.</p>
+<ul>
+<li><strong>중요도 가중치</strong>: 중요하다고 표시된 메시지는 시간과 관계없이 우선 보존</li>
+<li><strong>시간에 따른 감쇠</strong>: 오래된 메시지일수록 중요도가 점진적으로 낮아져 결국 제거된다</li>
+</ul>
+<h2 id="section-episodic-memory-세션-경험을시간순-기록으로-변환" tabindex="-1">Episodic Memory: 세션 경험을시간순 기록으로 변환<a href="#section-episodic-memory-%EC%84%B8%EC%85%98-%EA%B2%BD%ED%97%98%EC%9D%84%EC%8B%9C%EA%B0%84%EC%88%9C-%EA%B8%B0%EB%A1%9D%EC%9C%BC%EB%A1%9C-%EB%B3%80%ED%99%98" class="heading-anchor" aria-label="Episodic Memory: 세션 경험을시간순 기록으로 변환 항목 링크">#</a></h2>
+<p>Working Memory는 세션이 끝나면 사라진다.Episodic Memory는 이를<strong>세션 단위 경험 record</strong>로 저장한다. 개념적으로 인간의일화 기억에 해당한다.</p>
+<pre><code class="language-ts">type EpisodeSummary = {
+  sessionId: string;
+  userId: string;
+  startedAt: number;
+  endedAt: number;
+  turnCount: number;
+
+  // 핵심 정보만 추출한 요약
+  coreTopics: string[];         // ["API 설계", "성능 최적화"]
+  keyDecisions: string[];       // ["Redis 캐싱 도입", "DB sharding 결정"]
+  unresolvedTopics: string[];   // ["OAuth 연동 미완료"]
+  
+  // 메트릭
+  satisfactionScore?: number;   // 사용자가 별점 or thumb으로 평가
+  escalationCount: number;
+  totalTokensUsed: number;
+
+  // 원본 참조 (Full transcript는 별도 스토어)
+  rawTranscriptRef: string;     // S3, GCS 등 durable storage 경로
+};
+
+class EpisodicMemoryStore {
+  private store: /* Vector DB + KV store */ unknown;
+
+  async saveEpisode(episode: EpisodeSummary): Promise&#x3C;void> {
+    // 1. 요약 자체를 저장 (KV)
+    await this.store.put(`episode:${episode.sessionId}`, episode);
+
+    // 2. 핵심 주제를 벡터화하여 검색 가능하게 (Vector DB)
+    for (const topic of episode.coreTopics) {
+      await this.store.upsertVector({
+        id: `episode:${episode.sessionId}:topic:${topic}`,
+        vector: await this.embed(topic),
+        payload: {
+          sessionId: episode.sessionId,
+          topic,
+          timestamp: episode.endedAt,
+        },
+      });
+    }
+
+    // 3. unresolved topics → 다음 세션의agenda로 자동 등록
+    for (const topic of episode.unresolvedTopics) {
+      await this.scheduleFollowUp(topic, episode.userId);
+    }
+  }
+
+  async retrieveRelevantEpisodes(
+    userId: string,
+    query: string,
+    opts: { maxAgeDays?: number; limit?: number } = {}
+  ): Promise&#x3C;EpisodeSummary[]> {
+    const queryVector = await this.embed(query);
+    const minTimestamp = opts.maxAgeDays
+      ? Date.now() - opts.maxAgeDays * 24 * 60 * 60 * 1000
+      : 0;
+
+    const results = await this.store.similaritySearch({
+      vector: queryVector,
+      filter: { userId, minTimestamp },
+      limit: opts.limit ?? 5,
+    });
+
+    return this.store.getMultiple(results.map((r) => r.payload.sessionId));
+  }
+}
+</code></pre>
+<p>Episodic Memory의 핵심 가치: <strong>다음 세션에서 이전 결정과 맥락을 즉시 참조</strong>할 수 있다. "이전 대화에서 Redis 캐싱 도입으로 결정했죠?"라는 문장이 가능해진다.</p>
+<h2 id="section-semantic-memory-사용자-프로파일의-영속적-저장소" tabindex="-1">Semantic Memory: 사용자 프로파일의 영속적 저장소<a href="#section-semantic-memory-%EC%82%AC%EC%9A%A9%EC%9E%90-%ED%94%84%EB%A1%9C%ED%8C%8C%EC%9D%BC%EC%9D%98-%EC%98%81%EC%86%8D%EC%A0%81-%EC%A0%80%EC%9E%A5%EC%86%8C" class="heading-anchor" aria-label="Semantic Memory: 사용자 프로파일의 영속적 저장소 항목 링크">#</a></h2>
+<p>Episodic가 경험의시간순 기록이라면, Semantic Memory는<strong>지식의 구조화된 조직</strong>이다. 사용자 프로파일, 선호도, 프로젝트별 맥락이 여기 해당한다.</p>
+<pre><code class="language-ts">type UserProfile = {
+  userId: string;
+  name: string;
+  timezone: string;
+  preferredLanguage: "ko" | "en" | "mixed";
+  
+  // 기술 스택 (SK Interview 준비 수준 등)
+  technicalLevel: {
+    systemDesign: "beginner" | "intermediate" | "advanced";
+    backend: string[];
+    frontend: string[];
+    infrastructure: string[];
+  };
+
+  // 작업 스타일
+  workStyle: {
+    responseVerbosity: "concise" | "balanced" | "detailed";
+    codeStyle: "functional" | "oop" | "flexible";
+    prefersExamples: boolean;
+  };
+
+  // 현재 프로젝트 맥락
+  activeProjects: {
+    name: string;
+    role: string;
+    techStack: string[];
+    currentGoals: string[];
+    blockers: string[];
+  }[];
+
+  // 기억할 사실들
+  facts: { key: string; value: string; updatedAt: number }[];
+
+  // 제외할 사항 (선호하지 않는 항목)
+  dislikes: string[];
+};
+
+class SemanticMemoryManager {
+  private store: /* durable KV store */ unknown;
+  private profileCache = new Map&#x3C;string, { profile: UserProfile; loadedAt: number }>();
+
+  async getProfile(userId: string): Promise&#x3C;UserProfile | null> {
+    // 60초 TTL cache
+    const cached = this.profileCache.get(userId);
+    if (cached &#x26;&#x26; Date.now() - cached.loadedAt &#x3C; 60_000) {
+      return cached.profile;
+    }
+
+    const profile = await this.store.get(`profile:${userId}`);
+    if (profile) {
+      this.profileCache.set(userId, { profile, loadedAt: Date.now() });
+    }
+    return profile;
+  }
+
+  async updateProfile(userId: string, patch: Partial&#x3C;UserProfile>): Promise&#x3C;void> {
+    const current = await this.getProfile(userId);
+    const updated = { ...current, ...patch };
+    await this.store.put(`profile:${userId}`, updated);
+    this.profileCache.delete(userId); // cache inval
+  }
+
+  async mergeFromEpisode(userId: string, episode: EpisodeSummary): Promise&#x3C;void> {
+    //Episodic에서Semantic으로 정보 압축
+    const profile = (await this.getProfile(userId)) ?? this.emptyProfile(userId);
+
+    // Topic → 기술 스택 자동 업데이트
+    for (const topic of episode.coreTopics) {
+      this.inferAndMergeTechStack(profile, topic);
+    }
+
+    // 만족도 점수 → 선호도 추론
+    if (episode.satisfactionScore !== undefined) {
+      this.updatePreferenceFromScore(profile, episode);
+    }
+
+    await this.updateProfile(userId, profile);
+  }
+
+  private inferAndMergeTechStack(profile: UserProfile, topic: string) {
+    const techKeywords: Record&#x3C;string, keyof UserProfile["technicalLevel"]> = {
+      "API": "backend",
+      "Redis": "backend",
+      "Database": "backend",
+      "React": "frontend",
+      "Next.js": "frontend",
+      "AWS": "infrastructure",
+      "Kubernetes": "infrastructure",
+    };
+
+    for (const [keyword, category] of Object.entries(techKeywords)) {
+      if (topic.includes(keyword) &#x26;&#x26; !profile.technicalLevel[category].includes(keyword)) {
+        profile.technicalLevel[category].push(keyword);
+      }
+    }
+  }
+
+  private emptyProfile(userId: string): UserProfile {
+    return {
+      userId,
+      name: "",
+      timezone: "Asia/Seoul",
+      preferredLanguage: "mixed",
+      technicalLevel: { systemDesign: "intermediate", backend: [], frontend: [], infrastructure: [] },
+      workStyle: { responseVerbosity: "balanced", codeStyle: "flexible", prefersExamples: true },
+      activeProjects: [],
+      facts: [],
+      dislikes: [],
+    };
+  }
+}
+</code></pre>
+<p>Semantic Memory는<strong>서비스 초기에cold start</strong>가 걸리지만, 시간이 갈수록 Agent가 해당 사용자에게<strong>맞춤형으로 작동</strong>하게 된다.</p>
+<h2 id="section-procedural-memory-행동-정책의-버전-관리" tabindex="-1">Procedural Memory: 행동 정책의 버전 관리<a href="#section-procedural-memory-%ED%96%89%EB%8F%99-%EC%A0%95%EC%B1%85%EC%9D%98-%EB%B2%84%EC%A0%84-%EA%B4%80%EB%A6%AC" class="heading-anchor" aria-label="Procedural Memory: 행동 정책의 버전 관리 항목 링크">#</a></h2>
+<p>지금까지의 Memory는<strong>데이터</strong>였다.Procedural Memory는<strong>정책(policy)</strong> 이다. 프롬프트 템플릿, 도구 사용 규칙, SLO 임계값 등이 해당한다.</p>
+<pre><code class="language-ts">type AgentPolicy = {
+  version: string;
+  activePrompt: {
+    systemPrompt: string;
+    toolDescriptions: string[];
+    responseFormat: "markdown" | "json" | "plain";
+  };
+  sloConfig: {
+    taskCompletionRate: { target: number; alertBelow: number };
+    escalationRate: { alertAbove: number };
+  };
+  memoryConfig: WorkingMemoryConfig;
+};
+
+class ProceduralMemoryManager {
+  private store: /* git-like versioned store */ unknown;
+
+  async getActivePolicy(agentId: string): Promise&#x3C;AgentPolicy> {
+    return await this.store.getCurrent(`policy:${agentId}`);
+  }
+
+  async updatePolicy(agentId: string, patch: Partial&#x3C;AgentPolicy>): Promise&#x3C;void> {
+    const current = await this.getActivePolicy(agentId);
+    const newVersion = incrementPatch(current.version); // e.g. "1.2.3" → "1.2.4"
+
+    await this.store.put(`policy:${agentId}:v:${newVersion}`, {
+      ...current,
+      ...patch,
+      version: newVersion,
+    });
+
+    await this.store.setCurrent(`policy:${agentId}`, newVersion);
+  }
+
+  async rollback(agentId: string, targetVersion: string): Promise&#x3C;void> {
+    const policy = await this.store.get(`policy:${agentId}:v:${targetVersion}`);
+    if (!policy) throw new Error(`Version ${targetVersion} not found`);
+
+    await this.store.put(`policy:${agentId}:v:${targetVersion}:rollback-${Date.now()}`, policy); // 롤백 이력
+    await this.store.setCurrent(`policy:${agentId}`, targetVersion);
+  }
+
+  async diffVersions(agentId: string, v1: string, v2: string): Promise&#x3C;string> {
+    const p1 = await this.store.get(`policy:${agentId}:v:${v1}`);
+    const p2 = await this.store.get(`policy:${agentId}:v:${v2}`);
+    return this.computeDiff(p1, p2);
+  }
+}
+</code></pre>
+<p>Procedural Memory의 핵심: 모든 정책 변경이<strong>버전 관리</strong>되고, 롤백이 가능한 것이다. "왜 이 프롬프트를 이렇게 바꿨을까?"라는 질문에 답을 찾을 수 있다.</p>
+<h2 id="section-memory-간-상호작용-forget의-과학" tabindex="-1">Memory 간 상호작용: Forget의 과학<a href="#section-memory-%EA%B0%84-%EC%83%81%ED%98%B8%EC%9E%91%EC%9A%A9-forget%EC%9D%98-%EA%B3%BC%ED%95%99" class="heading-anchor" aria-label="Memory 간 상호작용: Forget의 과학 항목 링크">#</a></h2>
+<p>Memory 시스템의 가장 어려운 문제는<strong>무엇을 잊을 것인가</strong>이다. 모든 것을 기억하면 비용이 너무 높아지고, 너무 적게 기억하면 문맥이 단절된다.</p>
+<pre><code class="language-ts">type MemoryHealthScore = {
+  workingMemoryUtilization: number;  // 0.8 이상이면 경고
+  episodicStaleness: number;         // 너무 오래된 Episode 비율
+  semanticOutdatedness: number;      // 마지막 업데이트로부터 경과 시간
+  totalMemorySizeMb: number;
+};
+
+async function runMemoryGC(
+  userId: string,
+  config: { maxEpisodicAgeDays: number; maxSemanticAgeDays: number; maxTotalGb: number }
+): Promise&#x3C;{ evictedEpisodes: number; updatedSemantic: number; reclaimedMb: number }> {
+  const result = { evictedEpisodes: 0, updatedSemantic: 0, reclaimedMb: 0 };
+
+  // 1. 오래된 Episodic Memory evict
+  const oldEpisodes = await episodicStore.query({
+    userId,
+    olderThan: config.maxEpisodicAgeDays,
+    hasUnresolved: false,  // 미해결 이슈가 있으면 보존
+  });
+
+  for (const episode of oldEpisodes) {
+    // 중요 결정이 있으면 Semantic Memory로 먼저 압축
+    if (episode.keyDecisions.length > 0) {
+      await semanticMemory.mergeFromEpisode(userId, episode);
+      result.updatedSemantic++;
+    }
+    await episodicStore.delete(episode.sessionId);
+    result.evictedEpisodes++;
+    result.reclaimedMb += estimateEpisodeSize(episode);
+  }
+
+  // 2. 노후화된 Semantic Memory check
+  const profile = await semanticMemory.getProfile(userId);
+  const outdatedFacts = profile.facts.filter(
+    (f) => Date.now() - f.updatedAt > config.maxSemanticAgeDays * 24 * 60 * 60 * 1000
+  );
+
+  // Outdated facts에 대해 사용자에게 확인 질의
+  if (outdatedFacts.length > 0) {
+    await scheduleMemoryRefreshPrompt(userId, outdatedFacts);
+  }
+
+  return result;
+}
+</code></pre>
+<p><strong>GC의 핵심 원칙</strong>: evict할 때 단순 삭제하지 않고, 중요한 정보는 Semantic Memory로<strong>승격(promotion)</strong> 한다. 이것이 filing cabinet 방식이다 — working desk에서 오래된 서류를 archives로 이동하지만, 완전히 버리지는 않는다.</p>
+<h2 id="section-memory-검색-context-window에-넣을-때-품질-결정하기" tabindex="-1">Memory 검색: Context Window에 넣을 때 품질 결정하기<a href="#section-memory-%EA%B2%80%EC%83%89-context-window%EC%97%90-%EB%84%A3%EC%9D%84-%EB%95%8C-%ED%92%88%EC%A7%88-%EA%B2%B0%EC%A0%95%ED%95%98%EA%B8%B0" class="heading-anchor" aria-label="Memory 검색: Context Window에 넣을 때 품질 결정하기 항목 링크">#</a></h2>
+<p>Context Window에 어떤 memory를 넣을지 결정하는<strong>검색 품질</strong>이 Agent 응답 품질을 좌우한다.</p>
+<pre><code class="language-ts">async function buildSessionContext(
+  userId: string,
+  currentQuery: string,
+  config: { maxContextTokens: number }
+): Promise&#x3C;{ working: ConversationTurn[]; semantic: object; episodic: EpisodeSummary[] }> {
+  // 1. Semantic Memory: 현재 query와 관련된 사용자 프로파일 검색
+  const relevantProfile = await semanticMemory.getProfile(userId);
+
+  // 2. Episodic Memory: query와 관련된 과거 세션 검색
+  const relevantEpisodes = await episodicMemory.retrieveRelevantEpisodes(
+    userId,
+    currentQuery,
+    { maxAgeDays: 90, limit: 3 }
+  );
+
+  // 3. Working Memory: 최근 대화 (기존 로직)
+  const workingMemory = workingMemoryManager.getContext();
+
+  // 4. 크기 예측 및 트리밍
+  const semanticText = JSON.stringify(relevantProfile);
+  const episodicText = relevantEpisodes.map((e) => e.coreTopics.join(", ")).join(" | ");
+  const totalEstimate =
+    estimateTokens(workingMemory) +
+    estimateTokens(semanticText) +
+    estimateTokens(episodicText);
+
+  if (totalEstimate > config.maxContextTokens) {
+    // Semantic → episodic 순으로 우선순위
+    const trimmed = trimContextToTokenBudget(workingMemory, semanticText, episodicText, config.maxContextTokens);
+    return trimmed;
+  }
+
+  return { working: workingMemory, semantic: relevantProfile, episodic: relevantEpisodes };
+}
+</code></pre>
+<p>이 과정이 매 세션 시작 시 자동으로 실행되어야 한다. 수동으로 memory를 관리하는 것은 scalability가 전혀 없다.</p>
+<h2 id="section-memory-system을-만드는-팀-체크리스트" tabindex="-1">Memory System을 만드는 팀 체크리스트<a href="#section-memory-system%EC%9D%84-%EB%A7%8C%EB%93%9C%EB%8A%94-%ED%8C%80-%EC%B2%B4%ED%81%AC%EB%A6%AC%EC%8A%A4%ED%8A%B8" class="heading-anchor" aria-label="Memory System을 만드는 팀 체크리스트 항목 링크">#</a></h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> Working Memory에 중요도 기반 선별 알고리즘이 구현되어 있는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> Session 종료 시 Episodic Memory로 자동 저장되는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> Episodic Memory에서 unresolved topics가 다음 세션 agenda로 등록되는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> Semantic Memory가 Episodic에서 자동으로 업데이트되는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> Procedural Memory가 버전 관리되고 롤백 가능한가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> Memory GC가 주기적으로 실행되어 오래된 데이터가 evict되는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> Memory 검색 결과가 session 시작 시 자동으로 context에 포함되는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> Memory staleness가 SLO dashboard에 표시되는가?</li>
+</ul>
+<h2 id="section-결론" tabindex="-1">결론<a href="#section-%EA%B2%B0%EB%A1%A0" class="heading-anchor" aria-label="결론 항목 링크">#</a></h2>
+<p>Memory 설계는 Agent를<strong>범용 도구</strong>에서<strong>개인화된 파트너</strong>로 만드는 핵심 요소다. 4계층 구조는 단순한 추상화가 아니라 실제 구현 시마다 마주하는 문제들이다.</p>
+<ul>
+<li>Working Memory: 현재 세션의 attention 관리</li>
+<li>Episodic Memory: 경험의시간순 기록과 검색</li>
+<li>Semantic Memory: 사용자 지식의 구조화된 조직</li>
+<li>Procedural Memory: 정책의 버전 관리</li>
+</ul>
+<p>이 네 가지를 갖추면 Agent는 대화 초기에 사용자의 이름, 기술 수준, 작업 스타일을 파악하고, 대화 중에는 맥락을 유지하며, 대화 종료 후에는 결정과 문제를 기록하여<strong>다음 만남에서 기억</strong>한다.</p>
+<p>메모리는 에이전트의 연속성을 뒷받침한다. 이전 맥락을 기억하지 못하면 모델의 성능이 높아도 사용자와 신뢰를 쌓기 어렵다.</p>
+<hr></div></article><nav aria-label="에이전트 메모리 설계 읽기 순서" class="mt-8 border border-white/15 bg-slate-950/80 p-6"><a class="text-lg font-semibold text-cyan-200" href="/series/agent-memory/">에이전트 메모리 설계<!-- --> ↗</a><ol class="mt-4 space-y-3"><li class="flex gap-3 text-sm"><span class="font-mono text-white/40">1<!-- -->.</span><a aria-current="page" class="font-semibold text-cyan-200" href="/posts/2026-04-11-proactive-update/">에이전트 메모리의 네 계층과 컨텍스트 관리<!-- --> · 읽는 중</a></li><li class="flex gap-3 text-sm"><span class="font-mono text-white/40">2<!-- -->.</span><a class="text-white/70 hover:text-cyan-200" href="/posts/2026-04-14-proactive-update/">에이전트 메모리 설계: 장기 기억, 검색, 삭제 전략</a></li><li class="flex gap-3 text-sm"><span class="font-mono text-white/40">3<!-- -->.</span><a class="text-white/70 hover:text-cyan-200" href="/posts/2026-08-30-proactive-update/">RAG 설계: 벡터 검색과 관계형 데이터를 한곳에서 다루기</a></li></ol></nav></main><!--$--><!--/$--></div><script src="/_next/static/chunks/99a8e0514ad7b9f1.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[5035,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n4:I[28921,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"default\"]\n6:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\n9:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"ViewportBoundary\"]\nb:I[54283,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"MetadataBoundary\"]\nd:I[80036,[],\"default\"]\n:HL[\"/_next/static/chunks/93d861d9c34e9486.css\",\"style\"]\n:HL[\"/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"N2fGP1s8j8yZpESImpc1U\",\"c\":[\"\",\"posts\",\"2026-04-11-proactive-update\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"posts\",{\"children\":[[\"slug\",\"2026-04-11-proactive-update\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/93d861d9c34e9486.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/0323a6ac23c48c07.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",[[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/3b2ce2c68d173db7.js\",\"async\":true,\"nonce\":\"$undefined\"}]],[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L9\",null,{\"children\":\"$La\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lb\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lc\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$d\",[]],\"S\":true}\n"])</script><script>self.__next_f.push([1,"e:I[2407,[\"/_next/static/chunks/0323a6ac23c48c07.js\"],\"default\"]\nf:I[20531,[\"/_next/static/chunks/0323a6ac23c48c07.js\"],\"default\"]\n"])</script><script>self.__next_f.push([1,"2:[\"$\",\"html\",null,{\"lang\":\"ko-KR\",\"dir\":\"ltr\",\"className\":\"h-full\",\"children\":[\"$\",\"body\",null,{\"className\":\"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500\",\"children\":[[\"$\",\"$Le\",null,{}],[\"$\",\"div\",null,{\"className\":\"relative z-10 min-h-full\",\"children\":[[\"$\",\"$Lf\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]}]\n"])</script><script>self.__next_f.push([1,"a:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"10:I[94966,[\"/_next/static/chunks/9b57d60b52ca2954.js\",\"/_next/static/chunks/44c984f229072c4f.js\"],\"IconMark\"]\n8:null\n"])</script><script>self.__next_f.push([1,"c:[[\"$\",\"title\",\"0\",{\"children\":\"에이전트 메모리의 네 계층과 컨텍스트 관리 | Mato Po Tech Blog\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"작업·일화·의미·절차 기억의 역할을 나누고, 대화 사이에 문맥을 유지하기 위한 검색·보존·삭제의 균형을 설명합니다.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"canonical\",\"href\":\"https://po-mato.github.io/posts/2026-04-11-proactive-update/\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:title\",\"content\":\"에이전트 메모리의 네 계층과 컨텍스트 관리\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:description\",\"content\":\"작업·일화·의미·절차 기억의 역할을 나누고, 대화 사이에 문맥을 유지하기 위한 검색·보존·삭제의 균형을 설명합니다.\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:url\",\"content\":\"https://po-mato.github.io/posts/2026-04-11-proactive-update/\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"8\",{\"property\":\"article:published_time\",\"content\":\"2026-04-11T00:00:00.000Z\"}],[\"$\",\"meta\",\"9\",{\"property\":\"article:tag\",\"content\":\"AI Agents\"}],[\"$\",\"meta\",\"10\",{\"property\":\"article:tag\",\"content\":\"Agent Architecture\"}],[\"$\",\"meta\",\"11\",{\"property\":\"article:tag\",\"content\":\"Memory System\"}],[\"$\",\"meta\",\"12\",{\"property\":\"article:tag\",\"content\":\"Context Management\"}],[\"$\",\"meta\",\"13\",{\"property\":\"article:tag\",\"content\":\"RAG\"}],[\"$\",\"meta\",\"14\",{\"property\":\"article:tag\",\"content\":\"Production AI\"}],[\"$\",\"meta\",\"15\",{\"property\":\"article:tag\",\"content\":\"System Design\"}],[\"$\",\"meta\",\"16\",{\"property\":\"article:tag\",\"content\":\"TypeScript\"}],[\"$\",\"meta\",\"17\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"18\",{\"name\":\"twitter:title\",\"content\":\"에이전트 메모리의 네 계층과 컨텍스트 관리\"}],[\"$\",\"meta\",\"19\",{\"name\":\"twitter:description\",\"content\":\"작업·일화·의미·절차 기억의 역할을 나누고, 대화 사이에 문맥을 유지하기 위한 검색·보존·삭제의 균형을 설명합니다.\"}],[\"$\",\"meta\",\"20\",{\"name\":\"twitter:image\",\"content\":\"https://po-mato.github.io/milkyway.jpg\"}],[\"$\",\"link\",\"21\",{\"rel\":\"icon\",\"href\":\"/favicon.ico?favicon.0b3bf435.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}],[\"$\",\"$L10\",\"22\",{}]]\n"])</script><script>self.__next_f.push([1,"11:I[59588,[\"/_next/static/chunks/0323a6ac23c48c07.js\",\"/_next/static/chunks/3b2ce2c68d173db7.js\"],\"\"]\n"])</script><script>self.__next_f.push([1,"5:[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8\",\"children\":[[\"$\",\"article\",null,{\"className\":\"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10\",\"children\":[[\"$\",\"$L11\",null,{\"href\":\"/\",\"className\":\"mb-6 inline-block text-sm text-cyan-200\",\"children\":\"← 블로그 홈\"}],[\"$\",\"time\",null,{\"dateTime\":\"2026-04-11T00:00:00.000Z\",\"className\":\"block font-mono text-sm text-white/60\",\"children\":\"2026.04.11\"}],[\"$\",\"h1\",null,{\"className\":\"mt-2 text-3xl font-bold leading-snug md:text-5xl\",\"children\":\"에이전트 메모리의 네 계층과 컨텍스트 관리\"}],[\"$\",\"p\",null,{\"className\":\"mt-4 text-base text-white/80 md:text-lg\",\"children\":\"작업·일화·의미·절차 기억의 역할을 나누고, 대화 사이에 문맥을 유지하기 위한 검색·보존·삭제의 균형을 설명합니다.\"}],[\"$\",\"div\",null,{\"className\":\"mt-5 flex flex-wrap gap-3\",\"children\":[[\"$\",\"$L11\",\"AI Agents\",{\"className\":\"text-xs text-cyan-200 hover:underline\",\"href\":\"/tags/AI%20Agents/\",\"children\":[\"#\",\"AI Agents\"]}],[\"$\",\"$L11\",\"Agent Architecture\",{\"className\":\"text-xs text-cyan-200 hover:underline\",\"href\":\"/tags/Agent%20Architecture/\",\"children\":[\"#\",\"Agent Architecture\"]}],[\"$\",\"$L11\",\"Memory System\",{\"className\":\"text-xs text-cyan-200 hover:underline\",\"href\":\"/tags/Memory%20System/\",\"children\":[\"#\",\"Memory System\"]}],[\"$\",\"$L11\",\"Context Management\",{\"className\":\"text-xs text-cyan-200 hover:underline\",\"href\":\"/tags/Context%20Management/\",\"children\":[\"#\",\"Context Management\"]}],[\"$\",\"$L11\",\"RAG\",{\"className\":\"text-xs text-cyan-200 hover:underline\",\"href\":\"/tags/RAG/\",\"children\":[\"#\",\"RAG\"]}],[\"$\",\"$L11\",\"Production AI\",{\"className\":\"text-xs text-cyan-200 hover:underline\",\"href\":\"/tags/Production%20AI/\",\"children\":[\"#\",\"Production AI\"]}],[\"$\",\"$L11\",\"System Design\",{\"className\":\"text-xs text-cyan-200 hover:underline\",\"href\":\"/tags/System%20Design/\",\"children\":[\"#\",\"System Design\"]}],[\"$\",\"$L11\",\"TypeScript\",{\"className\":\"text-xs text-cyan-200 hover:underline\",\"href\":\"/tags/TypeScript/\",\"children\":[\"#\",\"TypeScript\"]}]]}],[\"$\",\"nav\",null,{\"aria-label\":\"이 글의 목차\",\"className\":\"post-toc mt-8 rounded-xl border border-cyan-200/20 bg-slate-950/60 p-5\",\"children\":[\"$\",\"details\",null,{\"open\":true,\"children\":[[\"$\",\"summary\",null,{\"className\":\"cursor-pointer font-semibold text-cyan-100\",\"children\":[\"이 글의 목차 \",[\"$\",\"span\",null,{\"className\":\"ml-2 text-sm font-normal text-white/60\",\"children\":[10,\"개 항목\"]}]]}],[\"$\",\"ol\",null,{\"className\":\"mt-3 max-h-72 space-y-1 overflow-y-auto pr-2\",\"children\":[[\"$\",\"li\",\"section-서론-왜-agent-memory인가\",{\"className\":\"\",\"children\":[\"$\",\"a\",null,{\"href\":\"#section-%EC%84%9C%EB%A1%A0-%EC%99%9C-agent-memory%EC%9D%B8%EA%B0%80\",\"className\":\"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200\",\"children\":\"서론: 왜 Agent Memory인가\"}]}],[\"$\",\"li\",\"section-agent-memory의-4계층-구조\",{\"className\":\"\",\"children\":[\"$\",\"a\",null,{\"href\":\"#section-agent-memory%EC%9D%98-4%EA%B3%84%EC%B8%B5-%EA%B5%AC%EC%A1%B0\",\"className\":\"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200\",\"children\":\"Agent Memory의 4계층 구조\"}]}],[\"$\",\"li\",\"section-working-memory-context-window의-전략적-관리\",{\"className\":\"\",\"children\":[\"$\",\"a\",null,{\"href\":\"#section-working-memory-context-window%EC%9D%98-%EC%A0%84%EB%9E%B5%EC%A0%81-%EA%B4%80%EB%A6%AC\",\"className\":\"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200\",\"children\":\"Working Memory: Context Window의 전략적 관리\"}]}],[\"$\",\"li\",\"section-episodic-memory-세션-경험을시간순-기록으로-변환\",{\"className\":\"\",\"children\":[\"$\",\"a\",null,{\"href\":\"#section-episodic-memory-%EC%84%B8%EC%85%98-%EA%B2%BD%ED%97%98%EC%9D%84%EC%8B%9C%EA%B0%84%EC%88%9C-%EA%B8%B0%EB%A1%9D%EC%9C%BC%EB%A1%9C-%EB%B3%80%ED%99%98\",\"className\":\"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200\",\"children\":\"Episodic Memory: 세션 경험을시간순 기록으로 변환\"}]}],\"$L12\",\"$L13\",\"$L14\",\"$L15\",\"$L16\",\"$L17\"]}]]}]}],\"$L18\"]}],[\"$L19\"]]}]\n"])</script><script>self.__next_f.push([1,"1a:I[97527,[\"/_next/static/chunks/0323a6ac23c48c07.js\",\"/_next/static/chunks/3b2ce2c68d173db7.js\"],\"default\"]\n12:[\"$\",\"li\",\"section-semantic-memory-사용자-프로파일의-영속적-저장소\",{\"className\":\"\",\"children\":[\"$\",\"a\",null,{\"href\":\"#section-semantic-memory-%EC%82%AC%EC%9A%A9%EC%9E%90-%ED%94%84%EB%A1%9C%ED%8C%8C%EC%9D%BC%EC%9D%98-%EC%98%81%EC%86%8D%EC%A0%81-%EC%A0%80%EC%9E%A5%EC%86%8C\",\"className\":\"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200\",\"children\":\"Semantic Memory: 사용자 프로파일의 영속적 저장소\"}]}]\n13:[\"$\",\"li\",\"section-procedural-memory-행동-정책의-버전-관리\",{\"className\":\"\",\"children\":[\"$\",\"a\",null,{\"href\":\"#section-procedural-memory-%ED%96%89%EB%8F%99-%EC%A0%95%EC%B1%85%EC%9D%98-%EB%B2%84%EC%A0%84-%EA%B4%80%EB%A6%AC\",\"className\":\"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200\",\"children\":\"Procedural Memory: 행동 정책의 버전 관리\"}]}]\n14:[\"$\",\"li\",\"section-memory-간-상호작용-forget의-과학\",{\"className\":\"\",\"children\":[\"$\",\"a\",null,{\"href\":\"#section-memory-%EA%B0%84-%EC%83%81%ED%98%B8%EC%9E%91%EC%9A%A9-forget%EC%9D%98-%EA%B3%BC%ED%95%99\",\"className\":\"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200\",\"children\":\"Memory 간 상호작용: Forget의 과학\"}]}]\n15:[\"$\",\"li\",\"section-memory-검색-context-window에-넣을-때-품질-결정하기\",{\"className\":\"\",\"children\":[\"$\",\"a\",null,{\"href\":\"#section-memory-%EA%B2%80%EC%83%89-context-window%EC%97%90-%EB%84%A3%EC%9D%84-%EB%95%8C-%ED%92%88%EC%A7%88-%EA%B2%B0%EC%A0%95%ED%95%98%EA%B8%B0\",\"className\":\"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200\",\"children\":\"Memory 검색: Context Window에 넣을 때 품질 결정하기\"}]}]\n16:[\"$\",\"li\",\"section-memory-system을-만드는-팀-체크리스트\",{\"className\":\"\",\"children\":[\"$\",\"a\",null,{\"href\":\"#section-memory-system%EC%9D%84-%EB%A7%8C%EB%93%9C%EB%8A%94-%ED%8C%80-%EC%B2%B4%ED%81%AC%EB%A6%AC%EC%8A%A4%ED%8A%B8\",\"className\":\"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200\",\"children\":\"Memory System을 만드는 팀 체크리스트\"}]}]\n17:[\"$\",\"li\",\"section-결론\",{\"className\":\"\",\"children\":[\"$\",\"a\",null,{\"href\":\"#section-%EA%B2%B0%EB%A1%A0\",\"className\":\"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200\",\"children\":\"결론\"}]}]\n1b:T59a8,"])</script><script>self.__next_f.push([1,"\u003ch2 id=\"section-서론-왜-agent-memory인가\" tabindex=\"-1\"\u003e서론: 왜 Agent Memory인가\u003ca href=\"#section-%EC%84%9C%EB%A1%A0-%EC%99%9C-agent-memory%EC%9D%B8%EA%B0%80\" class=\"heading-anchor\" aria-label=\"서론: 왜 Agent Memory인가 항목 링크\"\u003e#\u003c/a\u003e\u003c/h2\u003e\n\u003cp\u003e이전 글(2026-04-10)에서 Agent SLO와 Execution Journal를 통해 Agent의\u003cstrong\u003e실행 품질을 측정\u003c/strong\u003e하는 방법을 살펴봤다. 하지만 측정만으로는 불완전하다. Agent가\u003cstrong\u003e이전 대화를 기억하지 못한다\u003c/strong\u003e면, TCR은 아무리 높아도 사용자를 만족시키지 못한다.\u003c/p\u003e\n\u003cp\u003e인간 뇌의 기억은 단일 메커니즘이 아니다. Working memory는 현재 사고를 뒷받침하는 단기 기억이고, episodic memory는 경험의 시간순 기록이며, semantic memory는 개념과 사실의 지식 기반, procedural memory는기술과 절차의 묶음이다. AI Agent의 Memory도 마찬가지로 다층 구조가 필요하다.\u003c/p\u003e\n\u003ch2 id=\"section-agent-memory의-4계층-구조\" tabindex=\"-1\"\u003eAgent Memory의 4계층 구조\u003ca href=\"#section-agent-memory%EC%9D%98-4%EA%B3%84%EC%B8%B5-%EA%B5%AC%EC%A1%B0\" class=\"heading-anchor\" aria-label=\"Agent Memory의 4계층 구조 항목 링크\"\u003e#\u003c/a\u003e\u003c/h2\u003e\n\u003cpre\u003e\u003ccode\u003eAgent Memory Architecture\n├── Working Memory          (현재 세션, LLM Context Window)\n│   └── 가장 최근 N턴의 대화 + 현재 작업 상태\n│\n├── Episodic Memory         (과거 세션의 경험)\n│   └── 세션별 주요 이벤트, 결정, 결과의 시계열 기록\n│\n├── Semantic Memory         (영속적 지식 베이스)\n│   └── 사용자 프로파일, 선호도, 프로젝트 맥락\n│\n└── Procedural Memory       (행동 정책)\n    └── 프롬프트 템플릿, 도구 사용 정책, SLO 규칙\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 구조에서 핵심 질문은 세 가지다.\u003c/p\u003e\n\u003col\u003e\n\u003cli\u003e\u003cstrong\u003eWorking Memory가 넘칠 때\u003c/strong\u003e → 무엇을 episodic으로 보존할 것인가\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eEpisodic이 증가할 때\u003c/strong\u003e → Semantic Memory로 어떻게 압축할 것인가\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003eSemantic이 노후화할 때\u003c/strong\u003e → 어떻게 정렬(refresh)할 것인가\u003c/li\u003e\n\u003c/ol\u003e\n\u003ch2 id=\"section-working-memory-context-window의-전략적-관리\" tabindex=\"-1\"\u003eWorking Memory: Context Window의 전략적 관리\u003ca href=\"#section-working-memory-context-window%EC%9D%98-%EC%A0%84%EB%9E%B5%EC%A0%81-%EA%B4%80%EB%A6%AC\" class=\"heading-anchor\" aria-label=\"Working Memory: Context Window의 전략적 관리 항목 링크\"\u003e#\u003c/a\u003e\u003c/h2\u003e\n\u003cp\u003eLLM의 Context Window는 유한한 자원이다. 128K 토큰이 있더라도, 모든 대화를 넣으면 최근 중요 정보가 묻힐 수 있다. Working Memory 관리의 핵심은\u003cstrong\u003e중요도 기반 선별(salience-based triage)\u003c/strong\u003e 이다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003etype ConversationTurn = {\n  role: \"user\" | \"assistant\" | \"system\";\n  content: string;\n  timestamp: number;\n  tokens: number;\n  salient: boolean;   // 사용자가 명시적으로 표시\n  autoSalient: boolean; // 키워드/감정 분석으로 자동 판단\n};\n\ntype WorkingMemoryConfig = {\n  maxTokens: number;\n reservedRatio: number;       // 항상 유지하는 시스템 프롬프트 비율 (0.3 = 30%)\n  salientBoost: number;  // salient=true 메시지의 가중치 배수\n};\n\nclass WorkingMemoryManager {\n  private config: WorkingMemoryConfig;\n  private conversationHistory: ConversationTurn[] = [];\n\n  constructor(config: WorkingMemoryConfig) {\n    this.config = config;\n  }\n\n  addTurn(role: ConversationTurn[\"role\"], content: string, salient = false) {\n    const tokens = this.estimateTokens(content);\n    this.conversationHistory.push({ role, content, timestamp: Date.now(), tokens, salient, autoSalient: false });\n    this.evictIfNeeded();\n  }\n\n  getContext(): { role: ConversationTurn[\"role\"]; content: string }[] {\n    const reserved = this.getSystemPrompt();\n    const reservedTokens = this.estimateTokens(reserved);\n    const availableTokens = this.config.maxTokens * (1 - this.config.reservedRatio);\n\n    const turns = this.conversationHistory\n      .map((t) =\u003e ({\n        ...t,\n        weight: t.salient || t.autoSalient ? this.config.salientBoost : 1,\n        effectiveTokens: t.tokens * (t.salient || t.autoSalient ? this.config.salientBoost : 1),\n      }))\n      .sort((a, b) =\u003e {\n        // 중요도 가중치 × 시간 신선도(time decay)\n        const freshnessA = this.timeDecay(a.timestamp);\n        const freshnessB = this.timeDecay(b.timestamp);\n        return b.weight * freshnessB - a.weight * freshnessA;\n      });\n\n    let used = reservedTokens;\n    const selected: ConversationTurn[] = [];\n\n    for (const turn of turns) {\n      if (used + turn.tokens \u0026#x3C;= availableTokens) {\n        selected.push(turn);\n        used += turn.tokens;\n      } else {\n        break;\n      }\n    }\n\n    // 시간순 정렬 후 반환\n    return [\n      { role: \"system\", content: reserved },\n      ...selected.sort((a, b) =\u003e a.timestamp - b.timestamp),\n    ];\n  }\n\n  private timeDecay(timestamp: number): number {\n    const hoursAgo = (Date.now() - timestamp) / (1000 * 60 * 60);\n    return Math.exp(-hoursAgo / 24); // 24시간 반감기\n  }\n\n  private evictIfNeeded() {\n    // Eviction은 getContext() 호출 시lazy하게 처리\n  }\n\n  private estimateTokens(text: string): number {\n    // Approximate: 한글 기준 2자 ≈ 1토큰\n    return Math.ceil(text.length / 2);\n  }\n\n  private getSystemPrompt(): string {\n    return \"You are a helpful AI assistant. Keep responses concise and context-aware.\";\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 구조의 핵심 설계 의도는 두 가지다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cstrong\u003e중요도 가중치\u003c/strong\u003e: 중요하다고 표시된 메시지는 시간과 관계없이 우선 보존\u003c/li\u003e\n\u003cli\u003e\u003cstrong\u003e시간에 따른 감쇠\u003c/strong\u003e: 오래된 메시지일수록 중요도가 점진적으로 낮아져 결국 제거된다\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch2 id=\"section-episodic-memory-세션-경험을시간순-기록으로-변환\" tabindex=\"-1\"\u003eEpisodic Memory: 세션 경험을시간순 기록으로 변환\u003ca href=\"#section-episodic-memory-%EC%84%B8%EC%85%98-%EA%B2%BD%ED%97%98%EC%9D%84%EC%8B%9C%EA%B0%84%EC%88%9C-%EA%B8%B0%EB%A1%9D%EC%9C%BC%EB%A1%9C-%EB%B3%80%ED%99%98\" class=\"heading-anchor\" aria-label=\"Episodic Memory: 세션 경험을시간순 기록으로 변환 항목 링크\"\u003e#\u003c/a\u003e\u003c/h2\u003e\n\u003cp\u003eWorking Memory는 세션이 끝나면 사라진다.Episodic Memory는 이를\u003cstrong\u003e세션 단위 경험 record\u003c/strong\u003e로 저장한다. 개념적으로 인간의일화 기억에 해당한다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003etype EpisodeSummary = {\n  sessionId: string;\n  userId: string;\n  startedAt: number;\n  endedAt: number;\n  turnCount: number;\n\n  // 핵심 정보만 추출한 요약\n  coreTopics: string[];         // [\"API 설계\", \"성능 최적화\"]\n  keyDecisions: string[];       // [\"Redis 캐싱 도입\", \"DB sharding 결정\"]\n  unresolvedTopics: string[];   // [\"OAuth 연동 미완료\"]\n  \n  // 메트릭\n  satisfactionScore?: number;   // 사용자가 별점 or thumb으로 평가\n  escalationCount: number;\n  totalTokensUsed: number;\n\n  // 원본 참조 (Full transcript는 별도 스토어)\n  rawTranscriptRef: string;     // S3, GCS 등 durable storage 경로\n};\n\nclass EpisodicMemoryStore {\n  private store: /* Vector DB + KV store */ unknown;\n\n  async saveEpisode(episode: EpisodeSummary): Promise\u0026#x3C;void\u003e {\n    // 1. 요약 자체를 저장 (KV)\n    await this.store.put(`episode:${episode.sessionId}`, episode);\n\n    // 2. 핵심 주제를 벡터화하여 검색 가능하게 (Vector DB)\n    for (const topic of episode.coreTopics) {\n      await this.store.upsertVector({\n        id: `episode:${episode.sessionId}:topic:${topic}`,\n        vector: await this.embed(topic),\n        payload: {\n          sessionId: episode.sessionId,\n          topic,\n          timestamp: episode.endedAt,\n        },\n      });\n    }\n\n    // 3. unresolved topics → 다음 세션의agenda로 자동 등록\n    for (const topic of episode.unresolvedTopics) {\n      await this.scheduleFollowUp(topic, episode.userId);\n    }\n  }\n\n  async retrieveRelevantEpisodes(\n    userId: string,\n    query: string,\n    opts: { maxAgeDays?: number; limit?: number } = {}\n  ): Promise\u0026#x3C;EpisodeSummary[]\u003e {\n    const queryVector = await this.embed(query);\n    const minTimestamp = opts.maxAgeDays\n      ? Date.now() - opts.maxAgeDays * 24 * 60 * 60 * 1000\n      : 0;\n\n    const results = await this.store.similaritySearch({\n      vector: queryVector,\n      filter: { userId, minTimestamp },\n      limit: opts.limit ?? 5,\n    });\n\n    return this.store.getMultiple(results.map((r) =\u003e r.payload.sessionId));\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eEpisodic Memory의 핵심 가치: \u003cstrong\u003e다음 세션에서 이전 결정과 맥락을 즉시 참조\u003c/strong\u003e할 수 있다. \"이전 대화에서 Redis 캐싱 도입으로 결정했죠?\"라는 문장이 가능해진다.\u003c/p\u003e\n\u003ch2 id=\"section-semantic-memory-사용자-프로파일의-영속적-저장소\" tabindex=\"-1\"\u003eSemantic Memory: 사용자 프로파일의 영속적 저장소\u003ca href=\"#section-semantic-memory-%EC%82%AC%EC%9A%A9%EC%9E%90-%ED%94%84%EB%A1%9C%ED%8C%8C%EC%9D%BC%EC%9D%98-%EC%98%81%EC%86%8D%EC%A0%81-%EC%A0%80%EC%9E%A5%EC%86%8C\" class=\"heading-anchor\" aria-label=\"Semantic Memory: 사용자 프로파일의 영속적 저장소 항목 링크\"\u003e#\u003c/a\u003e\u003c/h2\u003e\n\u003cp\u003eEpisodic가 경험의시간순 기록이라면, Semantic Memory는\u003cstrong\u003e지식의 구조화된 조직\u003c/strong\u003e이다. 사용자 프로파일, 선호도, 프로젝트별 맥락이 여기 해당한다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003etype UserProfile = {\n  userId: string;\n  name: string;\n  timezone: string;\n  preferredLanguage: \"ko\" | \"en\" | \"mixed\";\n  \n  // 기술 스택 (SK Interview 준비 수준 등)\n  technicalLevel: {\n    systemDesign: \"beginner\" | \"intermediate\" | \"advanced\";\n    backend: string[];\n    frontend: string[];\n    infrastructure: string[];\n  };\n\n  // 작업 스타일\n  workStyle: {\n    responseVerbosity: \"concise\" | \"balanced\" | \"detailed\";\n    codeStyle: \"functional\" | \"oop\" | \"flexible\";\n    prefersExamples: boolean;\n  };\n\n  // 현재 프로젝트 맥락\n  activeProjects: {\n    name: string;\n    role: string;\n    techStack: string[];\n    currentGoals: string[];\n    blockers: string[];\n  }[];\n\n  // 기억할 사실들\n  facts: { key: string; value: string; updatedAt: number }[];\n\n  // 제외할 사항 (선호하지 않는 항목)\n  dislikes: string[];\n};\n\nclass SemanticMemoryManager {\n  private store: /* durable KV store */ unknown;\n  private profileCache = new Map\u0026#x3C;string, { profile: UserProfile; loadedAt: number }\u003e();\n\n  async getProfile(userId: string): Promise\u0026#x3C;UserProfile | null\u003e {\n    // 60초 TTL cache\n    const cached = this.profileCache.get(userId);\n    if (cached \u0026#x26;\u0026#x26; Date.now() - cached.loadedAt \u0026#x3C; 60_000) {\n      return cached.profile;\n    }\n\n    const profile = await this.store.get(`profile:${userId}`);\n    if (profile) {\n      this.profileCache.set(userId, { profile, loadedAt: Date.now() });\n    }\n    return profile;\n  }\n\n  async updateProfile(userId: string, patch: Partial\u0026#x3C;UserProfile\u003e): Promise\u0026#x3C;void\u003e {\n    const current = await this.getProfile(userId);\n    const updated = { ...current, ...patch };\n    await this.store.put(`profile:${userId}`, updated);\n    this.profileCache.delete(userId); // cache inval\n  }\n\n  async mergeFromEpisode(userId: string, episode: EpisodeSummary): Promise\u0026#x3C;void\u003e {\n    //Episodic에서Semantic으로 정보 압축\n    const profile = (await this.getProfile(userId)) ?? this.emptyProfile(userId);\n\n    // Topic → 기술 스택 자동 업데이트\n    for (const topic of episode.coreTopics) {\n      this.inferAndMergeTechStack(profile, topic);\n    }\n\n    // 만족도 점수 → 선호도 추론\n    if (episode.satisfactionScore !== undefined) {\n      this.updatePreferenceFromScore(profile, episode);\n    }\n\n    await this.updateProfile(userId, profile);\n  }\n\n  private inferAndMergeTechStack(profile: UserProfile, topic: string) {\n    const techKeywords: Record\u0026#x3C;string, keyof UserProfile[\"technicalLevel\"]\u003e = {\n      \"API\": \"backend\",\n      \"Redis\": \"backend\",\n      \"Database\": \"backend\",\n      \"React\": \"frontend\",\n      \"Next.js\": \"frontend\",\n      \"AWS\": \"infrastructure\",\n      \"Kubernetes\": \"infrastructure\",\n    };\n\n    for (const [keyword, category] of Object.entries(techKeywords)) {\n      if (topic.includes(keyword) \u0026#x26;\u0026#x26; !profile.technicalLevel[category].includes(keyword)) {\n        profile.technicalLevel[category].push(keyword);\n      }\n    }\n  }\n\n  private emptyProfile(userId: string): UserProfile {\n    return {\n      userId,\n      name: \"\",\n      timezone: \"Asia/Seoul\",\n      preferredLanguage: \"mixed\",\n      technicalLevel: { systemDesign: \"intermediate\", backend: [], frontend: [], infrastructure: [] },\n      workStyle: { responseVerbosity: \"balanced\", codeStyle: \"flexible\", prefersExamples: true },\n      activeProjects: [],\n      facts: [],\n      dislikes: [],\n    };\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eSemantic Memory는\u003cstrong\u003e서비스 초기에cold start\u003c/strong\u003e가 걸리지만, 시간이 갈수록 Agent가 해당 사용자에게\u003cstrong\u003e맞춤형으로 작동\u003c/strong\u003e하게 된다.\u003c/p\u003e\n\u003ch2 id=\"section-procedural-memory-행동-정책의-버전-관리\" tabindex=\"-1\"\u003eProcedural Memory: 행동 정책의 버전 관리\u003ca href=\"#section-procedural-memory-%ED%96%89%EB%8F%99-%EC%A0%95%EC%B1%85%EC%9D%98-%EB%B2%84%EC%A0%84-%EA%B4%80%EB%A6%AC\" class=\"heading-anchor\" aria-label=\"Procedural Memory: 행동 정책의 버전 관리 항목 링크\"\u003e#\u003c/a\u003e\u003c/h2\u003e\n\u003cp\u003e지금까지의 Memory는\u003cstrong\u003e데이터\u003c/strong\u003e였다.Procedural Memory는\u003cstrong\u003e정책(policy)\u003c/strong\u003e 이다. 프롬프트 템플릿, 도구 사용 규칙, SLO 임계값 등이 해당한다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003etype AgentPolicy = {\n  version: string;\n  activePrompt: {\n    systemPrompt: string;\n    toolDescriptions: string[];\n    responseFormat: \"markdown\" | \"json\" | \"plain\";\n  };\n  sloConfig: {\n    taskCompletionRate: { target: number; alertBelow: number };\n    escalationRate: { alertAbove: number };\n  };\n  memoryConfig: WorkingMemoryConfig;\n};\n\nclass ProceduralMemoryManager {\n  private store: /* git-like versioned store */ unknown;\n\n  async getActivePolicy(agentId: string): Promise\u0026#x3C;AgentPolicy\u003e {\n    return await this.store.getCurrent(`policy:${agentId}`);\n  }\n\n  async updatePolicy(agentId: string, patch: Partial\u0026#x3C;AgentPolicy\u003e): Promise\u0026#x3C;void\u003e {\n    const current = await this.getActivePolicy(agentId);\n    const newVersion = incrementPatch(current.version); // e.g. \"1.2.3\" → \"1.2.4\"\n\n    await this.store.put(`policy:${agentId}:v:${newVersion}`, {\n      ...current,\n      ...patch,\n      version: newVersion,\n    });\n\n    await this.store.setCurrent(`policy:${agentId}`, newVersion);\n  }\n\n  async rollback(agentId: string, targetVersion: string): Promise\u0026#x3C;void\u003e {\n    const policy = await this.store.get(`policy:${agentId}:v:${targetVersion}`);\n    if (!policy) throw new Error(`Version ${targetVersion} not found`);\n\n    await this.store.put(`policy:${agentId}:v:${targetVersion}:rollback-${Date.now()}`, policy); // 롤백 이력\n    await this.store.setCurrent(`policy:${agentId}`, targetVersion);\n  }\n\n  async diffVersions(agentId: string, v1: string, v2: string): Promise\u0026#x3C;string\u003e {\n    const p1 = await this.store.get(`policy:${agentId}:v:${v1}`);\n    const p2 = await this.store.get(`policy:${agentId}:v:${v2}`);\n    return this.computeDiff(p1, p2);\n  }\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eProcedural Memory의 핵심: 모든 정책 변경이\u003cstrong\u003e버전 관리\u003c/strong\u003e되고, 롤백이 가능한 것이다. \"왜 이 프롬프트를 이렇게 바꿨을까?\"라는 질문에 답을 찾을 수 있다.\u003c/p\u003e\n\u003ch2 id=\"section-memory-간-상호작용-forget의-과학\" tabindex=\"-1\"\u003eMemory 간 상호작용: Forget의 과학\u003ca href=\"#section-memory-%EA%B0%84-%EC%83%81%ED%98%B8%EC%9E%91%EC%9A%A9-forget%EC%9D%98-%EA%B3%BC%ED%95%99\" class=\"heading-anchor\" aria-label=\"Memory 간 상호작용: Forget의 과학 항목 링크\"\u003e#\u003c/a\u003e\u003c/h2\u003e\n\u003cp\u003eMemory 시스템의 가장 어려운 문제는\u003cstrong\u003e무엇을 잊을 것인가\u003c/strong\u003e이다. 모든 것을 기억하면 비용이 너무 높아지고, 너무 적게 기억하면 문맥이 단절된다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003etype MemoryHealthScore = {\n  workingMemoryUtilization: number;  // 0.8 이상이면 경고\n  episodicStaleness: number;         // 너무 오래된 Episode 비율\n  semanticOutdatedness: number;      // 마지막 업데이트로부터 경과 시간\n  totalMemorySizeMb: number;\n};\n\nasync function runMemoryGC(\n  userId: string,\n  config: { maxEpisodicAgeDays: number; maxSemanticAgeDays: number; maxTotalGb: number }\n): Promise\u0026#x3C;{ evictedEpisodes: number; updatedSemantic: number; reclaimedMb: number }\u003e {\n  const result = { evictedEpisodes: 0, updatedSemantic: 0, reclaimedMb: 0 };\n\n  // 1. 오래된 Episodic Memory evict\n  const oldEpisodes = await episodicStore.query({\n    userId,\n    olderThan: config.maxEpisodicAgeDays,\n    hasUnresolved: false,  // 미해결 이슈가 있으면 보존\n  });\n\n  for (const episode of oldEpisodes) {\n    // 중요 결정이 있으면 Semantic Memory로 먼저 압축\n    if (episode.keyDecisions.length \u003e 0) {\n      await semanticMemory.mergeFromEpisode(userId, episode);\n      result.updatedSemantic++;\n    }\n    await episodicStore.delete(episode.sessionId);\n    result.evictedEpisodes++;\n    result.reclaimedMb += estimateEpisodeSize(episode);\n  }\n\n  // 2. 노후화된 Semantic Memory check\n  const profile = await semanticMemory.getProfile(userId);\n  const outdatedFacts = profile.facts.filter(\n    (f) =\u003e Date.now() - f.updatedAt \u003e config.maxSemanticAgeDays * 24 * 60 * 60 * 1000\n  );\n\n  // Outdated facts에 대해 사용자에게 확인 질의\n  if (outdatedFacts.length \u003e 0) {\n    await scheduleMemoryRefreshPrompt(userId, outdatedFacts);\n  }\n\n  return result;\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e\u003cstrong\u003eGC의 핵심 원칙\u003c/strong\u003e: evict할 때 단순 삭제하지 않고, 중요한 정보는 Semantic Memory로\u003cstrong\u003e승격(promotion)\u003c/strong\u003e 한다. 이것이 filing cabinet 방식이다 — working desk에서 오래된 서류를 archives로 이동하지만, 완전히 버리지는 않는다.\u003c/p\u003e\n\u003ch2 id=\"section-memory-검색-context-window에-넣을-때-품질-결정하기\" tabindex=\"-1\"\u003eMemory 검색: Context Window에 넣을 때 품질 결정하기\u003ca href=\"#section-memory-%EA%B2%80%EC%83%89-context-window%EC%97%90-%EB%84%A3%EC%9D%84-%EB%95%8C-%ED%92%88%EC%A7%88-%EA%B2%B0%EC%A0%95%ED%95%98%EA%B8%B0\" class=\"heading-anchor\" aria-label=\"Memory 검색: Context Window에 넣을 때 품질 결정하기 항목 링크\"\u003e#\u003c/a\u003e\u003c/h2\u003e\n\u003cp\u003eContext Window에 어떤 memory를 넣을지 결정하는\u003cstrong\u003e검색 품질\u003c/strong\u003e이 Agent 응답 품질을 좌우한다.\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-ts\"\u003easync function buildSessionContext(\n  userId: string,\n  currentQuery: string,\n  config: { maxContextTokens: number }\n): Promise\u0026#x3C;{ working: ConversationTurn[]; semantic: object; episodic: EpisodeSummary[] }\u003e {\n  // 1. Semantic Memory: 현재 query와 관련된 사용자 프로파일 검색\n  const relevantProfile = await semanticMemory.getProfile(userId);\n\n  // 2. Episodic Memory: query와 관련된 과거 세션 검색\n  const relevantEpisodes = await episodicMemory.retrieveRelevantEpisodes(\n    userId,\n    currentQuery,\n    { maxAgeDays: 90, limit: 3 }\n  );\n\n  // 3. Working Memory: 최근 대화 (기존 로직)\n  const workingMemory = workingMemoryManager.getContext();\n\n  // 4. 크기 예측 및 트리밍\n  const semanticText = JSON.stringify(relevantProfile);\n  const episodicText = relevantEpisodes.map((e) =\u003e e.coreTopics.join(\", \")).join(\" | \");\n  const totalEstimate =\n    estimateTokens(workingMemory) +\n    estimateTokens(semanticText) +\n    estimateTokens(episodicText);\n\n  if (totalEstimate \u003e config.maxContextTokens) {\n    // Semantic → episodic 순으로 우선순위\n    const trimmed = trimContextToTokenBudget(workingMemory, semanticText, episodicText, config.maxContextTokens);\n    return trimmed;\n  }\n\n  return { working: workingMemory, semantic: relevantProfile, episodic: relevantEpisodes };\n}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e이 과정이 매 세션 시작 시 자동으로 실행되어야 한다. 수동으로 memory를 관리하는 것은 scalability가 전혀 없다.\u003c/p\u003e\n\u003ch2 id=\"section-memory-system을-만드는-팀-체크리스트\" tabindex=\"-1\"\u003eMemory System을 만드는 팀 체크리스트\u003ca href=\"#section-memory-system%EC%9D%84-%EB%A7%8C%EB%93%9C%EB%8A%94-%ED%8C%80-%EC%B2%B4%ED%81%AC%EB%A6%AC%EC%8A%A4%ED%8A%B8\" class=\"heading-anchor\" aria-label=\"Memory System을 만드는 팀 체크리스트 항목 링크\"\u003e#\u003c/a\u003e\u003c/h2\u003e\n\u003cul class=\"contains-task-list\"\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e Working Memory에 중요도 기반 선별 알고리즘이 구현되어 있는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e Session 종료 시 Episodic Memory로 자동 저장되는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e Episodic Memory에서 unresolved topics가 다음 세션 agenda로 등록되는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e Semantic Memory가 Episodic에서 자동으로 업데이트되는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e Procedural Memory가 버전 관리되고 롤백 가능한가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e Memory GC가 주기적으로 실행되어 오래된 데이터가 evict되는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e Memory 검색 결과가 session 시작 시 자동으로 context에 포함되는가?\u003c/li\u003e\n\u003cli class=\"task-list-item\"\u003e\u003cinput type=\"checkbox\" disabled\u003e Memory staleness가 SLO dashboard에 표시되는가?\u003c/li\u003e\n\u003c/ul\u003e\n\u003ch2 id=\"section-결론\" tabindex=\"-1\"\u003e결론\u003ca href=\"#section-%EA%B2%B0%EB%A1%A0\" class=\"heading-anchor\" aria-label=\"결론 항목 링크\"\u003e#\u003c/a\u003e\u003c/h2\u003e\n\u003cp\u003eMemory 설계는 Agent를\u003cstrong\u003e범용 도구\u003c/strong\u003e에서\u003cstrong\u003e개인화된 파트너\u003c/strong\u003e로 만드는 핵심 요소다. 4계층 구조는 단순한 추상화가 아니라 실제 구현 시마다 마주하는 문제들이다.\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eWorking Memory: 현재 세션의 attention 관리\u003c/li\u003e\n\u003cli\u003eEpisodic Memory: 경험의시간순 기록과 검색\u003c/li\u003e\n\u003cli\u003eSemantic Memory: 사용자 지식의 구조화된 조직\u003c/li\u003e\n\u003cli\u003eProcedural Memory: 정책의 버전 관리\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003e이 네 가지를 갖추면 Agent는 대화 초기에 사용자의 이름, 기술 수준, 작업 스타일을 파악하고, 대화 중에는 맥락을 유지하며, 대화 종료 후에는 결정과 문제를 기록하여\u003cstrong\u003e다음 만남에서 기억\u003c/strong\u003e한다.\u003c/p\u003e\n\u003cp\u003e메모리는 에이전트의 연속성을 뒷받침한다. 이전 맥락을 기억하지 못하면 모델의 성능이 높아도 사용자와 신뢰를 쌓기 어렵다.\u003c/p\u003e\n\u003chr\u003e"])</script><script>self.__next_f.push([1,"18:[\"$\",\"$L1a\",null,{\"contentHtml\":\"$1b\"}]\n"])</script><script>self.__next_f.push([1,"19:[\"$\",\"nav\",\"agent-memory\",{\"aria-label\":\"에이전트 메모리 설계 읽기 순서\",\"className\":\"mt-8 border border-white/15 bg-slate-950/80 p-6\",\"children\":[[\"$\",\"$L11\",null,{\"className\":\"text-lg font-semibold text-cyan-200\",\"href\":\"/series/agent-memory/\",\"children\":[\"에이전트 메모리 설계\",\" ↗\"]}],[\"$\",\"ol\",null,{\"className\":\"mt-4 space-y-3\",\"children\":[[\"$\",\"li\",\"2026-04-11-proactive-update\",{\"className\":\"flex gap-3 text-sm\",\"children\":[[\"$\",\"span\",null,{\"className\":\"font-mono text-white/40\",\"children\":[1,\".\"]}],[\"$\",\"$L11\",null,{\"href\":\"/posts/2026-04-11-proactive-update/\",\"aria-current\":\"page\",\"className\":\"font-semibold text-cyan-200\",\"children\":[\"에이전트 메모리의 네 계층과 컨텍스트 관리\",\" · 읽는 중\"]}]]}],[\"$\",\"li\",\"2026-04-14-proactive-update\",{\"className\":\"flex gap-3 text-sm\",\"children\":[[\"$\",\"span\",null,{\"className\":\"font-mono text-white/40\",\"children\":[2,\".\"]}],[\"$\",\"$L11\",null,{\"href\":\"/posts/2026-04-14-proactive-update/\",\"aria-current\":\"$undefined\",\"className\":\"text-white/70 hover:text-cyan-200\",\"children\":[\"에이전트 메모리 설계: 장기 기억, 검색, 삭제 전략\",\"\"]}]]}],[\"$\",\"li\",\"2026-08-30-proactive-update\",{\"className\":\"flex gap-3 text-sm\",\"children\":[[\"$\",\"span\",null,{\"className\":\"font-mono text-white/40\",\"children\":[3,\".\"]}],[\"$\",\"$L11\",null,{\"href\":\"/posts/2026-08-30-proactive-update/\",\"aria-current\":\"$undefined\",\"className\":\"text-white/70 hover:text-cyan-200\",\"children\":[\"RAG 설계: 벡터 검색과 관계형 데이터를 한곳에서 다루기\",\"\"]}]]}]]}]]}]\n"])</script></body></html>

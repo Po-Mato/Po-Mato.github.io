@@ -1,0 +1,29 @@
+1:"$Sreact.fragment"
+2:I[59588,["/_next/static/chunks/0323a6ac23c48c07.js","/_next/static/chunks/3b2ce2c68d173db7.js"],""]
+3:I[97527,["/_next/static/chunks/0323a6ac23c48c07.js","/_next/static/chunks/3b2ce2c68d173db7.js"],"default"]
+7:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+8:"$Sreact.suspense"
+4:T9dd,<h1>플랫폼 엔지니어링으로 클라우드 복잡성 줄이기</h1>
+<p>2026년 현재, 소프트웨어 엔지니어링 분야는 단순한 클라우드 채택을 넘어, 복잡성을 제어하고 개발자 경험(DevEx)을 최적화하는 <strong>플랫폼 엔지니어링(Platform Engineering)</strong> 중심으로 빠르게 재편되고 있습니다.</p>
+<h2 id="section-1-아키텍처의-패러다임-변화" tabindex="-1">1. 아키텍처의 패러다임 변화<a href="#section-1-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98%EC%9D%98-%ED%8C%A8%EB%9F%AC%EB%8B%A4%EC%9E%84-%EB%B3%80%ED%99%94" class="heading-anchor" aria-label="1. 아키텍처의 패러다임 변화 항목 링크">#</a></h2>
+<p>과거의 클라우드 네이티브 아키텍처가 '마이크로서비스 도입'에 초점이 맞춰져 있었다면, 이제는 **'지속 가능한 복잡성 관리'**가 핵심입니다. 무분별한 마이크로서비스 확장으로 인한 관리 오버헤드를 줄이기 위해, 필요에 따라 **모듈러 모놀리스(Modular Monolith)**를 선택적으로 혼용하는 하이브리드 접근법이 대세로 자리 잡았습니다.</p>
+<h2 id="section-2-플랫폼-엔지니어링의-역할" tabindex="-1">2. 플랫폼 엔지니어링의 역할<a href="#section-2-%ED%94%8C%EB%9E%AB%ED%8F%BC-%EC%97%94%EC%A7%80%EB%8B%88%EC%96%B4%EB%A7%81%EC%9D%98-%EC%97%AD%ED%95%A0" class="heading-anchor" aria-label="2. 플랫폼 엔지니어링의 역할 항목 링크">#</a></h2>
+<p>플랫폼 엔지니어링은 인프라와 개발 팀 사이의 마찰을 줄이는 인터페이스 역할을 합니다.</p>
+<pre><code class="language-yaml"># 내부 개발자 플랫폼(IDP) 예시 설정 (Infrastructure as Code)
+apiVersion: idp.io/v1
+kind: DeveloperPortal
+metadata:
+  name: self-service-infra
+spec:
+  templates:
+    - name: fast-api-boilerplate
+      runtime: container
+      resources:
+        cpu: "500m"
+        memory: "512Mi"
+</code></pre>
+<h2 id="section-3-결론-및-향후-전망" tabindex="-1">3. 결론 및 향후 전망<a href="#section-3-%EA%B2%B0%EB%A1%A0-%EB%B0%8F-%ED%96%A5%ED%9B%84-%EC%A0%84%EB%A7%9D" class="heading-anchor" aria-label="3. 결론 및 향후 전망 항목 링크">#</a></h2>
+<p>단순히 클라우드로 옮기는 것만으로는 부족합니다. 2026년의 성공적인 아키텍처는 observability(관측 가능성), 보안(DevSecOps), 그리고 개발자가 인프라를 신경 쓰지 않고 비즈니스 로직에만 집중하게 해주는 자동화된 플랫폼을 갖추는 것입니다.</p>0:{"buildId":"N2fGP1s8j8yZpESImpc1U","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8","children":[["$","article",null,{"className":"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10","children":[["$","$L2",null,{"href":"/","className":"mb-6 inline-block text-sm text-cyan-200","children":"← 블로그 홈"}],["$","time",null,{"dateTime":"2026-08-26T00:00:00.000Z","className":"block font-mono text-sm text-white/60","children":"2026.08.26"}],["$","h1",null,{"className":"mt-2 text-3xl font-bold leading-snug md:text-5xl","children":"플랫폼 엔지니어링으로 클라우드 복잡성 줄이기"}],["$","p",null,{"className":"mt-4 text-base text-white/80 md:text-lg","children":"모듈러 모놀리스와 마이크로서비스의 선택, 내부 개발자 플랫폼의 템플릿과 자동화가 맡는 역할을 정리합니다."}],["$","div",null,{"className":"mt-5 flex flex-wrap gap-3","children":[["$","$L2","Architecture",{"className":"text-xs text-cyan-200 hover:underline","href":"/tags/Architecture/","children":["#","Architecture"]}],["$","$L2","Cloud Native",{"className":"text-xs text-cyan-200 hover:underline","href":"/tags/Cloud%20Native/","children":["#","Cloud Native"]}],["$","$L2","Platform Engineering",{"className":"text-xs text-cyan-200 hover:underline","href":"/tags/Platform%20Engineering/","children":["#","Platform Engineering"]}],["$","$L2","DevOps",{"className":"text-xs text-cyan-200 hover:underline","href":"/tags/DevOps/","children":["#","DevOps"]}]]}],["$","nav",null,{"aria-label":"이 글의 목차","className":"post-toc mt-8 rounded-xl border border-cyan-200/20 bg-slate-950/60 p-5","children":["$","details",null,{"open":true,"children":[["$","summary",null,{"className":"cursor-pointer font-semibold text-cyan-100","children":["이 글의 목차 ",["$","span",null,{"className":"ml-2 text-sm font-normal text-white/60","children":[3,"개 항목"]}]]}],["$","ol",null,{"className":"mt-3 max-h-72 space-y-1 overflow-y-auto pr-2","children":[["$","li","section-1-아키텍처의-패러다임-변화",{"className":"","children":["$","a",null,{"href":"#section-1-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98%EC%9D%98-%ED%8C%A8%EB%9F%AC%EB%8B%A4%EC%9E%84-%EB%B3%80%ED%99%94","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"1. 아키텍처의 패러다임 변화"}]}],["$","li","section-2-플랫폼-엔지니어링의-역할",{"className":"","children":["$","a",null,{"href":"#section-2-%ED%94%8C%EB%9E%AB%ED%8F%BC-%EC%97%94%EC%A7%80%EB%8B%88%EC%96%B4%EB%A7%81%EC%9D%98-%EC%97%AD%ED%95%A0","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"2. 플랫폼 엔지니어링의 역할"}]}],["$","li","section-3-결론-및-향후-전망",{"className":"","children":["$","a",null,{"href":"#section-3-%EA%B2%B0%EB%A1%A0-%EB%B0%8F-%ED%96%A5%ED%9B%84-%EC%A0%84%EB%A7%9D","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"3. 결론 및 향후 전망"}]}]]}]]}]}],["$","$L3",null,{"contentHtml":"$4"}]]}],[]]}],["$L5"],"$L6"]}],"loading":null,"isPartial":false}
+5:["$","script","script-0",{"src":"/_next/static/chunks/3b2ce2c68d173db7.js","async":true}]
+6:["$","$L7",null,{"children":["$","$8",null,{"name":"Next.MetadataOutlet","children":"$@9"}]}]
+9:null

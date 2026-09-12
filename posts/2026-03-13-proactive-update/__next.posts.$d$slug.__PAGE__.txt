@@ -1,0 +1,34 @@
+1:"$Sreact.fragment"
+2:I[59588,["/_next/static/chunks/0323a6ac23c48c07.js","/_next/static/chunks/3b2ce2c68d173db7.js"],""]
+3:I[97527,["/_next/static/chunks/0323a6ac23c48c07.js","/_next/static/chunks/3b2ce2c68d173db7.js"],"default"]
+7:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+8:"$Sreact.suspense"
+4:Tc73,<h1>Locality-First Agentic Architecture: Moving Intelligence to the Edge</h1>
+<p>최근 기술 블로그와 GitHub 트렌딩을 휩쓸고 있는 핵심 담론은 **'AI의 로컬화(Locality)'**와 **'에이전트화(Agentic)'**입니다. 클라우드 API 의존도를 낮추고 로컬 환경에서 지능형 실행 흐름을 제어하는 이 새로운 아키텍처 패턴이 왜 중요한지, 그리고 어떻게 구현해야 하는지 Deep Dive 해봅니다.</p>
+<h2 id="section-1-문제-정의-클라우드-종속성의-병목" tabindex="-1">1. 문제 정의: 클라우드 종속성의 병목<a href="#section-1-%EB%AC%B8%EC%A0%9C-%EC%A0%95%EC%9D%98-%ED%81%B4%EB%9D%BC%EC%9A%B0%EB%93%9C-%EC%A2%85%EC%86%8D%EC%84%B1%EC%9D%98-%EB%B3%91%EB%AA%A9" class="heading-anchor" aria-label="1. 문제 정의: 클라우드 종속성의 병목 항목 링크">#</a></h2>
+<p>기존의 클라우드 기반 LLM 에이전트는 두 가지 큰 장벽에 직면해 있습니다:</p>
+<ol>
+<li><strong>Latency &#x26; Reliability</strong>: API 왕복 시간과 네트워크 불안정성.</li>
+<li><strong>Data Privacy &#x26; Cost</strong>: 민감한 사용자 데이터의 클라우드 노출 및 토큰 비용 최적화.</li>
+</ol>
+<h2 id="section-2-해결책-local-agentic-runtime" tabindex="-1">2. 해결책: Local Agentic Runtime<a href="#section-2-%ED%95%B4%EA%B2%B0%EC%B1%85-local-agentic-runtime" class="heading-anchor" aria-label="2. 해결책: Local Agentic Runtime 항목 링크">#</a></h2>
+<p>로컬 에이전트 런타임(OpenClaw 등)은 이러한 문제를 브라우저/로컬 환경에서 직접 해결합니다.</p>
+<h3 id="section-아키텍처-설계" tabindex="-1">아키텍처 설계<a href="#section-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98-%EC%84%A4%EA%B3%84" class="heading-anchor" aria-label="아키텍처 설계 항목 링크">#</a></h3>
+<pre><code class="language-typescript">// Local Agentic Pattern (Simplified)
+class LocalAgent {
+  private memory = new GraphRAG(); // Local Knowledge Graph
+
+  async executeTask(task: string) {
+    const context = await this.memory.query(task);
+    const model = await this.loadLocalModel();
+    return model.generate(task, context);
+  }
+}
+</code></pre>
+<h2 id="section-3-핵심-역량-graph-rag의-역할" tabindex="-1">3. 핵심 역량: Graph RAG의 역할<a href="#section-3-%ED%95%B5%EC%8B%AC-%EC%97%AD%EB%9F%89-graph-rag%EC%9D%98-%EC%97%AD%ED%95%A0" class="heading-anchor" aria-label="3. 핵심 역량: Graph RAG의 역할 항목 링크">#</a></h2>
+<p>최근 <code>GitNexus</code> 같은 프로젝트가 주목받는 이유는 FE 내에서 'Graph RAG'를 직접 실행하기 때문입니다. 로컬 데이터 구조를 그래프로 모델링하여, LLM이 문맥을 더 정확하게 파악하게 합니다.</p>
+<h2 id="section-4-결론" tabindex="-1">4. 결론<a href="#section-4-%EA%B2%B0%EB%A1%A0" class="heading-anchor" aria-label="4. 결론 항목 링크">#</a></h2>
+<p>이제 프론트엔드 개발자는 단순히 UI를 그리는 것을 넘어, **'에이전트 기반의 오케스트레이션'**을 설계하는 아키텍트가 되어야 합니다. 브라우저가 하나의 독립적인 지능형 터미널로 진화하고 있습니다.</p>0:{"buildId":"N2fGP1s8j8yZpESImpc1U","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8","children":[["$","article",null,{"className":"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10","children":[["$","$L2",null,{"href":"/","className":"mb-6 inline-block text-sm text-cyan-200","children":"← 블로그 홈"}],["$","time",null,{"dateTime":"2026-03-13T00:00:00.000Z","className":"block font-mono text-sm text-white/60","children":"2026.03.13"}],["$","h1",null,{"className":"mt-2 text-3xl font-bold leading-snug md:text-5xl","children":"Locality-First Agentic Architecture: Moving Intelligence to the Edge"}],null,["$","div",null,{"className":"mt-5 flex flex-wrap gap-3","children":[["$","$L2","AI",{"className":"text-xs text-cyan-200 hover:underline","href":"/tags/AI/","children":["#","AI"]}],["$","$L2","Edge Computing",{"className":"text-xs text-cyan-200 hover:underline","href":"/tags/Edge%20Computing/","children":["#","Edge Computing"]}],["$","$L2","Architecture",{"className":"text-xs text-cyan-200 hover:underline","href":"/tags/Architecture/","children":["#","Architecture"]}],["$","$L2","Local-AI",{"className":"text-xs text-cyan-200 hover:underline","href":"/tags/Local-AI/","children":["#","Local-AI"]}]]}],["$","nav",null,{"aria-label":"이 글의 목차","className":"post-toc mt-8 rounded-xl border border-cyan-200/20 bg-slate-950/60 p-5","children":["$","details",null,{"open":true,"children":[["$","summary",null,{"className":"cursor-pointer font-semibold text-cyan-100","children":["이 글의 목차 ",["$","span",null,{"className":"ml-2 text-sm font-normal text-white/60","children":[5,"개 항목"]}]]}],["$","ol",null,{"className":"mt-3 max-h-72 space-y-1 overflow-y-auto pr-2","children":[["$","li","section-1-문제-정의-클라우드-종속성의-병목",{"className":"","children":["$","a",null,{"href":"#section-1-%EB%AC%B8%EC%A0%9C-%EC%A0%95%EC%9D%98-%ED%81%B4%EB%9D%BC%EC%9A%B0%EB%93%9C-%EC%A2%85%EC%86%8D%EC%84%B1%EC%9D%98-%EB%B3%91%EB%AA%A9","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"1. 문제 정의: 클라우드 종속성의 병목"}]}],["$","li","section-2-해결책-local-agentic-runtime",{"className":"","children":["$","a",null,{"href":"#section-2-%ED%95%B4%EA%B2%B0%EC%B1%85-local-agentic-runtime","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"2. 해결책: Local Agentic Runtime"}]}],["$","li","section-아키텍처-설계",{"className":"ml-4 border-l border-white/15 pl-3","children":["$","a",null,{"href":"#section-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98-%EC%84%A4%EA%B3%84","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"아키텍처 설계"}]}],["$","li","section-3-핵심-역량-graph-rag의-역할",{"className":"","children":["$","a",null,{"href":"#section-3-%ED%95%B5%EC%8B%AC-%EC%97%AD%EB%9F%89-graph-rag%EC%9D%98-%EC%97%AD%ED%95%A0","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"3. 핵심 역량: Graph RAG의 역할"}]}],["$","li","section-4-결론",{"className":"","children":["$","a",null,{"href":"#section-4-%EA%B2%B0%EB%A1%A0","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"4. 결론"}]}]]}]]}]}],["$","$L3",null,{"contentHtml":"$4"}]]}],[]]}],["$L5"],"$L6"]}],"loading":null,"isPartial":false}
+5:["$","script","script-0",{"src":"/_next/static/chunks/3b2ce2c68d173db7.js","async":true}]
+6:["$","$L7",null,{"children":["$","$8",null,{"name":"Next.MetadataOutlet","children":"$@9"}]}]
+9:null

@@ -1,0 +1,27 @@
+1:"$Sreact.fragment"
+2:I[59588,["/_next/static/chunks/0323a6ac23c48c07.js","/_next/static/chunks/3b2ce2c68d173db7.js"],""]
+3:I[97527,["/_next/static/chunks/0323a6ac23c48c07.js","/_next/static/chunks/3b2ce2c68d173db7.js"],"default"]
+7:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+8:"$Sreact.suspense"
+4:T714,<h2 id="section-서론" tabindex="-1">서론<a href="#section-%EC%84%9C%EB%A1%A0" class="heading-anchor" aria-label="서론 항목 링크">#</a></h2>
+<p>분산 시스템 아키텍처에서 CAP 이론은 피할 수 없는 제약 조건입니다. 특히 고가용성과 성능을 위해 선택하는 Eventual Consistency는 서비스 구현의 복잡성을 가중시킵니다.</p>
+<h2 id="section-아키텍처적-분석" tabindex="-1">아키텍처적 분석<a href="#section-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98%EC%A0%81-%EB%B6%84%EC%84%9D" class="heading-anchor" aria-label="아키텍처적 분석 항목 링크">#</a></h2>
+<p>Eventual Consistency 모델은 쓰기 연산의 지연 시간을 최소화하지만, 읽기 연산에서 오래된 데이터를 반환할 가능성이 있습니다. 이를 극복하기 위해 Read-Repair, Anti-Entropy 등의 메커니즘을 적절히 배합해야 합니다.</p>
+<h2 id="section-코드-예시" tabindex="-1">코드 예시<a href="#section-%EC%BD%94%EB%93%9C-%EC%98%88%EC%8B%9C" class="heading-anchor" aria-label="코드 예시 항목 링크">#</a></h2>
+<pre><code class="language-javascript">// 단순한 Read-Repair 예시
+async function getConsistentData(key) {
+  const replicas = await readFromAllReplicas(key);
+  const latest = findLatestTimestamp(replicas);
+  
+  if (hasOutdated(replicas)) {
+    await backgroundRepair(key, latest);
+  }
+  
+  return latest.value;
+}
+</code></pre>
+<h2 id="section-결론" tabindex="-1">결론<a href="#section-%EA%B2%B0%EB%A1%A0" class="heading-anchor" aria-label="결론 항목 링크">#</a></h2>
+<p>모든 시스템에 강력한 일관성이 필요한 것은 아닙니다. 비즈니스 도메인의 요구사항을 명확히 정의하고, 허용 가능한 지연 시간을 설정하는 것이 엔지니어링의 핵심입니다.</p>0:{"buildId":"N2fGP1s8j8yZpESImpc1U","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8","children":[["$","article",null,{"className":"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10","children":[["$","$L2",null,{"href":"/","className":"mb-6 inline-block text-sm text-cyan-200","children":"← 블로그 홈"}],["$","time",null,{"dateTime":"2026-08-10T00:00:00.000Z","className":"block font-mono text-sm text-white/60","children":"2026.08.10"}],["$","h1",null,{"className":"mt-2 text-3xl font-bold leading-snug md:text-5xl","children":"현대적인 분산 시스템의 데이터 일관성: Eventual Consistency와 성능의 trade-off"}],["$","p",null,{"className":"mt-4 text-base text-white/80 md:text-lg","children":"분산 시스템 아키텍처 설계 시 고려해야 할 데이터 일관성 모델과 성능 간의 균형점에 대한 심층 분석."}],["$","div",null,{"className":"mt-5 flex flex-wrap gap-3","children":[]}],["$","nav",null,{"aria-label":"이 글의 목차","className":"post-toc mt-8 rounded-xl border border-cyan-200/20 bg-slate-950/60 p-5","children":["$","details",null,{"open":true,"children":[["$","summary",null,{"className":"cursor-pointer font-semibold text-cyan-100","children":["이 글의 목차 ",["$","span",null,{"className":"ml-2 text-sm font-normal text-white/60","children":[4,"개 항목"]}]]}],["$","ol",null,{"className":"mt-3 max-h-72 space-y-1 overflow-y-auto pr-2","children":[["$","li","section-서론",{"className":"","children":["$","a",null,{"href":"#section-%EC%84%9C%EB%A1%A0","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"서론"}]}],["$","li","section-아키텍처적-분석",{"className":"","children":["$","a",null,{"href":"#section-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98%EC%A0%81-%EB%B6%84%EC%84%9D","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"아키텍처적 분석"}]}],["$","li","section-코드-예시",{"className":"","children":["$","a",null,{"href":"#section-%EC%BD%94%EB%93%9C-%EC%98%88%EC%8B%9C","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"코드 예시"}]}],["$","li","section-결론",{"className":"","children":["$","a",null,{"href":"#section-%EA%B2%B0%EB%A1%A0","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"결론"}]}]]}]]}]}],["$","$L3",null,{"contentHtml":"$4"}]]}],[]]}],["$L5"],"$L6"]}],"loading":null,"isPartial":false}
+5:["$","script","script-0",{"src":"/_next/static/chunks/3b2ce2c68d173db7.js","async":true}]
+6:["$","$L7",null,{"children":["$","$8",null,{"name":"Next.MetadataOutlet","children":"$@9"}]}]
+9:null

@@ -1,0 +1,38 @@
+1:"$Sreact.fragment"
+2:I[59588,["/_next/static/chunks/0323a6ac23c48c07.js","/_next/static/chunks/3b2ce2c68d173db7.js"],""]
+3:I[97527,["/_next/static/chunks/0323a6ac23c48c07.js","/_next/static/chunks/3b2ce2c68d173db7.js"],"default"]
+7:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+8:"$Sreact.suspense"
+4:Td4c,<h1>2026년 AI 인프라의 핵심: 메모리 대역폭과 하이브리드 아키텍처</h1>
+<p>2026년 현재, 소프트웨어 엔지니어링 생태계에서 LLM 도입은 '어떻게 구현하는가'를 넘어 '어떻게 효율적으로 서빙하는가'의 문제로 변모했습니다. 특히 AI 인프라 아키텍처의 병목 현상이 raw compute에서 **메모리 대역폭(Memory Bandwidth)**으로 이동했다는 점은 주목할 만한 트렌드입니다.</p>
+<h2 id="section-1-아키텍처적-병목-compute에서-memory로" tabindex="-1">1. 아키텍처적 병목: Compute에서 Memory로<a href="#section-1-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98%EC%A0%81-%EB%B3%91%EB%AA%A9-compute%EC%97%90%EC%84%9C-memory%EB%A1%9C" class="heading-anchor" aria-label="1. 아키텍처적 병목: Compute에서 Memory로 항목 링크">#</a></h2>
+<p>과거에는 GPU의 연산 능력이 가장 큰 과제였으나, 현재는 모델 파라미터의 거대화와 추론 속도 요구치가 상충하면서 메모리 대역폭이 시스템 전체의 성능을 결정짓는 핵심 요소가 되었습니다.</p>
+<ul>
+<li><strong>vLLM의 표준화</strong>: 현재 vLLM은 일반적인 LLM 서빙의 표준으로 자리 잡았으나, 이제는 여기서 한 걸음 더 나아가 메모리 할당 전략을 최적화하는 것이 중요해졌습니다.</li>
+<li><strong>Cache Locality</strong>: 고정된 추론 비용을 줄이기 위해 컨텍스트 캐싱(Context Caching)과 Key-Value Cache의 효율적인 관리가 LLMOps의 성패를 좌우합니다.</li>
+</ul>
+<h2 id="section-2-하이브리드-아키텍처의-부상" tabindex="-1">2. 하이브리드 아키텍처의 부상<a href="#section-2-%ED%95%98%EC%9D%B4%EB%B8%8C%EB%A6%AC%EB%93%9C-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98%EC%9D%98-%EB%B6%80%EC%83%81" class="heading-anchor" aria-label="2. 하이브리드 아키텍처의 부상 항목 링크">#</a></h2>
+<p>최근의 LLM 연구(예: Qwen3.6 등)는 전통적인 Transformer 아키텍처의 한계를 극복하기 위해 **하이브리드 아키텍처(Hybrid Architecture)**를 채택하고 있습니다.</p>
+<ul>
+<li><strong>Alternating Attention</strong>: 모든 층에서 Self-attention을 사용하는 대신, 특정 층에서는 대안적인 연산 방식을 적용하여 연산 효율과 메모리 사용량을 절감합니다.</li>
+<li><strong>예시 코드 (개념적)</strong>:</li>
+</ul>
+<pre><code class="language-python"># 하이브리드 레이어 구조의 단순화된 예시
+class HybridLayer(nn.Module):
+    def __init__(self, mode='attention'):
+        super().__init__()
+        self.mode = mode
+        self.attn = AttentionLayer()
+        self.linear = LinearProjection()
+
+    def forward(self, x):
+        if self.mode == 'attention':
+            return self.attn(x)
+        else:
+            return self.linear(x) # 메모리 효율적인 대체 레이어
+</code></pre>
+<h2 id="section-결론" tabindex="-1">결론<a href="#section-%EA%B2%B0%EB%A1%A0" class="heading-anchor" aria-label="결론 항목 링크">#</a></h2>
+<p>2026년의 개발자에게 필요한 역량은 단순히 API를 호출하는 능력이 아닌, 인프라의 비용 구조와 메모리 대역폭의 물리적 한계를 이해하고 그에 최적화된 아키텍처를 설계하는 능력입니다. LLMOps는 MLOps의 확장을 넘어, 엔지니어링의 새로운 표준으로 자리 잡고 있습니다.</p>0:{"buildId":"N2fGP1s8j8yZpESImpc1U","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8","children":[["$","article",null,{"className":"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10","children":[["$","$L2",null,{"href":"/","className":"mb-6 inline-block text-sm text-cyan-200","children":"← 블로그 홈"}],["$","time",null,{"dateTime":"2026-08-21T00:00:00.000Z","className":"block font-mono text-sm text-white/60","children":"2026.08.21"}],["$","h1",null,{"className":"mt-2 text-3xl font-bold leading-snug md:text-5xl","children":"2026년 AI 인프라의 핵심: 메모리 대역폭과 하이브리드 아키텍처"}],null,["$","div",null,{"className":"mt-5 flex flex-wrap gap-3","children":[["$","$L2","AI",{"className":"text-xs text-cyan-200 hover:underline","href":"/tags/AI/","children":["#","AI"]}],["$","$L2","Infrastructure",{"className":"text-xs text-cyan-200 hover:underline","href":"/tags/Infrastructure/","children":["#","Infrastructure"]}],["$","$L2","LLM",{"className":"text-xs text-cyan-200 hover:underline","href":"/tags/LLM/","children":["#","LLM"]}],["$","$L2","Memory",{"className":"text-xs text-cyan-200 hover:underline","href":"/tags/Memory/","children":["#","Memory"]}],["$","$L2","Architecture",{"className":"text-xs text-cyan-200 hover:underline","href":"/tags/Architecture/","children":["#","Architecture"]}]]}],["$","nav",null,{"aria-label":"이 글의 목차","className":"post-toc mt-8 rounded-xl border border-cyan-200/20 bg-slate-950/60 p-5","children":["$","details",null,{"open":true,"children":[["$","summary",null,{"className":"cursor-pointer font-semibold text-cyan-100","children":["이 글의 목차 ",["$","span",null,{"className":"ml-2 text-sm font-normal text-white/60","children":[3,"개 항목"]}]]}],["$","ol",null,{"className":"mt-3 max-h-72 space-y-1 overflow-y-auto pr-2","children":[["$","li","section-1-아키텍처적-병목-compute에서-memory로",{"className":"","children":["$","a",null,{"href":"#section-1-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98%EC%A0%81-%EB%B3%91%EB%AA%A9-compute%EC%97%90%EC%84%9C-memory%EB%A1%9C","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"1. 아키텍처적 병목: Compute에서 Memory로"}]}],["$","li","section-2-하이브리드-아키텍처의-부상",{"className":"","children":["$","a",null,{"href":"#section-2-%ED%95%98%EC%9D%B4%EB%B8%8C%EB%A6%AC%EB%93%9C-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98%EC%9D%98-%EB%B6%80%EC%83%81","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"2. 하이브리드 아키텍처의 부상"}]}],["$","li","section-결론",{"className":"","children":["$","a",null,{"href":"#section-%EA%B2%B0%EB%A1%A0","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"결론"}]}]]}]]}]}],["$","$L3",null,{"contentHtml":"$4"}]]}],[]]}],["$L5"],"$L6"]}],"loading":null,"isPartial":false}
+5:["$","script","script-0",{"src":"/_next/static/chunks/3b2ce2c68d173db7.js","async":true}]
+6:["$","$L7",null,{"children":["$","$8",null,{"name":"Next.MetadataOutlet","children":"$@9"}]}]
+9:null
