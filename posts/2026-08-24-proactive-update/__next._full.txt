@@ -1,0 +1,207 @@
+1:"$Sreact.fragment"
+3:I[5035,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"default"]
+4:I[28921,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"default"]
+6:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"OutletBoundary"]
+7:"$Sreact.suspense"
+9:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"ViewportBoundary"]
+b:I[54283,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"MetadataBoundary"]
+d:I[80036,[],"default"]
+:HL["/_next/static/chunks/37a19a3fbd0c31f7.css","style"]
+:HL["/_next/static/media/797e433ab948586e-s.p.29207c2f.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"P":null,"b":"HY9-yMSc1HQ0R3-nkUhF6","c":["","posts","2026-08-24-proactive-update",""],"q":"","i":false,"f":[[["",{"children":["posts",{"children":[["slug","2026-08-24-proactive-update","d"],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",true],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/37a19a3fbd0c31f7.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/_next/static/chunks/eee04543d971e97b.js","async":true,"nonce":"$undefined"}]],"$L2"]}],{"children":[["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":["$L5",[["$","script","script-0",{"src":"/_next/static/chunks/5d4dc55b7a47d378.js","async":true,"nonce":"$undefined"}]],["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],["$","$1","h",{"children":[null,["$","$L9",null,{"children":"$La"}],["$","div",null,{"hidden":true,"children":["$","$Lb",null,{"children":["$","$7",null,{"name":"Next.Metadata","children":"$Lc"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],false]],"m":"$undefined","G":["$d",[]],"S":true}
+e:I[66430,["/_next/static/chunks/eee04543d971e97b.js"],"default"]
+f:I[2407,["/_next/static/chunks/eee04543d971e97b.js"],"default"]
+10:I[20531,["/_next/static/chunks/eee04543d971e97b.js"],"default"]
+2:["$","html",null,{"lang":"ko-KR","dir":"ltr","className":"h-full","children":["$","body",null,{"className":"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased h-full transition-colors duration-500","children":[["$","$Le",null,{}],["$","$Lf",null,{}],["$","div",null,{"className":"relative z-10 min-h-full","children":[["$","$L10",null,{}],["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}],["$","footer",null,{"className":"px-6 py-8 text-center text-sm text-white/60","children":["$","a",null,{"href":"/privacy/","children":"방문 통계 안내"}]}]]}]]}]}]
+a:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+11:I[94966,["/_next/static/chunks/9b57d60b52ca2954.js","/_next/static/chunks/44c984f229072c4f.js"],"IconMark"]
+8:null
+c:[["$","title","0",{"children":"개발 에이전트의 구성 요소: 추론, 도구, 메모리 | Mato Po Tech Blog"}],["$","meta","1",{"name":"description","content":"추론·도구·메모리의 역할을 구분하고 Python 실습으로 재시도 예산, 취소, 종료 이유를 검증합니다."}],["$","link","2",{"rel":"canonical","href":"https://po-mato.github.io/posts/2026-08-24-proactive-update/"}],["$","meta","3",{"property":"og:title","content":"개발 에이전트의 구성 요소: 추론, 도구, 메모리"}],["$","meta","4",{"property":"og:description","content":"추론·도구·메모리의 역할을 구분하고 Python 실습으로 재시도 예산, 취소, 종료 이유를 검증합니다."}],["$","meta","5",{"property":"og:url","content":"https://po-mato.github.io/posts/2026-08-24-proactive-update/"}],["$","meta","6",{"property":"og:image","content":"https://po-mato.github.io/milkyway.jpg"}],["$","meta","7",{"property":"og:type","content":"article"}],["$","meta","8",{"property":"article:published_time","content":"2026-08-24T00:00:00.000Z"}],["$","meta","9",{"property":"article:tag","content":"AI"}],["$","meta","10",{"property":"article:tag","content":"Agentic AI"}],["$","meta","11",{"property":"article:tag","content":"Software Engineering"}],["$","meta","12",{"property":"article:tag","content":"2026 Trends"}],["$","meta","13",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","14",{"name":"twitter:title","content":"개발 에이전트의 구성 요소: 추론, 도구, 메모리"}],["$","meta","15",{"name":"twitter:description","content":"추론·도구·메모리의 역할을 구분하고 Python 실습으로 재시도 예산, 취소, 종료 이유를 검증합니다."}],["$","meta","16",{"name":"twitter:image","content":"https://po-mato.github.io/milkyway.jpg"}],["$","link","17",{"rel":"icon","href":"/favicon.ico?favicon.0b3bf435.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L11","18",{}]]
+12:I[59588,["/_next/static/chunks/eee04543d971e97b.js","/_next/static/chunks/5d4dc55b7a47d378.js"],""]
+5:["$","main",null,{"className":"mx-auto max-w-4xl px-5 pb-20 pt-8 text-white md:px-8","children":[["$","article",null,{"className":"rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-2xl shadow-black/20 backdrop-blur transition duration-500 hover:border-cyan-300/30 hover:shadow-cyan-900/30 md:p-10","children":[["$","$L12",null,{"href":"/","className":"mb-6 inline-block text-sm text-cyan-200","children":"← 블로그 홈"}],["$","time",null,{"dateTime":"2026-08-24T00:00:00.000Z","className":"block font-mono text-sm text-white/60","children":"2026.08.24"}],["$","h1",null,{"className":"mt-2 text-3xl font-bold leading-snug md:text-5xl","children":"개발 에이전트의 구성 요소: 추론, 도구, 메모리"}],["$","p",null,{"className":"mt-4 text-base text-white/80 md:text-lg","children":"추론·도구·메모리의 역할을 구분하고 Python 실습으로 재시도 예산, 취소, 종료 이유를 검증합니다."}],["$","div",null,{"className":"mt-5 flex flex-wrap gap-3","children":[["$","$L12","AI",{"className":"text-xs text-cyan-200 hover:underline","href":"/tags/AI/","children":["#","AI"]}],["$","$L12","Agentic AI",{"className":"text-xs text-cyan-200 hover:underline","href":"/tags/Agentic%20AI/","children":["#","Agentic AI"]}],["$","$L12","Software Engineering",{"className":"text-xs text-cyan-200 hover:underline","href":"/tags/Software%20Engineering/","children":["#","Software Engineering"]}],["$","$L12","2026 Trends",{"className":"text-xs text-cyan-200 hover:underline","href":"/tags/2026%20Trends/","children":["#","2026 Trends"]}]]}],["$","nav",null,{"aria-label":"이 글의 목차","className":"post-toc mt-8 rounded-xl border border-cyan-200/20 bg-slate-950/60 p-5","children":["$","details",null,{"open":true,"children":[["$","summary",null,{"className":"cursor-pointer font-semibold text-cyan-100","children":["이 글의 목차 ",["$","span",null,{"className":"ml-2 text-sm font-normal text-white/60","children":[7,"개 항목"]}]]}],["$","ol",null,{"className":"mt-3 max-h-72 space-y-1 overflow-y-auto pr-2","children":[["$","li","section-들어가는-말-코딩-어시스턴트에서-에이전트로",{"className":"","children":["$","a",null,{"href":"#section-%EB%93%A4%EC%96%B4%EA%B0%80%EB%8A%94-%EB%A7%90-%EC%BD%94%EB%94%A9-%EC%96%B4%EC%8B%9C%EC%8A%A4%ED%84%B4%ED%8A%B8%EC%97%90%EC%84%9C-%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8%EB%A1%9C","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"들어가는 말: 코딩 어시스턴트에서 에이전트로"}]}],["$","li","section-agentic-ai의-아키텍처적-핵심",{"className":"","children":["$","a",null,{"href":"#section-agentic-ai%EC%9D%98-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98%EC%A0%81-%ED%95%B5%EC%8B%AC","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"Agentic AI의 아키텍처적 핵심"}]}],["$","li","section-간단한-워크플로우-예시-conceptual",{"className":"ml-4 border-l border-white/15 pl-3","children":["$","a",null,{"href":"#section-%EA%B0%84%EB%8B%A8%ED%95%9C-%EC%9B%8C%ED%81%AC%ED%94%8C%EB%A1%9C%EC%9A%B0-%EC%98%88%EC%8B%9C-conceptual","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"간단한 워크플로우 예시 (Conceptual)"}]}],["$","li","section-로컬-실습-재시도-예산과-취소",{"className":"ml-4 border-l border-white/15 pl-3","children":["$","a",null,{"href":"#section-%EB%A1%9C%EC%BB%AC-%EC%8B%A4%EC%8A%B5-%EC%9E%AC%EC%8B%9C%EB%8F%84-%EC%98%88%EC%82%B0%EA%B3%BC-%EC%B7%A8%EC%86%8C","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"로컬 실습: 재시도 예산과 취소"}]}],["$","li","section-결함을-넣어-종료-경계-확인하기",{"className":"ml-4 border-l border-white/15 pl-3","children":["$","a",null,{"href":"#section-%EA%B2%B0%ED%95%A8%EC%9D%84-%EB%84%A3%EC%96%B4-%EC%A2%85%EB%A3%8C-%EA%B2%BD%EA%B3%84-%ED%99%95%EC%9D%B8%ED%95%98%EA%B8%B0","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"결함을 넣어 종료 경계 확인하기"}]}],"$L13","$L14"]}]]}]}],"$L15","$L16"]}],["$L17"],null]}]
+18:I[58052,["/_next/static/chunks/eee04543d971e97b.js","/_next/static/chunks/5d4dc55b7a47d378.js"],"default"]
+19:I[97527,["/_next/static/chunks/eee04543d971e97b.js","/_next/static/chunks/5d4dc55b7a47d378.js"],"default"]
+13:["$","li","section-엔지니어가-준비해야-할-것",{"className":"","children":["$","a",null,{"href":"#section-%EC%97%94%EC%A7%80%EB%8B%88%EC%96%B4%EA%B0%80-%EC%A4%80%EB%B9%84%ED%95%B4%EC%95%BC-%ED%95%A0-%EA%B2%83","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"엔지니어가 준비해야 할 것"}]}]
+14:["$","li","section-맺음말",{"className":"","children":["$","a",null,{"href":"#section-%EB%A7%BA%EC%9D%8C%EB%A7%90","className":"block rounded py-2 text-sm leading-relaxed text-white/80 hover:text-cyan-200 focus-visible:text-cyan-200","children":"맺음말"}]}]
+15:["$","$L18","2026-08-24-proactive-update",{"slug":"2026-08-24-proactive-update"}]
+1a:T2c12,<h2 id="section-들어가는-말-코딩-어시스턴트에서-에이전트로" tabindex="-1">들어가는 말: 코딩 어시스턴트에서 에이전트로<a href="#section-%EB%93%A4%EC%96%B4%EA%B0%80%EB%8A%94-%EB%A7%90-%EC%BD%94%EB%94%A9-%EC%96%B4%EC%8B%9C%EC%8A%A4%ED%84%B4%ED%8A%B8%EC%97%90%EC%84%9C-%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8%EB%A1%9C" class="heading-anchor" aria-label="들어가는 말: 코딩 어시스턴트에서 에이전트로 항목 링크">#</a></h2>
+<p>도구를 반복 실행하는 에이전트를 설계할 때는 실패 후 언제 다시 시도하고 언제 멈출지 정해야 합니다. 이 글에서는 구성 요소를 구분한 뒤, 외부 모델 없이 단일 작업의 종료 경계를 직접 검증합니다.</p>
+<h2 id="section-agentic-ai의-아키텍처적-핵심" tabindex="-1">Agentic AI의 아키텍처적 핵심<a href="#section-agentic-ai%EC%9D%98-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98%EC%A0%81-%ED%95%B5%EC%8B%AC" class="heading-anchor" aria-label="Agentic AI의 아키텍처적 핵심 항목 링크">#</a></h2>
+<ul>
+<li><strong>추론</strong>: 다음 작업이나 계획을 제안합니다. 제안이 안전하거나 실행 가능하다는 보장은 별도로 검증해야 합니다.</li>
+<li><strong>도구</strong>: 파일 읽기나 API 호출처럼 실제 효과를 만드는 인터페이스입니다. 권한과 실패 분류는 실행 계층에서 관리합니다.</li>
+<li><strong>메모리</strong>: 이전 입력과 결과를 보관해 후속 판단에 제공합니다. 기록을 저장하는 것 자체가 모델 학습이나 품질 향상을 뜻하지는 않습니다.</li>
+</ul>
+<h3 id="section-간단한-워크플로우-예시-conceptual" tabindex="-1">간단한 워크플로우 예시 (Conceptual)<a href="#section-%EA%B0%84%EB%8B%A8%ED%95%9C-%EC%9B%8C%ED%81%AC%ED%94%8C%EB%A1%9C%EC%9A%B0-%EC%98%88%EC%8B%9C-conceptual" class="heading-anchor" aria-label="간단한 워크플로우 예시 (Conceptual) 항목 링크">#</a></h3>
+<p>흐름은 계획 제안 → 허용된 도구 실행 → 결과 검사 → 종료 또는 다음 시도입니다. 기존 예제처럼 실패할 때 execute_task를 재귀 호출하면 지속 실패 시 재귀 한도에 도달하고, 돌아온 뒤 이전 계획을 계속 실행할 수도 있습니다. 재계획과 재시도를 구분하고 종료 결과를 호출자에게 반환해야 합니다.</p>
+<h3 id="section-로컬-실습-재시도-예산과-취소" tabindex="-1">로컬 실습: 재시도 예산과 취소<a href="#section-%EB%A1%9C%EC%BB%AC-%EC%8B%A4%EC%8A%B5-%EC%9E%AC%EC%8B%9C%EB%8F%84-%EC%98%88%EC%82%B0%EA%B3%BC-%EC%B7%A8%EC%86%8C" class="heading-anchor" aria-label="로컬 실습: 재시도 예산과 취소 항목 링크">#</a></h3>
+<p><a href="/examples/retry-lab.py">retry-lab.py 전체 파일 받기</a>. Python 3.10 이상과 표준 라이브러리만 필요합니다. 아래 전체 코드와 다운로드 파일은 같습니다. 별도 빈 폴더에 저장한 뒤 실행하세요.</p>
+<pre><code class="language-sh">python3 -I retry-lab.py
+</code></pre>
+<p>예상 결과는 <code>Ran 8 tests</code>와 <code>OK</code>, 종료 코드 0입니다. 실행 시간은 환경마다 다릅니다. 이 실습은 네트워크·sleep·실제 모델 재계획을 수행하지 않습니다.</p>
+<table>
+<thead>
+<tr>
+<th>조건</th>
+<th>종료 이유</th>
+<th>호출 횟수</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>즉시 성공</td>
+<td>success</td>
+<td>1</td>
+</tr>
+<tr>
+<td>일시 실패 후 성공</td>
+<td>success</td>
+<td>성공한 시도까지</td>
+</tr>
+<tr>
+<td>영구 오류</td>
+<td>permanent_error</td>
+<td>첫 영구 오류까지</td>
+</tr>
+<tr>
+<td>일시 실패만 반복</td>
+<td>exhausted</td>
+<td>max_attempts</td>
+</tr>
+<tr>
+<td>시작 전 취소</td>
+<td>cancelled</td>
+<td>0</td>
+</tr>
+<tr>
+<td>시도 사이 취소</td>
+<td>cancelled</td>
+<td>이미 실행한 횟수</td>
+</tr>
+</tbody>
+</table>
+<p>max_attempts는 최초 호출을 포함합니다. 1 이상의 정수만 허용하며 bool은 거절합니다. 각 호출 직전에 취소를 검사하므로 실행 중인 동기 함수를 강제로 중단하지는 못합니다. 마지막 허용 시도라도 성공은 성공으로 반환하고, 이미 완료한 성공을 사후 취소로 바꾸지 않습니다.</p>
+<pre><code class="language-python">"""네트워크나 대기 없이 단일 작업의 재시도 경계를 검증합니다."""
+from dataclasses import dataclass
+import unittest
+
+
+class RetryableError(Exception):
+    pass
+
+
+class PermanentError(Exception):
+    pass
+
+
+@dataclass(frozen=True)
+class Result:
+    reason: str
+    attempts: int
+    value: object = None
+    error: str | None = None
+
+
+def run_retry(task, max_attempts, cancelled=lambda: False):
+    if type(max_attempts) is not int or max_attempts &#x3C; 1:
+        raise ValueError("max_attempts는 1 이상의 정수여야 합니다")
+    attempts = 0
+    last_error = None
+    for _ in range(max_attempts):
+        if cancelled():
+            return Result("cancelled", attempts, error=last_error)
+        attempts += 1
+        try:
+            value = task()
+        except RetryableError as error:
+            last_error = str(error)
+        except PermanentError as error:
+            return Result("permanent_error", attempts, error=str(error))
+        else:
+            return Result("success", attempts, value=value)
+    return Result("exhausted", attempts, error=last_error)
+
+
+class RetryTests(unittest.TestCase):
+    def fixture(self, outcomes):
+        calls = []
+
+        def task():
+            index = len(calls)
+            calls.append(index)
+            outcome = outcomes[min(index, len(outcomes) - 1)]
+            if isinstance(outcome, BaseException):
+                raise outcome
+            return outcome
+
+        return task, calls
+
+    def test_success(self):
+        for outcomes, budget in [(["완료"], 3),
+                                 ([RetryableError("대기"), "완료"], 3),
+                                 ([RetryableError("대기"), "완료"], 2)]:
+            with self.subTest(outcomes=outcomes, budget=budget):
+                task, calls = self.fixture(outcomes)
+                self.assertEqual(run_retry(task, budget),
+                                 Result("success", len(outcomes), "완료"))
+                self.assertEqual(len(calls), len(outcomes))
+
+    def test_permanent_error(self):
+        task, calls = self.fixture([PermanentError("권한 없음"), "실행 금지"])
+        self.assertEqual(run_retry(task, 3),
+                         Result("permanent_error", 1, error="권한 없음"))
+        self.assertEqual(len(calls), 1)
+
+    def test_exhausted(self):
+        task, calls = self.fixture([RetryableError("첫 오류"), RetryableError("마지막 오류")])
+        self.assertEqual(run_retry(task, 2),
+                         Result("exhausted", 2, error="마지막 오류"))
+        self.assertEqual(len(calls), 2)
+
+    def test_invalid_budget(self):
+        for budget in [0, -1, True, False, 1.5, "2", None]:
+            with self.subTest(budget=budget):
+                task, calls = self.fixture(["실행 금지"])
+                with self.assertRaises(ValueError):
+                    run_retry(task, budget)
+                self.assertEqual(calls, [])
+
+    def test_cancel_before_start(self):
+        task, calls = self.fixture(["실행 금지"])
+        self.assertEqual(run_retry(task, 2, lambda: True), Result("cancelled", 0))
+        self.assertEqual(calls, [])
+
+    def test_cancel_between_attempts(self):
+        task, calls = self.fixture([RetryableError("중단 요청"), "실행 금지"])
+        self.assertEqual(run_retry(task, 3, lambda: bool(calls)),
+                         Result("cancelled", 1, error="중단 요청"))
+        self.assertEqual(len(calls), 1)
+
+    def test_completed_success_wins(self):
+        task, calls = self.fixture(["완료"])
+        self.assertEqual(run_retry(task, 2, lambda: bool(calls)),
+                         Result("success", 1, "완료"))
+        self.assertEqual(len(calls), 1)
+
+    def test_unexpected_errors_propagate(self):
+        for error in [RuntimeError("버그"), KeyboardInterrupt(), SystemExit(2)]:
+            with self.subTest(error=type(error).__name__):
+                task, calls = self.fixture([error])
+                with self.assertRaises(type(error)):
+                    run_retry(task, 3)
+                self.assertEqual(len(calls), 1)
+
+
+if __name__ == "__main__":
+    unittest.main()
+</code></pre>
+<h3 id="section-결함을-넣어-종료-경계-확인하기" tabindex="-1">결함을 넣어 종료 경계 확인하기<a href="#section-%EA%B2%B0%ED%95%A8%EC%9D%84-%EB%84%A3%EC%96%B4-%EC%A2%85%EB%A3%8C-%EA%B2%BD%EA%B3%84-%ED%99%95%EC%9D%B8%ED%95%98%EA%B8%B0" class="heading-anchor" aria-label="결함을 넣어 종료 경계 확인하기 항목 링크">#</a></h3>
+<p>복사한 파일의 <code>range(max_attempts)</code>를 <code>range(max_attempts + 1)</code>로 바꾸고 같은 명령을 실행하세요. 예산 소진 검사가 호출 횟수 3과 기대값 2의 차이를 검출해 <code>FAILED</code>와 종료 코드 1을 반환해야 합니다. 확인 후 원래 코드를 복원합니다. 실패 여부뿐 아니라 실제 호출 횟수를 검사해야 초과 실행을 잡을 수 있습니다.</p>
+<h2 id="section-엔지니어가-준비해야-할-것" tabindex="-1">엔지니어가 준비해야 할 것<a href="#section-%EC%97%94%EC%A7%80%EB%8B%88%EC%96%B4%EA%B0%80-%EC%A4%80%EB%B9%84%ED%95%B4%EC%95%BC-%ED%95%A0-%EA%B2%83" class="heading-anchor" aria-label="엔지니어가 준비해야 할 것 항목 링크">#</a></h2>
+<p>이 예제는 RetryableError만 재시도하고 PermanentError는 종료 결과로 반환합니다. 예상하지 않은 오류와 KeyboardInterrupt/SystemExit는 호출자에게 전파합니다. 실서비스의 어떤 오류가 일시적인지는 API 계약과 작업 성격을 근거로 분류해야 합니다.</p>
+<p>재시도는 중복 부작용을 만들 수 있습니다. 결제·배포처럼 효과가 있는 작업에는 멱등성 키나 중복 방지, 재시도 간 백오프, 호출별 시간 제한과 전체 마감 시간을 별도로 설계해야 합니다. 이 실행기는 그런 기능이나 실행 중 강제 취소를 제공하지 않습니다. 여러 작업의 의존성과 실패 전파는 <a href="/posts/2026-08-31-proactive-update/">작업 그래프 실습</a>에서 따로 다룹니다.</p>
+<p>구현 근거는 Python 공식 <a href="https://docs.python.org/3/tutorial/errors.html">예외 처리</a>와 <a href="https://docs.python.org/3/library/unittest.html">unittest</a>입니다. 지정한 예외만 처리하고 다른 예외를 전파하는 동작, assertEqual/assertRaises 기반 검사를 사용했습니다.</p>
+<h2 id="section-맺음말" tabindex="-1">맺음말<a href="#section-%EB%A7%BA%EC%9D%8C%EB%A7%90" class="heading-anchor" aria-label="맺음말 항목 링크">#</a></h2>
+<p>도구 실행 루프에서는 반복 여부만큼 종료 이유와 호출 횟수가 중요합니다. 이 실습의 fixture를 자신의 오류 분류로 바꾸어 예산 소진·영구 실패·취소 경계를 먼저 검증하세요. 모델의 판단 품질이나 실제 시스템의 성공률은 이 로컬 검사로 입증하지 않습니다.</p>16:["$","$L19",null,{"contentHtml":"$1a"}]
+17:["$","nav","agent-development",{"aria-label":"에이전트와 개발하기 읽기 순서","className":"mt-8 border border-white/15 bg-slate-950/80 p-6","children":[["$","$L12",null,{"className":"text-lg font-semibold text-cyan-200","href":"/series/agent-development/","children":["에이전트와 개발하기"," ↗"]}],["$","ol",null,{"className":"mt-4 space-y-3","children":[["$","li","2026-08-24-proactive-update",{"className":"flex gap-3 text-sm","children":[["$","span",null,{"className":"font-mono text-white/40","children":[1,"."]}],["$","$L12",null,{"href":"/posts/2026-08-24-proactive-update/","aria-current":"page","className":"font-semibold text-cyan-200","children":["개발 에이전트의 구성 요소: 추론, 도구, 메모리"," · 읽는 중"]}]]}],["$","li","2026-08-31-proactive-update",{"className":"flex gap-3 text-sm","children":[["$","span",null,{"className":"font-mono text-white/40","children":[2,"."]}],["$","$L12",null,{"href":"/posts/2026-08-31-proactive-update/","aria-current":"$undefined","className":"text-white/70 hover:text-cyan-200","children":["AI 에이전트의 작업 분해와 컨텍스트 관리",""]}]]}],["$","li","2026-08-27-proactive-update",{"className":"flex gap-3 text-sm","children":[["$","span",null,{"className":"font-mono text-white/40","children":[3,"."]}],["$","$L12",null,{"href":"/posts/2026-08-27-proactive-update/","aria-current":"$undefined","className":"text-white/70 hover:text-cyan-200","children":["멀티 에이전트 코드 리뷰의 협업 구조",""]}]]}],["$","li","2026-09-01-proactive-update",{"className":"flex gap-3 text-sm","children":[["$","span",null,{"className":"font-mono text-white/40","children":[4,"."]}],["$","$L12",null,{"href":"/posts/2026-09-01-proactive-update/","aria-current":"$undefined","className":"text-white/70 hover:text-cyan-200","children":["에이전트가 작성한 코드를 검증하는 개발자의 역할",""]}]]}],["$","li","2026-09-02-proactive-update",{"className":"flex gap-3 text-sm","children":[["$","span",null,{"className":"font-mono text-white/40","children":[5,"."]}],["$","$L12",null,{"href":"/posts/2026-09-02-proactive-update/","aria-current":"$undefined","className":"text-white/70 hover:text-cyan-200","children":["클라우드 네이티브 환경에 AI 에이전트를 통합하는 설계",""]}]]}]]}]]}]
